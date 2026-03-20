@@ -863,7 +863,6 @@ function App() {
         {/* Global 64px icon rail — always visible */}
         <SidebarNav currentView={currentView} onViewChange={handleViewChange} />
 
-        {/* Navigation moved to Project Homepage - SidebarNav no longer used */}}
         <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0', marginLeft: '64px'}}>
           {/* Show global breadcrumb header whenever a project is loaded (all views except bare home/settings) */}
           {currentView !== 'home' && currentView !== 'documentViewer' && currentView !== 'settings' && currentProject && (
