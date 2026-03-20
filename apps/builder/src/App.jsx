@@ -325,6 +325,19 @@ function App() {
     }
   }, [currentProject]);
 
+  // Glass-card cursor glow — tracks mouse position per card
+  useEffect(() => {
+    const handler = (e) => {
+      document.querySelectorAll('.glass-card').forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    };
+    window.addEventListener('mousemove', handler, { passive: true });
+    return () => window.removeEventListener('mousemove', handler);
+  }, []);
+
   // Persist bid settings whenever they change (per-project)
   useEffect(() => {
     if (!currentProject) return;

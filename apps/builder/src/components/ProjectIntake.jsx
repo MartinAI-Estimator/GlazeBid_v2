@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { pdfjs } from 'react-pdf';
 import { 
   Upload, FileText, FolderOpen, CheckCircle2, AlertCircle, 
@@ -1111,8 +1112,12 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
 
               {/* â”€â”€ HERO CARD (col-span-8) â”€â”€ */}
               {hero ? (
-                <div
+                <motion.div
+                  className="glass-card"
                   style={styles.heroCard}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
                   onClick={() => onProjectReady({ projectName: hero.name })}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 1px rgba(14,165,233,0.12), 0 8px 32px rgba(0,0,0,0.4)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = '#27272a'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3)'; }}
@@ -1143,10 +1148,14 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                   <div style={{ position: 'absolute', bottom: 20, right: 24, zIndex: 1 }}>
                     <span style={{ fontSize: 12, fontWeight: 600, color: '#0ea5e9' }}>Open &#8594;</span>
                   </div>
-                </div>
+                </motion.div>
               ) : (
-                <div
+                <motion.div
+                  className="glass-card"
                   style={{ ...styles.heroCard, alignItems: 'center', justifyContent: 'center' }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
                   onClick={() => setShowUploadModal(true)}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = '#27272a'; }}
@@ -1154,11 +1163,17 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                   <Plus size={32} color="#0ea5e9" style={{ marginBottom: 12 }} />
                   <div style={{ fontSize: 16, fontWeight: 700, color: '#e4e4e7', marginBottom: 6 }}>Start your first project</div>
                   <div style={{ fontSize: 13, color: '#52525b' }}>Drop drawings &amp; specs to begin intake</div>
-                </div>
+                </motion.div>
               )}
 
               {/* â”€â”€ RADAR PANEL (col-span-4) â”€â”€ */}
-              <div style={styles.radarCard}>
+              <motion.div
+                className="glass-card"
+                style={styles.radarCard}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+              >
                 <div>
                   <div style={styles.bentoWidgetHeader}>
                     <Calendar size={13} style={{ marginRight: 7, color: '#52525b', flexShrink: 0 }} />
@@ -1197,16 +1212,20 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                     <span style={{ fontSize: 12, fontWeight: 600, color: '#e4e4e7' }}>{(recentProjects ?? []).length}</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* â”€â”€ SECONDARY PROJECT CARDS (col-span-4 each) â”€â”€ */}
               {secondary.map((p, i) => {
                 const st   = statusMeta[getProjectStatus(p)] || statusMeta['new'];
                 const prog = getProjectProgress(p.name);
                 return (
-                  <div
+                  <motion.div
                     key={i}
+                    className="glass-card"
                     style={styles.projectMiniCard}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 + i * 0.06, ease: [0.23, 1, 0.32, 1] }}
                     onClick={() => onProjectReady({ projectName: p.name })}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.4)'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = '#27272a'; }}
@@ -1221,13 +1240,17 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                       <div style={{ height: '100%', width: `${prog}%`, background: 'linear-gradient(90deg, #0ea5e9, #38bdf8)', borderRadius: 9999 }} />
                     </div>
                     <span style={{ fontSize: 12, color: '#0ea5e9', fontWeight: 600 }}>Open &#8594;</span>
-                  </div>
+                  </motion.div>
                 );
               })}
 
               {/* â”€â”€ NEW TAKEOFF CTA (col-span-4) â”€â”€ */}
-              <div
+              <motion.div
+                className="glass-card"
                 style={styles.newTakeoffCard}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.42, ease: [0.23, 1, 0.32, 1] }}
                 onClick={() => setShowUploadModal(true)}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; e.currentTarget.style.background = 'rgba(14,165,233,0.04)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = '#3f3f46'; e.currentTarget.style.background = 'transparent'; }}
@@ -1237,7 +1260,7 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7', marginBottom: 4 }}>Start New Takeoff</div>
                 <div style={{ fontSize: 12, color: '#52525b', lineHeight: 1.4 }}>Drop drawings &amp; specs or browse files to begin</div>
-              </div>
+              </motion.div>
 
             </div>
           );
