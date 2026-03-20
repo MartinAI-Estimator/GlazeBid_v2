@@ -24,6 +24,7 @@ import AdminDashboard from './components/Admin/AdminDashboard';
 import ProposalGenerator from './components/ProposalGenerator/ProposalGenerator';
 import RFQManager from './components/RFQManager';
 import StudioInbox from './components/StudioInbox';
+import SidebarNav from './components/SidebarNav';
 import { ProjectProvider } from './context/ProjectContext'; // Import the brain
 import { loadProjectFromCloud } from './utils/syncProject';
 import useBidStore from './store/useBidStore';
@@ -846,10 +847,13 @@ function App() {
           />
         )}
         
-        {/* Navigation moved to Project Homepage - SidebarNav no longer used */}
-        <div style={{...styles.mainWrapper, marginTop: isElectron ? '32px' : '0'}}>
-          {/* Only show header when inside a project (except on projectHome, documentViewer, and admin settings which have their own) */}
-          {currentView !== 'home' && currentView !== 'projectHome' && currentView !== 'documentViewer' && currentView !== 'settings' && currentProject && (
+        {/* Global 64px icon rail — always visible */}
+        <SidebarNav currentView={currentView} onViewChange={handleViewChange} />
+
+        {/* Navigation moved to Project Homepage - SidebarNav no longer used */}}
+        <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0', marginLeft: '64px'}}>
+          {/* Show global breadcrumb header whenever a project is loaded (all views except bare home/settings) */}
+          {currentView !== 'home' && currentView !== 'documentViewer' && currentView !== 'settings' && currentProject && (
             <>
               <Header 
                 project={currentProject} 
@@ -882,12 +886,12 @@ function App() {
 const styles = {
   appContainer: {
     display: 'flex',
-    flexDirection: 'row', // Icon bar on left, content on right
-    height: '100vh',      // Force full screen height
-    width: '100vw',       // Force full screen width
-    backgroundColor: 'var(--bg-deep)',
+    flexDirection: 'column', /* sidebar is fixed; no flex row needed */
+    height: '100vh',
+    width: '100vw',
+    backgroundColor: 'var(--bg-main)',
     color: 'var(--text-primary)',
-    overflow: 'hidden'    // Prevent weird scrollbars
+    overflow: 'hidden'
   },
   mainWrapper: {
     flex: 1,              // Take up all remaining width

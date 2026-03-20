@@ -1,34 +1,49 @@
 @import "tailwindcss";
 
 /* ── Midnight Chrome Design System ─────────────────────────────────────────── */
-:root {
-  /* Backgrounds */
-  --bg-main:      #09090b;   /* Almost-black base */
-  --bg-surface:   #18181b;   /* Cards, panels, surfaces */
-  --bg-elevated:  #1c1c1f;   /* Modals, dropdowns */
+@layer base {
+  :root {
+    /* Neural Palette — HSL values (use with hsl() wrapper in Tailwind) */
+    --background: 240 10% 3.9%;    /* #09090b  deep charcoal base   */
+    --surface:    240 5.9% 10%;    /* #18181b  card / panel surface */
+    --border:     240 3.7% 15.9%; /* #27272a  crisp 1px dividers   */
+    --accent:     199 89% 48%;    /* #0ea5e9  electric cyan accent */
+    --muted:      240 5% 64.9%;   /* #a1a1aa  secondary text       */
 
-  /* Aliases kept for backwards-compat with inline styles scattered across components */
-  --bg-deep:      var(--bg-main);
-  --bg-panel:     var(--bg-surface);
-  --bg-card:      var(--bg-surface);
-  --accent-navy:  var(--bg-main);
+    /* Hex aliases — used by legacy inline-style components */
+    --bg-main:        #09090b;
+    --bg-surface:     #18181b;
+    --bg-elevated:    #1c1c1f;
+    --bg-deep:        var(--bg-main);
+    --bg-panel:       var(--bg-surface);
+    --bg-card:        var(--bg-surface);
+    --accent-navy:    var(--bg-main);
+    --border-subtle:  rgba(255, 255, 255, 0.08);
+    --border-crisp:   #27272a;
+    --brand-cyan:     #0ea5e9;
+    --accent-blue:    var(--brand-cyan);
+    --accent-glow:    rgba(14, 165, 233, 0.18);
+    --text-primary:   #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted:     #71717a;
+  }
 
-  /* Borders */
-  --border-subtle:  rgba(255, 255, 255, 0.08);
-  --border-crisp:   #27272a;
+  body {
+    margin: 0;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
 
-  /* Brand / Accent — use only for active states & primary CTAs */
-  --brand-cyan:     #0ea5e9;
-  --accent-blue:    var(--brand-cyan);   /* alias */
-  --accent-glow:    rgba(14, 165, 233, 0.18);
-
-  /* Text */
-  --text-primary:   #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted:     #71717a;
+  /* Sleek 5px scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--brand-cyan); }
 }
 
-/* ── Global Card Utility ────────────────────────────────────────────────────── */
+/* ── Glass Card Utility ─────────────────────────────────────────────────────── */
 .glass-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -41,29 +56,12 @@
   box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.12);
 }
 
-body {
-  margin: 0;
-  background-color: var(--bg-main);
-  color: var(--text-primary);
-  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  overflow: hidden; /* Prevents double scrollbars */
-}
-
 /* Reset button focus styles */
-button:focus {
-  outline: none;
-}
-
+button:focus { outline: none; }
 button:focus-visible {
   outline: 2px solid var(--brand-cyan);
   outline-offset: 2px;
 }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-main); }
-::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--brand-cyan); }
 
 /* Loading Spinner Animation */
 @keyframes spin {
