@@ -152,6 +152,5 @@ const styles = {
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   },
 };
-};
 
 export default Header;

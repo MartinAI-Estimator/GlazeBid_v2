@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @import '@fontsource-variable/inter';
-@import 'geist/dist/geist.css';
+
+/* ── Geist Variable Font (@font-face, self-hosted via geist npm package) ── */
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
 
 /* ── Tailwind v4 Theme ─────────────────────────────────────────────────────── */
 @theme {
