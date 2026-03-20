@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { pdfjs } from 'react-pdf';
 import { 
   Upload, FileText, FolderOpen, CheckCircle2, AlertCircle, 
@@ -1039,6 +1039,13 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
   const formatDueDate = (d) => { try { return new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch { return d; } };
   const statusMeta    = { new: { label: 'Intake',   color: '#58a6ff' }, in_progress: { label: 'Takeoff',  color: '#a371f7' }, drafting: { label: 'Pricing',  color: '#d29922' }, completed: { label: 'Complete', color: '#3fb950' } };
   const activeCount   = (recentProjects ?? []).filter(p => getProjectStatus(p) !== 'completed').length;
+  const getProjectProgress = (name) => {
+    try {
+      const bid = JSON.parse(localStorage.getItem(`glazebid:bid:${name}`) || 'null');
+      if (!bid?.frames?.length) return 0;
+      return Math.min(Math.round((bid.frames.length / 20) * 100), 95);
+    } catch { return 0; }
+  };
 
   return (
     <div
@@ -1092,145 +1099,150 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
         </button>
       </header>
 
-      {/* ── BODY ── */}
+      {/* â”€â”€ BODY â”€â”€ */}
       <div style={styles.bentoBody}>
 
-        {/* ── WELCOME HEADER ── */}
-        <div style={styles.bentoWelcome}>
-          <h1 style={styles.bentoWelcomeH1}>Welcome to <span style={{ color: '#007BFF' }}>GlazeBid.</span></h1>
-          <p style={styles.bentoWelcomeP}>
-            {activeCount > 0
-              ? `You have ${activeCount} active project${activeCount !== 1 ? 's' : ''} in the pipeline.`
-              : 'Your estimating home base. Start a new project or continue where you left off.'}
-          </p>
-        </div>
+        {/* 12-column Bento Grid */}
+        {(() => {
+          const hero      = (recentProjects ?? []).find(p => getProjectStatus(p) !== 'completed') || (recentProjects ?? [])[0];
+          const secondary = (recentProjects ?? []).filter(p => p !== hero).slice(0, 2);
+          return (
+            <div style={styles.bentoGridNew}>
 
-        {/* ── TWO-COLUMN BENTO GRID ── */}
-        <div style={styles.bentoGrid}>
-
-          {/* ── LEFT COLUMN ── */}
-          <div style={styles.bentoLeft}>
-
-            {/* Quick Launch */}
-            <div
-              style={styles.quickLaunchCard}
-              onClick={() => setShowUploadModal(true)}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              <div style={styles.qlIconWrap}><Plus size={26} color="#fff" /></div>
-              <div>
-                <div style={styles.qlTitle}>Start a New Project</div>
-                <div style={styles.qlSub}>Drop drawings &amp; specs or browse files to begin intake</div>
-              </div>
-              <div style={styles.qlArrow}>→</div>
-            </div>
-
-            {/* Continue Working */}
-            <div style={styles.bentoWidget}>
-              <div style={styles.bentoWidgetHeader}>
-                <Clock size={14} style={{ marginRight: 7, color: '#8b949e', flexShrink: 0 }} />
-                <span style={styles.bentoWidgetTitle}>Continue Working</span>
-                <button style={styles.bentoViewAll} onClick={onShowProjects}>View all →</button>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {(recentProjects ?? []).filter(p => {
-                  const s = getProjectStatus(p);
-                  if (activeFilter === 'urgent') return p.bidDate && Math.ceil((new Date(p.bidDate) - new Date()) / 86400000) <= 7;
-                  return activeFilter === 'mine' ? true : true;
-                }).filter(p => !searchQuery || (p.name ?? '').toLowerCase().includes(searchQuery.toLowerCase()))
-                  .slice(0, 4).map((p, i) => {
-                  const st = statusMeta[getProjectStatus(p)] || statusMeta['new'];
-                  const openProject = (e) => { e.stopPropagation(); onProjectReady({ projectName: p.name }); };
-                  return (
-                    <div key={i} style={{ ...styles.workspaceRow, cursor: 'pointer' }}
-                      onClick={openProject}
-                      onMouseEnter={e => e.currentTarget.style.background = '#0f2744'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <div style={styles.wsThumb}>
-                        {p.thumbnail ? <img src={p.thumbnail} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <FileText size={16} color="#4b5563" />}
+              {/* â”€â”€ HERO CARD (col-span-8) â”€â”€ */}
+              {hero ? (
+                <div
+                  style={styles.heroCard}
+                  onClick={() => onProjectReady({ projectName: hero.name })}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 1px rgba(14,165,233,0.12), 0 8px 32px rgba(0,0,0,0.4)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#27272a'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3)'; }}
+                >
+                  <div style={styles.heroShimmer} />
+                  <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                        {(() => {
+                          const st = statusMeta[getProjectStatus(hero)] || statusMeta['new'];
+                          return <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, border: '1px solid', color: st.color, borderColor: st.color + '55', background: st.color + '18', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{st.label}</span>;
+                        })()}
+                        {hero.bidDate && <span style={{ fontSize: 11, color: '#a1a1aa' }}>{getDaysLeft(hero.bidDate)}d to bid</span>}
                       </div>
-                      <div style={styles.wsInfo}>
-                        <div style={styles.wsName}>{p.name}</div>
-                        <div style={styles.wsMeta}>{new Date(p.modified).toLocaleDateString()}</div>
-                      </div>
-                      <span style={{ ...styles.wsPill, color: st.color, borderColor: st.color + '55', background: st.color + '18' }}>{st.label}</span>
-                      <button style={styles.wsOpenBtn} onClick={openProject}>Open</button>
+                      <div style={{ fontSize: 22, fontWeight: 700, color: '#fafafa', marginBottom: 6, lineHeight: 1.2, letterSpacing: '-0.3px' }}>{hero.name}</div>
+                      <div style={{ fontSize: 12, color: '#71717a' }}>Last modified {new Date(hero.modified).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                     </div>
-                  );
-                })}
-                {(recentProjects ?? []).length === 0 && (
-                  <div style={{ padding: '24px 0', textAlign: 'center', color: '#4b5563', fontSize: 13 }}>No projects yet — start your first one above.</div>
-                )}
-              </div>
-            </div>
-
-          </div>{/* end left column */}
-
-          {/* ── RIGHT COLUMN (THE RADAR) ── */}
-          <div style={styles.bentoRight}>
-
-            {/* Upcoming Deadlines */}
-            <div style={styles.bentoWidget}>
-              <div style={styles.bentoWidgetHeader}>
-                <Calendar size={14} style={{ marginRight: 7, color: '#8b949e', flexShrink: 0 }} />
-                <span style={styles.bentoWidgetTitle}>Upcoming Deadlines</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {upcomingDeadlines.length === 0 ? (
-                  <div style={{ color: '#4b5563', fontSize: 13, padding: '12px 0' }}>No upcoming deadlines</div>
-                ) : upcomingDeadlines.slice(0, 5).map(dl => {
-                  const days = getDaysLeft(dl.date);
-                  const urgent = days <= 3;
-                  const soon   = days <= 7;
-                  return (
-                    <div key={dl.id} style={styles.deadlineItem}>
-                      <span style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, marginTop: 2, display: 'inline-block',
-                        background: dl.priority === 'high' ? '#ef4444' : dl.priority === 'medium' ? '#f59e0b' : '#3fb950' }} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: '#e6edf3', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{dl.title}</div>
-                        <div style={{ fontSize: 11, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{dl.project}</div>
+                    <div style={{ marginTop: 20 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                        <span style={{ fontSize: 11, color: '#71717a' }}>Progress</span>
+                        <span style={{ fontSize: 11, color: '#a1a1aa', fontWeight: 600 }}>{getProjectProgress(hero.name)}%</span>
                       </div>
-                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: urgent ? '#ef4444' : soon ? '#f59e0b' : '#6b7280' }}>{days}d</div>
-                        <div style={{ fontSize: 10, color: '#4b5563' }}>{formatDueDate(dl.date)}</div>
+                      <div style={{ height: 4, background: '#27272a', borderRadius: 9999, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${getProjectProgress(hero.name)}%`, background: 'linear-gradient(90deg, #0ea5e9, #38bdf8)', borderRadius: 9999, transition: 'width 0.4s ease' }} />
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                  <div style={{ position: 'absolute', bottom: 20, right: 24, zIndex: 1 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#0ea5e9' }}>Open &#8594;</span>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  style={{ ...styles.heroCard, alignItems: 'center', justifyContent: 'center' }}
+                  onClick={() => setShowUploadModal(true)}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#27272a'; }}
+                >
+                  <Plus size={32} color="#0ea5e9" style={{ marginBottom: 12 }} />
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#e4e4e7', marginBottom: 6 }}>Start your first project</div>
+                  <div style={{ fontSize: 13, color: '#52525b' }}>Drop drawings &amp; specs to begin intake</div>
+                </div>
+              )}
+
+              {/* â”€â”€ RADAR PANEL (col-span-4) â”€â”€ */}
+              <div style={styles.radarCard}>
+                <div>
+                  <div style={styles.bentoWidgetHeader}>
+                    <Calendar size={13} style={{ marginRight: 7, color: '#52525b', flexShrink: 0 }} />
+                    <span style={styles.bentoWidgetTitle}>Deadlines</span>
+                  </div>
+                  {upcomingDeadlines.length === 0
+                    ? <div style={{ color: '#52525b', fontSize: 12, padding: '8px 0' }}>No upcoming deadlines</div>
+                    : upcomingDeadlines.slice(0, 3).map(dl => {
+                        const days = getDaysLeft(dl.date);
+                        return (
+                          <div key={dl.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid #1c1c1f' }}>
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, display: 'inline-block', background: dl.priority === 'high' ? '#ef4444' : dl.priority === 'medium' ? '#f59e0b' : '#3fb950' }} />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 12, fontWeight: 600, color: '#e4e4e7', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{dl.title}</div>
+                              <div style={{ fontSize: 11, color: '#52525b' }}>{dl.project}</div>
+                            </div>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: days <= 3 ? '#ef4444' : '#a1a1aa', flexShrink: 0 }}>{days}d</div>
+                          </div>
+                        );
+                      })
+                  }
+                </div>
+                <div style={{ borderTop: '1px solid #27272a', paddingTop: 14, marginTop: 14 }}>
+                  <div style={styles.bentoWidgetHeader}>
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#3fb950', display: 'inline-block', marginRight: 8, flexShrink: 0 }} />
+                    <span style={styles.bentoWidgetTitle}>System</span>
+                  </div>
+                  {[['AI Engine', true], ['Bid Database', true], ['PDF Parser', true]].map(([label, online]) => (
+                    <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 0' }}>
+                      <span style={{ fontSize: 12, color: '#71717a' }}>{label}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 9px', borderRadius: 20, color: online ? '#3fb950' : '#ef4444', background: online ? '#3fb95018' : '#ef444418', border: `1px solid ${online ? '#3fb95040' : '#ef444440'}` }}>{online ? 'Online' : 'Offline'}</span>
+                    </div>
+                  ))}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 0' }}>
+                    <span style={{ fontSize: 12, color: '#71717a' }}>Projects</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#e4e4e7' }}>{(recentProjects ?? []).length}</span>
+                  </div>
+                </div>
               </div>
+
+              {/* â”€â”€ SECONDARY PROJECT CARDS (col-span-4 each) â”€â”€ */}
+              {secondary.map((p, i) => {
+                const st   = statusMeta[getProjectStatus(p)] || statusMeta['new'];
+                const prog = getProjectProgress(p.name);
+                return (
+                  <div
+                    key={i}
+                    style={styles.projectMiniCard}
+                    onClick={() => onProjectReady({ projectName: p.name })}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.4)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#27272a'; }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 9px', borderRadius: 20, border: '1px solid', color: st.color, borderColor: st.color + '55', background: st.color + '18', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{st.label}</span>
+                      <span style={{ fontSize: 11, color: '#52525b' }}>{new Date(p.modified).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#e4e4e7', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
+                    <div style={{ fontSize: 11, color: '#52525b', marginBottom: 14 }}>Takeoff in progress</div>
+                    <div style={{ height: 3, background: '#27272a', borderRadius: 9999, overflow: 'hidden', marginBottom: 12 }}>
+                      <div style={{ height: '100%', width: `${prog}%`, background: 'linear-gradient(90deg, #0ea5e9, #38bdf8)', borderRadius: 9999 }} />
+                    </div>
+                    <span style={{ fontSize: 12, color: '#0ea5e9', fontWeight: 600 }}>Open &#8594;</span>
+                  </div>
+                );
+              })}
+
+              {/* â”€â”€ NEW TAKEOFF CTA (col-span-4) â”€â”€ */}
+              <div
+                style={styles.newTakeoffCard}
+                onClick={() => setShowUploadModal(true)}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; e.currentTarget.style.background = 'rgba(14,165,233,0.04)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#3f3f46'; e.currentTarget.style.background = 'transparent'; }}
+              >
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                  <Plus size={20} color="#0ea5e9" />
+                </div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7', marginBottom: 4 }}>Start New Takeoff</div>
+                <div style={{ fontSize: 12, color: '#52525b', lineHeight: 1.4 }}>Drop drawings &amp; specs or browse files to begin</div>
+              </div>
+
             </div>
+          );
+        })()}
 
-            {/* System Status */}
-            <div style={styles.bentoWidget}>
-              <div style={styles.bentoWidgetHeader}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#3fb950', display: 'inline-block', marginRight: 8, flexShrink: 0 }} />
-                <span style={styles.bentoWidgetTitle}>System Status</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <div style={styles.statusRow}>
-                  <span style={styles.statusLabel}>AI Engine</span>
-                  <span style={{ ...styles.statusBadge, color: '#3fb950', background: '#3fb95018', border: '1px solid #3fb95040' }}>Online</span>
-                </div>
-                <div style={styles.statusRow}>
-                  <span style={styles.statusLabel}>Projects</span>
-                  <span style={styles.statusValue}>{projectStats?.total ?? '—'}</span>
-                </div>
-                <div style={styles.statusRow}>
-                  <span style={styles.statusLabel}>Active</span>
-                  <span style={styles.statusValue}>{projectStats?.inProgress ?? '—'}</span>
-                </div>
-                <div style={styles.statusRow}>
-                  <span style={styles.statusLabel}>Completed</span>
-                  <span style={styles.statusValue}>{projectStats?.completed ?? '—'}</span>
-                </div>
-              </div>
-            </div>
-
-          </div>{/* end right column */}
-
-        </div>{/* end bentoGrid */}
       </div>{/* end bentoBody */}
 
       {/* Drag overlay */}
@@ -1448,6 +1460,71 @@ const styles = {
   },
   bentoLeft: { display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 },
   bentoRight: { display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 },
+
+  // ── New 12-col Bento Grid styles ───────────────────────────────
+  bentoGridNew: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(12, 1fr)',
+    gap: 16,
+    alignItems: 'start',
+  },
+  heroCard: {
+    gridColumn: 'span 8',
+    position: 'relative',
+    background: 'linear-gradient(135deg, #18181b 0%, #1c1917 60%, #18181b 100%)',
+    border: '1px solid #27272a',
+    borderRadius: 16,
+    padding: '28px 28px 24px',
+    cursor: 'pointer',
+    minHeight: 200,
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    transition: 'border-color .2s, box-shadow .2s',
+    boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+  },
+  heroShimmer: {
+    position: 'absolute',
+    top: 0, right: 0, bottom: 0,
+    width: '45%',
+    background: 'linear-gradient(90deg, transparent 0%, rgba(14,165,233,0.06) 100%)',
+    pointerEvents: 'none',
+  },
+  radarCard: {
+    gridColumn: 'span 4',
+    background: '#18181b',
+    border: '1px solid #27272a',
+    borderRadius: 16,
+    padding: '18px 20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 0,
+  },
+  projectMiniCard: {
+    gridColumn: 'span 4',
+    background: '#18181b',
+    border: '1px solid #27272a',
+    borderRadius: 14,
+    padding: '18px 20px',
+    cursor: 'pointer',
+    transition: 'border-color .2s',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  newTakeoffCard: {
+    gridColumn: 'span 4',
+    background: 'transparent',
+    border: '1px dashed #3f3f46',
+    borderRadius: 14,
+    padding: '24px 20px',
+    cursor: 'pointer',
+    transition: 'border-color .2s, background .2s',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+
   // Quick Launch card
   quickLaunchCard: {
     display: 'flex', alignItems: 'center', gap: 20,
