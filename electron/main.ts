@@ -119,7 +119,10 @@ function createBuilderWindow(): void {
   if (isDev) {
     const builderUrl = process.env.VITE_DEV_SERVER_URL ?? 'http://localhost:5173';
     win.loadURL(builderUrl);
-    win.webContents.openDevTools({ mode: 'detach' });
+    // DevTools only if explicitly requested (set GLAZEBID_DEVTOOLS=1)
+    if (process.env.GLAZEBID_DEVTOOLS === '1') {
+      win.webContents.openDevTools({ mode: 'detach' });
+    }
   } else {
     win.loadFile(path.join(__dirname, '../apps/builder/dist/index.html'));
   }

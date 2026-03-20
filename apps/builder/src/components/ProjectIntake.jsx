@@ -233,6 +233,9 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
   const handleDragOut = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    // Only clear the overlay when the cursor truly leaves the intake page
+    // (not when it moves between child elements within the page)
+    if (e.currentTarget.contains(e.relatedTarget)) return;
     setDragging(false);
   };
 
@@ -248,13 +251,12 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
     });
 
     if (files.length > 0) {
-      // Generate default project name from first file
-      const defaultName = files[0].name.replace(/\.(pdf|zip)$/i, '').replace(/_/g, ' ');
-      setProjectName(defaultName);
-      setBidDate('');
-      setPendingFiles(files);
-      setShowUploadModal(false); // Close upload modal
-      setShowProjectMetadataModal(true); // Show metadata modal
+      // Route through the two-zone sort modal so the user can categorise
+      // drawings vs specifications before naming the project.
+      setPendingDrawings(files);
+      setPendingSpecs([]);
+      setPendingFileCategories({});
+      setShowUploadModal(true);
     } else {
       setError('Please drop PDF or ZIP files only');
       setTimeout(() => setError(null), 3000);
@@ -709,14 +711,14 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
           </div>
 
           {/* Specifications Card */}
-          <div style={{...styles.resultCard, borderColor: results.specs.sections > 0 ? '#10b981' : '#6b7280'}}>
+          <div style={{...styles.resultCard, borderColor: (results.spec?.length ?? 0) > 0 ? '#10b981' : '#6b7280'}}>
             <div style={styles.cardHeader}>
-              <FileText size={24} color={results.specs.sections > 0 ? '#10b981' : '#6b7280'} />
+              <FileText size={24} color={(results.spec?.length ?? 0) > 0 ? '#10b981' : '#6b7280'} />
               <h3 style={styles.cardTitleText}>Specifications</h3>
             </div>
-            <div style={styles.cardCount}>{results.specs.sections}</div>
+            <div style={styles.cardCount}>{results.spec?.length ?? 0}</div>
             <div style={styles.cardLabel}>
-              {results.specs.sections > 0 ? 'Division 08 Sections' : 'None Found'}
+              {(results.spec?.length ?? 0) > 0 ? 'Spec Documents' : 'None Found'}
             </div>
           </div>
 
@@ -887,7 +889,12 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
     );
 
     return (
-      <div style={styles.modalOverlay} onClick={handleClose}>
+      <div
+        style={styles.modalOverlay}
+        onClick={handleClose}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => e.preventDefault()}
+      >
         <div
           style={{ ...styles.modalContent, maxWidth: 700, width: '90vw' }}
           onClick={(e) => e.stopPropagation()}
@@ -914,7 +921,7 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
             <div
               style={zoneStyle('drawings')}
               onDragEnter={(e) => { e.preventDefault(); setDraggingZone('drawings'); }}
-              onDragLeave={(e) => { e.preventDefault(); setDraggingZone(null); }}
+              onDragLeave={(e) => { if (e.currentTarget.contains(e.relatedTarget)) return; e.preventDefault(); setDraggingZone(null); }}
               onDragOver={(e) => e.preventDefault()}
               onDrop={makeZoneDrop('drawings')}
             >
@@ -956,7 +963,7 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
             <div
               style={zoneStyle('specs')}
               onDragEnter={(e) => { e.preventDefault(); setDraggingZone('specs'); }}
-              onDragLeave={(e) => { e.preventDefault(); setDraggingZone(null); }}
+              onDragLeave={(e) => { if (e.currentTarget.contains(e.relatedTarget)) return; e.preventDefault(); setDraggingZone(null); }}
               onDragOver={(e) => e.preventDefault()}
               onDrop={makeZoneDrop('specs')}
             >

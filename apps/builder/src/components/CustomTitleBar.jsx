@@ -219,7 +219,7 @@ const menuItemStyles = {
     alignItems: 'center',
   },
   menuItemHover: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#0ea5e9',
     color: '#ffffff',
   },
   menuItemDisabled: {
@@ -235,14 +235,14 @@ const menuItemStyles = {
 
 const styles = {
   titleBar: {
-    height: '32px',
-    background: '#0b0e11',
-    borderBottom: '1px solid #007BFF',
+    height: '40px',
+    background: '#09090b',
+    borderBottom: '1px solid #27272a',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '0 8px',
-    WebkitAppRegion: 'drag', // Makes the title bar draggable
+    WebkitAppRegion: 'drag',
     userSelect: 'none',
     position: 'fixed',
     top: 0,
@@ -279,23 +279,23 @@ const styles = {
     transition: 'background-color 0.15s',
   },
   menuButtonActive: {
-    backgroundColor: 'rgba(0, 123, 255, 0.3)',
+    backgroundColor: 'rgba(14, 165, 233, 0.15)',
   },
   dropdown: {
     position: 'absolute',
     top: '100%',
     left: '0',
     minWidth: '200px',
-    backgroundColor: '#1c2128',
-    border: '1px solid #30363d',
+    backgroundColor: '#18181b',
+    border: '1px solid #27272a',
     borderRadius: '4px',
-    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
     padding: '4px 0',
     zIndex: 10002,
   },
   separator: {
     height: '1px',
-    backgroundColor: '#30363d',
+    backgroundColor: '#27272a',
     margin: '4px 0',
   },
   windowControls: {
@@ -305,16 +305,16 @@ const styles = {
     WebkitAppRegion: 'no-drag', // Allow clicking buttons
   },
   controlButton: {
-    width: '46px',
-    height: '32px',
+    width: '40px',
+    height: '40px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     background: 'transparent',
     border: 'none',
-    color: '#ffffff',
+    color: '#a1a1aa',
     cursor: 'pointer',
-    transition: 'background-color 0.2s',
+    transition: 'background-color 0.15s, color 0.15s',
     borderRadius: '0',
   },
   closeButton: {

@@ -191,6 +191,7 @@ const ProjectHome = ({
         <div style={styles.sidebarSection}>
           <span style={styles.sidebarSectionLabel}>Project</span>
           <button
+            title="Overview"
             style={activeSidebarSection === null ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
             onClick={() => setActiveSidebarSection(null)}
           >
@@ -198,6 +199,7 @@ const ProjectHome = ({
             <span style={styles.sidebarItemLabel}>Overview</span>
           </button>
           <button
+            title="Project Documents"
             style={activeSidebarSection === 'documents' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
             onClick={() => setActiveSidebarSection('documents')}
           >
@@ -206,6 +208,7 @@ const ProjectHome = ({
             {totalSheets > 0 && <span style={styles.sidebarBadge}>{totalSheets}</span>}
           </button>
           <button
+            title="Labor Days"
             style={activeSidebarSection === 'labor' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
             onClick={() => setActiveSidebarSection('labor')}
           >
@@ -219,6 +222,7 @@ const ProjectHome = ({
         <div style={{ ...styles.sidebarSection, marginTop: 12 }}>
           <span style={styles.sidebarSectionLabel}>Actions</span>
           <button
+            title="Open Studio"
             style={hoveredWorkflowCard === 'studio'
               ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
               : styles.sidebarItem}
@@ -230,6 +234,7 @@ const ProjectHome = ({
             <span style={styles.sidebarItemLabel}>Open Studio</span>
           </button>
           <button
+            title="Studio Takeoffs"
             style={hoveredWorkflowCard === 'inbox'
               ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
               : styles.sidebarItem}
@@ -241,6 +246,7 @@ const ProjectHome = ({
             <span style={styles.sidebarItemLabel}>Studio Takeoffs</span>
           </button>
           <button
+            title="Bid Builder"
             style={hoveredWorkflowCard === 'labor'
               ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
               : styles.sidebarItem}
@@ -252,6 +258,7 @@ const ProjectHome = ({
             <span style={styles.sidebarItemLabel}>Bid Builder</span>
           </button>
           <button
+            title="Bid Cart & Pricing"
             style={hoveredNavCard === 'bid-cart'
               ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
               : styles.sidebarItem}
@@ -689,15 +696,15 @@ const styles = {
   },
 
   toolboxCard: {
-    background: '#0d1117', border: '1px solid #1e2530',
-    borderRadius: 14, padding: '16px 18px',
+    background: '#09090b', border: '1px solid #27272a',
+    borderRadius: 8, padding: '16px 18px',
   },
   toolRow: {
     display: 'flex', alignItems: 'center', gap: 12,
-    padding: '10px 10px', borderRadius: 9,
+    padding: '10px 10px', borderRadius: 8,
     cursor: 'pointer', transition: 'background .15s',
   },
-  toolRowHover: { background: '#161b22' },
+  toolRowHover: { background: '#18181b' },
   toolRowIcon: {
     width: 34, height: 34, borderRadius: 8, flexShrink: 0,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -712,7 +719,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'row',
     height: '100%',
-    backgroundColor: '#0b0e11',
+    backgroundColor: '#09090b',
     overflow: 'hidden',
   },
   scrollArea: {
@@ -720,69 +727,66 @@ const styles = {
     overflowY: 'auto',
   },
   sidebar: {
-    width: '200px',
+    width: '64px',
     flexShrink: 0,
-    backgroundColor: '#0d1117',
-    borderRight: '1px solid #1e2530',
+    backgroundColor: '#09090b',
+    borderRight: '1px solid #27272a',
     display: 'flex',
     flexDirection: 'column',
-    padding: '20px 0',
+    alignItems: 'center',
+    padding: '12px 0',
     overflowY: 'auto',
+    overflowX: 'hidden',
   },
   sidebarSection: {
     display: 'flex',
     flexDirection: 'column',
+    alignItems: 'center',
     gap: '2px',
+    width: '100%',
     padding: '0 8px',
   },
   sidebarSectionLabel: {
-    fontSize: '10px',
-    fontWeight: 700,
-    color: '#4b5563',
-    textTransform: 'uppercase',
-    letterSpacing: '0.08em',
-    padding: '0 8px',
-    marginBottom: '6px',
+    display: 'none',   /* hidden in collapsed icon-only mode */
   },
   sidebarItem: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    padding: '7px 10px',
-    borderRadius: '6px',
+    justifyContent: 'center',
+    width: '44px',
+    height: '40px',
+    borderRadius: '8px',
     border: 'none',
     background: 'transparent',
-    color: '#8b949e',
+    color: '#52525b',
     cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: 500,
-    textAlign: 'left',
-    width: '100%',
     transition: 'background 0.15s, color 0.15s',
+    position: 'relative',
   },
   sidebarItemActive: {
-    background: 'rgba(0,123,255,0.12)',
-    color: '#58a6ff',
+    background: 'rgba(14, 165, 233, 0.10)',
+    color: '#0ea5e9',
   },
   sidebarActionHover: {
-    background: 'rgba(255,255,255,0.05)',
-    color: '#e6edf3',
+    background: 'rgba(255, 255, 255, 0.05)',
+    color: '#e4e4e7',
   },
   sidebarItemLabel: {
-    flex: 1,
-    minWidth: 0,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
+    display: 'none',   /* labels hidden — icon-only sidebar */
   },
   sidebarBadge: {
-    fontSize: '10px',
+    position: 'absolute',
+    top: '4px',
+    right: '4px',
+    fontSize: '9px',
     fontWeight: 700,
-    color: '#4b5563',
-    background: '#161b22',
-    border: '1px solid #30363d',
-    borderRadius: '10px',
-    padding: '1px 6px',
+    color: '#09090b',
+    background: '#0ea5e9',
+    borderRadius: '8px',
+    padding: '0px 4px',
+    lineHeight: '14px',
+    minWidth: '14px',
+    textAlign: 'center',
     flexShrink: 0,
   },
   documentsFocusPanel: {
@@ -866,14 +870,15 @@ const styles = {
   },
   // Document table styles
   documentTable: {
-    backgroundColor: '#1a1f26',
-    borderRadius: '12px',
-    border: '1px solid #2d333b',
+    backgroundColor: '#18181b',
+    borderRadius: '8px',
+    border: '1px solid rgba(255,255,255,0.08)',
     overflow: 'hidden',
     marginBottom: '32px',
+    transition: 'border-color 0.2s',
   },
   documentSection: {
-    borderBottom: '1px solid #2d333b',
+    borderBottom: '1px solid rgba(255,255,255,0.06)',
   },
   documentSectionHeader: {
     display: 'flex',
@@ -901,22 +906,22 @@ const styles = {
     borderRadius: '10px',
   },
   viewAllButton: {
-    padding: '6px 12px',
-    fontSize: '12px',
+    padding: '5px 10px',
+    fontSize: '11px',
     fontWeight: '600',
-    color: '#007BFF',
+    color: '#0ea5e9',
     backgroundColor: 'transparent',
-    border: '1px solid #007BFF',
-    borderRadius: '6px',
+    border: '1px solid #0ea5e9',
+    borderRadius: '5px',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all 0.15s',
   },
   documentList: {
-    backgroundColor: '#161b22',
+    backgroundColor: '#09090b',
     padding: '8px 0',
   },
   documentListEmpty: {
-    backgroundColor: '#161b22',
+    backgroundColor: '#09090b',
     padding: '16px 20px',
     textAlign: 'center',
   },
@@ -948,29 +953,27 @@ const styles = {
     justifyContent: 'center',
     gap: '8px',
     padding: '16px 12px',
-    backgroundColor: '#1c2128',
-    borderRadius: '10px',
+    backgroundColor: '#18181b',
+    borderRadius: '8px',
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: '#2d333b',
+    borderColor: 'rgba(255,255,255,0.08)',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
   },
   navCardHover: {
-    backgroundColor: '#242b33',
-    borderColor: '#007BFF',
-    transform: 'translateY(-2px)',
-    boxShadow: '0 4px 12px rgba(0, 123, 255, 0.2)',
+    borderColor: '#0ea5e9',
+    boxShadow: '0 0 0 1px rgba(14, 165, 233, 0.12)',
   },
 
   // ── Labor Days Panel ─────────────────────────────────────────────────────────
   laborCrewNote: {
     fontSize: '0.78rem',
-    color: '#6b7280',
+    color: '#71717a',
     marginBottom: 20,
     padding: '6px 12px',
-    background: '#161b22',
-    border: '1px solid #1e2530',
+    background: '#09090b',
+    border: '1px solid #27272a',
     borderRadius: 8,
     display: 'inline-block',
   },
@@ -980,8 +983,8 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '60px 20px',
-    background: '#0d1117',
-    border: '1px solid #1e2530',
+    background: '#09090b',
+    border: '1px solid #27272a',
     borderRadius: 14,
     textAlign: 'center',
   },
@@ -1004,9 +1007,9 @@ const styles = {
   // XLS-style card
   laborSystemCard: {
     border: '1px solid',
-    borderRadius: 10,
+    borderRadius: 8,
     overflow: 'hidden',
-    background: '#0d1117',
+    background: '#09090b',
   },
   laborXlsHeader: {
     display: 'flex',
@@ -1038,7 +1041,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     padding: '7px 14px',
-    borderBottom: '1px solid #1e2530',
+    borderBottom: '1px solid #27272a',
   },
   laborXlsRowLabel: {
     flex: 1,

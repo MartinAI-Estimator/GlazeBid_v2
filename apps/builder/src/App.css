@@ -1,20 +1,49 @@
 @import "tailwindcss";
 
+/* ── Midnight Chrome Design System ─────────────────────────────────────────── */
 :root {
-  --bg-deep: #0b162a;      /* Main app background - GlazeBid Navy */
-  --bg-panel: #0d2040;     /* Sidebar/Header */
-  --bg-card: #112240;      /* Cards/Active items */
-  --accent-blue: #007BFF;  /* GlazeBid Electric Blue - Primary Brand Color */
-  --accent-navy: #001F3F;  /* GlazeBid Dark Navy - Secondary Brand Color */
-  --accent-glow: rgba(0, 123, 255, 0.2);
-  --text-primary: #eef2f7;
-  --text-secondary: #c4cfdb;
-  --border-subtle: #1d3a5f;
+  /* Backgrounds */
+  --bg-main:      #09090b;   /* Almost-black base */
+  --bg-surface:   #18181b;   /* Cards, panels, surfaces */
+  --bg-elevated:  #1c1c1f;   /* Modals, dropdowns */
+
+  /* Aliases kept for backwards-compat with inline styles scattered across components */
+  --bg-deep:      var(--bg-main);
+  --bg-panel:     var(--bg-surface);
+  --bg-card:      var(--bg-surface);
+  --accent-navy:  var(--bg-main);
+
+  /* Borders */
+  --border-subtle:  rgba(255, 255, 255, 0.08);
+  --border-crisp:   #27272a;
+
+  /* Brand / Accent — use only for active states & primary CTAs */
+  --brand-cyan:     #0ea5e9;
+  --accent-blue:    var(--brand-cyan);   /* alias */
+  --accent-glow:    rgba(14, 165, 233, 0.18);
+
+  /* Text */
+  --text-primary:   #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted:     #71717a;
+}
+
+/* ── Global Card Utility ────────────────────────────────────────────────────── */
+.glass-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--brand-cyan);
+  box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.12);
 }
 
 body {
   margin: 0;
-  background-color: var(--bg-deep);
+  background-color: var(--bg-main);
   color: var(--text-primary);
   font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   overflow: hidden; /* Prevents double scrollbars */
@@ -26,15 +55,15 @@ button:focus {
 }
 
 button:focus-visible {
-  outline: 2px solid var(--accent-blue);
+  outline: 2px solid var(--brand-cyan);
   outline-offset: 2px;
 }
 
-/* Scrollbar Styling for that Pro Look */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-deep); }
-::-webkit-scrollbar-thumb { background: #6a7788; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-cyan); }
 
 /* Loading Spinner Animation */
 @keyframes spin {
@@ -55,12 +84,12 @@ div[style*="cursor: pointer"] {
 
 div[style*="cursor: pointer"]:hover {
   transform: scale(1.02) !important;
-  box-shadow: 0 12px 24px rgba(0, 123, 255, 0.15) !important;
+  box-shadow: 0 12px 24px rgba(14, 165, 233, 0.12) !important;
 }
 
 /* Sidebar Item Hover */
 .sidebar-item:hover {
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(14, 165, 233, 0.08);
 }
 
 /* Sidebar Toggle Button Hover */
@@ -79,9 +108,9 @@ button[style*="right: 8px"]:hover {
 }
 
 .app-header {
-  background: var(--bg-panel);
+  background: var(--bg-main);
   padding: 1rem 2rem;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-crisp);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -93,8 +122,8 @@ button[style*="right: 8px"]:hover {
 }
 
 .upload-button {
-  background: #007acc;
-  color: white;
+  background: var(--brand-cyan);
+  color: #09090b;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
@@ -102,7 +131,7 @@ button[style*="right: 8px"]:hover {
 }
 
 .upload-button:hover {
-  background: #005a9e;
+  background: #38bdf8;
 }
 
 .app-content {
@@ -113,8 +142,8 @@ button[style*="right: 8px"]:hover {
 }
 
 .sheet-list {
-  background: var(--bg-panel);
-  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-crisp);
   overflow-y: auto;
   padding: 1rem;
 }
@@ -128,20 +157,20 @@ button[style*="right: 8px"]:hover {
 .sheet-item {
   padding: 0.75rem;
   margin-bottom: 0.5rem;
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.2s;
-  border: 1px solid var(--border-subtle);
+  transition: background 0.2s, border-color 0.2s;
+  border: 1px solid var(--border-crisp);
 }
 
 .sheet-item:hover {
-  background: #516071;
+  background: #27272a;
 }
 
 .sheet-item.active {
-  background: #1f3f63;
-  border-left: 3px solid #007acc;
+  background: #18181b;
+  border-left: 3px solid var(--brand-cyan);
 }
 
 .sheet-id {
@@ -181,8 +210,8 @@ button[style*="right: 8px"]:hover {
 }
 
 .viewer-controls button {
-  background: #007acc;
-  color: white;
+  background: var(--brand-cyan);
+  color: #09090b;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -190,12 +219,12 @@ button[style*="right: 8px"]:hover {
 }
 
 .viewer-controls button:hover {
-  background: #005a9e;
+  background: #38bdf8;
 }
 
 .takeoff-panel {
-  background: var(--bg-panel);
-  border-left: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border-crisp);
   padding: 1rem;
   overflow-y: auto;
 }

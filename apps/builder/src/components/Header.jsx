@@ -1,30 +1,37 @@
 import React from 'react';
-import { ChevronLeft } from 'lucide-react';
-import topLogo from '../assets/TOP_LOGO.svg';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 const Header = ({ project, projectData, onBack, onBackToProjectHome, onSave, saveState = 'idle' }) => {
   // Extract project metadata if available
-  const projectName = projectData?.metadata?.projectName || project || "Project Intake";
+  const projectName = projectData?.metadata?.projectName || project || 'Project Intake';
   const projectNumber = projectData?.metadata?.projectNumber;
   const status = projectData?.metadata?.status;
-  
+
   return (
     <header style={styles.header}>
-      <div style={styles.logoSection}>
+      <div style={styles.leftSection}>
         {/* Back to Project Home button */}
         {onBackToProjectHome && (
           <button onClick={onBackToProjectHome} style={styles.backButton}>
-            <ChevronLeft size={16} />
-            <span>Project Home</span>
+            <ChevronLeft size={14} />
+            <span>Back</span>
           </button>
         )}
-        <div style={styles.projectInfo}>
-          <span style={styles.projectName}>
-            {projectName}
-            {projectNumber && <span style={styles.projectNumber}> • {projectNumber}</span>}
-            {status && <span style={{...styles.statusBadge, ...getStatusStyle(status)}}>{status.toUpperCase()}</span>}
-          </span>
-        </div>
+
+        {/* Breadcrumb */}
+        <nav style={styles.breadcrumb}>
+          <span style={styles.breadcrumbRoot}>Projects</span>
+          <ChevronRight size={13} color="#52525b" style={{ flexShrink: 0 }} />
+          <span style={styles.breadcrumbCurrent}>{projectName}</span>
+          {projectNumber && (
+            <span style={styles.projectNumber}>#{projectNumber}</span>
+          )}
+          {status && (
+            <span style={{ ...styles.statusBadge, ...getStatusStyle(status) }}>
+              {status.toUpperCase()}
+            </span>
+          )}
+        </nav>
       </div>
 
       {/* Right-side actions */}
@@ -35,24 +42,20 @@ const Header = ({ project, projectData, onBack, onBackToProjectHome, onSave, sav
             disabled={saveState === 'saving'}
             style={{
               ...styles.btnPrimary,
-              padding: '5px 14px',
-              fontSize: '12px',
               opacity: saveState === 'saving' ? 0.7 : 1,
-              minWidth: '100px',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
             {saveState === 'saving' && (
-              <span style={{ display: 'inline-block', width: '10px', height: '10px', border: '2px solid #001F3F', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
+              <span style={{ display: 'inline-block', width: '10px', height: '10px', border: '2px solid #09090b', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
             )}
-            {saveState === 'saved' ? '✓ Saved!' : saveState === 'saving' ? 'Saving…' : '💾 Save Project'}
+            {saveState === 'saved' ? '✓ Saved' : saveState === 'saving' ? 'Saving…' : 'Save'}
           </button>
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       )}
-
     </header>
   );
 };
@@ -70,54 +73,85 @@ const getStatusStyle = (status) => {
 
 const styles = {
   header: {
-    height: '38px',
-    backgroundColor: '#001F3F',
+    height: '48px',
+    backgroundColor: '#09090b',
     display: 'flex',
     alignItems: 'center',
     padding: '0 16px',
-    borderBottom: '2px solid #007BFF',
+    borderBottom: '1px solid #27272a',
     justifyContent: 'space-between',
+    flexShrink: 0,
   },
-  logoSection: {
+  leftSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '16px',
+    gap: '12px',
+    minWidth: 0,
   },
   backButton: {
     display: 'flex',
     alignItems: 'center',
     gap: '4px',
     backgroundColor: 'transparent',
-    border: '1px solid #2d333b',
-    color: '#9ca3af',
+    border: '1px solid #27272a',
+    color: '#71717a',
     padding: '4px 10px',
-    borderRadius: '4px',
+    borderRadius: '5px',
     cursor: 'pointer',
     fontSize: '12px',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    transition: 'all 0.2s',
+    transition: 'border-color 0.15s, color 0.15s',
+    flexShrink: 0,
   },
-  logo: {
-    height: '32px',
-    width: 'auto',
-  },
-  projectInfo: {
+  breadcrumb: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '6px',
+    minWidth: 0,
   },
-  projectName: { fontWeight: '600', color: '#ffffff', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' },
-  projectNumber: { fontSize: '12px', color: '#007BFF', fontWeight: 'normal' },
+  breadcrumbRoot: {
+    fontSize: '13px',
+    color: '#52525b',
+    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    whiteSpace: 'nowrap',
+  },
+  breadcrumbCurrent: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#e4e4e7',
+    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  projectNumber: {
+    fontSize: '11px',
+    color: '#0ea5e9',
+    fontWeight: '500',
+    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    flexShrink: 0,
+  },
   statusBadge: {
     fontSize: '10px',
     fontWeight: '600',
-    padding: '2px 8px',
+    padding: '2px 7px',
     borderRadius: '4px',
-    alignSelf: 'flex-start',
+    flexShrink: 0,
   },
-  headerActions: { display: 'flex', gap: '10px' },
-  btnPrimary: { backgroundColor: '#007BFF', color: '#001F3F', border: 'none', padding: '8px 16px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s', fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' },
-  btnSecondary: { backgroundColor: 'transparent', color: '#007BFF', border: '1px solid #007BFF', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', transition: 'all 0.2s', fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }
+  headerActions: { display: 'flex', gap: '8px', flexShrink: 0 },
+  btnPrimary: {
+    backgroundColor: '#0ea5e9',
+    color: '#09090b',
+    border: 'none',
+    padding: '6px 14px',
+    borderRadius: '5px',
+    fontSize: '12px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'background 0.15s',
+    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
+};
 };
 
 export default Header;
