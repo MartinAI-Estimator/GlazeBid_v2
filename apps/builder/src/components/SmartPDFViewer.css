@@ -1,0 +1,245 @@
+/**
+ * SmartPDFViewer.css
+ * 
+ * Styles for Smart Guide (Ghost Highlighter) integration
+ * 
+ * Features:
+ * - Glowing border animation (Siri-style)
+ * - Ghost markup styling
+ * - Approve/Deny button hover states
+ * - Loading spinner
+ * - Toolbar controls
+ */
+
+/* ============================================================================
+   SMART GUIDE TOOLBAR
+   ============================================================================ */
+
+.smart-guide-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.smart-guide-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.3s ease;
+}
+
+.smart-guide-toggle:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+.smart-guide-toggle.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-color: #3b82f6;
+  color: white;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.smart-guide-toggle.active:hover {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+  transform: translateY(-1px);
+}
+
+.smart-guide-stats {
+  padding: 4px 12px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.smart-guide-searching {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #fef3c7;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================================
+   GLOWING BORDER EFFECT (Siri-style)
+   ============================================================================ */
+
+.smart-guide-glow-border {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 5;
+  animation: smartGuideGlow 3s ease-in-out infinite;
+}
+
+@keyframes smartGuideGlow {
+  0%, 100% { 
+    box-shadow: 
+      0 0 15px rgba(59, 130, 246, 0.5),
+      0 0 25px rgba(59, 130, 246, 0.3),
+      inset 0 0 15px rgba(59, 130, 246, 0.1);
+    border: 3px solid rgba(59, 130, 246, 0.4);
+  }
+  50% { 
+    box-shadow: 
+      0 0 25px rgba(139, 92, 246, 0.6),
+      0 0 50px rgba(139, 92, 246, 0.4),
+      inset 0 0 25px rgba(139, 92, 246, 0.15);
+    border: 3px solid rgba(139, 92, 246, 0.6);
+  }
+}
+
+/* ============================================================================
+   GHOST MARKUP STYLING
+   ============================================================================ */
+
+.ghost-overlay-layer {
+  pointer-events: auto;
+}
+
+.ghost-markup {
+  transition: all 0.2s ease;
+}
+
+.ghost-markup:hover {
+  filter: brightness(1.15);
+}
+
+/* Ghost confidence badge */
+.ghost-markup text {
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Approve/Deny buttons */
+.ghost-markup g[style*="cursor: pointer"] {
+  transition: transform 0.15s ease;
+}
+
+.ghost-markup g[style*="cursor: pointer"]:hover {
+  transform: scale(1.05);
+}
+
+.ghost-markup g[style*="cursor: pointer"]:active {
+  transform: scale(0.95);
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .smart-guide-toolbar {
+    flex-wrap: wrap;
+    padding: 6px 12px;
+  }
+  
+  .smart-guide-toggle {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  
+  .smart-guide-stats,
+  .smart-guide-searching {
+    font-size: 12px;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+.smart-guide-toggle:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.ghost-markup g[style*="cursor: pointer"]:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   ANIMATION PREFERS REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .smart-guide-glow-border {
+    animation: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    border: 3px solid rgba(59, 130, 246, 0.5);
+  }
+  
+  .spinner {
+    animation: none;
+  }
+  
+  .smart-guide-toggle,
+  .ghost-markup,
+  .ghost-markup g[style*="cursor: pointer"] {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT (Optional)
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .smart-guide-toolbar {
+    background: rgba(31, 41, 55, 0.95);
+  }
+  
+  .smart-guide-toggle {
+    background: #1f2937;
+    border-color: #374151;
+    color: #e5e7eb;
+  }
+  
+  .smart-guide-toggle:hover {
+    background: #111827;
+    border-color: #60a5fa;
+    color: #60a5fa;
+  }
+  
+  .smart-guide-stats {
+    background: #374151;
+    color: #9ca3af;
+  }
+  
+  .smart-guide-searching {
+    background: #78350f;
+    color: #fde68a;
+  }
+}

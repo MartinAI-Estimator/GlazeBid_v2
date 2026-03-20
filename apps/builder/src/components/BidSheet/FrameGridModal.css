@@ -1,0 +1,191 @@
+/* Frame Grid Modal Styles */
+/* Matches Labor Summary and Hr Function Rates panel styling */
+
+/* Collapsed Panel */
+.frame-grid-collapsed-panel {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  min-height: 48px;
+  max-height: 48px;
+  height: 48px;
+}
+
+/* Collapsed Header */
+.frame-grid-collapsed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: none;
+  background: #1F4E78;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.frame-grid-collapsed-header .panel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Expand Toggle Button (+ icon) */
+.expand-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.expand-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.08);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.expand-toggle:active {
+  transform: scale(0.98);
+}
+
+/* Full Screen Modal Overlay */
+.frame-grid-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.frame-grid-modal {
+  width: 98vw;
+  height: 98vh;
+  background: var(--bg-deep);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 123, 255, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.frame-grid-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #1F4E78;
+  border-bottom: 3px solid #0D2944;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.frame-grid-modal-header .modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Collapse Toggle Button (- icon) */
+.frame-grid-modal-header .collapse-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.frame-grid-modal-header .collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.08);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.frame-grid-modal-header .collapse-toggle:active {
+  transform: scale(0.98);
+}
+
+/* Modal Content */
+.frame-grid-modal-content {
+  flex: 1;
+  overflow: hidden;
+  padding: 1rem;
+  background: var(--bg-deep);
+}
+
+/* Ensure the FrameGrid inside modal takes full height */
+.frame-grid-modal-content .frame-grid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.frame-grid-modal-content .frame-grid-container {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .frame-grid-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+  
+  .frame-grid-modal-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .frame-grid-modal-header .modal-title {
+    font-size: 1.1rem;
+  }
+}

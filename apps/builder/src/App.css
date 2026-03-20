@@ -1,0 +1,352 @@
+@import "tailwindcss";
+
+:root {
+  --bg-deep: #0b162a;      /* Main app background - GlazeBid Navy */
+  --bg-panel: #0d2040;     /* Sidebar/Header */
+  --bg-card: #112240;      /* Cards/Active items */
+  --accent-blue: #007BFF;  /* GlazeBid Electric Blue - Primary Brand Color */
+  --accent-navy: #001F3F;  /* GlazeBid Dark Navy - Secondary Brand Color */
+  --accent-glow: rgba(0, 123, 255, 0.2);
+  --text-primary: #eef2f7;
+  --text-secondary: #c4cfdb;
+  --border-subtle: #1d3a5f;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden; /* Prevents double scrollbars */
+}
+
+/* Reset button focus styles */
+button:focus {
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+/* Scrollbar Styling for that Pro Look */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: #6a7788; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+/* Loading Spinner Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Pulse Animation for StatusChip */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Tile Hover Effects - Apply to any div with cursor:pointer inside tilesGrid */
+div[style*="cursor: pointer"] {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+div[style*="cursor: pointer"]:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 12px 24px rgba(0, 123, 255, 0.15) !important;
+}
+
+/* Sidebar Item Hover */
+.sidebar-item:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Sidebar Toggle Button Hover */
+button[style*="right: 8px"]:hover {
+  color: #0056b3 !important;
+  transform: scale(1.15);
+}
+
+.App {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.app-header {
+  background: var(--bg-panel);
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+.upload-button {
+  background: #007acc;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.upload-button:hover {
+  background: #005a9e;
+}
+
+.app-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  overflow: hidden;
+}
+
+.sheet-list {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-subtle);
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.sheet-list h2 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.sheet-item {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-card);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: 1px solid var(--border-subtle);
+}
+
+.sheet-item:hover {
+  background: #516071;
+}
+
+.sheet-item.active {
+  background: #1f3f63;
+  border-left: 3px solid #007acc;
+}
+
+.sheet-id {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.viewer-area {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-deep);
+}
+
+.sheet-viewer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.sheet-viewer canvas {
+  width: 100%;
+  height: 100%;
+  background: #394553;
+}
+
+.viewer-controls {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(66, 79, 93, 0.95);
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  border: 1px solid var(--border-subtle);
+}
+
+.viewer-controls button {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.viewer-controls button:hover {
+  background: #005a9e;
+}
+
+.takeoff-panel {
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border-subtle);
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.takeoff-panel h2 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.system-total {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-card);
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.color-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+}
+
+.color-indicator.storefront {
+  background: orange;
+}
+
+.color-indicator.curtainwall {
+  background: green;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+}
+
+.empty-state h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ======================================
+   RESPONSIVE BREAKPOINTS
+   ====================================== */
+
+/* Tablet Landscape (1024px - 1279px) */
+@media (max-width: 1279px) {
+  .app-content {
+    grid-template-columns: 200px 1fr 250px;
+  }
+  
+  .takeoff-panel {
+    padding: 0.75rem;
+  }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (max-width: 1023px) {
+  .app-content {
+    grid-template-columns: 180px 1fr;
+  }
+  
+  .takeoff-panel {
+    display: none; /* Hide on smaller screens, use modal instead */
+  }
+  
+  .app-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .app-header h1 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Mobile Landscape (640px - 767px) */
+@media (max-width: 767px) {
+  .app-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .sheet-list {
+    position: fixed;
+    left: -250px;
+    top: 60px;
+    bottom: 0;
+    width: 250px;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+  
+  .sheet-list.open {
+    left: 0;
+  }
+  
+  .viewer-controls {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem;
+    gap: 0.25rem;
+  }
+  
+  .viewer-controls button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Mobile Portrait (< 640px) */
+@media (max-width: 639px) {
+  .app-header {
+    padding: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .upload-button {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Ensure proper touch targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .sheet-item,
+  .upload-button,
+  .viewer-controls button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .app-header,
+  .sheet-list,
+  .viewer-controls,
+  .takeoff-panel {
+    display: none !important;
+  }
+  
+  .viewer-area {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+}

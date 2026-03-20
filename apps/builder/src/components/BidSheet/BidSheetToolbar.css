@@ -1,0 +1,141 @@
+/* BidSheet Toolbar Styles - Slim Professional Header */
+
+.bidsheet-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #2d2d2d;
+  border-bottom: 1px solid #444;
+  height: 40px;
+}
+
+/* Caulk Beads Input - Compact */
+.toolbar-caulk-beads {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(0, 123, 255, 0.08);
+  border: 1px solid rgba(0, 123, 255, 0.2);
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.toolbar-caulk-beads:hover {
+  border-color: rgba(0, 123, 255, 0.4);
+  background: rgba(0, 123, 255, 0.12);
+}
+
+/* Action Buttons Container */
+.toolbar-buttons-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.caulk-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a0a0a0;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.caulk-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4dabf7;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.caulk-value:hover {
+  background: rgba(0, 123, 255, 0.15);
+  border-color: #007bff;
+}
+
+.caulk-input {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid #007bff;
+  background: #1e1e1e;
+  color: #fff;
+  width: 50px;
+  text-align: center;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.caulk-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.toolbar-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #1e1e1e;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+}
+
+.toolbar-btn:hover {
+  background: rgba(0, 123, 255, 0.15);
+  border-color: #007bff;
+  color: #fff;
+}
+
+.toolbar-btn:active {
+  transform: scale(0.98);
+}
+
+.toolbar-btn-import:hover {
+  border-color: #007bff;
+  color: #4dabf7;
+}
+
+.toolbar-btn-export:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.toolbar-btn-refresh:hover {
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+.toolbar-btn-clear {
+  background: rgba(248, 81, 73, 0.1);
+  border-color: #f85149;
+  color: #f85149;
+}
+
+.toolbar-btn-clear:hover {
+  background: rgba(248, 81, 73, 0.25);
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+

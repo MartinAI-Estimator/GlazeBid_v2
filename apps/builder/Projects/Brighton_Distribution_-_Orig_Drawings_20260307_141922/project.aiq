@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "projectName": "Brighton Distribution - Orig Drawings",
+    "projectNumber": "AIQ-20260307",
+    "client": "",
+    "address": "",
+    "estimator": "",
+    "bidDate": "",
+    "createdDate": "2026-03-07T14:19:22.733499",
+    "modifiedDate": "2026-03-07T14:19:22.733499",
+    "status": "draft",
+    "folderPath": "Projects\\Brighton_Distribution_-_Orig_Drawings_20260307_141922"
+  },
+  "documents": {
+    "architectural": [
+      {
+        "filename": "Brighton Distribution - Orig Drawings_Architectural.pdf",
+        "sheetId": "Brighton Distribution - Orig Drawings",
+        "title": "Brighton Distribution - Orig Drawings Architectural",
+        "pageCount": 42,
+        "uploadDate": "2026-03-07T14:19:22.733499"
+      }
+    ],
+    "structural": [],
+    "specifications": [],
+    "other": [],
+    "bid_docs": [],
+    "reports": [],
+    "pageLabels": {}
+  },
+  "takeoffs": {},
+  "estimates": {
+    "totalSquareFeet": 0.0,
+    "totalLinearFeet": 0.0,
+    "hardwareCount": 0,
+    "laborHours": 0,
+    "costBreakdown": {
+      "materials": 0.0,
+      "labor": 0.0,
+      "markup": 0.0,
+      "total": 0.0
+    },
+    "markupPercent": 35,
+    "lastUpdated": "2026-03-07T14:19:22.733499"
+  },
+  "structural": {
+    "windLoadPSF": 30.0,
+    "calculations": []
+  },
+  "settings": {
+    "defaultMarkupPercent": 35,
+    "laborRatePerHour": 75.0,
+    "pricePerSF": 45.0,
+    "pricePerLF": 25.0,
+    "pricePerEA": 500.0
+  }
+}

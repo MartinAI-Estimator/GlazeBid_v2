@@ -1,0 +1,29 @@
+{
+  "name": "glazebid-v2",
+  "version": "2.0.0",
+  "private": true,
+  "main": "dist-electron/main.js",
+  "description": "GlazeBid v2 — Legacy Builder UI + New Studio Takeoff Engine",
+  "scripts": {
+    "start": "npm run dev:builder",
+    "predev:builder": "node scripts/build-preloads.mjs",
+    "dev:builder": "concurrently --kill-others \"npm run dev --workspace apps/builder\" \"npm run dev --workspace apps/studio\" \"wait-on tcp:5173 tcp:5174 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .\"",
+    "predev:studio": "node scripts/build-preloads.mjs",
+    "dev:studio": "concurrently --kill-others \"npm run dev --workspace apps/studio\" \"wait-on tcp:5174 && cross-env VITE_DEV_SERVER_URL=http://localhost:5174 electron .\"",
+    "build:builder": "npm run build -w apps/builder",
+    "build:studio": "npm run build -w apps/studio",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.20.0",
+    "electron": "^29.1.0",
+    "electron-builder": "^24.9.1",
+    "typescript": "^5.4.0",
+    "wait-on": "^7.2.0"
+  }
+}

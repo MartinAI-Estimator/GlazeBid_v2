@@ -1,0 +1,447 @@
+/* Frame Grid Styles - Professional High-Density Estimating Grid */
+
+.frame-grid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Grid Container */
+.frame-grid-container {
+  flex: 1;
+  overflow: auto;
+  background: #F8F8F8;
+}
+
+/* Table - High Density Layout */
+.frame-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+/* Header Row - Sticky with professional styling */
+.frame-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.frame-table th {
+  background-color: #1F4E78;
+  color: #0B1626;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 3px solid #0D2944;
+  border-right: 1px solid #2E5C8A;
+  white-space: nowrap;
+  font-size: 11px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: none;
+  cursor: help;
+}
+
+/* Sticky First Column - Frame Name */
+.col-frame_number,
+.col-frame-number {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background-color: #1F4E78 !important;
+}
+
+.frame-table tbody .col-frame_number,
+.frame-table tbody .col-frame-number {
+  background-color: #FFFFFF !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.frame-table tbody tr:nth-child(even) .col-frame_number,
+.frame-table tbody tr:nth-child(even) .col-frame-number {
+  background-color: #F2F2F2 !important;
+}
+
+.frame-table tbody tr:hover .col-frame_number,
+.frame-table tbody tr:hover .col-frame-number {
+  background-color: #E7F3FF !important;
+}
+
+/* Column Grouping - Visual Separation */
+.group-identity {
+  border-right: 2px solid #4472C4 !important;
+}
+
+.group-geometry {
+  border-right: 2px solid #70AD47 !important;
+}
+
+.group-operations:last-of-type {
+  border-right: 2px solid #FFC000 !important;
+}
+
+.group-actions {
+  border-left: 3px solid #D0D0D0 !important;
+}
+
+/* Data Rows - Compact 36px height */
+.frame-table tbody tr {
+  border-bottom: 1px solid #2d3748;
+  transition: background-color 0.1s ease;
+  height: 36px;
+}
+
+.frame-table tbody tr:nth-child(even) {
+  background-color: #F2F2F2;
+}
+
+.frame-table tbody tr:nth-child(odd) {
+  background-color: #FFFFFF;
+}
+
+.frame-table tbody tr:hover {
+  background-color: #E7F3FF;
+  box-shadow: 0 0 0 2px #4DA6FF inset;
+  position: relative;
+}
+
+.frame-table tbody tr:hover td {
+  background-color: inherit;
+}
+
+/* Cells - Minimal padding for density */
+.frame-table td {
+  padding: 6px 12px;
+  color: #000000;
+  height: 36px;
+  border-right: 1px solid #D0D0D0;
+  border-bottom: 1px solid #D0D0D0;
+}
+
+/* Text Columns - Left aligned (Excel white) */
+.col-frame_number,
+.col-frame-number {
+  text-align: left;
+  font-weight: 500;
+}
+
+.col-comments {
+  text-align: left;
+  background-color: #FFFFCC !important;
+  max-width: 250px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.col-material,
+.col-type {
+  text-align: left;
+  background-color: rgba(219, 234, 254, 0.06);
+}
+
+/* Numeric Columns - Input cells (Excel light yellow) */
+.col-width,
+.col-height,
+.col-quantity {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  background-color: #FFF2CC !important;
+}
+
+.col-subsills,
+.col-bays,
+.col-dlos,
+.col-pairs,
+.col-singles {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  background-color: #FFF2CC !important;
+}
+
+.col-ssg,
+.col-steel,
+.col-vents,
+.col-brake,
+.col-open,
+.col-stool-trim,
+.col-stool_trim,
+.col-ft,
+.col-wl-dl,
+.col-wl_dl {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  background-color: #FFF2CC !important;
+}
+
+.col-sf,
+.col-mhs,
+.col-cost {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  background-color: #DDEBF7 !important;
+  font-weight: 600;
+  color: #1F4E78;
+}
+
+/* Actions column centered */
+.col-actions {
+  text-align: center;
+  width: 60px;
+  background-color: #F8F8F8 !important;
+  border-left: 2px solid #D0D0D0;
+}
+
+/* Cell values with proper styling */
+.cell-value {
+  display: inline-block;
+  width: 100%;
+  transition: background-color 0.1s ease;
+}
+
+/* Editable cells - distinct background */
+.cell-value.editable {
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  min-height: 20px;
+  display: inline-block;
+  width: 100%;
+}
+
+.cell-value.editable:hover {
+  background-color: #FFF9E6;
+  border-color: #FFD966;
+  box-shadow: inset 0 0 0 1px #FFD966;
+}
+
+.cell-value.editable:focus-within {
+  background-color: #FFF2CC;
+  border-color: #0078D4;
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.3);
+  outline: none;
+}
+
+/* Readonly cells */
+.cell-value.readonly {
+  color: #a0a0a0;
+}
+
+/* Calculated values highlighted */
+.cell-value.calculated {
+  background: rgba(0, 123, 255, 0.15);
+  color: #4dabf7;
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Empty/Zero values - Truly empty display */
+.cell-value.empty-cell {
+  opacity: 0.3;
+  color: #CCCCCC;
+  font-style: italic;
+}
+
+.cell-value.empty-cell::after {
+  content: '';
+  display: inline-block;
+}
+
+/* Input Fields - Clean integration */
+.cell-input {
+  background: #FFF2CC;
+  border: 2px solid #0078D4;
+  color: #000000;
+  text-align: left;
+  width: 100%;
+  height: 28px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
+  border-radius: 2px;
+}
+
+.cell-input:focus {
+  background-color: #FFFFFF;
+  color: #000000;
+  border-color: #4472C4;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(68, 114, 196, 0.3);
+}
+
+/* Numeric inputs - right aligned with monospace */
+.cell-input.numeric-input {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+}
+
+/* Remove number input spinners (fallback) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Delete button - subtle */
+.btn-delete-row {
+  color: #ef4444;
+  padding: 4px 8px;
+  font-size: 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  opacity: 0.6;
+}
+
+.btn-delete-row:hover {
+  background: rgba(239, 68, 68, 0.15);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Empty State */
+.frame-grid-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #666;
+  gap: 1rem;
+  background: #FFFFFF;
+}
+
+.frame-grid-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #4472C4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #2E5C8A;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(68, 114, 196, 0.3);
+}
+
+/* Footer - Compact stats */
+.frame-grid-footer {
+  display: flex;
+  gap: 2rem;
+  padding: 8px 12px;
+  background: #D9E9F7;
+  border-top: 3px solid #4472C4;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.footer-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-label {
+  font-size: 11px;
+  color: #1F4E78;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.footer-value {
+  font-size: 13px;
+  color: #1F4E78;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+}
+
+/* Loading State */
+.frame-grid-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  gap: 1rem;
+  color: #666;
+  background: #FFFFFF;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #E0E0E0;
+  border-top-color: #4472C4;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbar styling - Slim and modern */
+.frame-grid-container::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.frame-grid-container::-webkit-scrollbar-track {
+  background: #F0F0F0;
+}
+
+.frame-grid-container::-webkit-scrollbar-thumb {
+  background: #C0C0C0;
+  border-radius: 6px;
+  border: 2px solid #F0F0F0;
+}
+
+.frame-grid-container::-webkit-scrollbar-thumb:hover {
+  background: #4472C4;
+}
+
+/* Zebra Striping - Optional for better line tracking */
+.frame-table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.frame-table tbody tr:nth-child(even):hover {
+  background-color: #2a2a2a;
+}

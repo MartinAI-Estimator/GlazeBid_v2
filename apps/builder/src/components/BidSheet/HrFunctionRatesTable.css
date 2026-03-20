@@ -1,0 +1,212 @@
+/* Hr Function Rates Table - Professional Grid Styling */
+/* Matches Labor Summary Panel styling */
+
+.hr-rates-panel {
+  display: block;
+  position: relative;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  overflow: hidden;
+  min-height: 60px;
+}
+
+/* Panel Header */
+.hr-rates-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(0, 123, 255, 0.05);
+}
+
+.hr-rates-panel .panel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-blue);
+  letter-spacing: 0.025em;
+}
+
+.hr-rates-panel.collapsed .hr-rates-table-container {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.hr-rates-panel.collapsed .hr-rates-header {
+  border-bottom: none;
+}
+
+.hr-rates-panel:not(.collapsed) .hr-rates-table-container {
+  max-height: 500px;
+  opacity: 1;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+/* Collapse Toggle Button */
+.hr-rates-panel .collapse-toggle {
+  background: rgba(0, 123, 255, 0.2);
+  border: 1px solid rgba(0, 123, 255, 0.4);
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-blue);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.hr-rates-panel .collapse-toggle:hover {
+  background: rgba(0, 123, 255, 0.4);
+  border-color: rgba(0, 123, 255, 0.8);
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+}
+
+.hr-rates-panel .collapse-toggle:active {
+  transform: scale(0.98);
+}
+
+.hr-rates-table-container {
+  padding: 12px;
+  background: #FFFFFF;
+}
+
+.hr-rates-table {
+  width: auto;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: #FFFFFF;
+  color: #000000;
+}
+
+/* Headers */
+.hr-rates-table thead th {
+  background-color: #1F4E78;
+  color: #FFFFFF;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 3px solid #0D2944;
+  border-right: 1px solid #2E5C8A;
+  font-size: 11px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Column widths */
+.task-col {
+  width: 100px;
+  text-align: left !important;
+}
+
+.rate-col {
+  width: 80px;
+  min-width: 80px;
+}
+
+.spacer-col {
+  width: 100px;
+  background: transparent;
+  border: none;
+}
+
+/* Body rows */
+.hr-rates-table tbody tr {
+  border-bottom: 1px solid #D0D0D0;
+  height: 36px;
+  background-color: #FFFFFF;
+}
+
+.hr-rates-table tbody tr:hover {
+  background-color: #E7F3FF;
+}
+
+.hr-rates-table tbody tr.total-row {
+  border-top: 2px solid #4472C4;
+  background-color: #D9E9F7 !important;
+  font-weight: 700;
+}
+
+/* Cells */
+.hr-rates-table td {
+  padding: 6px 12px;
+  color: #000000;
+  height: 36px;
+  text-align: center;
+  border-right: 1px solid #D0D0D0;
+}
+
+.task-label {
+  text-align: left;
+  font-weight: 600;
+  color: #1F4E78;
+  background-color: #F2F2F2;
+}
+
+.spacer-cell {
+  text-align: left;
+  font-weight: 500;
+  color: #a0a0a0;
+  background: transparent;
+  border-left: 2px solid #444;
+  padding-left: 16px;
+}
+
+.rate-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+}
+
+/* Editable rate values */
+.rate-value {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  transition: background-color 0.15s ease;
+  min-width: 50px;
+}
+
+.rate-value.editable {
+  cursor: pointer;
+  background-color: rgba(0, 123, 255, 0.08);
+  border: 1px solid transparent;
+}
+
+.rate-value.editable:hover {
+  background-color: rgba(0, 123, 255, 0.15);
+  border-color: rgba(0, 123, 255, 0.3);
+}
+
+/* Total cells - read-only */
+.total-cell {
+  background: rgba(0, 123, 255, 0.12);
+  color: #4dabf7;
+  font-weight: 600;
+}
+
+/* Input field */
+.rate-input {
+  background: #333;
+  border: 1px solid #007bff;
+  color: #fff;
+  text-align: right;
+  width: 60px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  outline: none;
+}
+
+.rate-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
