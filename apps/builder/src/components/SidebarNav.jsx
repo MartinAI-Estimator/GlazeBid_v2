@@ -1,6 +1,5 @@
 import React from 'react';
 import { LayoutGrid, Box, Layers, FileText, Settings } from 'lucide-react';
-import iconLogo from '../assets/ICON_LOGO.svg';
 
 /**
  * SleekSidebar — 64px icon-only global navigation rail.
@@ -53,10 +52,6 @@ const NavItem = ({ icon: Icon, label, active, onClick }) => (
 
 const SidebarNav = ({ currentView, onViewChange }) => (
   <aside className="fixed left-0 bottom-0 z-40 flex w-16 flex-col items-center border-r border-[#27272a] bg-[#09090b] py-3" style={{ top: '40px' }}>
-    {/* GlazeBid logo mark */}
-    <div className="mb-5 flex h-8 w-8 items-center justify-center">
-      <img src={iconLogo} alt="GlazeBid" className="h-7 w-7 object-contain" />
-    </div>
 
     {/* Main navigation */}
     <nav className="flex flex-1 flex-col items-center gap-1.5">

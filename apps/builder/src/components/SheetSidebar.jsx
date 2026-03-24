@@ -21,6 +21,7 @@ const SheetSidebar = ({
   onRenamePage,
   onStartRegionSelection, // Callback to start region selection in PDF viewer
   onUpdateBookmarks, // Expose bookmark updates to parent
+  pdfData, // PDF data object from parent (e.g. { data: Uint8Array }) — avoids backend fetch
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [width, setWidth] = useState(260); // Default width
@@ -42,29 +43,41 @@ const SheetSidebar = ({
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [pagesWithMarkups, setPagesWithMarkups] = useState(new Set());
   
-  // Load existing markups on mount
+  // Load existing markups on mount (localStorage-first, backend fallback)
   useEffect(() => {
     const loadMarkups = async () => {
       if (!project || !sheetId) return;
+      const projectName = typeof project === 'string' ? project : project.name;
       
+      // Try localStorage first
       try {
-        const response = await fetch(`http://127.0.0.1:8000/projects/${encodeURIComponent(project)}/markups/${encodeURIComponent(sheetId)}`);
-        
-        // Handle 404 gracefully (new sheet, no markups yet)
+        const saved = localStorage.getItem(`glazebid:markups:${projectName}:${sheetId}`);
+        if (saved) {
+          const data = JSON.parse(saved);
+          const pages = new Set((data.markups || []).map(m => m.pageNum).filter(Boolean));
+          setPagesWithMarkups(pages);
+          console.log(`📚 Loaded bookmarks from localStorage for ${pages.size} pages`);
+          return;
+        }
+      } catch { /* fallthrough */ }
+      
+      // Fallback: try backend if available
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/projects/${encodeURIComponent(projectName)}/markups/${encodeURIComponent(sheetId)}`);
         if (response.status === 404) {
-          console.log('🆕 New sheet detected. Starting with empty markups.');
           setPagesWithMarkups(new Set());
           return;
         }
-        
         if (response.ok) {
           const data = await response.json();
           const pages = new Set(data.markups.map(m => m.pageNum).filter(Boolean));
           setPagesWithMarkups(pages);
-          console.log(`📚 Loaded bookmarks for ${pages.size} pages with markups`);
+          // Cache to localStorage for next time
+          localStorage.setItem(`glazebid:markups:${projectName}:${sheetId}`, JSON.stringify(data));
         }
-      } catch (error) {
-        console.error('Failed to load markups for bookmarks:', error);
+      } catch {
+        console.warn('Backend unavailable — starting with empty markups');
+        setPagesWithMarkups(new Set());
       }
     };
     
@@ -109,20 +122,48 @@ const SheetSidebar = ({
 
     const loadPdfAndGenerateThumbnails = async () => {
       try {
-        // Handle project as either string or object
         const projectName = typeof project === 'string' ? project : project.name;
-        const encodedProjectName = encodeURIComponent(projectName);
-        const encodedSheetId = encodeURIComponent(sheetId);
-        
-        // Fetch PDF from backend
-        const response = await fetch(`http://127.0.0.1:8000/pdf/${encodedProjectName}/${encodedSheetId}`);
-        if (!response.ok) {
-          console.error('Failed to fetch PDF for thumbnails');
+        let pdfSource = null;
+
+        // Priority 1: Use pdfData passed from parent (already loaded via Electron IPC)
+        if (pdfData?.data) {
+          pdfSource = { data: pdfData.data };
+        }
+
+        // Priority 2: Try Electron IPC directly
+        if (!pdfSource) {
+          const filePath = localStorage.getItem(`glazebid:filePath:${projectName}`);
+          if (filePath && window.electronAPI?.readPdfFile) {
+            try {
+              const result = await window.electronAPI.readPdfFile(filePath);
+              if (result?.ok && result.buffer) {
+                pdfSource = { data: result.buffer };
+              }
+            } catch (err) {
+              console.warn('Electron PDF read failed for thumbnails:', err.message);
+            }
+          }
+        }
+
+        // Priority 3: Fallback to backend
+        if (!pdfSource) {
+          try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/pdf/${encodeURIComponent(projectName)}/${encodeURIComponent(sheetId)}`);
+            if (response.ok) {
+              const arrayBuffer = await response.arrayBuffer();
+              pdfSource = { data: arrayBuffer };
+            }
+          } catch {
+            console.warn('Backend PDF fetch failed for thumbnails');
+          }
+        }
+
+        if (!pdfSource) {
+          console.error('No PDF source available for thumbnails');
           return;
         }
 
-        const arrayBuffer = await response.arrayBuffer();
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const loadingTask = pdfjsLib.getDocument(pdfSource);
         const pdf = await loadingTask.promise;
         pdfDocRef.current = pdf;
 
@@ -177,7 +218,7 @@ const SheetSidebar = ({
     };
 
     loadPdfAndGenerateThumbnails();
-  }, [project, sheetId, numPages]);
+  }, [project, sheetId, numPages, pdfData]);
 
   // Resize Logic
   const startResizing = useCallback((e) => {
@@ -346,7 +387,7 @@ const SheetSidebar = ({
       formData.append('target_sheet_id', targetSheetId);
       formData.append('page_numbers', JSON.stringify(pagesToMove));
       
-      const response = await fetch('http://127.0.0.1:8000/move-pages', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/move-pages`, {
         method: 'POST',
         body: formData,
       });
@@ -408,7 +449,7 @@ const SheetSidebar = ({
     formData.append('sheet_id', sheetId);
     formData.append('regions', JSON.stringify(regions));
     
-    fetch('http://127.0.0.1:8000/extract-labels-from-regions', {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/extract-labels-from-regions`, {
       method: 'POST',
       body: formData,
     })
@@ -427,7 +468,7 @@ const SheetSidebar = ({
         saveFormData.append('sheet_id', sheetId);
         saveFormData.append('labels', JSON.stringify(data.labels));
         
-        return fetch('http://127.0.0.1:8000/save-page-labels', {
+        return fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/save-page-labels`, {
           method: 'POST',
           body: saveFormData,
         }).then(saveResponse => {

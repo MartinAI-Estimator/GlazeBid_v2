@@ -1076,7 +1076,6 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
 
       {/* ── TOP NAV ── */}
       <header style={styles.bentoNav}>
-        <img src={topLogo} alt="GlazeBid Builder" style={styles.bentoNavLogo} />
         <div style={styles.bentoSearchWrap}>
           <Search size={14} color="#6b7280" style={{ flexShrink: 0 }} />
           <input

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Toolbar from '../toolbar/Toolbar';
+import NavigationBar from '../toolbar/NavigationBar';
 import StudioCanvas from '../canvas/StudioCanvas';
 import PropertiesPanel from '../properties/PropertiesPanel';
 import CalibrationModal from '../calibration/CalibrationModal';
@@ -9,6 +10,7 @@ import { BulkClassifyDialog } from '../ui/BulkClassifyDialog';
 import ShapeContextMenu, { type ContextMenuTarget } from '../canvas/ShapeContextMenu';
 import CustomSystemModal from '../parametric/CustomSystemModal';
 import StructuralPanel from '../structural/StructuralPanel';
+import StudioTitleBar from './StudioTitleBar';
 import { type CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useStudioStore, type PdfTab } from '../../store/useStudioStore';
 import type { RectShape, PolygonShape } from '../../types/shapes';
@@ -100,6 +102,9 @@ export default function StudioLayout() {
   const [isScanRunning, setIsScanRunning] = useState(false);
   // Stable ref to the runScan function lifted from StudioCanvas
   const scanRunnerRef = useRef<(() => void) | null>(null);
+
+  // ── Selected shape (drives properties panel slide) ──────────────────────────
+  const selectedShapeId = useStudioStore(s => s.selectedShapeId);
 
   // ── Right-click overlay state ──────────────────────────────────────────────
   const [contextMenuTarget,   setContextMenuTarget]   = useState<ContextMenuTarget | null>(null);
@@ -193,14 +198,8 @@ export default function StudioLayout() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-slate-950 overflow-hidden select-none">
-      {/* ── Top toolbar — always in DOM so layout height is stable from first paint ── */}
-      <Toolbar
-        engine={engine}
-        onScanPage={handleScanPage}
-        isScanRunning={isScanRunning}
-        showTypeLibrary={showTypeLibrary}
-        onToggleTypeLibrary={() => setShowTypeLibrary(v => !v)}
-      />
+      {/* ── Custom title bar (matching Builder) ── */}
+      <StudioTitleBar />
 
       {/* ── PDF Tab Bar — shown only when 1+ PDFs are open ── */}
       <PdfTabBar />
@@ -210,17 +209,27 @@ export default function StudioLayout() {
         {/* Left thumbnail sidebar */}
         <ThumbnailSidebar engine={engine} />
 
-        {/* Canvas + calibration modal overlay */}
-        <div className="relative flex flex-1 min-w-0 min-h-0">
-          <StudioCanvas
-            onEngine={handleEngine}
-            onScanReady={handleScanReady}
-            onScanComplete={handleScanComplete}
-            onContextMenu={handleContextMenu}
+        {/* Canvas + navigation bar — stacked in a flex-col so the nav bar
+            only spans the center area between the two sidebars */}
+        <div className="flex flex-col flex-1 min-w-0 min-h-0">
+          <div className="relative flex flex-1 min-w-0 min-h-0">
+            <StudioCanvas
+              onEngine={handleEngine}
+              onScanReady={handleScanReady}
+              onScanComplete={handleScanComplete}
+              onContextMenu={handleContextMenu}
+            />
+            {/* CalibrationModal renders inside this relative container so
+                its `absolute inset-0` covers only the canvas area, not the panels */}
+            <CalibrationModal />
+          </div>
+          <NavigationBar
+            engine={engine}
+            showTypeLibrary={showTypeLibrary}
+            onToggleTypeLibrary={() => setShowTypeLibrary(v => !v)}
+            onScanPage={handleScanPage}
+            isScanRunning={isScanRunning}
           />
-          {/* CalibrationModal renders inside this relative container so
-              its `absolute inset-0` covers only the canvas area, not the panels */}
-          <CalibrationModal />
         </div>
 
         {/* Right side: type library | structural panel | properties panel */}
@@ -237,10 +246,19 @@ export default function StudioLayout() {
             <FrameTypeLibrary />
           </aside>
         ) : (
-          <aside className="w-56 flex-shrink-0 bg-slate-900 border-l border-slate-800 overflow-y-auto">
+          <div
+            className="overflow-hidden flex-shrink-0"
+            style={{
+              width: selectedShapeId ? '224px' : '0px',
+              transition: 'width 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
+          >
             <PropertiesPanel />
-          </aside>
+          </div>
         )}
+
+        {/* ── Right toolbar rail ── */}
+        <Toolbar engine={engine} />
       </div>
 
       {/* ── AI Bulk Classify Dialog ────────────────────────────── */}

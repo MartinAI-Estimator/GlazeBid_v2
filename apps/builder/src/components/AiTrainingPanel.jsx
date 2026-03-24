@@ -26,7 +26,7 @@ const AiTrainingPanel = ({ projectName, onTrainingComplete }) => {
 
   const checkModelStatus = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/training/status');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/training/status`);
       const data = await response.json();
       setModelStatus(data);
     } catch (error) {
@@ -59,7 +59,7 @@ const AiTrainingPanel = ({ projectName, onTrainingComplete }) => {
         formData.append('project_name', projectName);
         formData.append('file', file);
 
-        const response = await fetch('http://127.0.0.1:8000/api/training/import-bluebeam', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/training/import-bluebeam`, {
           method: 'POST',
           body: formData
         });
@@ -129,7 +129,7 @@ const AiTrainingPanel = ({ projectName, onTrainingComplete }) => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('http://127.0.0.1:8000/api/training/import-roboflow-model', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/training/import-roboflow-model`, {
         method: 'POST',
         body: formData
       });
@@ -161,7 +161,7 @@ const AiTrainingPanel = ({ projectName, onTrainingComplete }) => {
     setMessage('');
 
     try {
-      const url = `http://127.0.0.1:8000/api/training/export-yolo-dataset?project_name=${encodeURIComponent(projectName)}`;
+      const url = `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/training/export-yolo-dataset?project_name=${encodeURIComponent(projectName)}`;
       console.log('🔵 Calling API:', url);
       
       const response = await fetch(url, {

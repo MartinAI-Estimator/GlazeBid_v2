@@ -17,7 +17,7 @@ const PropertiesPanel = ({ selectedMarkup, systemLibrary, projectName }) => {
             try {
                 const encodedProjectName = encodeURIComponent(projectName);
                 const response = await fetch(
-                    `http://localhost:8000/api/projects/${encodedProjectName}/verify-entity/${selectedMarkup.id}`
+                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/projects/${encodedProjectName}/verify-entity/${selectedMarkup.id}`
                 );
                 const data = await response.json();
                 

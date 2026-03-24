@@ -25,6 +25,7 @@ import ProposalGenerator from './components/ProposalGenerator/ProposalGenerator'
 import RFQManager from './components/RFQManager';
 import StudioInbox from './components/StudioInbox';
 import SidebarNav from './components/SidebarNav';
+import ProjectSideNav from './components/ProjectSideNav';
 import { ProjectProvider } from './context/ProjectContext'; // Import the brain
 import { loadProjectFromCloud } from './utils/syncProject';
 import useBidStore from './store/useBidStore';
@@ -48,6 +49,7 @@ function App() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [projectType, setProjectType] = useState('pdf'); // 'pdf' or 'tiles'
   const [currentView, setCurrentView] = useState('home'); // Navigation state
+  const [activeSidebarSection, setActiveSidebarSection] = useState(null);
   const [showProjectList, setShowProjectList] = useState(false); // Toggle between intake and project list
   const [pageInfo, setPageInfo] = useState({ numPages: 0, currentPage: 1 }); // Track current document's pages
   const [requestedPage, setRequestedPage] = useState(null); // For sidebar to request page changes
@@ -297,6 +299,9 @@ function App() {
   const [projectSheets, setProjectSheets] = useState([]); // Add this if not present
   const [sheets, setSheets] = useState([]);
 
+  // PDF file data loaded via Electron IPC or File API
+  const [pdfFileData, setPdfFileData] = useState(null);
+
   // Check if running inside GlazeBid's own Electron shell (not VS Code Simple Browser)
   useEffect(() => {
     setIsElectron(window.electronAPI?.isDesktop === true);
@@ -410,6 +415,34 @@ function App() {
     };
     fetchSheets();
   }, [currentProject, currentView, selectedSheet]);
+
+  // Load PDF file data when entering viewer mode
+  useEffect(() => {
+    if (currentView !== 'viewer' || !currentProject) {
+      setPdfFileData(null);
+      return;
+    }
+    const loadPdf = async () => {
+      // Try 1: Electron IPC — read from filesystem path stored at intake
+      const filePath = localStorage.getItem(`glazebid:filePath:${currentProject}`);
+      if (filePath && window.electronAPI?.readPdfFile) {
+        try {
+          const result = await window.electronAPI.readPdfFile(filePath);
+          if (result?.ok && result.buffer) {
+            setPdfFileData({ data: result.buffer });
+            return;
+          }
+        } catch (err) {
+          console.warn('Electron PDF load failed, trying fallback:', err.message);
+        }
+      }
+      // Try 2: File object from context (survives only within session)
+      // architecturalFiles are File objects stored by ProjectIntake
+      // We can't access context here directly, so we rely on the Electron path above
+      console.warn('No PDF source available for project:', currentProject);
+    };
+    loadPdf();
+  }, [currentView, currentProject, selectedSheet]);
 
   // 1. Ensure you have the upload function defined
   const handleUpload = async (event) => {
@@ -715,6 +748,8 @@ function App() {
           onNavigate={handleViewChange}
           bidSettings={bidSettings}
           onBidSettingsChange={setBidSettings}
+          activeSidebarSection={activeSidebarSection}
+          setActiveSidebarSection={setActiveSidebarSection}
         />
       );
     }
@@ -809,8 +844,7 @@ function App() {
     }
 
     // PDF Viewer (default project view)
-    // PDF files are opened via Electron IPC in PDFWorkspace — no backend URL needed.
-    const viewerFileUrl = null;
+    const viewerFileUrl = pdfFileData;
     const viewerPageNumber = requestedPage ?? pageInfo.currentPage ?? 1;
 
     return (
@@ -833,6 +867,7 @@ function App() {
           onRenamePage={handleRenamePage}
           onStartRegionSelection={handleStartRegionSelection}
           onUpdateBookmarks={() => {}}
+          pdfData={pdfFileData}
         />
         <PDFWorkspace
           file={viewerFileUrl}
@@ -860,10 +895,10 @@ function App() {
           />
         )}
         
-        {/* Global 64px icon rail — always visible */}
-        <SidebarNav currentView={currentView} onViewChange={handleViewChange} />
+        {/* 64px icon rail — home page only */}
+        {currentView === 'home' && <SidebarNav currentView={currentView} onViewChange={handleViewChange} />}
 
-        <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0', marginLeft: '64px'}}>
+        <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0', marginLeft: currentView === 'home' ? '64px' : '0'}}>
           {/* Show global breadcrumb header whenever a project is loaded (all views except bare home/settings) */}
           {currentView !== 'home' && currentView !== 'documentViewer' && currentView !== 'settings' && currentProject && (
             <>
@@ -871,7 +906,7 @@ function App() {
                 project={currentProject} 
                 projectData={projectData}
                 onBack={resetToHome}
-                onBackToProjectHome={() => setCurrentView('projectHome')}
+                onBackToProjectHome={currentView === 'projectHome' ? resetToHome : () => setCurrentView('projectHome')}
               />
               {/* Menu bar for non-Electron mode (browser) */}
               {!isElectron && (
@@ -888,7 +923,24 @@ function App() {
               )}
             </>
           )}
-          {renderContent()}
+          {/* Project-level sidebar — shown for all inner project views */}
+          {currentProject && currentView !== 'home' && currentView !== 'settings' && currentView !== 'documentViewer' ? (
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+              <ProjectSideNav
+                currentView={currentView}
+                onNavigate={handleViewChange}
+                project={currentProject}
+                projectData={projectData}
+                sheets={sheets}
+                activeSidebarSection={activeSidebarSection}
+                setActiveSidebarSection={setActiveSidebarSection}
+                totalSheets={sheets ? sheets.filter(s => ['Architectural','Structural','Other'].includes(s.category)).length : 0}
+              />
+              <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                {renderContent()}
+              </div>
+            </div>
+          ) : renderContent()}
         </div>
       </div>
     </ProjectProvider>

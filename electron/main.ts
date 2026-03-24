@@ -38,7 +38,7 @@
 // Cast using an inline object type whose members come from the global
 // `Electron` ambient namespace — works in every TS project context.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell } =
+const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell, Menu } =
   require('electron') as {
     app:         Electron.App;
     BrowserWindow: typeof Electron.BrowserWindow;
@@ -47,6 +47,7 @@ const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell } =
     session:     typeof Electron.Session;
     nativeImage: { createFromPath(path: string): Electron.NativeImage };
     shell:       Electron.Shell;
+    Menu:        typeof Electron.Menu;
   };
 
 /** Instance type of Electron.BrowserWindow – used for variable/param annotations. */
@@ -184,14 +185,10 @@ function createStudioWindow(projectData?: unknown): void {
     minWidth:        1024,
     minHeight:       700,
     title:           'GlazeBid Studio',
-    autoHideMenuBar: true,
-    backgroundColor: '#0b162a',
+    backgroundColor: '#09090b',
+    frame:           true,
     titleBarStyle:   'hidden',
-    titleBarOverlay: {
-      color:       '#0b162a',
-      symbolColor: '#9ea7b3',
-      height:      48,
-    },
+    resizable:       true,
     ...(_appIcon ? { icon: nativeImage.createFromPath(_appIcon) } : {}),
     show: false,
     webPreferences: {
@@ -203,6 +200,10 @@ function createStudioWindow(projectData?: unknown): void {
   });
 
   studioWindow = sWin;
+
+  // Hide native menu bar — Studio uses a custom React title bar
+  sWin.setMenu(null);
+
   if (projectData) pendingProject = projectData;
 
   // 5 s safety fallback — show Studio even if studio-ready never fires
@@ -257,6 +258,14 @@ app.whenReady().then(() => {
     else builderWindow?.maximize();
   });
   ipcMain.on('window-close', () => builderWindow?.close());
+
+  // ── Studio window controls (from StudioTitleBar) ──────────────────────────────
+  ipcMain.on('studio-window-minimize', () => studioWindow?.minimize());
+  ipcMain.on('studio-window-maximize', () => {
+    if (studioWindow?.isMaximized()) studioWindow.unmaximize();
+    else studioWindow?.maximize();
+  });
+  ipcMain.on('studio-window-close', () => studioWindow?.close());
 
   // ── open-studio (simple, no args — back-compat with old preload) ────────────
   ipcMain.on('open-studio', () => {

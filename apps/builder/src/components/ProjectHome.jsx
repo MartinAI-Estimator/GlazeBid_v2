@@ -16,10 +16,14 @@ const ProjectHome = ({
   onNavigate,
   bidSettings = {},
   onBidSettingsChange,
+  activeSidebarSection: activeSidebarSectionProp,
+  setActiveSidebarSection: setActiveSidebarSectionProp,
 }) => {
   const [hoveredNavCard, setHoveredNavCard] = React.useState(null);
   const [hoveredWorkflowCard, setHoveredWorkflowCard] = React.useState(null);
-  const [activeSidebarSection, setActiveSidebarSection] = React.useState(null);
+  const [activeSidebarSectionInternal, setActiveSidebarSectionInternal] = React.useState(null);
+  const activeSidebarSection = activeSidebarSectionProp !== undefined ? activeSidebarSectionProp : activeSidebarSectionInternal;
+  const setActiveSidebarSection = setActiveSidebarSectionProp ?? setActiveSidebarSectionInternal;
 
   // ── Labor Days ──────────────────────────────────────────────────────────
   const [laborSystems, setLaborSystems] = React.useState(() => {
@@ -186,119 +190,9 @@ const ProjectHome = ({
   return (
     <div style={styles.container}>
 
-      {/* ── LEFT SIDEBAR ── */}
-      <div style={styles.sidebar}>
-        <div style={styles.sidebarSection}>
-          <span style={styles.sidebarSectionLabel}>Project</span>
-          <button
-            title="Overview"
-            style={activeSidebarSection === null ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
-            onClick={() => setActiveSidebarSection(null)}
-          >
-            <LayoutGrid size={15} style={{ flexShrink: 0 }} />
-            <span style={styles.sidebarItemLabel}>Overview</span>
-          </button>
-          <button
-            title="Project Documents"
-            style={activeSidebarSection === 'documents' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
-            onClick={() => setActiveSidebarSection('documents')}
-          >
-            <FolderOpen size={15} style={{ flexShrink: 0 }} />
-            <span style={styles.sidebarItemLabel}>Project Documents</span>
-            {totalSheets > 0 && <span style={styles.sidebarBadge}>{totalSheets}</span>}
-          </button>
-          <button
-            title="Labor Days"
-            style={activeSidebarSection === 'labor' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
-            onClick={() => setActiveSidebarSection('labor')}
-          >
-            <HardHat size={15} style={{ flexShrink: 0 }} />
-            <span style={styles.sidebarItemLabel}>Labor Days</span>
-            {laborSystems.length > 0 && <span style={styles.sidebarBadge}>{laborSystems.length}</span>}
-          </button>
-        </div>
-
-        {/* ── Actions ── */}
-        <div style={{ ...styles.sidebarSection, marginTop: 12 }}>
-          <span style={styles.sidebarSectionLabel}>Actions</span>
-          <button
-            title="Open Studio"
-            style={hoveredWorkflowCard === 'studio'
-              ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
-              : styles.sidebarItem}
-            onClick={() => openStudio()}
-            onMouseEnter={() => setHoveredWorkflowCard('studio')}
-            onMouseLeave={() => setHoveredWorkflowCard(null)}
-          >
-            <Building2 size={15} style={{ flexShrink: 0, color: '#60a5fa' }} />
-            <span style={styles.sidebarItemLabel}>Open Studio</span>
-          </button>
-          <button
-            title="Studio Takeoffs"
-            style={hoveredWorkflowCard === 'inbox'
-              ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
-              : styles.sidebarItem}
-            onClick={() => onNavigate && onNavigate('inbox')}
-            onMouseEnter={() => setHoveredWorkflowCard('inbox')}
-            onMouseLeave={() => setHoveredWorkflowCard(null)}
-          >
-            <FileSpreadsheet size={15} style={{ flexShrink: 0, color: '#a78bfa' }} />
-            <span style={styles.sidebarItemLabel}>Studio Takeoffs</span>
-          </button>
-          <button
-            title="Bid Builder"
-            style={hoveredWorkflowCard === 'labor'
-              ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
-              : styles.sidebarItem}
-            onClick={() => onNavigate && onNavigate('bidsheet')}
-            onMouseEnter={() => setHoveredWorkflowCard('labor')}
-            onMouseLeave={() => setHoveredWorkflowCard(null)}
-          >
-            <FileDown size={15} style={{ flexShrink: 0, color: '#34d399' }} />
-            <span style={styles.sidebarItemLabel}>Bid Builder</span>
-          </button>
-          <button
-            title="Bid Cart & Pricing"
-            style={hoveredNavCard === 'bid-cart'
-              ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
-              : styles.sidebarItem}
-            onClick={() => onNavigate && onNavigate('bid-cart')}
-            onMouseEnter={() => setHoveredNavCard('bid-cart')}
-            onMouseLeave={() => setHoveredNavCard(null)}
-          >
-            <span style={{ fontSize: '14px', flexShrink: 0 }}>💵</span>
-            <span style={styles.sidebarItemLabel}>Bid Cart &amp; Pricing</span>
-          </button>
-        </div>
-      </div>
-
       {/* ── MAIN SCROLL AREA ── */}
       <div style={styles.scrollArea}>
       <div style={styles.content}>
-        {/* Back Button */}
-        <button onClick={onBack} style={styles.backButton}>
-          <ArrowLeft size={18} />
-          <span>Back to Projects</span>
-        </button>
-
-        {/* Project Header - Compact */}
-        <div style={styles.projectHeader}>
-          <div>
-            <h1 style={styles.projectTitle}>{project || 'Project'}</h1>
-            <p style={styles.projectSubtitle}>Glazing Estimation Workspace</p>
-          </div>
-          <div style={styles.projectMeta}>
-            <div style={styles.metaItem}>
-              <Clock size={16} color="#9ca3af" />
-              <span style={styles.metaText}>Modified Today</span>
-            </div>
-            <div style={styles.metaItem}>
-              <CheckCircle size={16} color="#10b981" />
-              <span style={styles.metaText}>Ready</span>
-            </div>
-          </div>
-        </div>
-
         {/* â”€â”€ BENTO GRID â”€â”€ */}
         {activeSidebarSection === null && (
         <div style={styles.bentoGrid}>

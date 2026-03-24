@@ -10,8 +10,10 @@ export const SNAP_CONFIG = {
   MIN_VECTOR_LENGTH: 5   // Ignore tiny dust specks
 };
 
+import { API_BASE } from '../../../apiClient';
+
 export const API_ENDPOINTS = {
-  GHOST_SUGGEST: 'http://127.0.0.1:8000/api/ghost/live-suggest',
-  GHOST_ACCEPT: 'http://127.0.0.1:8000/api/ghost/accept',
-  GHOST_REJECT: 'http://127.0.0.1:8000/api/ghost/reject'
+  GHOST_SUGGEST: `${API_BASE}/api/ghost/live-suggest`,
+  GHOST_ACCEPT: `${API_BASE}/api/ghost/accept`,
+  GHOST_REJECT: `${API_BASE}/api/ghost/reject`
 };

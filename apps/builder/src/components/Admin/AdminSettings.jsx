@@ -24,7 +24,7 @@ const AdminSettings = ({ onClose }) => {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://127.0.0.1:8000/api/admin/settings/');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/admin/settings/`);
       const data = await response.json();
       
       if (data.success) {
@@ -41,7 +41,7 @@ const AdminSettings = ({ onClose }) => {
 
   const loadExamples = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/admin/settings/network-paths');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/admin/settings/network-paths`);
       const data = await response.json();
       
       if (data.success) {
@@ -57,7 +57,7 @@ const AdminSettings = ({ onClose }) => {
     
     try {
       setTestingPath(true);
-      const response = await fetch('http://127.0.0.1:8000/api/admin/settings/test-path', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/admin/settings/test-path`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path: newPath.trim() })
@@ -85,7 +85,7 @@ const AdminSettings = ({ onClose }) => {
     
     try {
       setSaving(true);
-      const response = await fetch('http://127.0.0.1:8000/api/admin/settings/projects-path', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/admin/settings/projects-path`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projects_base_path: newPath.trim() })
@@ -120,7 +120,7 @@ const AdminSettings = ({ onClose }) => {
     
     try {
       setSaving(true);
-      const response = await fetch('http://127.0.0.1:8000/api/admin/settings/reset', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/admin/settings/reset`, {
         method: 'POST'
       });
       

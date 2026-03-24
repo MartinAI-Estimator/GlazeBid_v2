@@ -143,10 +143,16 @@ type State = {
   /** Close a tab. If it was active, activates the next available tab (or clears). */
   closePdfTab:  (tabId: string) => void;
 
+  // ── Bookmarks ─────────────────────────────────────────────────────────────
+  /** Set of page IDs that the user has bookmarked for quick access. */
+  bookmarkedPageIds: Set<string>;
+
   // ── Actions: Pages ────────────────────────────────────────────────────────
   addPage:       (page: PageState) => void;
   removePage:    (id: string) => void;
   setActivePage: (id: string) => void;
+  setPageLabel:  (pageId: string, label: string) => void;
+  toggleBookmark:(pageId: string) => void;
 
   // ── Actions: Calibration ──────────────────────────────────────────────────
   setCalibration:            (cal: PageCalibration) => void;
@@ -232,6 +238,7 @@ export const useStudioStore = create<State>()((set, get) => ({
   shapes:                 [],
   selectedShapeId:        null,
   activeFrameTypeId:      null,
+  bookmarkedPageIds:      new Set<string>(),
 
   // ── Tool actions ──────────────────────────────────────────────────────────
   setActiveTool: (tool) => set({ activeTool: tool }),
@@ -378,6 +385,19 @@ export const useStudioStore = create<State>()((set, get) => ({
     }),
 
   setActivePage: (id) => set({ activePageId: id }),
+
+  setPageLabel: (pageId, label) =>
+    set(s => ({
+      pages: s.pages.map(p => p.id === pageId ? { ...p, label } : p),
+    })),
+
+  toggleBookmark: (pageId) =>
+    set(s => {
+      const next = new Set(s.bookmarkedPageIds);
+      if (next.has(pageId)) next.delete(pageId);
+      else next.add(pageId);
+      return { bookmarkedPageIds: next };
+    }),
 
   // ── Calibration actions ───────────────────────────────────────────────────
   setCalibration: (cal) =>

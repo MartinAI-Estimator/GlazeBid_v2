@@ -71,7 +71,7 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 min-w-0 min-h-0 overflow-hidden bg-slate-950"
+      className="relative flex-1 min-w-0 min-h-0 overflow-hidden" style={{ backgroundColor: '#3a3a3a' }}
     >
       {/* Status bar */}
       <ZoomStatusBar />

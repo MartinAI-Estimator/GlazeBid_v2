@@ -25,40 +25,46 @@ const SheetViewer = ({ project, sheetId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
 
-  // Helper to save markup to backend
+  // Helper to save markup (localStorage-first, backend fallback)
   const saveMarkupToBackend = async (markup) => {
+    const sheetKey = typeof sheetId === 'object' ? sheetId.id : sheetId;
     try {
-      await fetch('http://127.0.0.1:8000/save-markup', {
+      // Save to localStorage
+      const storageKey = `glazebid:markups:${project}:${sheetKey}`;
+      const existing = JSON.parse(localStorage.getItem(storageKey) || '{"markups":[]}');
+      existing.markups.push(markup);
+      localStorage.setItem(storageKey, JSON.stringify(existing));
+      console.log('Markup saved to localStorage:', markup);
+    } catch (err) {
+      console.error('Failed to save markup locally:', err);
+    }
+    // Best-effort backend sync
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/save-markup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          project,
-          sheet: typeof sheetId === 'object' ? sheetId.id : sheetId,
-          markup
-        })
+        body: JSON.stringify({ project, sheet: sheetKey, markup })
       });
-      console.log('Markup saved:', markup);
-    } catch (err) {
-      console.error('Failed to save markup:', err);
-    }
+    } catch { /* backend unavailable — already saved locally */ }
   };
 
-  // Helper to save scale to backend
+  // Helper to save scale (localStorage-first, backend fallback)
   const saveScaleToBackend = async (scaleValue) => {
+    const sheetKey = typeof sheetId === 'object' ? sheetId.id : sheetId;
     try {
-      await fetch('http://127.0.0.1:8000/save-scale', {
+      localStorage.setItem(`glazebid:scale:${project}:${sheetKey}`, JSON.stringify(scaleValue));
+      console.log('Scale saved to localStorage:', scaleValue);
+    } catch (err) {
+      console.error('Failed to save scale locally:', err);
+    }
+    // Best-effort backend sync
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/save-scale`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          project,
-          sheet: typeof sheetId === 'object' ? sheetId.id : sheetId,
-          scale: scaleValue
-        })
+        body: JSON.stringify({ project, sheet: sheetKey, scale: scaleValue })
       });
-      console.log('Scale saved:', scaleValue);
-    } catch (err) {
-      console.error('Failed to save scale:', err);
-    }
+    } catch { /* backend unavailable — already saved locally */ }
   };
 
   // --- Add the getSnappedPoint function here ---
@@ -210,7 +216,7 @@ const SheetViewer = ({ project, sheetId }) => {
     const sheetIdSafe = typeof sheetId === 'object' ? sheetId.id : sheetId;
     const encodedProject = encodeURIComponent(project);
     const encodedSheetId = encodeURIComponent(sheetIdSafe);
-    const tileUrl = `http://127.0.0.1:8000/tiles/${encodedProject}/${encodedSheetId}/map.dzi`;
+    const tileUrl = `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/tiles/${encodedProject}/${encodedSheetId}/map.dzi`;
     
     // To debug: See what the app is TRYING to load
     console.log("Current Tile URL:", tileUrl);

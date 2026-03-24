@@ -50,7 +50,7 @@ const MarkupTransfer = ({
 
       try {
         const response = await fetch(
-          `http://localhost:8000/load-markups?project=${encodeURIComponent(project)}&sheet=${encodeURIComponent(sourceSheet)}`
+          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/load-markups?project=${encodeURIComponent(project)}&sheet=${encodeURIComponent(sourceSheet)}`
         );
         const data = await response.json();
         
@@ -143,7 +143,7 @@ const MarkupTransfer = ({
       // Save each markup to target sheet
       let successCount = 0;
       for (const markup of transferredMarkups) {
-        const response = await fetch('http://localhost:8000/save-markup', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/save-markup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

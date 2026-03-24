@@ -30,6 +30,7 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
+import { apiFetch } from '../apiClient';
 
 const useGhostLayer = ({
   project,
@@ -125,7 +126,7 @@ const useGhostLayer = ({
       const pageImageBase64 = await capturePageImage();
       
       // Call backend Smart Guide API
-      const response = await fetch('http://127.0.0.1:8000/api/ghost/live-suggest', {
+      const response = await apiFetch('/api/ghost/live-suggest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -186,7 +187,7 @@ const useGhostLayer = ({
     
     // Log to learning loop
     try {
-      fetch('http://127.0.0.1:8000/api/ghost/accept', {
+      apiFetch('/api/ghost/accept', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -220,7 +221,7 @@ const useGhostLayer = ({
     
     // Log rejection to learning loop (adjusts threshold)
     try {
-      fetch('http://127.0.0.1:8000/api/ghost/reject', {
+      apiFetch('/api/ghost/reject', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -250,7 +251,7 @@ const useGhostLayer = ({
    */
   const endSession = useCallback(async () => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/ghost/session?session_id=${sessionIdRef.current}`, {
+      await apiFetch(`/api/ghost/session?session_id=${sessionIdRef.current}`, {
         method: 'DELETE'
       });
       console.log('🧹 Smart Guide session ended');

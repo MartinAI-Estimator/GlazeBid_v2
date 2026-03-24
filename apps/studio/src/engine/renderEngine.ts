@@ -92,7 +92,7 @@ type RenderContext = {
 // ── Palette ───────────────────────────────────────────────────────────────────
 
 const C = {
-  bg:           '#0f172a',
+  bg:           '#3a3a3a',
   pageShadow:   'rgba(0,0,0,0.55)',
   pageWhite:    '#ffffff',
   gridMinor:    'rgba(100,116,139,0.10)',
@@ -202,14 +202,16 @@ export function renderFrame(rc: RenderContext): void {
       drawCalibrationRef(ctx, rc.calibration, camera.scale);
     }
 
-    // 6 — Committed shapes
-    for (const shape of rc.shapes) {
+    // 6 — Committed shapes (filter to active page only)
+    const pageShapes = rc.shapes.filter(s => s.pageId === rc.activePageId);
+    for (const shape of pageShapes) {
       drawShape(ctx, shape, camera.scale, rc.selectedId === shape.id);
     }
 
-    // 6b — Type-count dots
-    if (rc.typeDots.length > 0) {
-      drawTypeDots(ctx, rc.typeDots, rc.frameTypeColors, rc.frameTypeMarks, camera.scale);
+    // 6b — Type-count dots (filter to active page only)
+    const pageDots = rc.typeDots.filter(d => d.pageId === rc.activePageId);
+    if (pageDots.length > 0) {
+      drawTypeDots(ctx, pageDots, rc.frameTypeColors, rc.frameTypeMarks, camera.scale);
     }
 
     // 7 — In-progress shape

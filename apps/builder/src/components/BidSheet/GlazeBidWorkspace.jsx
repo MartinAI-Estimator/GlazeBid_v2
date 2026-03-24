@@ -423,21 +423,6 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
     return wrapWithSidebar(
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', background: 'var(--bg-deep)', overflow: 'hidden' }}>
 
-        {/* ── Top bar: back to project ── */}
-        <div style={{ padding: '0.6rem 1.5rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'var(--bg-panel)', flexShrink: 0 }}>
-          <button
-            onClick={() => onNavigate && onNavigate('projectHome')}
-            style={{ padding: '5px 12px', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.color = 'var(--accent-blue)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-          >
-            ← Back to Project
-          </button>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            Bid Builder
-          </span>
-        </div>
-
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
 
           {/* ── Section 1: Add Project Scope ── */}
@@ -544,26 +529,6 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
   if (!selectedSystem) {
     return wrapWithSidebar(
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', background: 'var(--bg-deep)' }}>
-        {/* Top bar */}
-        <div style={{ background: 'var(--bg-panel)', borderBottom: '1px solid var(--border-subtle)', padding: '0.65rem 2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
-          <button
-            onClick={() => onNavigate && onNavigate('projectHome')}
-            style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.color = 'var(--accent-blue)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-          >
-            ← Back to Project
-          </button>
-          <button
-            onClick={() => setShowHomeBase(true)}
-            style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.78rem' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.color = 'var(--accent-blue)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-          >
-            ← Bid Builder Home
-          </button>
-        </div>
-
         {/* System Dashboard */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           <SystemDashboard

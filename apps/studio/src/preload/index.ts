@@ -38,5 +38,9 @@ contextBridge.exposeInMainWorld('electron', {
   onPdfInject: (cb: (role: string, buffer: Uint8Array, fileName: string) => void) => {
     ipcRenderer.on('pdf:inject', (_ev, role, buffer, fileName) => cb(role, buffer, fileName));
   },
+  // Window controls (for custom title bar)
+  windowMinimize: () => ipcRenderer.send('studio-window-minimize'),
+  windowMaximize: () => ipcRenderer.send('studio-window-maximize'),
+  windowClose:    () => ipcRenderer.send('studio-window-close'),
 });
 

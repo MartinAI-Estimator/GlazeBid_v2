@@ -22,7 +22,7 @@ const DoorSchedule = ({ project, projectData }) => {
     // Schedules remain null, which triggers the empty-state UI below.
     try {
       const classifyResponse = await fetch(
-        `http://localhost:8000/api/door-schedule/projects/${encodeURIComponent(project)}/classify`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/classify`,
         { method: 'POST' }
       );
       if (!classifyResponse.ok) throw new Error('no server');
@@ -30,14 +30,14 @@ const DoorSchedule = ({ project, projectData }) => {
       if (classifyData.success) setClassifiedDoors(classifyData);
 
       const aluminumResponse = await fetch(
-        `http://localhost:8000/api/door-schedule/projects/${encodeURIComponent(project)}/aluminum-schedule`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/aluminum-schedule`
       );
       if (!aluminumResponse.ok) throw new Error('no server');
       const aluminumData = await aluminumResponse.json();
       if (aluminumData.success) setAluminumSchedule(aluminumData);
 
       const glazingResponse = await fetch(
-        `http://localhost:8000/api/door-schedule/projects/${encodeURIComponent(project)}/glazing-schedule`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/glazing-schedule`
       );
       if (!glazingResponse.ok) throw new Error('no server');
       const glazingData = await glazingResponse.json();
@@ -53,7 +53,7 @@ const DoorSchedule = ({ project, projectData }) => {
     try {
       const endpoint = activeTab === 'aluminum' ? 'aluminum' : 'glazing';
       const response = await fetch(
-        `http://localhost:8000/api/door-schedule/projects/${encodeURIComponent(project)}/export/${endpoint}`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/export/${endpoint}`
       );
       if (!response.ok) throw new Error('no server');
       const data = await response.json();

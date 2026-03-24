@@ -25,7 +25,7 @@ const PDFThumbnails = ({ file, numPages, currentPage, onPageClick, project, shee
   const loadRfqs = async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/projects/${encodeURIComponent(project)}`
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/projects/${encodeURIComponent(project)}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -71,7 +71,7 @@ const PDFThumbnails = ({ file, numPages, currentPage, onPageClick, project, shee
     
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/projects/${encodeURIComponent(project)}`,
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/projects/${encodeURIComponent(project)}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -107,7 +107,7 @@ const PDFThumbnails = ({ file, numPages, currentPage, onPageClick, project, shee
   const handleAddToRfq = async (rfqId, pageNum) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/${rfqId}/attachments?project=${encodeURIComponent(project)}`,
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/${rfqId}/attachments?project=${encodeURIComponent(project)}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

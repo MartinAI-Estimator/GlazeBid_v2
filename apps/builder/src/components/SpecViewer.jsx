@@ -915,7 +915,7 @@ const SpecViewer = ({
       if (documentPath.startsWith('http')) {
         pdfUrl = documentPath;
       } else {
-        pdfUrl = `http://localhost:8000/pdf/${encodeURIComponent(project)}/${encodeURIComponent(documentPath)}`;
+        pdfUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/pdf/${encodeURIComponent(project)}/${encodeURIComponent(documentPath)}`;
       }
       
       const response = await fetch(pdfUrl);
@@ -926,7 +926,7 @@ const SpecViewer = ({
       formData.append('file', blob, documentName || 'spec.pdf');
       formData.append('sections', JSON.stringify(inScopeSections));
       
-      const extractResponse = await fetch('http://localhost:8000/api/spec/extract-requirements', {
+      const extractResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/spec/extract-requirements`, {
         method: 'POST',
         body: formData
       });
@@ -945,7 +945,7 @@ const SpecViewer = ({
       
       // Save to project data
       const projectName = encodeURIComponent(project);
-      const saveResponse = await fetch(`http://localhost:8000/api/projects/${projectName}/spec-requirements`, {
+      const saveResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/projects/${projectName}/spec-requirements`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -993,7 +993,7 @@ const SpecViewer = ({
       if (documentPath.startsWith('http')) {
         pdfUrl = documentPath;
       } else {
-        pdfUrl = `http://localhost:8000/pdf/${encodeURIComponent(project)}/${encodeURIComponent(documentPath)}`;
+        pdfUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/pdf/${encodeURIComponent(project)}/${encodeURIComponent(documentPath)}`;
       }
       
       const response = await fetch(pdfUrl);
@@ -1003,7 +1003,7 @@ const SpecViewer = ({
       const formData = new FormData();
       formData.append('file', blob, documentName || 'spec.pdf');
       
-      const extractResponse = await fetch('http://localhost:8000/api/spec/extract-sections', {
+      const extractResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/spec/extract-sections`, {
         method: 'POST',
         body: formData
       });

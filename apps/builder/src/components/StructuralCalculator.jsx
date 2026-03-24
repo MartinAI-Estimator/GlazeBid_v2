@@ -59,7 +59,7 @@ const StructuralCalculator = ({
   
   const fetchMaterials = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/structural/materials');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/structural/materials`);
       const data = await response.json();
       if (data.status === 'success') {
         setMaterials(data.materials);
@@ -112,7 +112,7 @@ const StructuralCalculator = ({
         sheet: sheet
       };
       
-      const response = await fetch('http://127.0.0.1:8000/api/structural/analyze-frame', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/structural/analyze-frame`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)

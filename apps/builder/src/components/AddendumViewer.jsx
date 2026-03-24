@@ -77,7 +77,7 @@ const AddendumViewer = ({ isOpen, onClose, project }) => {
       formData.append('new_pdf', newSheet.file);
 
       // Call comparison endpoint
-      const compareResponse = await fetch('http://localhost:8000/api/visual-diff/compare', {
+      const compareResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/compare`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -100,7 +100,7 @@ const AddendumViewer = ({ isOpen, onClose, project }) => {
       setDiffImage(compareResult.diff_image || oldSheet.preview);
 
       // Get impact report
-      const impactResponse = await fetch('http://localhost:8000/api/visual-diff/impact-report', {
+      const impactResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/impact-report`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

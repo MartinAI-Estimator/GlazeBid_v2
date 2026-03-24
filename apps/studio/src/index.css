@@ -1,34 +1,132 @@
 @import "tailwindcss";
 
-/* ── Midnight Chrome shared palette ────────────────────────────────────────── */
-:root {
-  --bg-main:      #09090b;
-  --bg-surface:   #18181b;
-  --border-crisp:  #27272a;
-  --brand-cyan:   #0ea5e9;
-  --text-primary: #fafafa;
-  --text-muted:   #71717a;
+/* ── Geist Variable Font (@font-face, self-hosted) ── */
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
 }
 
-/* Brand color palette (Tailwind @theme) */
+/* ── Tailwind v4 Theme ─────────────────────────────────────────────────────── */
 @theme {
+  --font-sans: 'Geist', 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Geist_Mono', ui-monospace, monospace;
+
+  /* Brand accent */
   --color-brand-400: #38bdf8;
   --color-brand-500: #0ea5e9;
   --color-brand-600: #0284c7;
+
+  /* Override slate palette → Builder's warm zinc tones so all bg-slate-* classes match */
+  --color-slate-950: #09090b;
+  --color-slate-900: #18181b;
+  --color-slate-800: #27272a;
+  --color-slate-700: #3f3f46;
+  --color-slate-600: #52525b;
+  --color-slate-500: #71717a;
+  --color-slate-400: #a1a1aa;
+  --color-slate-300: #d4d4d8;
+  --color-slate-200: #e4e4e7;
+  --color-slate-100: #f4f4f5;
+  --color-slate-50:  #fafafa;
 }
 
-/* Class-based dark mode (matches builder) */
-@variant dark (&:where(.dark, .dark *));
-
+/* ── Midnight Chrome Design System ─────────────────────────────────────────── */
 @layer base {
+  :root {
+    /* HSL values (for Tailwind hsl() wrappers) */
+    --background: 240 10% 3.9%;
+    --surface:    240 5.9% 10%;
+    --border:     240 3.7% 15.9%;
+    --accent:     199 89% 48%;
+    --muted:      240 5% 64.9%;
+
+    /* Hex aliases */
+    --bg-main:        #09090b;
+    --bg-surface:     #18181b;
+    --bg-elevated:    #1c1c1f;
+    --bg-deep:        var(--bg-main);
+    --bg-panel:       var(--bg-surface);
+    --bg-card:        var(--bg-surface);
+    --accent-navy:    var(--bg-main);
+    --border-subtle:  rgba(255, 255, 255, 0.08);
+    --border-crisp:   #27272a;
+    --brand-cyan:     #0ea5e9;
+    --accent-blue:    var(--brand-cyan);
+    --accent-glow:    rgba(14, 165, 233, 0.18);
+    --text-primary:   #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted:     #71717a;
+  }
+
   html, body, #root {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #09090b;
+    background: var(--bg-main);
   }
+
+  body {
+    margin: 0;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Geist', 'Inter Variable', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Sleek 5px scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-crisp); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--brand-cyan); }
+
   * {
     scrollbar-width: thin;
-    scrollbar-color: #3f3f46 #09090b;
+    scrollbar-color: #3f3f46 transparent;
   }
+}
+
+/* ── Glass Card Utility ─────────────────────────────────────────────────────── */
+.glass-card {
+  position: relative;
+  background: rgba(24, 24, 27, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  isolation: isolate;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, -9999px) var(--mouse-y, -9999px),
+    rgba(14, 165, 233, 0.15),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glass-card:hover::before {
+  opacity: 1;
 }

@@ -46,7 +46,7 @@ const AIAutomationButton = ({
   const [messageType, setMessageType] = useState('info'); // info, success, error
   const [hasRunDetection, setHasRunDetection] = useState(false); // Only allow detection once per project
 
-  const API_BASE = 'http://127.0.0.1:8000';
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
   // Fetch learning stats on mount
   React.useEffect(() => {

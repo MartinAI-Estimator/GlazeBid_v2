@@ -49,7 +49,7 @@ const RFQManager = ({ project, onOpenDrawing }) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/projects/${encodeURIComponent(project)}`
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/projects/${encodeURIComponent(project)}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -71,7 +71,7 @@ const RFQManager = ({ project, onOpenDrawing }) => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/projects/${encodeURIComponent(project)}`,
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/projects/${encodeURIComponent(project)}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -110,7 +110,7 @@ const RFQManager = ({ project, onOpenDrawing }) => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
         { method: 'DELETE' }
       );
 
@@ -129,7 +129,7 @@ const RFQManager = ({ project, onOpenDrawing }) => {
   const updateRfq = async (rfqId, updates) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -152,7 +152,7 @@ const RFQManager = ({ project, onOpenDrawing }) => {
   const exportRfq = async (rfq) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/rfq/${rfq.id}/export?project=${encodeURIComponent(project)}`
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/${rfq.id}/export?project=${encodeURIComponent(project)}`
       );
       if (response.ok) {
         const blob = await response.blob();

@@ -22,5 +22,8 @@ interface Window {
     openPdf: () => Promise<PdfOpenResult>;
     savePdf: (buffer: Uint8Array, defaultName: string) => Promise<unknown>;
     onPdfInject: (cb: (role: string, buffer: Uint8Array, fileName: string) => void) => void;
+    windowMinimize: () => void;
+    windowMaximize: () => void;
+    windowClose: () => void;
   };
 }

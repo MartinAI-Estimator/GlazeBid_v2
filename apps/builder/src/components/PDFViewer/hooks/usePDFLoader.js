@@ -35,7 +35,7 @@ export function usePDFLoader({
         setLoadProgress(10);
         
         // Construct PDF URL - backend will serve raw PDF
-        const pdfUrl = `http://127.0.0.1:8000/pdf/${project}/${sheetId}`;
+        const pdfUrl = `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/pdf/${project}/${sheetId}`;
         
         setLoadProgress(30);
         
@@ -120,7 +120,7 @@ export function usePDFLoader({
           message: error.message,
           name: error.name,
           stack: error.stack,
-          pdfUrl: `http://127.0.0.1:8000/pdf/${project}/${sheetId}`
+          pdfUrl: `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/pdf/${project}/${sheetId}`
         });
         setIsLoading(false);
         

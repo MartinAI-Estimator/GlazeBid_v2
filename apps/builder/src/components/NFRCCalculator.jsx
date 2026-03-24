@@ -78,7 +78,7 @@ const NFRCCalculator = ({ project, sheet }) => {
     const layersToCalculate = mode === 'builder' && builderAssembly ? builderAssembly : layers;
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/nfrc/calculate-u-factor', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/nfrc/calculate-u-factor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -117,7 +117,7 @@ const NFRCCalculator = ({ project, sheet }) => {
     const layersToSave = mode === 'builder' && builderAssembly ? builderAssembly : layers;
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/nfrc/save-system', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/nfrc/save-system`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
