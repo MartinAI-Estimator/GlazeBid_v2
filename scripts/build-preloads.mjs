@@ -28,7 +28,7 @@ await Promise.all([
     platform:    'node',
     target:      'node18',
     outfile:     path.join(root, 'dist-electron/main.js'),
-    external:    ['electron'],
+    external:    ['electron', 'better-sqlite3'],
     format:      'cjs',
     logLevel:    'silent',
   }),

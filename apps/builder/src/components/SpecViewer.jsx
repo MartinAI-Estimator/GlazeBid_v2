@@ -977,58 +977,101 @@ const SpecViewer = ({
     }
   };
 
-  // Extract spec sections using pattern matching (no AI)
+  // Extract spec sections using local PDF text parsing (no backend)
   const extractSpecSections = async () => {
-    if (!documentPath) return;
-    // Section extraction requires the GlazeBid backend server.
-    alert('Spec section extraction is not available in offline mode.');
-    return;
-    // eslint-disable-next-line no-unreachable
     try {
       console.log('🔍 Extracting spec sections...');
       setExtractingSpecs(true);
-      
-      // Fetch the PDF file
-      let pdfUrl;
-      if (documentPath.startsWith('http')) {
-        pdfUrl = documentPath;
-      } else {
-        pdfUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/pdf/${encodeURIComponent(project)}/${encodeURIComponent(documentPath)}`;
+
+      // Try 1: Check if intake already extracted and persisted sections
+      const cached = localStorage.getItem(`glazebid:specSections:${project}`);
+      if (cached) {
+        const result = JSON.parse(cached);
+        console.log(`✅ Loaded ${result.sections_found} cached spec sections (${result.division8?.length || 0} Div 08)`);
+        setSpecSections(result);
+        const initialScope = {};
+        // Default: Division 08 sections in scope, others out
+        result.sections.forEach(section => {
+          const key = `${section.code}_${section.page}`;
+          initialScope[key] = section.isDiv8 !== false;
+        });
+        setSectionScope(initialScope);
+        setExtractingSpecs(false);
+        return result;
       }
-      
-      const response = await fetch(pdfUrl);
-      const blob = await response.blob();
-      
-      // Send to backend for extraction
-      const formData = new FormData();
-      formData.append('file', blob, documentName || 'spec.pdf');
-      
-      const extractResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/spec/extract-sections`, {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (!extractResponse.ok) {
-        throw new Error('Failed to extract sections');
+
+      // Try 2: If we have a loaded PDF, extract sections live
+      if (!pdfDoc) {
+        alert('Load a spec PDF first, then extract sections.');
+        setExtractingSpecs(false);
+        return;
       }
-      
-      const result = await extractResponse.json();
-      console.log(`✅ Extracted ${result.sections_found} spec sections`);
-      
-      // Save extracted sections
+
+      // Use local spec section extractor
+      const { extractSpecSections: extractFn } = await import('../utils/specSectionExtractor');
+      const pdf = pdfDoc;
+      const numPages = pdf.numPages;
+      const seen = new Set();
+      const allSections = [];
+
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        // Collapse text items into lines
+        const lines = [];
+        let currentLine = '';
+        let lastY = null;
+        for (const item of (textContent.items || [])) {
+          const y = Math.round(item.transform[5]);
+          if (lastY !== null && Math.abs(y - lastY) > 3) {
+            if (currentLine.trim()) lines.push(currentLine.trim());
+            currentLine = '';
+          }
+          currentLine += (currentLine ? ' ' : '') + item.str;
+          lastY = y;
+        }
+        if (currentLine.trim()) lines.push(currentLine.trim());
+
+        // Match CSI codes
+        for (const line of lines) {
+          const csiMatch = line.match(/\b(\d{2})\s*[-.]?\s*(\d{2})\s*[-.]?\s*(\d{2})\b\s*[-–—:.]?\s*(.*)/);
+          if (!csiMatch) continue;
+          const div = csiMatch[1];
+          const code = `${div} ${csiMatch[2]} ${csiMatch[3]}`;
+          const name = csiMatch[4]?.replace(/^[-–—:.\s]+/, '').replace(/\s{2,}/g, ' ').replace(/\d+\s*$/, '').trim() || '';
+          const divNum = parseInt(div, 10);
+          if (divNum < 1 || divNum > 49) continue;
+          const dedup = `${code}_${pageNum}`;
+          if (seen.has(dedup)) continue;
+          seen.add(dedup);
+          allSections.push({ code, name, page: pageNum, division: div, isDiv8: div === '08' });
+        }
+      }
+
+      allSections.sort((a, b) => a.code.localeCompare(b.code) || a.page - b.page);
+      const division8 = allSections.filter(s => s.isDiv8);
+      const result = { sections_found: allSections.length, sections: allSections, division8 };
+
+      console.log(`✅ Extracted ${result.sections_found} spec sections (${division8.length} Div 08)`);
       setSpecSections(result);
-      
-      // Initialize scope - all sections start as "in scope" (checked)
+
       const initialScope = {};
-      result.sections.forEach(section => {
+      allSections.forEach(section => {
         const key = `${section.code}_${section.page}`;
-        initialScope[key] = true; // Default all to in-scope
+        initialScope[key] = section.isDiv8;
       });
       setSectionScope(initialScope);
-      
+
+      // Cache for next time
+      if (project) {
+        localStorage.setItem(`glazebid:specSections:${project}`, JSON.stringify({
+          extractedAt: new Date().toISOString(), ...result
+        }));
+      }
+
       setExtractingSpecs(false);
       return result;
-      
+
     } catch (err) {
       console.error('❌ Failed to extract spec sections:', err);
       alert(`Failed to extract sections: ${err.message}`);

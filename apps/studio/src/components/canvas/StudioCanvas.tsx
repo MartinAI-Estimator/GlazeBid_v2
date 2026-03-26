@@ -9,6 +9,7 @@ import { useGhostTool }      from '../../hooks/useGhostTool';
 import { useGhostDetector }  from '../../hooks/useGhostDetector';
 import FrameOverlay          from '../parametric/FrameOverlay';
 import GhostOverlay          from './GhostOverlay';
+import CitationCaptureLayer   from './CitationCaptureLayer';
 import RakeOverlay           from '../parametric/RakeOverlay';
 import { CountOverlay }      from '../parametric/CountOverlay';
 import { GridEditor }        from '../parametric/GridEditor';
@@ -115,6 +116,11 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
         onAcceptAll={ghostDetector.acceptAll}
         onClear={ghostDetector.clearDetections}
       />
+
+      {/* ── Citation capture layer (observer + modal + highlight overlay) ── */}
+      {engine && (
+        <CitationCaptureLayer pageToScreen={engine.pageToScreen} />
+      )}
 
       {/* ── Wand scanning indicator ─────────────────────────────────────── */}
       {isScanning && (

@@ -108,6 +108,28 @@ type State = {
     shapeId:     string;   // the RectShape whose grid is being edited
     widthInches: number;
     heightInches: number;
+  } | null;
+
+  /**
+   * Set after Shape finalization to trigger the CitationFormPanel.
+   * Contains shape metadata + shadow heuristic pre-fill.
+   */
+  pendingCitation: {
+    shapeId:      string;
+    pageId:       string;
+    widthInches:  number;
+    heightInches: number;
+    sheetNumber:  string;  // page label (e.g. "A-001")
+    screenX:      number;  // cursor screen position for QuickEntryModal
+    screenY:      number;
+    /** Shadow mode — pre-populated by local heuristic before the form opens. */
+    shadow?: {
+      systemType:   string;
+      architectTag: string;
+      systemLabel:  string;
+      confidence:   number;
+      suggestedBy:  string;  // e.g. "tag-pattern" | "size-heuristic"
+    };
   } | null;  // ── Shapes ────────────────────────────────────────────────────────────────
   shapes:          DrawnShape[];
   selectedShapeId: string | null;
@@ -160,6 +182,7 @@ type State = {
   setPendingCalibrationLine: (line: State['pendingCalibrationLine']) => void;
   setPendingFrameBounds:     (bounds: State['pendingFrameBounds'])   => void;
   setPendingGridEdit:        (edit:   State['pendingGridEdit'])      => void;
+  setPendingCitation:        (citation: State['pendingCitation'])    => void;
   // ── Actions: Shapes ───────────────────────────────────────────────────────
   addShape:    (shape: DrawnShape) => void;
   updateShape: (id: string, patch: Partial<DrawnShape>) => void;
@@ -235,6 +258,7 @@ export const useStudioStore = create<State>()((set, get) => ({
   pendingCalibrationLine: null,
   pendingFrameBounds:     null,
   pendingGridEdit:        null,
+  pendingCitation:        null,
   shapes:                 [],
   selectedShapeId:        null,
   activeFrameTypeId:      null,
@@ -412,6 +436,7 @@ export const useStudioStore = create<State>()((set, get) => ({
   setPendingCalibrationLine: (line)   => set({ pendingCalibrationLine: line }),
   setPendingFrameBounds:     (bounds) => set({ pendingFrameBounds: bounds }),
   setPendingGridEdit:        (edit)   => set({ pendingGridEdit: edit }),
+  setPendingCitation:        (citation) => set({ pendingCitation: citation }),
 
   // ── Shape actions ─────────────────────────────────────────────────────────
   addShape: (shape) =>

@@ -42,5 +42,19 @@ contextBridge.exposeInMainWorld('electron', {
   windowMinimize: () => ipcRenderer.send('studio-window-minimize'),
   windowMaximize: () => ipcRenderer.send('studio-window-maximize'),
   windowClose:    () => ipcRenderer.send('studio-window-close'),
+
+  // ── Citation Store ──────────────────────────────────────────────────────
+  /** Write a validated citation to the SQLite store. */
+  writeCitation:        (raw: unknown) => ipcRenderer.invoke('citation:write', raw),
+  /** Get all citations for a project. */
+  getCitationsByProject:(projectId: string) => ipcRenderer.invoke('citation:getByProject', projectId),
+  /** Get citations for a specific sheet within a project. */
+  getCitationsBySheet:  (projectId: string, sheetNumber: string) => ipcRenderer.invoke('citation:getBySheet', projectId, sheetNumber),
+  /** Mark a citation as human-verified. */
+  verifyCitation:       (citationId: string) => ipcRenderer.invoke('citation:verify', citationId),
+  /** Get matching implication suggestions from the library. */
+  getImplications:      (params: { systemType?: string; specSections?: string[]; keywords?: string[] }) => ipcRenderer.invoke('citation:getImplications', params),
+  /** Record usage of an implication (for usage-based ranking). */
+  recordImplicationUsage: (implId: string) => ipcRenderer.invoke('citation:recordUsage', implId),
 });
 

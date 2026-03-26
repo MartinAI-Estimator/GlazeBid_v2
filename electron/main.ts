@@ -54,6 +54,15 @@ const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell, Menu }
 type BW = InstanceType<typeof BrowserWindow>;
 import path from 'path';
 import fs from 'fs';
+import {
+  initCitationStore,
+  writeCitation,
+  getCitationsByProject,
+  getCitationsBySheet,
+  verifyCitation,
+  getImplicationSuggestions,
+  recordImplicationUsage,
+} from '../apps/builder/src/db/citationStore';
 
 // ── Window references ──────────────────────────────────────────────────────────
 let builderWindow: BW | null = null;
@@ -244,6 +253,16 @@ app.whenReady().then(() => {
     app.setAppUserModelId('com.glazebid.v2');
   }
 
+  // ── Initialize Citation SQLite store ──────────────────────────────────────
+  try {
+    const userDataPath = app.getPath('userData');
+    const citationDbPath = path.join(userDataPath, 'glazebid-citations.db');
+    initCitationStore(citationDbPath);
+    console.log('[GlazeBid v2] Citation store initialized at', citationDbPath);
+  } catch (err) {
+    console.error('[GlazeBid v2] Failed to initialize citation store:', err);
+  }
+
   // In dev:studio mode start Studio directly; otherwise start Builder
   if (isDev && process.env.VITE_DEV_SERVER_URL?.includes('5174')) {
     createStudioWindow();
@@ -420,6 +439,65 @@ app.whenReady().then(() => {
     };
     tryDeliver(0);
     return { success: true };
+  });
+
+  // ── citation:write — validate + persist a citation ────────────────────────
+  ipcMain.handle('citation:write', async (_event, raw: unknown) => {
+    try {
+      const citation = writeCitation(raw);
+      return { ok: true, citation };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── citation:getByProject — all citations for a project ──────────────────
+  ipcMain.handle('citation:getByProject', async (_event, projectId: string) => {
+    try {
+      return { ok: true, citations: getCitationsByProject(projectId) };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── citation:getBySheet — citations for one sheet ────────────────────────
+  ipcMain.handle('citation:getBySheet', async (_event, projectId: string, sheetNumber: string) => {
+    try {
+      return { ok: true, citations: getCitationsBySheet(projectId, sheetNumber) };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── citation:verify — human-verify a citation ────────────────────────────
+  ipcMain.handle('citation:verify', async (_event, citationId: string) => {
+    try {
+      verifyCitation(citationId);
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── citation:getImplications — fetch matching implications from library ──
+  ipcMain.handle('citation:getImplications', async (_event, params: {
+    systemType?: string; specSections?: string[]; keywords?: string[];
+  }) => {
+    try {
+      return { ok: true, suggestions: getImplicationSuggestions(params) };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── citation:recordUsage — track implication usage ──────────────────────
+  ipcMain.handle('citation:recordUsage', async (_event, implicationId: string) => {
+    try {
+      recordImplicationUsage(implicationId);
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
   });
 
   app.on('activate', () => {

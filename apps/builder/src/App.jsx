@@ -27,10 +27,29 @@ import StudioInbox from './components/StudioInbox';
 import SidebarNav from './components/SidebarNav';
 import ProjectSideNav from './components/ProjectSideNav';
 import { ProjectProvider } from './context/ProjectContext'; // Import the brain
-import { loadProjectFromCloud } from './utils/syncProject';
 import useBidStore from './store/useBidStore';
 import { useEstimatorSync } from './hooks/useEstimatorSync';
 import { useInboxSync } from './hooks/useInboxSync';
+
+// Safe dynamic import — if syncProject is broken/missing the app still boots
+let _loadProjectFromCloud = null;
+try {
+  const mod = await import('./utils/syncProject');
+  _loadProjectFromCloud = mod.loadProjectFromCloud;
+} catch (e) {
+  console.warn('⚠️ syncProject unavailable — running local-only:', e.message);
+}
+
+/** Guaranteed-safe cloud rehydration — never throws, never blocks navigation. */
+async function safeLoadFromCloud(projectName) {
+  if (!_loadProjectFromCloud) return null;
+  try {
+    return await _loadProjectFromCloud(projectName);
+  } catch (err) {
+    console.warn('⚠️ safeLoadFromCloud failed (non-fatal):', err.message);
+    return null;
+  }
+}
 
 // Stable default — defined outside component to prevent re-creation on every render
 const DEFAULT_BID_SETTINGS = { laborRate: 42, crewSize: 2, laborContingency: 2.5, markupPercent: 20, taxPercent: 8.5 };
@@ -505,82 +524,120 @@ function App() {
   const handleProjectReady = async (intakeResults) => {
     console.log('🚀 handleProjectReady called with:', intakeResults);
     
+    const projectName = intakeResults.projectName;
+    console.log('   Setting current project to:', projectName);
+    setCurrentProject(projectName);
+    upsertProjectRegistry(projectName);
+
+    // ── Convert intake file lists → sheet objects & persist ──────────────
     try {
-      const projectName = intakeResults.projectName;
-      console.log('   Setting current project to:', projectName);
-      setCurrentProject(projectName);
-      upsertProjectRegistry(projectName);
-      
-      // Load full project data — non-fatal, proceed to project home regardless
-      console.log('   Loading project data...');
-      try {
-        await loadProjectData(projectName);
-        console.log('   ✅ Project data loaded');
-      } catch (loadErr) {
-        console.warn('   ⚠️ Could not load project data (will proceed anyway):', loadErr.message);
-      }
-      
-      // ── Rehydration Engine (project intake / re-open) ──────────────────────
-      // For brand-new projects there won't be a saved bid, but if the estimator
-      // re-opens a project they started earlier this will restore their work.
-      try {
-        const payload = await loadProjectFromCloud(projectName);
-        if (payload) {
-          useBidStore.getState().rehydrateBid({
-            frames:       payload.takeoff?.frames          ?? [],
-            financials:   payload.financials               ?? null,
-            vendorQuotes: payload.financials?.vendorQuotes ?? null,
-          });
-          console.log('✅ Bid rehydrated from cloud for:', projectName);
-        } else {
-          useBidStore.getState().clearBid();
-        }
-      } catch (rehydErr) {
-        console.warn('⚠️ Rehydration failed (non-fatal):', rehydErr.message);
-      }
-      // ── End Rehydration ──────────────────────────────────────────────────────
+      const newSheets = [];
+      let idx = 0;
+      (intakeResults.architectural || []).forEach(name => {
+        newSheets.push({ id: `arch-${idx}`, name, category: 'Architectural', type: 'pdf', path: intakeResults.filePaths?.[name] || '' });
+        idx++;
+      });
+      (intakeResults.spec || []).forEach(name => {
+        newSheets.push({ id: `spec-${idx}`, name, category: 'Specifications', type: 'pdf', path: intakeResults.filePaths?.[name] || '' });
+        idx++;
+      });
+      (intakeResults.other || []).forEach(name => {
+        newSheets.push({ id: `other-${idx}`, name, category: 'Other', type: 'pdf', path: intakeResults.filePaths?.[name] || '' });
+        idx++;
+      });
 
-      // Always navigate to Project Home after intake
-      console.log('   Navigating to Project Home');
-      setCurrentView('projectHome');
-
-      console.log('✅ Project ready complete');
-    } catch (error) {
-      console.error('❌ Error in handleProjectReady:', error);
-      alert(`Failed to open project: ${error.message}`);
-      resetToHome();
+      if (newSheets.length > 0) {
+        localStorage.setItem(`glazebid:sheets:${projectName}`, JSON.stringify({ sheets: newSheets }));
+        setSheets(newSheets);
+        console.log(`   📄 ${newSheets.length} sheet(s) persisted for`, projectName);
+      }
+    } catch (sheetErr) {
+      console.warn('   ⚠️ Could not persist sheets (non-fatal):', sheetErr.message);
     }
+    // ── End sheet conversion ─────────────────────────────────────────────
+
+    // Store project data with intake metadata
+    try {
+      const pd = {
+        projectName,
+        bidDate: intakeResults.bidDate || '',
+        filePath: intakeResults.filePaths?.[intakeResults.architectural?.[0]] || '',
+        sheets: [],
+        metadata: {},
+      };
+      setProjectData(pd);
+      localStorage.setItem('projectData', JSON.stringify(pd));
+      console.log('   ✅ Project data stored');
+    } catch (loadErr) {
+      console.warn('   ⚠️ Could not store project data (will proceed anyway):', loadErr.message);
+    }
+
+    // ── Persist Division 08 spec sections ──────────────────────────────────
+    try {
+      const div8 = intakeResults.div8Sections || [];
+      const allSections = intakeResults.specSections || [];
+      if (div8.length > 0 || allSections.length > 0) {
+        localStorage.setItem(`glazebid:specSections:${projectName}`, JSON.stringify({
+          extractedAt: new Date().toISOString(),
+          sections_found: allSections.length,
+          sections: allSections,
+          division8: div8,
+        }));
+        console.log(`   📑 ${div8.length} Div 08 section(s) persisted for`, projectName);
+      }
+    } catch (specErr) {
+      console.warn('   ⚠️ Could not persist spec sections (non-fatal):', specErr.message);
+    }
+    // ── End spec section persistence ────────────────────────────────────────
+
+    // ── Rehydration Engine (project intake / re-open) ──────────────────────
+    const payload = await safeLoadFromCloud(projectName);
+    if (payload) {
+      useBidStore.getState().rehydrateBid({
+        frames:       payload.takeoff?.frames          ?? [],
+        financials:   payload.financials               ?? null,
+        vendorQuotes: payload.financials?.vendorQuotes ?? null,
+      });
+      console.log('✅ Bid rehydrated for:', projectName);
+    } else {
+      useBidStore.getState().clearBid();
+    }
+    // ── End Rehydration ──────────────────────────────────────────────────────
+
+    // Always navigate — this line runs no matter what happened above
+    console.log('   Navigating to Project Home');
+    setCurrentView('projectHome');
+    console.log('✅ Project ready complete');
   };
 
   // Handle selecting existing project
   const handleProjectSelect = async (project) => {
     setCurrentProject(project.name);
     upsertProjectRegistry(project.name);
-    await loadProjectData(project.name);
     setShowProjectList(false);
 
-    // ── Rehydration Engine ───────────────────────────────────────────────────
-    // Silently restore the last saved bid (frames + financials) from the cloud.
-    // If there's no saved bid yet (new project), clearBid wipes any stale state
-    // from a previously opened project.
     try {
-      const payload = await loadProjectFromCloud(project.name);
-      if (payload) {
-        useBidStore.getState().rehydrateBid({
-          frames:       payload.takeoff?.frames       ?? [],
-          financials:   payload.financials            ?? null,
-          vendorQuotes: payload.financials?.vendorQuotes ?? null,
-        });
-        console.log('✅ Bid rehydrated from cloud for:', project.name);
-      } else {
-        useBidStore.getState().clearBid(); // wipe stale data from previous project
-        console.log('ℹ️ No saved bid found for:', project.name, '— starting fresh');
-      }
-    } catch (rehydErr) {
-      console.warn('⚠️ Rehydration failed (non-fatal):', rehydErr.message);
+      await loadProjectData(project.name);
+    } catch (loadErr) {
+      console.warn('⚠️ Could not load project data (will proceed anyway):', loadErr.message);
+    }
+
+    // ── Rehydration Engine ───────────────────────────────────────────────────
+    const payload = await safeLoadFromCloud(project.name);
+    if (payload) {
+      useBidStore.getState().rehydrateBid({
+        frames:       payload.takeoff?.frames       ?? [],
+        financials:   payload.financials            ?? null,
+        vendorQuotes: payload.financials?.vendorQuotes ?? null,
+      });
+      console.log('✅ Bid rehydrated for:', project.name);
+    } else {
+      useBidStore.getState().clearBid();
+      console.log('ℹ️ No saved bid found for:', project.name, '— starting fresh');
     }
     // ── End Rehydration ──────────────────────────────────────────────────────
 
+    // Always navigate — this line runs no matter what happened above
     setCurrentView('projectHome');
   };
 

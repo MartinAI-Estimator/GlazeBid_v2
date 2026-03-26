@@ -25,5 +25,13 @@ interface Window {
     windowMinimize: () => void;
     windowMaximize: () => void;
     windowClose: () => void;
+
+    // Citation Store
+    writeCitation:          (raw: unknown) => Promise<{ ok: boolean; citation?: unknown; error?: string }>;
+    getCitationsByProject:  (projectId: string) => Promise<{ ok: boolean; citations: unknown[]; error?: string }>;
+    getCitationsBySheet:    (projectId: string, sheetNumber: string) => Promise<{ ok: boolean; citations: unknown[]; error?: string }>;
+    verifyCitation:         (citationId: string) => Promise<{ ok: boolean; error?: string }>;
+    getImplications:        (params: { systemType?: string; specSections?: string[]; keywords?: string[] }) => Promise<{ ok: boolean; suggestions: unknown[]; error?: string }>;
+    recordImplicationUsage: (implId: string) => Promise<{ ok: boolean; error?: string }>;
   };
 }

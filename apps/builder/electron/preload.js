@@ -100,5 +100,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // ── Window controls ────────────────────────────────────────────────────────
   windowMinimize: () => ipcRenderer.send('window-minimize'),
   windowMaximize: () => ipcRenderer.send('window-maximize'),
-  windowClose:    () => ipcRenderer.send('window-close'),
+  windowClose: () => ipcRenderer.send('window-close'),
+
+  // ── Citation Store ──────────────────────────────────────────────────────
+  /** Write a validated citation to the SQLite store. */
+  writeCitation:        (raw) => ipcRenderer.invoke('citation:write', raw),
+  /** Get all citations for a project. */
+  getCitationsByProject:(projectId) => ipcRenderer.invoke('citation:getByProject', projectId),
+  /** Get citations for a specific sheet within a project. */
+  getCitationsBySheet:  (projectId, sheetNumber) => ipcRenderer.invoke('citation:getBySheet', projectId, sheetNumber),
+  /** Mark a citation as human-verified. */
+  verifyCitation:       (citationId) => ipcRenderer.invoke('citation:verify', citationId),
+  /** Get matching implication suggestions from the library. */
+  getImplications:      (params) => ipcRenderer.invoke('citation:getImplications', params),
+  /** Record usage of an implication (for usage-based ranking). */
+  recordImplicationUsage: (implId) => ipcRenderer.invoke('citation:recordUsage', implId),
 });

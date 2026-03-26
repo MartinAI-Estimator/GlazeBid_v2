@@ -12,6 +12,7 @@ import { extractAnnotations } from '../utils/pdfAnnotationParser';
 import { buildBluebeamFramesFromAnnotations } from '../utils/bluebeamParser';
 import { useProject } from '../context/ProjectContext';
 import { saveToLocalFolder, isFileSystemAccessSupported } from '../utils/saveSortedFiles';
+import { extractSpecSections } from '../utils/specSectionExtractor';
 
 const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
   const { setMarkups, setArchitecturalFiles, setIntakeFileCategories } = useProject();
@@ -285,6 +286,74 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
     setResults(null);
 
     try {
+      // ── Spec Division 08 scan ──────────────────────────────────────────────
+      // Scan each spec PDF for CSI section headings.  Only specs that contain
+      // Division 08 content are kept — all others are moved to 'other'.
+      const specFiles = pendingSpecs.length > 0
+        ? pendingSpecs
+        : (files || []).filter(f => fileCategories[f.name] === 'spec');
+
+      console.log(`📑 Spec splitter: ${specFiles.length} spec file(s) to scan, pendingSpecs=${pendingSpecs.length}, fileCategories keys=${Object.keys(fileCategories).length}`);
+
+      const keptSpecs = [];            // File names that have Div 08
+      const rejectedSpecs = [];        // File names that don't
+      const allSpecSections = [];      // All extracted sections across files
+      const div8Sections = [];         // Only Division 08 sections
+
+      if (specFiles.length > 0) {
+        setProgressStage('Scanning specs for Division 08...');
+        setProgress(10);
+
+        for (let i = 0; i < specFiles.length; i++) {
+          const f = specFiles[i];
+          setProgressStage(`Scanning spec ${i + 1}/${specFiles.length}: ${f.name}`);
+          setProgress(10 + Math.round((i / specFiles.length) * 40));
+
+          try {
+            console.log(`📑 Scanning spec: "${f.name}" (${(f.size / 1024).toFixed(0)} KB, type=${f.type})`);
+            const result = await extractSpecSections(f);
+            console.log(`📑 ${f.name}: ${result.sections_found} total sections, ${result.division8.length} Div 08`);
+            // Tag each section with source filename
+            result.sections.forEach(s => { s.sourceFile = f.name; });
+            result.division8.forEach(s => { s.sourceFile = f.name; });
+
+            allSpecSections.push(...result.sections);
+            div8Sections.push(...result.division8);
+
+            if (result.division8.length > 0) {
+              keptSpecs.push(f.name);
+              console.log(`✅ ${f.name}: ${result.division8.length} Div 08 section(s) found`);
+            } else {
+              rejectedSpecs.push(f.name);
+              console.log(`⬜ ${f.name}: No Div 08 content — moved to 'other'`);
+            }
+          } catch (scanErr) {
+            console.error(`❌ Failed to scan ${f.name}:`, scanErr);
+            // Keep the file on error so the user doesn't lose it
+            keptSpecs.push(f.name);
+          }
+        }
+      } else {
+        console.log('📑 Spec splitter: No spec files to scan — skipping Division 08 filter');
+      }
+
+      setProgressStage('Sorting files...');
+      setProgress(55);
+
+      // Determine final spec list:
+      // - If we scanned specs and found some with Div 08 → use only those (keptSpecs)
+      // - If we scanned specs but none had Div 08 → empty (all moved to 'other')
+      // - If no spec files were uploaded at all → use whatever was categorized as 'spec'
+      const didScanSpecs = specFiles.length > 0;
+      const finalSpecs = didScanSpecs
+        ? keptSpecs   // Only Div 08 specs (may be empty — that's correct)
+        : (files || []).filter(f => fileCategories[f.name] === 'spec').map(f => f.name);
+
+      console.log(`📑 Spec splitter results: scanned=${didScanSpecs}, kept=${keptSpecs.length}, rejected=${rejectedSpecs.length}, final=${finalSpecs.length}`);
+      if (div8Sections.length > 0) {
+        console.log(`📑 Division 08 sections found:`, div8Sections.map(s => `${s.code} ${s.name}`).join(', '));
+      }
+
       // Build local project data — no backend upload required
       // PDFs are loaded directly in Studio via file dialog
       const localData = {
@@ -295,10 +364,11 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
           .filter(f => (fileCategories[f.name] || 'drawing') === 'drawing')
           .map(f => f.name),
         structural: [],
-        spec: (files || [])
-          .filter(f => fileCategories[f.name] === 'spec')
-          .map(f => f.name),
+        spec: finalSpecs,
+        other: rejectedSpecs,
         file_categories: fileCategories,
+        specSections: allSpecSections,
+        div8Sections,
       };
 
       // Store file objects in ProjectContext if drawings were provided
@@ -306,17 +376,27 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
         setArchitecturalFiles(pendingDrawings);
       }
 
-      // Capture the real filesystem path of the first drawing for Studio PDF auto-load.
-      // getPathForFile is synchronous and only available in Electron.
-      const allDrawingFiles = pendingDrawings.length > 0
-        ? pendingDrawings
-        : (files || []).filter(f => (fileCategories[f.name] || 'drawing') === 'drawing');
-      if (allDrawingFiles.length > 0 && window.electronAPI?.getPathForFile) {
-        try {
-          const fp = window.electronAPI.getPathForFile(allDrawingFiles[0]);
-          if (fp) localStorage.setItem(`glazebid:filePath:${projectNameInput}`, fp);
-        } catch { /* path capture is best-effort */ }
+      // Capture real filesystem paths for all uploaded files (Electron only).
+      // Stored on localData.filePaths so handleProjectReady can attach them to sheets.
+      const allUploadedFiles = [...pendingDrawings, ...pendingSpecs];
+      if (allUploadedFiles.length === 0 && files) {
+        allUploadedFiles.push(...files);
       }
+      const filePaths = {};
+      if (allUploadedFiles.length > 0 && window.electronAPI?.getPathForFile) {
+        for (const f of allUploadedFiles) {
+          try {
+            const fp = window.electronAPI.getPathForFile(f);
+            if (fp) filePaths[f.name] = fp;
+          } catch { /* path capture is best-effort */ }
+        }
+        // Keep backward-compat key for Studio PDF auto-load
+        const firstDrawingPath = filePaths[localData.architectural[0]];
+        if (firstDrawingPath) {
+          localStorage.setItem(`glazebid:filePath:${projectNameInput}`, firstDrawingPath);
+        }
+      }
+      localData.filePaths = filePaths;
 
       setProgress(100);
       setProgressStage('Project ready!');
@@ -624,7 +704,7 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                   const result = await saveToLocalFolder(
                     pendingDrawings,
                     pendingSpecs,
-                    fileCategories,
+                    pendingFileCategories,
                     ({ done, total, current }) => setLocalSaveProgress({ done, total, current })
                   );
                   if (result) setLocalSaveResult(result);
@@ -749,7 +829,7 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                   onClick={async () => {
                     try {
                       const result = await saveToLocalFolder(
-                        pendingDrawings, pendingSpecs, fileCategories,
+                        pendingDrawings, pendingSpecs, pendingFileCategories,
                         ({ done, total, current }) => setLocalSaveProgress({ done, total, current })
                       );
                       if (result) setLocalSaveResult(result);
