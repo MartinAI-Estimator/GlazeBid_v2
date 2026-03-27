@@ -6,6 +6,7 @@ import {
   Building2,
   FileSpreadsheet,
   FileDown,
+  FileText,
 } from 'lucide-react';
 
 const STUDIO_URL = 'http://127.0.0.1:5174';
@@ -80,6 +81,7 @@ const ProjectSideNav = ({
   const inboxActive = currentView === 'inbox';
   const bidsheetActive = currentView === 'bidsheet';
   const bidCartActive = currentView === 'bid-cart';
+  const shopDrawingsActive = currentView === 'shopDrawings';
 
   return (
     <div style={styles.sidebar}>
@@ -168,6 +170,17 @@ const ProjectSideNav = ({
           onLeave={() => setHoveredItem(null)}
         >
           <span style={{ fontSize: '14px', flexShrink: 0 }}>💵</span>
+        </Btn>
+
+        <Btn
+          title="Shop Drawings"
+          active={shopDrawingsActive}
+          hovered={hoveredItem === 'shopDrawings'}
+          onClick={() => onNavigate('shopDrawings')}
+          onEnter={() => setHoveredItem('shopDrawings')}
+          onLeave={() => setHoveredItem(null)}
+        >
+          <FileText size={15} style={{ flexShrink: 0, color: '#f59e0b' }} />
         </Btn>
       </div>
     </div>

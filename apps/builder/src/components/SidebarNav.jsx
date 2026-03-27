@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Box, Layers, FileText, Settings } from 'lucide-react';
+import { LayoutGrid, Box, Layers, FileText, Ruler, Settings } from 'lucide-react';
 
 /**
  * SleekSidebar — 64px icon-only global navigation rail.
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { views: ['viewer'],                           icon: Box,        label: 'Studio (3D)',       goView: 'viewer'   },
   { views: ['inbox', 'documentViewer'],          icon: Layers,     label: 'Takeoffs & Specs',  goView: 'inbox'    },
   { views: ['bidsheet', 'bid-cart', 'proposal'], icon: FileText,   label: 'Bid & Proposal',    goView: 'bidsheet' },
+  { views: ['shopDrawings'],                     icon: Ruler,      label: 'Shop Drawings',      goView: 'shopDrawings' },
 ];
 
 const BOTTOM_ITEMS = [

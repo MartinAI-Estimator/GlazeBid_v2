@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 
+// ─── Hr Function defaults (modifier labour hours) ────────────────────────────
 const DEFAULT_HR_FUNCTIONS = {
   'modifier-door-single':   4.5,
   'modifier-door-pair':     8.0,
@@ -12,24 +13,44 @@ const DEFAULT_HR_FUNCTIONS = {
 };
 
 const fmt = (n) =>
-  n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  (typeof n === 'number' ? n : 0).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+const fmtPct = (n) =>
+  (typeof n === 'number' ? n : 0).toLocaleString(undefined, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+
+function gpmColor(pct) {
+  if (pct >= 30) return '#34d399';
+  if (pct >= 25) return '#fbbf24';
+  return '#f87171';
+}
 
 const BidSummaryDashboard = ({
-  projectName, importedSystems = [], customToolDefs = [], onBack,
-  markupPercent: initMarkup = 20, taxPercent: initTax = 8.5,
-  onMarkupChange, onTaxChange,
+  projectName,
+  importedSystems = [],
+  customToolDefs = [],
+  onBack,
+  markupPercent: initMarkup    = 40,
+  taxPercent:    initTax       = 8.2,
+  laborRate:     initLaborRate = 42,
+  onMarkupChange,
+  onTaxChange,
 }) => {
   const [markupPercent, setMarkupPercent] = useState(initMarkup);
-  const [taxPercent, setTaxPercent]       = useState(initTax);
-  const [isTaxExempt, setIsTaxExempt]     = useState(false);
+  const [taxPercent,    setTaxPercent]    = useState(initTax);
+  const [isTaxExempt,  setIsTaxExempt]   = useState(false);
 
-  // Sync changes back to workspace-level state
   const handleMarkupChange = (v) => { setMarkupPercent(v); onMarkupChange?.(v); };
   const handleTaxChange    = (v) => { setTaxPercent(v);    onTaxChange?.(v);    };
 
   // Build hr lookup for custom tools
-  const customDefMap = useMemo(() =>
-    Object.fromEntries(customToolDefs.map(t => [t.id, t.hrPerUnit || 1.0])),
+  const customDefMap = useMemo(
+    () => Object.fromEntries(customToolDefs.map(t => [t.id, t.hrPerUnit || 1.0])),
     [customToolDefs]
   );
 
@@ -62,25 +83,43 @@ const BidSummaryDashboard = ({
       const shopMHs  = Number(sys.totals?.shopMHs)  || 0;
       const fieldMHs = Number(sys.totals?.fieldMHs) || 0;
       const distMHs  = Number(sys.totals?.distMHs)  || 0;
-      baseLaborMHs += shopMHs + fieldMHs + distMHs;
+      baseLaborMHs  += shopMHs + fieldMHs + distMHs;
 
-      const laborRate = Number(sys.productionRates?.laborRate) || 42;
+      const laborRate = Number(sys.productionRates?.laborRate) || initLaborRate || 42;
       const modMHs    = getModMHs(sys);
       modifierLaborMHs += modMHs;
       totalLaborCost   += (shopMHs + fieldMHs + distMHs + modMHs) * laborRate;
     });
 
-    const subtotal     = materialCost + totalLaborCost;
-    const taxAmount    = isTaxExempt ? 0 : materialCost * (taxPercent / 100);
+    const subtotal = materialCost + totalLaborCost;
+
+    // Tax on materials only — labor is not taxed
+    const taxAmount = isTaxExempt ? 0 : materialCost * (taxPercent / 100);
+
+    // Markup on COST only (materials + labor), NOT on cost+tax
     const markupAmount = subtotal * (markupPercent / 100);
     const finalBid     = subtotal + taxAmount + markupAmount;
 
+    // GPM% = Markup / (Cost + Markup) — margin on revenue excluding tax
+    const gpmDollars = markupAmount;
+    const gpmPct     = (subtotal + markupAmount) > 0
+      ? (markupAmount / (subtotal + markupAmount)) * 100
+      : 0;
+
     return {
-      materialCost, baseLaborMHs, modifierLaborMHs,
+      materialCost,
+      baseLaborMHs,
+      modifierLaborMHs,
       totalLaborMHs: baseLaborMHs + modifierLaborMHs,
-      totalLaborCost, subtotal, taxAmount, markupAmount, finalBid,
+      totalLaborCost,
+      subtotal,
+      taxAmount,
+      markupAmount,
+      finalBid,
+      gpmDollars,
+      gpmPct,
     };
-  }, [importedSystems, markupPercent, taxPercent, isTaxExempt, customDefMap]);
+  }, [importedSystems, markupPercent, taxPercent, isTaxExempt, customDefMap, initLaborRate]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg-deep)', overflowY: 'auto' }}>
@@ -103,21 +142,57 @@ const BidSummaryDashboard = ({
             Executive Bid Summary
           </h1>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Project</p>
-          <p style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>{projectName}</p>
+
+        {/* Live GPM badge in sticky header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <span style={{ fontSize: '0.62rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+              Projected GPM
+            </span>
+            <span style={{
+              fontSize: '1.4rem', fontWeight: 900, fontVariantNumeric: 'tabular-nums',
+              color: gpmColor(totals.gpmPct), lineHeight: 1.1,
+            }}>
+              {fmtPct(totals.gpmPct)}%
+            </span>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Project</p>
+            <p style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>{projectName}</p>
+          </div>
         </div>
       </div>
 
       {/* ── Body ── */}
       <div style={{ padding: '2rem', maxWidth: 1200, margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '2rem', boxSizing: 'border-box' }}>
 
-        {/* KPI Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+        {/* KPI Cards — 4 cards including Projected GPM */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1.25rem' }}>
           {[
-            { label: 'Total Materials',   value: `$${fmt(totals.materialCost)}`,   sub: `${importedSystems.length} system${importedSystems.length !== 1 ? 's' : ''}`, color: 'var(--text-primary)' },
-            { label: 'Total Labor Hours', value: `${totals.totalLaborMHs.toFixed(1)} hrs`, sub: `Base: ${totals.baseLaborMHs.toFixed(1)} · Modifiers: ${totals.modifierLaborMHs.toFixed(1)}`, color: 'var(--accent-blue)' },
-            { label: 'Total Labor Cost',  value: `$${fmt(totals.totalLaborCost)}`,  sub: 'All systems combined', color: 'var(--text-primary)' },
+            {
+              label: 'Total Materials',
+              value: `$${fmt(totals.materialCost)}`,
+              sub: `${importedSystems.length} system${importedSystems.length !== 1 ? 's' : ''}`,
+              color: 'var(--text-primary)',
+            },
+            {
+              label: 'Total Labor Hours',
+              value: `${totals.totalLaborMHs.toFixed(1)} hrs`,
+              sub: `Base: ${totals.baseLaborMHs.toFixed(1)} · Modifiers: ${totals.modifierLaborMHs.toFixed(1)}`,
+              color: 'var(--accent-blue)',
+            },
+            {
+              label: 'Total Labor Cost',
+              value: `$${fmt(totals.totalLaborCost)}`,
+              sub: 'All systems combined',
+              color: 'var(--text-primary)',
+            },
+            {
+              label: 'Projected GPM',
+              value: `${fmtPct(totals.gpmPct)}%`,
+              sub: `$${fmt(totals.gpmDollars)} gross profit`,
+              color: gpmColor(totals.gpmPct),
+            },
           ].map(card => (
             <div key={card.label} style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: 12, border: '1px solid var(--border-subtle)' }}>
               <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{card.label}</p>
@@ -127,7 +202,7 @@ const BidSummaryDashboard = ({
           ))}
         </div>
 
-        {/* Per-system breakdown */}
+        {/* Per-system breakdown table */}
         {importedSystems.length > 0 && (
           <div style={{ background: 'var(--bg-panel)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
             <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-subtle)' }}>
@@ -143,13 +218,13 @@ const BidSummaryDashboard = ({
               </thead>
               <tbody>
                 {importedSystems.map(sys => {
-                  const matCost  = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
-                  const shopMHs  = Number(sys.totals?.shopMHs)  || 0;
-                  const fieldMHs = Number(sys.totals?.fieldMHs) || 0;
-                  const distMHs  = Number(sys.totals?.distMHs)  || 0;
-                  const baseMHs  = shopMHs + fieldMHs + distMHs;
-                  const modMHs   = getModMHs(sys);
-                  const laborRate = Number(sys.productionRates?.laborRate) || 42;
+                  const matCost   = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
+                  const shopMHs   = Number(sys.totals?.shopMHs)  || 0;
+                  const fieldMHs  = Number(sys.totals?.fieldMHs) || 0;
+                  const distMHs   = Number(sys.totals?.distMHs)  || 0;
+                  const baseMHs   = shopMHs + fieldMHs + distMHs;
+                  const modMHs    = getModMHs(sys);
+                  const laborRate = Number(sys.productionRates?.laborRate) || initLaborRate || 42;
                   const laborCost = (baseMHs + modMHs) * laborRate;
                   return (
                     <tr key={sys.id} style={{ borderBottom: '1px solid var(--border-subtle)', fontSize: '0.85rem' }}>
@@ -168,7 +243,7 @@ const BidSummaryDashboard = ({
         )}
 
         {/* Adjustments + Final Number */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '2rem', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '2rem', alignItems: 'start' }}>
 
           {/* Controls */}
           <div style={{ background: 'var(--bg-panel)', padding: '2rem', borderRadius: 12, border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -187,6 +262,9 @@ const BidSummaryDashboard = ({
                 onChange={e => handleTaxChange(Number(e.target.value))}
                 style={{ width: '100%', padding: '0.7rem', borderRadius: 6, border: '1px solid var(--border-subtle)', background: isTaxExempt ? 'var(--bg-deep)' : 'var(--bg-card)', color: isTaxExempt ? 'var(--text-secondary)' : 'var(--text-primary)', fontSize: '0.95rem', boxSizing: 'border-box', opacity: isTaxExempt ? 0.5 : 1 }}
               />
+              <p style={{ margin: '0.35rem 0 0', fontSize: '0.68rem', color: 'var(--text-secondary)' }}>
+                Applied to materials only — labor is not taxed
+              </p>
             </div>
 
             <div>
@@ -198,17 +276,43 @@ const BidSummaryDashboard = ({
                 onChange={e => handleMarkupChange(Number(e.target.value))}
                 style={{ width: '100%', padding: '0.7rem', borderRadius: 6, border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '0.95rem', boxSizing: 'border-box' }}
               />
+              <p style={{ margin: '0.35rem 0 0', fontSize: '0.68rem', color: 'var(--text-secondary)' }}>
+                Applied to cost (materials + labor) — before tax
+              </p>
+            </div>
+
+            {/* GPM threshold reference panel */}
+            <div style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.2)', borderRadius: 8, padding: '0.85rem 1rem' }}>
+              <p style={{ margin: '0 0 0.4rem', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--accent-blue)' }}>
+                Company GPM Thresholds
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                {[
+                  { range: '$0 – $250k', target: '≥ 30%', met: totals.gpmPct >= 30 },
+                  { range: '$250k – $1M', target: '≥ 27%', met: totals.gpmPct >= 27 },
+                ].map(row => (
+                  <div key={row.range} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>{row.range}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{row.target}</span>
+                      <span style={{ fontSize: '0.65rem', color: row.met ? '#34d399' : '#f87171' }}>
+                        {row.met ? '✓ Met' : '✗ Below'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* The Big Number */}
           <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 12, border: '2px solid var(--accent-blue)', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
             {[
-              { label: 'Materials',                                         value: totals.materialCost },
-              { label: 'Labor',                                             value: totals.totalLaborCost },
-              { label: 'Subtotal',                                          value: totals.subtotal, bold: true },
-              { label: `Tax (${isTaxExempt ? 'exempt' : taxPercent + '%'})`,value: totals.taxAmount },
-              { label: `Markup (${markupPercent}%)`,                        value: totals.markupAmount },
+              { label: 'Materials',                                                          value: totals.materialCost },
+              { label: 'Labor',                                                              value: totals.totalLaborCost },
+              { label: 'Subtotal',                                                           value: totals.subtotal, bold: true },
+              { label: `Tax (${isTaxExempt ? 'exempt' : taxPercent + '%'} on materials)`,   value: totals.taxAmount },
+              { label: `Markup (${markupPercent}% on cost)`,                                value: totals.markupAmount },
             ].map(row => (
               <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: row.bold ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: row.bold ? 700 : 400 }}>
                 <span>{row.label}</span>
@@ -220,6 +324,27 @@ const BidSummaryDashboard = ({
               <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Final Bid Price</p>
               <p style={{ margin: '0.4rem 0 0', fontSize: '2.75rem', fontWeight: 900, color: '#34d399', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
                 ${fmt(totals.finalBid)}
+              </p>
+            </div>
+
+            {/* GPM breakdown box under the final number */}
+            <div style={{
+              marginTop: '0.25rem',
+              padding: '0.85rem 1rem',
+              background: `${gpmColor(totals.gpmPct)}18`,
+              border: `1px solid ${gpmColor(totals.gpmPct)}50`,
+              borderRadius: 8,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-secondary)' }}>
+                  Projected GPM
+                </span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 900, color: gpmColor(totals.gpmPct), fontVariantNumeric: 'tabular-nums' }}>
+                  {fmtPct(totals.gpmPct)}%
+                </span>
+              </div>
+              <p style={{ margin: '0.2rem 0 0', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                ${fmt(totals.gpmDollars)} gross profit · markup ÷ (cost + markup)
               </p>
             </div>
           </div>

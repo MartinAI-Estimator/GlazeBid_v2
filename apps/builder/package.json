@@ -45,6 +45,7 @@
     "better-sqlite3": "^12.8.0",
     "framer-motion": "^12.38.0",
     "geist": "^1.7.0",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.562.0",
     "openseadragon": "^5.0.1",
     "pdfjs-dist": "^5.4.296",

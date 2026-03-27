@@ -24,6 +24,7 @@ import AdminDashboard from './components/Admin/AdminDashboard';
 import ProposalGenerator from './components/ProposalGenerator/ProposalGenerator';
 import RFQManager from './components/RFQManager';
 import StudioInbox from './components/StudioInbox';
+import ShopDrawingPanel from './components/ShopDrawings/ShopDrawingPanel';
 import SidebarNav from './components/SidebarNav';
 import ProjectSideNav from './components/ProjectSideNav';
 import { ProjectProvider } from './context/ProjectContext'; // Import the brain
@@ -52,7 +53,7 @@ async function safeLoadFromCloud(projectName) {
 }
 
 // Stable default — defined outside component to prevent re-creation on every render
-const DEFAULT_BID_SETTINGS = { laborRate: 42, crewSize: 2, laborContingency: 2.5, markupPercent: 20, taxPercent: 8.5 };
+const DEFAULT_BID_SETTINGS = { laborRate: 42, crewSize: 2, laborContingency: 2.5, markupPercent: 40, taxPercent: 8.2 };
 
 function App() {
   // BroadcastChannel receiver — listens for frames pushed from GlazeBid Studio
@@ -765,6 +766,11 @@ function App() {
       return <SettingsView />;
     }
 
+    // Shop Drawings - standalone, works without a loaded project
+    if (currentView === 'shopDrawings') {
+      return <ShopDrawingPanel />;
+    }
+
     // Project Intake or Project List (Home)
     if (currentView === 'home' || !currentProject) {
       // Show project list if requested
@@ -952,10 +958,10 @@ function App() {
           />
         )}
         
-        {/* 64px icon rail — home page only */}
-        {currentView === 'home' && <SidebarNav currentView={currentView} onViewChange={handleViewChange} />}
+        {/* 64px icon rail — home page + standalone views */}
+        {(currentView === 'home' || currentView === 'shopDrawings') && <SidebarNav currentView={currentView} onViewChange={handleViewChange} />}
 
-        <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0', marginLeft: currentView === 'home' ? '64px' : '0'}}>
+        <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0', marginLeft: (currentView === 'home' || currentView === 'shopDrawings') ? '64px' : '0'}}>
           {/* Show global breadcrumb header whenever a project is loaded (all views except bare home/settings) */}
           {currentView !== 'home' && currentView !== 'documentViewer' && currentView !== 'settings' && currentProject && (
             <>
