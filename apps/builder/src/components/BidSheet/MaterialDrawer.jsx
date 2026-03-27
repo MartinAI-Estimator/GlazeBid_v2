@@ -1,16 +1,13 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import AccountingInput from './AccountingInput';
+import { COST_CODES } from './SOWMaterialTracker';
 
-const DEFAULT_CATEGORIES = [
-  { id: 'aluminum',      icon: '🔩', label: 'Aluminum (02-Metal)' },
-  { id: 'glass',         icon: '🪟', label: 'Glass' },
-  { id: 'doors',         icon: '🚪', label: 'Doors (Leaves)' },
-  { id: 'hardware',      icon: '🔑', label: 'Hardware Sets' },
-  { id: 'equipment',     icon: '🏗️', label: 'Equipment' },
-  { id: 'caulking',      icon: '🪣', label: 'Caulking & Misc' },
-  { id: 'subcontractor', icon: '👷', label: 'Subcontractor / Labor' },
-];
+const DEFAULT_CATEGORIES = COST_CODES.map(c => ({
+  id: c.code,
+  icon: c.icon,
+  label: `${c.code} — ${c.label.replace(/^\d{2}-/, '')}`,
+}));
 
 const inputBase = {
   padding: '0.45rem 0.6rem',
