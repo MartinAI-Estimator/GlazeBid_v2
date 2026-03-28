@@ -14,6 +14,7 @@ import LaborOnlyWorkspace from './LaborOnlyWorkspace';
 import CustomSystemWorkspace from './CustomSystemWorkspace';
 import MiscLaborWorkspace from './MiscLaborWorkspace';
 import GlassPricingWorkspace from './GlassPricingWorkspace';
+import BidWorkflowShell from './BidWorkflowShell';
 import ParametricFrameBuilder from './ParametricFrameBuilder';
 import TakeoffWorkspace from './TakeoffWorkspace';
 import { useBidSheet } from '../../context/BidSheetContext';
@@ -31,6 +32,7 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
   const [isBidCartOpen, setIsBidCartOpen] = useState(false);
   const [isLaborModalOpen, setIsLaborModalOpen] = useState(false);
   const [activeView, setActiveView] = useState('workspace'); // 'workspace' | 'executive-dashboard'
+  const [workflowMode, setWorkflowMode] = useState('guided'); // 'guided' | 'advanced'
 
   // ── Custom System Cards from Studio (via IPC) ───────────────────────────────
   // Received when the estimator right-clicks a highlight in Studio and
@@ -361,7 +363,31 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
     </div>
   );
 
-  // Render sequence:
+  // ── Guided Mode: BidWorkflowShell ────────────────────────────────────────
+  if (workflowMode === 'guided') {
+    return (
+      <div style={{ display: 'flex', flex: 1, height: '100%', overflow: 'hidden' }}>
+        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '0.4rem 1rem', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-panel)', display: 'flex', justifyContent: 'flex-end', flexShrink: 0 }}>
+            <button
+              onClick={() => setWorkflowMode('advanced')}
+              style={{ padding: '4px 12px', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.75rem', cursor: 'pointer' }}
+            >
+              ⚙ Advanced Mode
+            </button>
+          </div>
+          <BidWorkflowShell
+            project={projectName}
+            bidSettings={bidSettings}
+            onBidSettingsChange={onBidSettingsChange}
+            onBack={() => onNavigate && onNavigate('projectHome')}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Render sequence (Advanced Mode):
   // 1. If no import, show drop zone
   // 2. If imported but no system selected, show dashboard
   // 3. If system selected, show visual canvas with drag-drop
@@ -433,6 +459,15 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
   if (showHomeBase) {
     return wrapWithSidebar(
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', background: 'var(--bg-deep)', overflow: 'hidden' }}>
+
+        <div style={{ padding: '0.4rem 1rem', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-panel)', display: 'flex', justifyContent: 'flex-end', flexShrink: 0 }}>
+          <button
+            onClick={() => setWorkflowMode('guided')}
+            style={{ padding: '4px 12px', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.75rem', cursor: 'pointer' }}
+          >
+            ← Guided Mode
+          </button>
+        </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
 
