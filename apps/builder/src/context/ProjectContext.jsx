@@ -254,6 +254,21 @@ export const ProjectProvider = ({ children }) => {
 
   // 4. Admin Settings - Management Backend (The "Golden Rules")
   const ADMIN_DEFAULTS = {
+    // ── Phase 5: Company-wide rate defaults (AdminSettingsPanel) ──────────
+    suppliesPct:        0.5,
+    contingencyPct:     1.25,
+    defaultLaborRate:   42,
+    defaultCrewSize:    2,
+    defaultLaborCont:   2.5,
+    defaultMarkupPct:   40,
+    defaultTaxPct:      8.2,
+    glassSurchargePct:  17,
+    glassBreakagePct:   3,
+    gpmThresholds: [
+      { label: '$0 – $250k',   minGPM: 30 },
+      { label: '$250k – $1M',  minGPM: 27 },
+      { label: '$1M+',         minGPM: 25 },
+    ],
     // Labor Library - Production rates
     laborLibrary: [
       { id: 'frame_assembly', name: 'Frame Assembly', category: 'Fabrication', hoursPerUnit: 0.150, unit: 'SF' },

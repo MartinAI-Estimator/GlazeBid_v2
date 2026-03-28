@@ -21,6 +21,7 @@ import DoorSchedule from './components/DoorSchedule';
 import BidSheet from './components/BidSheet/BidSheet';
 import BidCart from './components/BidCart/BidCart';
 import AdminDashboard from './components/Admin/AdminDashboard';
+import AdminSettingsPanel from './components/Admin/AdminSettingsPanel';
 import ProposalGenerator from './components/ProposalGenerator/ProposalGenerator';
 import RFQManager from './components/RFQManager';
 import StudioInbox from './components/StudioInbox';
@@ -723,6 +724,22 @@ function App() {
             >
               🔒 Admin Dashboard
             </button>
+            <button
+              onClick={() => setSettingsTab('admin-rates')}
+              style={{
+                padding: '8px 20px',
+                backgroundColor: settingsTab === 'admin-rates' ? '#1c2128' : 'transparent',
+                border: 'none',
+                borderBottom: settingsTab === 'admin-rates' ? '2px solid #58a6ff' : '2px solid transparent',
+                color: settingsTab === 'admin-rates' ? '#58a6ff' : '#8b949e',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: '0.2s'
+              }}
+            >
+              📊 Rate Defaults
+            </button>
           </div>
         </div>
 
@@ -754,6 +771,13 @@ function App() {
         {settingsTab === 'admin' && (
           <div style={{ flex: 1, padding: '24px', boxSizing: 'border-box', overflowY: 'auto' }}>
             <AdminDashboard onClose={() => setCurrentView('projectHome')} />
+          </div>
+        )}
+
+        {/* Admin Rate Defaults Tab — AdminSettingsPanel */}
+        {settingsTab === 'admin-rates' && (
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <AdminSettingsPanel />
           </div>
         )}
       </div>

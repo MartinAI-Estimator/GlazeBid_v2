@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import AccountingInput from './AccountingInput';
+import { useProject } from '../../context/ProjectContext';
 
 // ─── Cost Code Taxonomy — mirrors Excel SOW Material Tracker ─────────────────
 export const COST_CODES = [
@@ -64,12 +65,12 @@ const inputBase = {
 };
 
 // ─── Generate auto Supplies + Contingency lines for a breakout+alternate group ─
-function generateAutoLines(baseLines) {
+function generateAutoLines(baseLines, suppliesPctEff = SUPPLIES_PCT, contingencyPctEff = CONTINGENCY_PCT) {
   const baseCost = baseLines.reduce((s, l) => s + (Number(l.cost) || 0), 0);
   if (baseCost <= 0) return [];
 
-  const suppliesCost     = baseCost * (SUPPLIES_PCT    / 100);
-  const contingencyCost  = baseCost * (CONTINGENCY_PCT / 100);
+  const suppliesCost     = baseCost * (suppliesPctEff    / 100);
+  const contingencyCost  = baseCost * (contingencyPctEff / 100);
   const sample           = baseLines[0];
 
   return [
@@ -79,7 +80,7 @@ function generateAutoLines(baseLines) {
       desc1:     "Addt'l Supplies",
       desc2:     '',
       desc3:     '',
-      notes:     `${SUPPLIES_PCT}%`,
+      notes:     `${suppliesPctEff}%`,
       breakout:  sample?.breakout  || '',
       alternate: sample?.alternate || '',
       cost:      suppliesCost,
@@ -91,7 +92,7 @@ function generateAutoLines(baseLines) {
       desc1:     'Contingency',
       desc2:     '',
       desc3:     '',
-      notes:     `${CONTINGENCY_PCT}%`,
+      notes:     `${contingencyPctEff}%`,
       breakout:  sample?.breakout  || '',
       alternate: sample?.alternate || '',
       cost:      contingencyCost,
@@ -109,6 +110,10 @@ export default function SOWMaterialTracker({
   isTaxExempt = false,
   readOnly    = false,
 }) {
+  const { adminSettings } = useProject();
+  const SUPPLIES_PCT_EFF    = adminSettings?.suppliesPct    ?? SUPPLIES_PCT;
+  const CONTINGENCY_PCT_EFF = adminSettings?.contingencyPct ?? CONTINGENCY_PCT;
+
   const [collapsed, setCollapsed] = useState({}); // breakout → bool
 
   // ── Manual lines only (auto lines are derived, never stored) ────────────────
@@ -131,7 +136,7 @@ export default function SOWMaterialTracker({
     const result = [];
     Object.values(groups).forEach(group => {
       result.push(...group);
-      result.push(...generateAutoLines(group));
+      result.push(...generateAutoLines(group, SUPPLIES_PCT_EFF, CONTINGENCY_PCT_EFF));
     });
     return result;
   }, [manualLines]);

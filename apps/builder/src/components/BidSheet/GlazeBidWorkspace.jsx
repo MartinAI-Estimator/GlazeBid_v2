@@ -1,5 +1,6 @@
 import React, { useState, useCallback, forwardRef, useImperativeHandle, useEffect } from 'react';
 import PartnerPakDropZone from './PartnerPakDropZone';
+import { partnerPakToSOWLines } from '../../utils/partnerPakToSOW';
 import SystemDashboard from './SystemDashboard';
 import ToolPalette from './ToolPalette';
 import VisualCanvas from './VisualCanvas';
@@ -182,7 +183,13 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
 
   // Handle PartnerPak import completion
   const handleImportComplete = useCallback((systems) => {
-    setImportedSystems(systems);
+    const enrichedSystems = systems.map(sys => ({
+      ...sys,
+      materials: sys.materials?.length > 0
+        ? sys.materials
+        : partnerPakToSOWLines([sys]),
+    }));
+    setImportedSystems(enrichedSystems);
     setShowDropZone(false);
     setShowHomeBase(false);
   }, []);

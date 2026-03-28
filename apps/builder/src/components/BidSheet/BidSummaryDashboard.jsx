@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { buildCostCodeReport, downloadCostCodeCSV } from './CostCodeExport';
 
 // ─── Hr Function defaults (modifier labour hours) ────────────────────────────
 const DEFAULT_HR_FUNCTIONS = {
@@ -156,6 +157,29 @@ const BidSummaryDashboard = ({
               {fmtPct(totals.gpmPct)}%
             </span>
           </div>
+          <button
+            onClick={() => {
+              const report = buildCostCodeReport(importedSystems, markupPercent, taxPercent, isTaxExempt);
+              downloadCostCodeCSV(report, projectName);
+            }}
+            style={{
+              padding: '5px 12px',
+              background: 'transparent',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 6,
+              color: 'var(--text-secondary)',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.color = 'var(--accent-blue)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+          >
+            ⬇ Export CSV
+          </button>
           <div style={{ textAlign: 'right' }}>
             <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Project</p>
             <p style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>{projectName}</p>
