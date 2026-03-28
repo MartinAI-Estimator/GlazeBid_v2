@@ -11,6 +11,8 @@ import ExecutiveDashboard from './ExecutiveDashboard';
 import MaterialOnlyWorkspace from './MaterialOnlyWorkspace';
 import LaborOnlyWorkspace from './LaborOnlyWorkspace';
 import CustomSystemWorkspace from './CustomSystemWorkspace';
+import MiscLaborWorkspace from './MiscLaborWorkspace';
+import GlassPricingWorkspace from './GlassPricingWorkspace';
 import ParametricFrameBuilder from './ParametricFrameBuilder';
 import TakeoffWorkspace from './TakeoffWorkspace';
 import { useBidSheet } from '../../context/BidSheetContext';
@@ -201,6 +203,8 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
     if (type === 'material-only')  { defaultName = 'Manual Material Scope';          shortName = 'Mat Only'; }
     if (type === 'labor-only')     { defaultName = 'Manual Labor Scope';             shortName = 'Lab Only'; }
     if (type === 'custom-system')  { defaultName = `Custom System ${newSystemCount}`; shortName = 'Custom'; }
+    if (type === 'misc-labor')      { defaultName = `Misc Labor ${newSystemCount}`;    shortName = 'Misc Lab'; }
+    if (type === 'glass-pricing')   { defaultName = `Glass Pricing ${newSystemCount}`; shortName = 'Glass'; }
 
     const blankSystem = {
       id: newId,
@@ -517,6 +521,50 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
                 <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#a78bfa', fontWeight: 700, flexShrink: 0 }}>+ Add</span>
               </div>
 
+              {/* Misc Labor */}
+              <div
+                onClick={() => handleCreateBlankSystem('misc-labor')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.85rem',
+                  padding: '0.9rem 1.1rem', borderRadius: 12, cursor: 'pointer',
+                  border: '1px solid var(--border-subtle)', background: 'var(--bg-card)',
+                  transition: 'all 0.18s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#fbbf24'; e.currentTarget.style.background = 'rgba(251,191,36,0.05)'; e.currentTarget.style.boxShadow = '0 2px 16px rgba(251,191,36,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(251,191,36,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>
+                  👷
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ margin: '0 0 0.15rem', fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>Misc Labor</p>
+                  <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>Daily cleaning, hardware installs, labor contingency</p>
+                </div>
+                <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#fbbf24', fontWeight: 700, flexShrink: 0 }}>+ Add</span>
+              </div>
+
+              {/* Glass Pricing */}
+              <div
+                onClick={() => handleCreateBlankSystem('glass-pricing')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.85rem',
+                  padding: '0.9rem 1.1rem', borderRadius: 12, cursor: 'pointer',
+                  border: '1px solid var(--border-subtle)', background: 'var(--bg-card)',
+                  transition: 'all 0.18s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#60a5fa'; e.currentTarget.style.background = 'rgba(96,165,250,0.05)'; e.currentTarget.style.boxShadow = '0 2px 16px rgba(96,165,250,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(96,165,250,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>
+                  🪟
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ margin: '0 0 0.15rem', fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>Glass Pricing</p>
+                  <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>Per-lite $/SqFt pricing with surcharge &amp; breakage</p>
+                </div>
+                <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#60a5fa', fontWeight: 700, flexShrink: 0 }}>+ Add</span>
+              </div>
+
             </div>
           </div>
 
@@ -634,6 +682,35 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
           />
         </div>
       </div>
+    );
+  }
+
+  // --- MISC LABOR WORKSPACE ---
+  if (selectedSystem.type === 'misc-labor') {
+    return wrapWithSidebar(
+      <MiscLaborWorkspace
+        system={selectedSystem}
+        setImportedSystems={setImportedSystems}
+        onComplete={() => setSelectedSystemId(null)}
+        onBack={() => setSelectedSystemId(null)}
+        laborRate={laborRate}
+        crewSize={crewSize}
+        markupPct={markupPercent}
+      />
+    );
+  }
+
+  // --- GLASS PRICING WORKSPACE ---
+  if (selectedSystem.type === 'glass-pricing') {
+    return wrapWithSidebar(
+      <GlassPricingWorkspace
+        system={selectedSystem}
+        setImportedSystems={setImportedSystems}
+        onComplete={() => setSelectedSystemId(null)}
+        onBack={() => setSelectedSystemId(null)}
+        markupPct={markupPercent}
+        taxPct={taxPercent}
+      />
     );
   }
 
