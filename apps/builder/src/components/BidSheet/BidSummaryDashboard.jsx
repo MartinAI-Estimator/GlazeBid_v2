@@ -242,6 +242,88 @@ const BidSummaryDashboard = ({
           </div>
         )}
 
+        {/* Phase 3: Alternates Rollup */}
+        {(() => {
+          // Gather all alternate line items across all systems
+          const allLines = importedSystems.flatMap(sys => sys.materials || []);
+          const altLines = allLines.filter(l => l.alternate && l.alternate !== '');
+          if (altLines.length === 0) return null;
+
+          // Group by alternate name
+          const altGroups = {};
+          altLines.forEach(l => {
+            const key = l.alternate;
+            if (!altGroups[key]) altGroups[key] = [];
+            altGroups[key].push(l);
+          });
+
+          return (
+            <div style={{ background: 'var(--bg-panel)', borderRadius: 12, border: '1px solid rgba(167,139,250,0.25)', overflow: 'hidden' }}>
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Alternates
+                </h3>
+                <span style={{ fontSize: '0.72rem', color: '#a78bfa', background: 'rgba(167,139,250,0.12)', padding: '2px 8px', borderRadius: 10, border: '1px solid rgba(167,139,250,0.25)' }}>
+                  {Object.keys(altGroups).length} alternate{Object.keys(altGroups).length !== 1 ? 's' : ''}
+                </span>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginLeft: 'auto' }}>
+                  Not included in base bid total
+                </span>
+              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)' }}>
+                    {['Alternate', 'Items', 'Add Cost', 'Markup', 'Add Total'].map(h => (
+                      <th key={h} style={{ padding: '0.6rem 1.5rem', fontWeight: 600 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(altGroups).map(([altName, lines], i) => {
+                    const addCost    = lines.reduce((s, l) => s + (Number(l.cost) || 0), 0);
+                    const addMarkup  = addCost * (markupPercent / 100);
+                    const addTotal   = addCost + addMarkup;
+                    return (
+                      <tr key={altName} style={{ borderBottom: '1px solid var(--border-subtle)', fontSize: '0.85rem', background: i % 2 === 1 ? 'rgba(167,139,250,0.03)' : 'transparent' }}>
+                        <td style={{ padding: '0.85rem 1.5rem', fontWeight: 700, color: '#a78bfa' }}>
+                          ⟐ {altName}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.5rem', color: 'var(--text-secondary)' }}>
+                          {lines.length}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.5rem', color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
+                          +${fmt(addCost)}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.5rem', color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
+                          +${fmt(addMarkup)}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.5rem', fontWeight: 700, color: '#a78bfa', fontVariantNumeric: 'tabular-nums' }}>
+                          +${fmt(addTotal)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {/* If-selected total */}
+              <div style={{ padding: '0.85rem 1.5rem', background: 'rgba(167,139,250,0.05)', borderTop: '1px solid rgba(167,139,250,0.2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                  If all alternates accepted — Base + All Alternates:
+                </span>
+                <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#a78bfa', fontVariantNumeric: 'tabular-nums' }}>
+                  ${fmt(
+                    totals.finalBid +
+                    Object.values(altGroups).reduce((s, lines) => {
+                      const ac = lines.reduce((x, l) => x + (Number(l.cost) || 0), 0);
+                      return s + ac + ac * (markupPercent / 100);
+                    }, 0)
+                  )}
+                </span>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Adjustments + Final Number */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '2rem', alignItems: 'start' }}>
 

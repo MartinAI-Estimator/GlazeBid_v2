@@ -1,5 +1,6 @@
 import React from 'react';
 import { FolderOpen, FileText, Building2, Wrench, LayoutGrid, ArrowLeft, Clock, Calendar, CheckCircle, Play, FileDown, ChevronRight, ChevronDown, FileSpreadsheet, HardHat } from 'lucide-react';
+import ProjectSettingsPanel from './ProjectSettingsPanel';
 
 /**
  * Project Home Page - Estimator's Dashboard
@@ -250,6 +251,13 @@ const ProjectHome = ({
             <span style={{ fontSize: '14px', flexShrink: 0 }}>💵</span>
             <span style={styles.sidebarItemLabel}>Bid Cart &amp; Pricing</span>
           </button>
+          <button
+            style={activeSidebarSection === 'settings' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
+            onClick={() => setActiveSidebarSection('settings')}
+          >
+            <Wrench size={15} style={{ flexShrink: 0, color: activeSidebarSection === 'settings' ? '#58a6ff' : undefined }} />
+            <span style={styles.sidebarItemLabel}>Project Settings</span>
+          </button>
         </div>
       </div>
 
@@ -301,8 +309,8 @@ const ProjectHome = ({
                   { label: 'Labor Rate',   unit: '$/hr', key: 'laborRate',        default: 42,   icon: '⏱️',  step: 1,    min: 0 },
                   { label: 'Crew Size',    unit: 'men',  key: 'crewSize',         default: 2,    icon: '👷',  step: 1,    min: 1 },
                   { label: 'Labor Cont.',  unit: '%',    key: 'laborContingency', default: 2.5,  icon: '🛡️', step: 0.5,  min: 0 },
-                  { label: 'Markup',       unit: '%',    key: 'markupPercent',    default: 20,   icon: '📈',  step: 0.5,  min: 0 },
-                  { label: 'Tax Rate',     unit: '%',    key: 'taxPercent',       default: 8.5,  icon: '🏛️', step: 0.25, min: 0 },
+                  { label: 'Markup',       unit: '%',    key: 'markupPercent',    default: 40,   icon: '📈',  step: 0.5,  min: 0 },
+                  { label: 'Tax Rate',     unit: '%',    key: 'taxPercent',       default: 8.2,  icon: '🏛️', step: 0.25, min: 0 },
                 ].map((field, i) => {
                   const value = bidSettings[field.key] ?? field.default;
                   return (
@@ -372,40 +380,45 @@ const ProjectHome = ({
             ) : (
               <div style={styles.laborSystemsGrid}>
                 {laborSystems.map((sys, sysIdx) => {
-                  const crewSize  = bidSettings.crewSize ?? 2;
-                  const DAYS_MO   = 20;  // matches XLS: qty of days / 20 days per month
-
-                  const totals    = sys.totals ?? {};
-                  const totalMHs  = +(totals.shopMHs ?? 0) + +(totals.distMHs ?? 0) + +(totals.fieldMHs ?? 0);
-
+                  const crewSize = bidSettings.crewSize ?? 2;
+                  const DAYS_MO  = 20;
+                  const totals   = sys.totals ?? {};
+                  const totalMHs = +(totals.shopMHs ?? 0) + +(totals.distMHs ?? 0) + +(totals.fieldMHs ?? 0);
                   const hrsPerMan = crewSize > 0 ? totalMHs / crewSize : 0;
                   const days      = hrsPerMan / 8;
                   const weeks     = days / 5;
                   const months    = days / DAYS_MO;
 
-                  // Color palette cycles per system (matches XLS tab colors)
                   const COLORS = [
-                    { accent: '#00d4ff', headerBg: 'rgba(0,212,255,0.13)', rowBg: 'rgba(0,212,255,0.04)' },
+                    { accent: '#00d4ff', headerBg: 'rgba(0,212,255,0.13)',   rowBg: 'rgba(0,212,255,0.04)'   },
                     { accent: '#a78bfa', headerBg: 'rgba(167,139,250,0.13)', rowBg: 'rgba(167,139,250,0.04)' },
                     { accent: '#f87171', headerBg: 'rgba(248,113,113,0.13)', rowBg: 'rgba(248,113,113,0.04)' },
                     { accent: '#86efac', headerBg: 'rgba(134,239,172,0.13)', rowBg: 'rgba(134,239,172,0.04)' },
                     { accent: '#fbbf24', headerBg: 'rgba(251,191,36,0.13)',  rowBg: 'rgba(251,191,36,0.04)'  },
                     { accent: '#60a5fa', headerBg: 'rgba(96,165,250,0.13)',  rowBg: 'rgba(96,165,250,0.04)'  },
                   ];
-                  const c = COLORS[sysIdx % COLORS.length];
-
+                  const c   = COLORS[sysIdx % COLORS.length];
                   const fmt = n => n > 0 ? (n % 1 === 0 ? n.toFixed(0) : n.toFixed(2)) : '0';
 
                   const calcRows = [
                     { label: 'Total hours / crew size = hours per man', value: fmt(hrsPerMan) },
-                    { label: 'hrs per man / 8 hrs per day = qty of days', value: fmt(days)     },
-                    { label: 'days / 5 days = qty of weeks',              value: fmt(weeks)    },
+                    { label: 'hrs per man / 8 hrs per day = qty of days', value: fmt(days) },
+                    { label: 'days / 5 days = qty of weeks', value: fmt(weeks) },
                     { label: 'qty of days / 20 days per month = qty of months', value: months.toFixed(2) },
                   ];
 
+                  // Phase 3: GPM signal for this system
+                  const laborCost = totalMHs * (bidSettings.laborRate ?? 42);
+                  const matCost   = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
+                  const totalCost = laborCost + matCost;
+                  const markupAmt = totalCost * ((bidSettings.markupPercent ?? 40) / 100);
+                  const gpmPct    = (totalCost + markupAmt) > 0
+                    ? (markupAmt / (totalCost + markupAmt)) * 100 : 0;
+                  const gpmColor  = gpmPct >= 30 ? '#34d399' : gpmPct >= 25 ? '#fbbf24' : '#f87171';
+
                   return (
                     <div key={sys.id} style={{ ...styles.laborSystemCard, borderColor: c.accent + '55' }}>
-                      {/* XLS-style header row: System Name | Hours | value */}
+                      {/* Header */}
                       <div style={{ ...styles.laborXlsHeader, background: c.headerBg, borderBottomColor: c.accent + '55' }}>
                         <span style={{ ...styles.laborXlsHeaderName, color: c.accent }}>{sys.name}:</span>
                         <span style={styles.laborXlsHeaderHoursLabel}>Hours</span>
@@ -416,17 +429,40 @@ const ProjectHome = ({
 
                       {/* 4-row calculation chain */}
                       {calcRows.map((row, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            ...styles.laborXlsRow,
-                            background: i % 2 === 0 ? c.rowBg : 'transparent',
-                          }}
-                        >
+                        <div key={i} style={{ ...styles.laborXlsRow, background: i % 2 === 0 ? c.rowBg : 'transparent' }}>
                           <span style={styles.laborXlsRowLabel}>{row.label}</span>
-                          <span style={{ ...styles.laborXlsRowValue, color: totalMHs > 0 ? '#e6edf3' : '#4b5563' }}>{row.value}</span>
+                          <span style={{ ...styles.laborXlsRowValue, color: totalMHs > 0 ? '#e6edf3' : '#4b5563' }}>
+                            {row.value}
+                          </span>
                         </div>
                       ))}
+
+                      {/* Phase 3: Summary row — labor cost + GPM signal */}
+                      {totalMHs > 0 && (
+                        <div style={{
+                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          padding: '8px 14px',
+                          background: 'rgba(255,255,255,0.02)',
+                          borderTop: `1px solid ${c.accent}33`,
+                        }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            <span style={{ fontSize: '0.7rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                              Est. Labor Cost
+                            </span>
+                            <span style={{ fontSize: '1rem', fontWeight: 800, color: c.accent, fontVariantNumeric: 'tabular-nums' }}>
+                              ${laborCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                            <span style={{ fontSize: '0.7rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                              System GPM
+                            </span>
+                            <span style={{ fontSize: '1rem', fontWeight: 800, color: gpmColor, fontVariantNumeric: 'tabular-nums' }}>
+                              {gpmPct.toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -507,6 +543,18 @@ const ProjectHome = ({
         )}
 
       </div>
+
+        {/* ── PROJECT SETTINGS PANEL ── */}
+        {activeSidebarSection === 'settings' && (
+          <ProjectSettingsPanel
+            bidSettings={bidSettings}
+            onBidSettingsChange={(newSettings) => {
+              onBidSettingsChange?.(newSettings);
+            }}
+            onClose={() => setActiveSidebarSection(null)}
+          />
+        )}
+
       </div>{/* end scrollArea */}
     </div>
   );
