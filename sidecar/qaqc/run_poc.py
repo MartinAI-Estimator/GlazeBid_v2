@@ -94,6 +94,16 @@ def run():
         sys.exit(1)
 
     print(f"\n✓  PDF found: {TEST_PDF}")
+
+    # ── Drawing Set Prescan ──
+    print(f"\n--- Drawing Set Pre-Scan ---")
+    from layers.layer_prescan import prescan_drawing_set, prescan_summary
+    prescan = prescan_drawing_set(TEST_PDF)
+    print(prescan_summary(prescan))
+    print(f"\n  Full pipeline will run on {len(prescan.scan_pages)} of "
+          f"{prescan.total_pages} pages.")
+    print(f"  Time saved: ~{prescan.total_pages - len(prescan.scan_pages)} pages skipped")
+
     print(f"\nRunning Layer 0 + Layer 2 extraction...")
 
     # Extract graph

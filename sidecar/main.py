@@ -313,6 +313,72 @@ async def sync_sheets_endpoint(request: SyncSheetsRequest):
         return {"status": "error", "error": str(e), "is_reliable": False}
 
 
+# ── Prescan Endpoint ──────────────────────────────────────────────────────────
+
+class PrescanRequest(BaseModel):
+    """Request to pre-scan an entire PDF drawing set."""
+    pdf_base64: str
+    max_pages: Optional[int] = None
+
+
+@app.post("/prescan-drawing-set")
+async def prescan_drawing_set_endpoint(request: PrescanRequest):
+    """
+    Pre-scan a PDF drawing set to identify which pages are worth
+    running full glazing detection on.
+
+    Returns per-page relevance scores and three lists:
+    - scan_pages: pages to run full glazing detection on
+    - reference_pages: floor plans and details for cross-referencing
+    - skip_pages: pages with no glazing relevance
+
+    This is the first call to make when processing a new drawing set.
+    Use the scan_pages list to drive subsequent /extract-graph and
+    /detect-glazing calls — skip everything else.
+    """
+    from layers.layer_prescan import prescan_drawing_set
+
+    try:
+        pdf_bytes = base64.b64decode(request.pdf_base64)
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+            f.write(pdf_bytes)
+            tmp_path = f.name
+
+        try:
+            prescan = prescan_drawing_set(tmp_path, max_pages=request.max_pages)
+        finally:
+            os.unlink(tmp_path)
+
+        return {
+            "status": "ok",
+            "total_pages": prescan.total_pages,
+            "scan_pages": prescan.scan_pages,
+            "reference_pages": prescan.reference_pages,
+            "skip_pages": prescan.skip_pages,
+            "results": [
+                {
+                    "page_num": r.page_num,
+                    "relevance_score": r.relevance_score,
+                    "should_scan": r.should_scan,
+                    "sheet_type": r.sheet_type,
+                    "sheet_number": r.sheet_number,
+                    "path_count": r.path_count,
+                    "keywords_found": r.keywords_found,
+                    "processing_role": r.processing_role,
+                    "skip_reason": r.skip_reason,
+                }
+                for r in sorted(prescan.results, key=lambda x: x.page_num)
+            ],
+            "errors": prescan.errors,
+        }
+
+    except ValueError as e:
+        return {"status": "error", "error": str(e)}
+    except Exception as e:
+        logger.exception(f"/prescan-drawing-set failed: {e}")
+        return {"status": "error", "error": str(e)}
+
+
 # ── Entry Point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
