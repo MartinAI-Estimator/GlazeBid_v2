@@ -1248,3 +1248,99 @@ def test_TR12_real_pdf_rules_engine():
               f"confidence={top.confidence:.2f}, "
               f"system={top.system_hint}, "
               f"rules_passed={top.rules_passed}")
+
+
+# ── TR13: Candidate deduplication ────────────────────────────────────────────
+
+def test_TR13_deduplication_merges_overlapping():
+    """
+    TR13: deduplicate_candidates merges heavily overlapping candidates
+    into a single representative, keeping the highest-confidence one.
+    """
+    from layers.rules_engine import deduplicate_candidates
+
+    # Three candidates that are nearly identical (same location, slight offsets)
+    c1 = GlazingCandidate(
+        candidate_id="C001", bounding_box=Rect(100, 100, 500, 300),
+        width_pts=500, height_pts=300, width_inches=0, height_inches=0,
+        scale_factor=0, scale_confidence=0, bay_count=1, row_count=1,
+        confidence=0.60, rules_passed=["T1.1"], rules_failed=[],
+        system_hint="unknown", source_sheet="test", status="needs_review"
+    )
+    c2 = GlazingCandidate(
+        candidate_id="C002", bounding_box=Rect(102, 102, 498, 298),
+        width_pts=498, height_pts=298, width_inches=0, height_inches=0,
+        scale_factor=0, scale_confidence=0, bay_count=1, row_count=1,
+        confidence=0.45, rules_passed=["T1.1"], rules_failed=[],
+        system_hint="unknown", source_sheet="test", status="needs_review"
+    )
+    c3 = GlazingCandidate(
+        candidate_id="C003", bounding_box=Rect(98, 98, 504, 304),
+        width_pts=504, height_pts=304, width_inches=0, height_inches=0,
+        scale_factor=0, scale_confidence=0, bay_count=1, row_count=1,
+        confidence=0.40, rules_passed=["T1.1"], rules_failed=[],
+        system_hint="unknown", source_sheet="test", status="needs_review"
+    )
+    # One non-overlapping candidate (far away)
+    c4 = GlazingCandidate(
+        candidate_id="C004", bounding_box=Rect(2000, 100, 500, 300),
+        width_pts=500, height_pts=300, width_inches=0, height_inches=0,
+        scale_factor=0, scale_confidence=0, bay_count=1, row_count=1,
+        confidence=0.55, rules_passed=["T1.1"], rules_failed=[],
+        system_hint="unknown", source_sheet="test", status="needs_review"
+    )
+
+    result = deduplicate_candidates([c1, c2, c3, c4])
+
+    assert len(result) == 2, (
+        f"Expected 2 candidates after dedup (1 merged group + 1 separate), "
+        f"got {len(result)}: {[c.candidate_id for c in result]}"
+    )
+    # The kept candidate from the overlapping group should be the highest confidence
+    ids = {c.candidate_id for c in result}
+    assert "C001" in ids, "C001 (highest confidence) should survive dedup"
+    assert "C004" in ids, "C004 (non-overlapping) should survive dedup"
+    assert "C002" not in ids, "C002 (lower confidence duplicate) should be merged"
+    assert "C003" not in ids, "C003 (lowest confidence duplicate) should be merged"
+
+    # The surviving merged candidate should have debug_info
+    merged = next(c for c in result if c.candidate_id == "C001")
+    assert "merged_count" in merged.debug_info, "Merged candidate should have merged_count"
+    assert merged.debug_info["merged_count"] == 3, (
+        f"Expected merged_count=3, got {merged.debug_info['merged_count']}"
+    )
+
+
+def test_TR14_deduplication_no_overlap():
+    """
+    TR14: deduplicate_candidates does not merge candidates that
+    do not overlap — each stays as its own representative.
+    """
+    from layers.rules_engine import deduplicate_candidates
+
+    # Four clearly separate candidates
+    candidates = [
+        GlazingCandidate(
+            candidate_id=f"C00{i}",
+            bounding_box=Rect(i * 600, 100, 500, 300),
+            width_pts=500, height_pts=300, width_inches=0, height_inches=0,
+            scale_factor=0, scale_confidence=0, bay_count=1, row_count=1,
+            confidence=0.50, rules_passed=["T1.1"], rules_failed=[],
+            system_hint="unknown", source_sheet="test", status="needs_review"
+        )
+        for i in range(4)
+    ]
+
+    result = deduplicate_candidates(candidates)
+    assert len(result) == 4, (
+        f"Expected 4 separate candidates, got {len(result)}"
+    )
+
+
+def test_TR15_deduplication_empty_input():
+    """
+    TR15: deduplicate_candidates handles empty list without error.
+    """
+    from layers.rules_engine import deduplicate_candidates
+    result = deduplicate_candidates([])
+    assert result == []

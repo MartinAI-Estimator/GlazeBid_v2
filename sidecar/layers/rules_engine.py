@@ -751,6 +751,86 @@ def classify_system(
     return "unknown"
 
 
+# ── Candidate Deduplication ────────────────────────────────────────────────────
+
+def deduplicate_candidates(
+    candidates: List[GlazingCandidate],
+    overlap_threshold: float = 0.70
+) -> List[GlazingCandidate]:
+    """
+    Merge overlapping GlazingCandidate bounding boxes into representative candidates.
+
+    Two candidates are considered duplicates if their bounding boxes overlap
+    by more than overlap_threshold (IoU — Intersection over Union).
+
+    When merging a group of overlapping candidates:
+    - Keep the candidate with the highest confidence score
+    - Add the merged candidate count to its debug_info
+    - Discard the lower-confidence duplicates
+
+    This reduces 17 overlapping detections of the same glazing assembly
+    into 1-3 representative candidates for human review.
+
+    Args:
+        candidates: List of GlazingCandidate objects (any status)
+        overlap_threshold: IoU threshold above which candidates are merged (0.0-1.0)
+
+    Returns:
+        Deduplicated list, sorted by confidence descending. Never raises.
+    """
+    if len(candidates) <= 1:
+        return candidates
+
+    try:
+        def iou(a: Rect, b: Rect) -> float:
+            """Intersection over Union for two axis-aligned rectangles."""
+            ix1 = max(a.x, b.x)
+            iy1 = max(a.y, b.y)
+            ix2 = min(a.x_max, b.x_max)
+            iy2 = min(a.y_max, b.y_max)
+
+            if ix2 <= ix1 or iy2 <= iy1:
+                return 0.0  # No intersection
+
+            intersection = (ix2 - ix1) * (iy2 - iy1)
+            union = a.area + b.area - intersection
+            return intersection / union if union > 0 else 0.0
+
+        # Greedy clustering: assign each candidate to the first cluster
+        # whose representative it overlaps with above the threshold
+        clusters: List[List[GlazingCandidate]] = []
+
+        for candidate in candidates:
+            assigned = False
+            for cluster in clusters:
+                # Compare against the highest-confidence member of the cluster
+                representative = max(cluster, key=lambda c: c.confidence)
+                if iou(candidate.bounding_box, representative.bounding_box) >= overlap_threshold:
+                    cluster.append(candidate)
+                    assigned = True
+                    break
+            if not assigned:
+                clusters.append([candidate])
+
+        # From each cluster, keep the highest-confidence candidate
+        result = []
+        for cluster in clusters:
+            best = max(cluster, key=lambda c: c.confidence)
+            if len(cluster) > 1:
+                best.debug_info["merged_count"] = len(cluster)
+                best.debug_info["merged_ids"] = [
+                    c.candidate_id for c in cluster if c is not best
+                ]
+            result.append(best)
+
+        result.sort(key=lambda c: c.confidence, reverse=True)
+        return result
+
+    except Exception as e:
+        logger.warning(f"deduplicate_candidates failed: {e}")
+        return candidates
+
+
 # ── Main Engine ───────────────────────────────────────────────────────────────
 
 def run_rules_engine(
@@ -969,8 +1049,8 @@ def run_rules_engine(
                 status=status
             ))
 
-        # Sort by confidence descending
-        candidates_out.sort(key=lambda c: c.confidence, reverse=True)
+        # Deduplicate overlapping candidates, then sort by confidence
+        candidates_out = deduplicate_candidates(candidates_out)
         accepted = sum(1 for c in candidates_out if c.status == "auto_accepted")
         review = sum(1 for c in candidates_out if c.status == "needs_review")
         rejected = sum(1 for c in candidates_out if c.status == "rejected")
