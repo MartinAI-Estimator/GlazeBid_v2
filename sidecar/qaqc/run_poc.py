@@ -146,6 +146,25 @@ def run():
     path = normalization_path.get(classification.sheet_type, "UNKNOWN")
     print(f"  Normalization: {path}")
 
+    # ── Grid Label Detection (Layer 9 preview) ──
+    print(f"\n--- Layer 9: Grid Label Detection ---")
+    from layers.layer9_homography import detect_grid_labels
+    import fitz as _fitz
+    _doc = _fitz.open(TEST_PDF)
+    _page = _doc[0]
+    grid_labels = detect_grid_labels(_page, sheet_id="test_elevation")
+    _doc.close()
+
+    if grid_labels:
+        label_texts = [l.label for l in grid_labels]
+        print(f"  Detected {len(grid_labels)} grid labels: {label_texts[:15]}"
+              f"{'...' if len(grid_labels) > 15 else ''}")
+        print(f"  Note: Grid-line homography requires 2 sheets with matching labels.")
+        print(f"        Cross-sheet sync runs when both elevation + floor plan are available.")
+    else:
+        print(f"  No grid labels detected on this sheet.")
+        print(f"  (Expected if sheet is 'PRESENTATION PLANS' with no grid bubbles)")
+
     # Automated checks (T05, T06)
     print(f"\n--- Automated Gate Checks ---")
 

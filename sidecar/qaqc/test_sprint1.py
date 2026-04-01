@@ -668,3 +668,278 @@ def test_T24_real_pdf_sheet_router_runs_without_error():
           f"confidence={result.confidence:.0%}, "
           f"sheet_number={result.sheet_number}, "
           f"method={result.method}")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT 3 TESTS — Layer 9: Grid-Line Homography
+# ═══════════════════════════════════════════════════════════════════════════
+
+from layers.layer9_homography import (
+    detect_grid_labels,
+    match_grid_labels,
+    compute_homography,
+    project_point,
+    sync_sheets,
+    apply_cross_sheet_confidence,
+    GridLabel,
+    GridMatch,
+    HomographyResult,
+    MIN_GRID_LABELS_FOR_HOMOGRAPHY,
+    MULTI_VIEW_CONFIDENCE_BOOST,
+    SINGLE_VIEW_CONFIDENCE_PENALTY,
+)
+from typing import List, Tuple
+
+
+def _make_page_with_grid_labels(
+    labels: List[Tuple[str, float, float]],
+    width: int = 600,
+    height: int = 800
+):
+    """
+    Create an in-memory PDF page with grid labels inserted at specified positions.
+    labels: list of (text, x, y) tuples
+    """
+    import fitz
+    doc = fitz.open()
+    page = doc.new_page(width=width, height=height)
+    for text, x, y in labels:
+        page.insert_text(fitz.Point(x, y), text, fontsize=12, color=(0, 0, 0))
+    return page
+
+
+# ── T25: Grid label detection — letters ──────────────────────────────────────
+
+def test_T25_grid_label_detection_letters():
+    """
+    T25: Grid labels A, B, C placed in the margin zone are detected.
+    """
+    import fitz
+    # Place labels in the top margin (y < 8% of 800 = 64)
+    page = _make_page_with_grid_labels([
+        ("A", 100, 40),
+        ("B", 200, 40),
+        ("C", 300, 40),
+    ], width=600, height=800)
+
+    labels = detect_grid_labels(page, sheet_id="test")
+    detected = {l.label for l in labels}
+
+    assert "A" in detected, f"Grid label 'A' not detected. Found: {detected}"
+    assert "B" in detected, f"Grid label 'B' not detected. Found: {detected}"
+    assert "C" in detected, f"Grid label 'C' not detected. Found: {detected}"
+
+
+# ── T26: Grid label detection — numbers ──────────────────────────────────────
+
+def test_T26_grid_label_detection_numbers():
+    """
+    T26: Numeric grid labels 1, 2, 3 placed in the left margin are detected.
+    """
+    import fitz
+    # Place in left margin (x < 8% of 600 = 48)
+    page = _make_page_with_grid_labels([
+        ("1", 20, 200),
+        ("2", 20, 350),
+        ("3", 20, 500),
+    ], width=600, height=800)
+
+    labels = detect_grid_labels(page, sheet_id="test")
+    detected = {l.label for l in labels}
+
+    assert "1" in detected, f"Grid label '1' not detected. Found: {detected}"
+    assert "2" in detected, f"Grid label '2' not detected. Found: {detected}"
+    assert "3" in detected, f"Grid label '3' not detected. Found: {detected}"
+
+
+# ── T27: Grid label matching between two sheets ───────────────────────────────
+
+def test_T27_grid_label_matching():
+    """
+    T27: Grid labels present on both sheets are correctly matched.
+    Labels only on one sheet are not matched.
+    """
+    labels_a = [
+        GridLabel("A", 100, 50, "sheet_a"),
+        GridLabel("B", 200, 50, "sheet_a"),
+        GridLabel("C", 300, 50, "sheet_a"),
+        GridLabel("D", 400, 50, "sheet_a"),  # Only on sheet A
+    ]
+    labels_b = [
+        GridLabel("A", 110, 60, "sheet_b"),
+        GridLabel("B", 210, 60, "sheet_b"),
+        GridLabel("C", 310, 60, "sheet_b"),
+        GridLabel("E", 500, 60, "sheet_b"),  # Only on sheet B
+    ]
+
+    matches = match_grid_labels(labels_a, labels_b)
+    matched_labels = {m.label for m in matches}
+
+    assert "A" in matched_labels
+    assert "B" in matched_labels
+    assert "C" in matched_labels
+    assert "D" not in matched_labels, "D only on sheet A, should not be matched"
+    assert "E" not in matched_labels, "E only on sheet B, should not be matched"
+    assert len(matches) == 3
+
+
+# ── T28: Homography computation with sufficient matches ───────────────────────
+
+def test_T28_homography_computation():
+    """
+    T28: With 4 well-defined grid label pairs, homography computes successfully
+    with low reprojection error.
+    """
+    # Create a simple translation: sheet B is sheet A shifted by (50, 30)
+    matches = [
+        GridMatch("A", (100, 100), (150, 130)),
+        GridMatch("B", (200, 100), (250, 130)),
+        GridMatch("C", (300, 100), (350, 130)),
+        GridMatch("1", (100, 200), (150, 230)),
+    ]
+
+    result = compute_homography(matches, "elevation", "floor_plan")
+
+    assert result.transform_matrix is not None, (
+        f"Expected transform matrix, got None. Errors: {result.errors}"
+    )
+    assert result.reprojection_error_pts < 5.0, (
+        f"Reprojection error {result.reprojection_error_pts:.2f} exceeds 5pt threshold"
+    )
+    assert result.is_reliable == True
+
+
+# ── T29: Homography fails gracefully with too few matches ─────────────────────
+
+def test_T29_homography_insufficient_matches():
+    """
+    T29: With fewer than MIN_GRID_LABELS_FOR_HOMOGRAPHY matches,
+    homography returns HomographyResult with is_reliable=False. No exception.
+    """
+    matches = [
+        GridMatch("A", (100, 100), (150, 130)),
+        GridMatch("B", (200, 100), (250, 130)),
+        # Only 2 matches — insufficient
+    ]
+
+    result = compute_homography(matches, "elevation", "floor_plan")
+
+    assert isinstance(result, HomographyResult)
+    assert result.is_reliable == False
+    assert len(result.errors) > 0
+
+
+# ── T30: Point projection using homography ────────────────────────────────────
+
+def test_T30_point_projection():
+    """
+    T30: A point projected through a known homography lands at the
+    expected location within tolerance.
+    """
+    # Pure translation: +50 in x, +30 in y
+    matches = [
+        GridMatch("A", (100, 100), (150, 130)),
+        GridMatch("B", (200, 100), (250, 130)),
+        GridMatch("C", (300, 100), (350, 130)),
+        GridMatch("1", (100, 200), (150, 230)),
+    ]
+    homography = compute_homography(matches)
+
+    projected = project_point((400, 150), homography)
+
+    assert projected is not None
+    px, py = projected
+    # Expected: (450, 180) — translation of +50, +30
+    assert abs(px - 450) < 5.0, f"Projected x={px:.1f}, expected ~450"
+    assert abs(py - 180) < 5.0, f"Projected y={py:.1f}, expected ~180"
+
+
+# ── T31: Confidence boost for confirmed candidates ────────────────────────────
+
+def test_T31_confidence_boost_confirmed():
+    """
+    T31: Candidates confirmed in 2+ views receive a confidence boost
+    of MULTI_VIEW_CONFIDENCE_BOOST.
+    """
+    candidates = [
+        {"candidate_id": "C001", "confidence": 0.70},
+        {"candidate_id": "C002", "confidence": 0.65},
+    ]
+
+    updated = apply_cross_sheet_confidence(
+        candidates,
+        confirmed_ids=["C001"],
+        flagged_ids=["C002"]
+    )
+
+    c001 = next(c for c in updated if c["candidate_id"] == "C001")
+    c002 = next(c for c in updated if c["candidate_id"] == "C002")
+
+    assert abs(c001["confidence"] - (0.70 + MULTI_VIEW_CONFIDENCE_BOOST)) < 0.001
+    assert c001["cross_sheet_status"] == "confirmed"
+
+    assert abs(c002["confidence"] - (0.65 - SINGLE_VIEW_CONFIDENCE_PENALTY)) < 0.001
+    assert c002["cross_sheet_status"] == "single_view"
+
+
+# ── T32: Confidence does not exceed 1.0 ──────────────────────────────────────
+
+def test_T32_confidence_capped_at_1():
+    """
+    T32: Confidence boost cannot push a candidate above 1.0.
+    """
+    candidates = [{"candidate_id": "C001", "confidence": 0.95}]
+    updated = apply_cross_sheet_confidence(candidates, confirmed_ids=["C001"], flagged_ids=[])
+    assert updated[0]["confidence"] <= 1.0
+
+
+# ── T33: Confidence does not go below 0.0 ────────────────────────────────────
+
+def test_T33_confidence_floor_at_0():
+    """
+    T33: Confidence penalty cannot push a candidate below 0.0.
+    """
+    candidates = [{"candidate_id": "C001", "confidence": 0.05}]
+    updated = apply_cross_sheet_confidence(candidates, confirmed_ids=[], flagged_ids=["C001"])
+    assert updated[0]["confidence"] >= 0.0
+
+
+# ── T34: sync_sheets missing PDF returns HomographyResult ────────────────────
+
+def test_T34_sync_sheets_missing_pdf():
+    """
+    T34: sync_sheets_from_paths on a missing file returns HomographyResult
+    with is_reliable=False and errors populated. No exception raised.
+    """
+    from layers.layer9_homography import sync_sheets_from_paths
+    result = sync_sheets_from_paths(
+        "/nonexistent/a.pdf", 0,
+        "/nonexistent/b.pdf", 0
+    )
+    assert isinstance(result, HomographyResult)
+    assert result.is_reliable == False
+    assert len(result.errors) > 0
+
+
+# ── T35: Real PDF grid label detection ───────────────────────────────────────
+
+@pytest.mark.skipif(not HAS_REAL_PDF, reason="No real PDF at qaqc/test_data/test_elevation.pdf")
+def test_T35_real_pdf_grid_label_detection():
+    """
+    T35: Running grid label detection on the real test PDF returns
+    a list of GridLabel objects without error. Count is logged.
+    Requires: sidecar/qaqc/test_data/test_elevation.pdf
+    """
+    import fitz
+    doc = fitz.open(REAL_PDF_PATH)
+    page = doc[0]
+    labels = detect_grid_labels(page, sheet_id="test_elevation")
+    doc.close()
+
+    assert isinstance(labels, list), "Must return a list"
+    # Print detected labels for human awareness
+    print(f"\n  [T35 info] Detected {len(labels)} grid labels: "
+          f"{[l.label for l in labels[:10]]}"
+          f"{'...' if len(labels) > 10 else ''}")
+    # No assertion on count — some sheets have grid labels, some don't
+    # The test validates the function runs without error
