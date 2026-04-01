@@ -146,6 +146,44 @@ def run():
     path = normalization_path.get(classification.sheet_type, "UNKNOWN")
     print(f"  Normalization: {path}")
 
+    # ── Rules Engine ──
+    print(f"\n--- Rules Engine: Glazing Detection ---")
+    from layers.rules_engine import run_rules_engine
+    candidates = run_rules_engine(
+        graph.x,
+        graph.edge_index,
+        graph.edge_attr,
+        scale_factor=graph.scale.scale_factor,
+        scale_confidence=graph.scale.scale_confidence,
+        source_sheet="test_elevation"
+    )
+
+    accepted  = [c for c in candidates if c.status == "auto_accepted"]
+    review    = [c for c in candidates if c.status == "needs_review"]
+    rejected  = [c for c in candidates if c.status == "rejected"]
+
+    print(f"  Total candidates:   {len(candidates)}")
+    print(f"  Auto-accepted:      {len(accepted)}")
+    print(f"  Needs review:       {len(review)}")
+    print(f"  Rejected:           {len(rejected)}")
+
+    if accepted:
+        print(f"\n  Top 3 accepted candidates:")
+        for c in accepted[:3]:
+            print(f"    {c.candidate_id}: confidence={c.confidence:.2f} "
+                  f"system={c.system_hint} "
+                  f"bays={c.bay_count} "
+                  f"w={c.width_inches:.1f}\" h={c.height_inches:.1f}\"")
+            print(f"      rules_passed: {c.rules_passed}")
+    elif review:
+        print(f"\n  No auto-accepted candidates. Top review candidate:")
+        c = review[0]
+        print(f"    {c.candidate_id}: confidence={c.confidence:.2f} "
+              f"rules_passed={c.rules_passed}")
+    else:
+        print(f"  No candidates passed rules engine on this sheet.")
+        print(f"  (Expected if sheet is 'PRESENTATION PLANS' with no elevation geometry)")
+
     # ── Grid Label Detection (Layer 9 preview) ──
     print(f"\n--- Layer 9: Grid Label Detection ---")
     from layers.layer9_homography import detect_grid_labels
