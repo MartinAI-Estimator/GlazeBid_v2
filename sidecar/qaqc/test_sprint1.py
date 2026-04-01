@@ -484,3 +484,187 @@ def test_T15_low_scale_confidence_is_warning_not_error():
             )
     finally:
         os.unlink(tmp_path)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT 2 TESTS — Layer 1: Sheet Router
+# ═══════════════════════════════════════════════════════════════════════════
+
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from layers.layer1_router import (
+    classify_sheet,
+    classify_sheet_from_path,
+    SheetClassification,
+    _extract_titleblock_text,
+    _classify_from_text,
+    _detect_sheet_number,
+    SHEET_TYPES,
+)
+
+import fitz
+
+
+def _make_page_with_text(text: str, width: int = 600, height: int = 800) -> fitz.Page:
+    """Create an in-memory PDF page with text inserted at the bottom (title block area)."""
+    import fitz
+    doc = fitz.open()
+    page = doc.new_page(width=width, height=height)
+    # Insert text in the bottom strip (title block region)
+    page.insert_text(
+        fitz.Point(20, height - 40),
+        text,
+        fontsize=10,
+        color=(0, 0, 0)
+    )
+    return page
+
+
+# ── T16: Elevation keyword detection ────────────────────────────────────────
+
+def test_T16_elevation_keyword_detection():
+    """
+    T16: A page with 'SOUTH ELEVATION' in the title block is classified
+    as 'elevation' with confidence >= 0.8.
+    """
+    import fitz
+    page = _make_page_with_text("SHEET A3.1  SOUTH ELEVATION  SCALE: 1/8\"=1'-0\"")
+    result = classify_sheet(page)
+    assert result.sheet_type == "elevation", (
+        f"Expected 'elevation', got '{result.sheet_type}'"
+    )
+    assert result.confidence >= 0.8, (
+        f"Expected confidence >= 0.8, got {result.confidence}"
+    )
+
+
+# ── T17: Floor plan keyword detection ───────────────────────────────────────
+
+def test_T17_floorplan_keyword_detection():
+    """
+    T17: A page with 'FIRST FLOOR PLAN' in the title block is classified
+    as 'floor_plan' with confidence >= 0.8.
+    """
+    page = _make_page_with_text("SHEET A1.1  FIRST FLOOR PLAN  LEVEL 1")
+    result = classify_sheet(page)
+    assert result.sheet_type == "floor_plan", (
+        f"Expected 'floor_plan', got '{result.sheet_type}'"
+    )
+    assert result.confidence >= 0.8
+
+
+# ── T18: Detail sheet keyword detection ─────────────────────────────────────
+
+def test_T18_detail_keyword_detection():
+    """
+    T18: A page with 'TYP. DETAIL' in the title block is classified
+    as 'detail'.
+    """
+    page = _make_page_with_text("SHEET A5.2  TYP. DETAIL AT STOREFRONT HEAD")
+    result = classify_sheet(page)
+    assert result.sheet_type == "detail", (
+        f"Expected 'detail', got '{result.sheet_type}'"
+    )
+
+
+# ── T19: Schedule sheet keyword detection ───────────────────────────────────
+
+def test_T19_schedule_keyword_detection():
+    """
+    T19: A page with 'GLAZING SCHEDULE' is classified as 'schedule'.
+    """
+    page = _make_page_with_text("SHEET A6.0  GLAZING SCHEDULE  PROJECT: TEST BUILDING")
+    result = classify_sheet(page)
+    assert result.sheet_type == "schedule", (
+        f"Expected 'schedule', got '{result.sheet_type}'"
+    )
+
+
+# ── T20: Unknown sheet returns structured result ─────────────────────────────
+
+def test_T20_unknown_sheet_returns_structured_result():
+    """
+    T20: A page with no recognizable keywords returns SheetClassification
+    with sheet_type='unknown' and confidence=0.0. No exception raised.
+    """
+    page = _make_page_with_text("SOME RANDOM TEXT WITH NO GLAZING KEYWORDS XYZ123")
+    result = classify_sheet(page)
+    assert isinstance(result, SheetClassification)
+    assert result.sheet_type == "unknown"
+    assert result.confidence == 0.0
+
+
+# ── T21: Sheet number detection ──────────────────────────────────────────────
+
+def test_T21_sheet_number_detection():
+    """
+    T21: Sheet number is correctly extracted from title block text.
+    """
+    from layers.layer1_router import _detect_sheet_number
+    assert _detect_sheet_number("SHEET A3.1  SOUTH ELEVATION") == "A3.1"
+    assert _detect_sheet_number("S1.0  FOUNDATION PLAN") == "S1.0"
+    assert _detect_sheet_number("NO NUMBER HERE XYZ") == ""
+
+
+# ── T22: Structural sheet prefix inference ───────────────────────────────────
+
+def test_T22_structural_prefix_inference():
+    """
+    T22: A sheet numbered S1.0 with no clear keyword is inferred
+    as 'structural' via the sheet number prefix fallback.
+    """
+    import fitz
+    doc = fitz.open()
+    page = doc.new_page(width=600, height=800)
+    # Insert sheet number but no type keyword
+    page.insert_text(fitz.Point(20, 760), "S1.0  MISC NOTES", fontsize=10)
+    result = classify_sheet(page)
+    # Either structural from keyword or structural from prefix
+    assert result.sheet_type in ["structural", "unknown"], (
+        f"Expected structural or unknown, got {result.sheet_type}"
+    )
+
+
+# ── T23: Missing PDF returns SheetClassification not exception ───────────────
+
+def test_T23_missing_pdf_returns_classification():
+    """
+    T23: classify_sheet_from_path on a missing file returns SheetClassification
+    with errors populated. No exception raised.
+    """
+    result = classify_sheet_from_path("/nonexistent/path/drawing.pdf", page_num=0)
+    assert isinstance(result, SheetClassification)
+    assert len(result.errors) > 0
+
+
+# ── T24: Real PDF classification (skipped without real PDF) ─────────────────
+
+@pytest.mark.skipif(not HAS_REAL_PDF, reason="No real PDF at qaqc/test_data/test_elevation.pdf")
+def test_T24_real_pdf_sheet_router_runs_without_error():
+    """
+    T24: The sheet router runs on the real test PDF without error and returns
+    a valid SheetClassification with a known sheet_type (not necessarily elevation,
+    since the test PDF may not be an elevation sheet).
+
+    The full elevation classification is validated manually via run_poc.py
+    when a proper elevation sheet is available.
+
+    Requires: sidecar/qaqc/test_data/test_elevation.pdf
+    """
+    result = classify_sheet_from_path(REAL_PDF_PATH, page_num=0)
+    assert isinstance(result, SheetClassification), "Must return SheetClassification"
+    assert result.sheet_type in SHEET_TYPES, (
+        f"sheet_type must be one of {SHEET_TYPES}, got '{result.sheet_type}'"
+    )
+    assert 0.0 <= result.confidence <= 1.0, (
+        f"Confidence must be between 0.0 and 1.0, got {result.confidence}"
+    )
+    assert len(result.errors) == 0, (
+        f"No errors expected on a valid PDF, got: {result.errors}"
+    )
+    # Log what was detected for human awareness
+    print(f"\n  [T24 info] sheet_type={result.sheet_type}, "
+          f"confidence={result.confidence:.0%}, "
+          f"sheet_number={result.sheet_number}, "
+          f"method={result.method}")

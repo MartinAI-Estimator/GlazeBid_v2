@@ -120,6 +120,32 @@ def run():
 
     print_graph_diagnostics(graph)
 
+    # ── Sheet Router ──
+    print(f"\n--- Layer 1: Sheet Router ---")
+    from layers.layer1_router import classify_sheet_from_path
+    classification = classify_sheet_from_path(TEST_PDF, page_num=0)
+    print(f"  Sheet type:   {classification.sheet_type}")
+    print(f"  Confidence:   {classification.confidence:.0%}")
+    print(f"  Method:       {classification.method}")
+    print(f"  Matched text: {classification.matched_text}")
+    print(f"  Sheet number: {classification.sheet_number}")
+    if classification.errors:
+        for e in classification.errors:
+            print(f"  ERROR: {e}")
+
+    # Validate normalization path decision
+    normalization_path = {
+        "elevation": "FULL normalization (uniform stroke, text filter)",
+        "floor_plan": "PARTIAL normalization (preserve weight ratios)",
+        "detail": "NO normalization (preserve all attributes)",
+        "schedule": "NO normalization (text-dominant)",
+        "site_plan": "SKIP (no glazing scope)",
+        "structural": "SKIP (substrate reference only)",
+        "unknown": "NO normalization (flag for review)",
+    }
+    path = normalization_path.get(classification.sheet_type, "UNKNOWN")
+    print(f"  Normalization: {path}")
+
     # Automated checks (T05, T06)
     print(f"\n--- Automated Gate Checks ---")
 
