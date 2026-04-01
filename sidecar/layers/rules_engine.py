@@ -39,8 +39,8 @@ logger = logging.getLogger(__name__)
 # ── Physical Constants ────────────────────────────────────────────────────────
 
 # Geometry-only fallback thresholds (used when scale is unknown)
-GEOM_MIN_HEIGHT_PTS  = 30.0    # pts — eliminates dimension lines
-GEOM_MIN_AREA_PTS2   = 2000.0  # pts² — eliminates annotation rectangles
+GEOM_MIN_HEIGHT_PTS  = 75.0    # pts — min ~8ft glazing at 1/8" scale
+GEOM_MIN_AREA_PTS2   = 10000.0  # pts² — min area for plausible glazing opening
 GEOM_MAX_ASPECT      = 30.0    # width/height — eliminates horizontal bars
 GEOM_MIN_WIDTH_PTS   = 20.0    # pts — too narrow to be glazing
 
@@ -417,18 +417,18 @@ def check_dimensional_feasibility(
         # Reject obvious noise: dimension lines, annotation boxes, hatching
 
         # Minimum height: must be tall enough to be a glazing opening
-        # At typical 1/8" scale, 30pts ≈ 3.3" real height — below any glazing
+        # At typical 1/8" scale, 75pts ≈ 100" (8.3ft) — min full-height commercial glazing
         if rect.height < GEOM_MIN_HEIGHT_PTS:
             return False, (
-                f"T1.3_geometry: height {rect.height:.1f}pts below minimum {GEOM_MIN_HEIGHT_PTS}pts "
-                f"(likely dimension line or annotation)"
+                f"T1.3_geometry: height {rect.height:.1f}pts below minimum "
+                f"{GEOM_MIN_HEIGHT_PTS:.0f}pts (likely annotation, not glazing height)"
             )
 
         # Minimum area: must have substance
         if rect.area < GEOM_MIN_AREA_PTS2:
             return False, (
-                f"T1.3_geometry: area {rect.area:.0f}pts² below minimum {GEOM_MIN_AREA_PTS2}pts² "
-                f"(likely annotation rectangle)"
+                f"T1.3_geometry: area {rect.area:.0f}pts² below minimum "
+                f"{GEOM_MIN_AREA_PTS2:.0f}pts² (too small for glazing opening)"
             )
 
         # Maximum aspect ratio: width/height — glazing is not extremely wide and flat
