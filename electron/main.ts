@@ -54,6 +54,7 @@ const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell, Menu }
 type BW = InstanceType<typeof BrowserWindow>;
 import path from 'path';
 import fs from 'fs';
+import { spawn, type ChildProcess } from 'child_process';
 import {
   initCitationStore,
   writeCitation,
@@ -63,6 +64,120 @@ import {
   getImplicationSuggestions,
   recordImplicationUsage,
 } from '../apps/builder/src/db/citationStore';
+
+// ── AiQ Sidecar Process Manager ───────────────────────────────────────────────
+
+let sidecarProcess: ChildProcess | null = null;
+const SIDECAR_PORT = 8100;
+const SIDECAR_HEALTH_URL = `http://localhost:${SIDECAR_PORT}/health`;
+
+function getSidecarPythonPath(): string {
+  const candidates = [
+    path.join(__dirname, '../../.venv/Scripts/python.exe'),
+    path.join(__dirname, '../../.venv/bin/python'),
+    path.join(process.cwd(), '.venv/Scripts/python.exe'),
+    path.join(process.cwd(), '.venv/bin/python'),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return process.platform === 'win32' ? 'python' : 'python3';
+}
+
+function getSidecarDir(): string {
+  return path.join(__dirname, '../../sidecar');
+}
+
+async function checkSidecarHealth(): Promise<boolean> {
+  try {
+    const http = await import('http');
+    return new Promise((resolve) => {
+      const req = http.get(SIDECAR_HEALTH_URL, { timeout: 2000 }, (res) => {
+        resolve(res.statusCode === 200);
+        res.resume();
+      });
+      req.on('error', () => resolve(false));
+      req.on('timeout', () => { req.destroy(); resolve(false); });
+    });
+  } catch {
+    return false;
+  }
+}
+
+async function startSidecar(): Promise<void> {
+  const alreadyRunning = await checkSidecarHealth();
+  if (alreadyRunning) {
+    console.log('[AiQ] Sidecar already running on port', SIDECAR_PORT);
+    return;
+  }
+
+  const pythonPath = getSidecarPythonPath();
+  const sidecarDir = getSidecarDir();
+  const mainPy = path.join(sidecarDir, 'main.py');
+
+  if (!fs.existsSync(mainPy)) {
+    console.warn('[AiQ] Sidecar script not found at:', mainPy);
+    return;
+  }
+
+  console.log('[AiQ] Starting sidecar:', pythonPath, 'in', sidecarDir);
+
+  sidecarProcess = spawn(
+    pythonPath,
+    ['-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', String(SIDECAR_PORT), '--log-level', 'warning'],
+    {
+      cwd: sidecarDir,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      detached: false,
+    }
+  );
+
+  sidecarProcess.stdout?.on('data', (data: Buffer) => {
+    console.log('[AiQ sidecar]', data.toString().trim());
+  });
+
+  sidecarProcess.stderr?.on('data', (data: Buffer) => {
+    const msg = data.toString().trim();
+    if (msg) console.warn('[AiQ sidecar]', msg);
+  });
+
+  sidecarProcess.on('exit', (code, signal) => {
+    console.log(`[AiQ] Sidecar exited: code=${code} signal=${signal}`);
+    sidecarProcess = null;
+  });
+
+  sidecarProcess.on('error', (err) => {
+    console.error('[AiQ] Failed to start sidecar:', err.message);
+    sidecarProcess = null;
+  });
+
+  // Wait up to 15 seconds for the sidecar to become healthy
+  const maxWait = 15000;
+  const interval = 500;
+  let waited = 0;
+  while (waited < maxWait) {
+    await new Promise(resolve => setTimeout(resolve, interval));
+    waited += interval;
+    if (await checkSidecarHealth()) {
+      console.log(`[AiQ] Sidecar healthy after ${waited}ms`);
+      return;
+    }
+  }
+  console.warn('[AiQ] Sidecar did not become healthy within', maxWait, 'ms');
+}
+
+function stopSidecar(): void {
+  if (sidecarProcess && !sidecarProcess.killed) {
+    console.log('[AiQ] Stopping sidecar process');
+    sidecarProcess.kill('SIGTERM');
+    setTimeout(() => {
+      if (sidecarProcess && !sidecarProcess.killed) {
+        sidecarProcess.kill('SIGKILL');
+      }
+    }, 3000);
+    sidecarProcess = null;
+  }
+}
 
 // ── Window references ──────────────────────────────────────────────────────────
 let builderWindow: BW | null = null;
@@ -248,10 +363,13 @@ function loadStudioWithRetry(win: BW, attempt = 1): void {
 }
 
 // ── App lifecycle ──────────────────────────────────────────────────────────────
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   if (process.platform === 'win32') {
     app.setAppUserModelId('com.glazebid.v2');
   }
+
+  // ── Start AiQ sidecar (non-blocking — windows open even if sidecar fails) ──
+  startSidecar().catch(err => console.warn('[AiQ] Sidecar start failed:', err));
 
   // ── Initialize Citation SQLite store ──────────────────────────────────────
   try {
@@ -500,9 +618,27 @@ app.whenReady().then(() => {
     }
   });
 
+  // ── AiQ sidecar IPC ─────────────────────────────────────────────────────────
+  ipcMain.handle('aiq:health', async () => {
+    const healthy = await checkSidecarHealth();
+    return { healthy, port: SIDECAR_PORT };
+  });
+
+  ipcMain.handle('aiq:restart-sidecar', async () => {
+    stopSidecar();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await startSidecar();
+    const healthy = await checkSidecarHealth();
+    return { healthy };
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createBuilderWindow();
   });
+});
+
+app.on('before-quit', () => {
+  stopSidecar();
 });
 
 app.on('window-all-closed', () => {

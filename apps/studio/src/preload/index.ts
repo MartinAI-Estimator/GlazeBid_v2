@@ -56,5 +56,13 @@ contextBridge.exposeInMainWorld('electron', {
   getImplications:      (params: { systemType?: string; specSections?: string[]; keywords?: string[] }) => ipcRenderer.invoke('citation:getImplications', params),
   /** Record usage of an implication (for usage-based ranking). */
   recordImplicationUsage: (implId: string) => ipcRenderer.invoke('citation:recordUsage', implId),
+
+  // ── AiQ Sidecar ───────────────────────────────────────────────────────
+  aiq: {
+    /** Check if sidecar is healthy (via main process). */
+    health: () => ipcRenderer.invoke('aiq:health') as Promise<{ healthy: boolean; port: number }>,
+    /** Restart the sidecar process (via main process). */
+    restartSidecar: () => ipcRenderer.invoke('aiq:restart-sidecar') as Promise<{ healthy: boolean }>,
+  },
 });
 

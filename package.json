@@ -12,6 +12,8 @@
     "dev:studio": "concurrently --kill-others \"npm run dev --workspace apps/studio\" \"wait-on tcp:5174 && cross-env VITE_DEV_SERVER_URL=http://localhost:5174 electron .\"",
     "build:builder": "npm run build -w apps/builder",
     "build:studio": "npm run build -w apps/studio",
+    "sidecar": "cd sidecar && ../.venv/Scripts/python -m uvicorn main:app --host 127.0.0.1 --port 8100 --reload",
+    "sidecar:install": "cd sidecar && ../.venv/Scripts/pip install -r requirements.txt",
     "postinstall": "electron-builder install-app-deps"
   },
   "workspaces": [

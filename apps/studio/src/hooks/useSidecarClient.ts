@@ -74,6 +74,25 @@ async function pdfToBase64(pdfBuffer: ArrayBuffer): Promise<string> {
 }
 
 export async function checkSidecarHealth(): Promise<SidecarHealth> {
+  // Prefer IPC when running inside Electron (main process manages the sidecar)
+  try {
+    const aiq = (window as any).electron?.aiq;
+    if (aiq?.health) {
+      const { healthy } = await aiq.health();
+      if (healthy) {
+        // Sidecar confirmed alive via IPC — fetch full /health for version info
+        const res = await fetch(`${SIDECAR_URL}/health`, {
+          signal: AbortSignal.timeout(3000),
+        });
+        if (res.ok) return await res.json();
+      }
+      return { status: 'unavailable', error: 'Sidecar not running' };
+    }
+  } catch {
+    // IPC unavailable (browser dev mode) — fall through to direct HTTP
+  }
+
+  // Direct HTTP fallback (npm run dev:studio without Electron)
   try {
     const res = await fetch(`${SIDECAR_URL}/health`, {
       signal: AbortSignal.timeout(3000),
