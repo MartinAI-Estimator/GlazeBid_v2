@@ -34,14 +34,18 @@ export default function CitationCaptureLayer({ pageToScreen }: Props) {
   const setHoveredId       = useCitationStore(s => s.setHoveredCitationId);
   const loadSheetCitations = useCitationStore(s => s.loadSheetCitations);
 
-  const activePage = useStudioStore(s => s.getActivePage());
+  // Primitive selector — getActivePage() returns a new object every call,
+  // causing useSyncExternalStore infinite loops. We only need the label.
+  const activePageLabel = useStudioStore(s =>
+    s.pages.find(p => p.id === s.activePageId)?.label ?? null,
+  );
 
   // Reload citations when sheet changes
   useEffect(() => {
-    if (activePage?.label) {
-      loadSheetCitations('current', activePage.label);
+    if (activePageLabel) {
+      loadSheetCitations('current', activePageLabel);
     }
-  }, [activePage?.label, loadSheetCitations]);
+  }, [activePageLabel, loadSheetCitations]);
 
   // Derive screen position from page-space bounding box
   let screenPos = { x: 400, y: 200 };

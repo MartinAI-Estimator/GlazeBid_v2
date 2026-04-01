@@ -45,11 +45,12 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef    = useRef<HTMLCanvasElement>(null);
 
-  // Reactive selectors for DI overlay
-  const pages        = useStudioStore(s => s.pages);
-  const activePageId = useStudioStore(s => s.activePageId);
-  const cameraScale  = useStudioStore(s => s.cameraScale);
-  const activePdfPageIndex = pages.find(p => p.id === activePageId)?.pdfPageIndex ?? 0;
+  // Reactive selectors for DI overlay — primitive returns only (avoids
+  // new-object-every-render which triggers useSyncExternalStore infinite loops)
+  const activePdfPageIndex = useStudioStore(s =>
+    s.pages.find(p => p.id === s.activePageId)?.pdfPageIndex ?? 0,
+  );
+  const cameraScale = useStudioStore(s => s.cameraScale);
 
   const engine = useCanvasEngine(containerRef, canvasRef, onContextMenu);
 

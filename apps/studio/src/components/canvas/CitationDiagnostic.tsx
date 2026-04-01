@@ -14,8 +14,16 @@ export function CitationDiagnostic() {
   const pendingShape    = useCitationStore(s => s.pendingShape);
   const sheetCitations  = useCitationStore(s => s.sheetCitations);
   const shapes          = useStudioStore(s => s.shapes);
-  const activePage      = useStudioStore(s => s.getActivePage());
-  const calibration     = useStudioStore(s => s.getActiveCalibration());
+  // Primitive selectors — getActivePage()/getActiveCalibration() return new
+  // objects on every call which trips useSyncExternalStore infinite loops.
+  const activePageId    = useStudioStore(s => s.activePageId);
+  const activePageLabel = useStudioStore(s =>
+    s.pages.find(p => p.id === s.activePageId)?.label ?? null,
+  );
+  const ppi = useStudioStore(s => {
+    const cal = s.calibrations?.[s.activePageId];
+    return cal?.pixelsPerInch ?? null;
+  });
 
   const [dbStatus, setDbStatus] = useState<'checking' | 'ok' | 'error'>('checking');
   const [dbError, setDbError]   = useState<string>('');
@@ -35,7 +43,6 @@ export function CitationDiagnostic() {
       .catch(e => { setDbStatus('error'); setDbError(e.message); });
   }, []);
 
-  const ppi = calibration?.pixelsPerInch ?? null;
   const isDefaultPpi = ppi === 72;
 
   return (
@@ -57,8 +64,8 @@ export function CitationDiagnostic() {
       />
       <DiagRow
         label="Active Page"
-        ok={!!activePage?.id}
-        value={activePage?.label ?? 'None'}
+        ok={!!activePageId}
+        value={activePageLabel ?? 'None'}
       />
       <DiagRow
         label="Calibration"
