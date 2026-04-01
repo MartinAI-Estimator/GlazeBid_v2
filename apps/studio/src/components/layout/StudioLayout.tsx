@@ -10,8 +10,10 @@ import { BulkClassifyDialog } from '../ui/BulkClassifyDialog';
 import ShapeContextMenu, { type ContextMenuTarget } from '../canvas/ShapeContextMenu';
 import CustomSystemModal from '../parametric/CustomSystemModal';
 import StructuralPanel from '../structural/StructuralPanel';
+import { DrawingIntelligencePanel } from '../panels/DrawingIntelligencePanel';
 import StudioTitleBar from './StudioTitleBar';
 import { type CanvasEngineAPI } from '../../hooks/useCanvasEngine';
+import { useDrawingIntelligence, type CandidateWithReview } from '../../hooks/useDrawingIntelligence';
 import { useStudioStore, type PdfTab } from '../../store/useStudioStore';
 import type { RectShape, PolygonShape } from '../../types/shapes';
 import type { ScanResult } from '../../hooks/useAIAutoScan';
@@ -97,6 +99,10 @@ export default function StudioLayout() {
   // ── Frame Type Library panel toggle ───────────────────────────────────────
   const [showTypeLibrary, setShowTypeLibrary] = useState(false);
 
+  // ── Drawing Intelligence panel toggle + hook ──────────────────────────────
+  const [showDrawingIntelligence, setShowDrawingIntelligence] = useState(false);
+  const di = useDrawingIntelligence();
+
   // ── AI Auto-Scan state ─────────────────────────────────────────────────────
   const [scanResults,   setScanResults]   = useState<ScanResult[] | null>(null);
   const [isScanRunning, setIsScanRunning] = useState(false);
@@ -169,6 +175,12 @@ export default function StudioLayout() {
 
   const handleDialogDismiss = useCallback(() => setScanResults(null), []);
 
+  const handleDIScan = useCallback(() => {
+    const buf = engineRef.current?.getPdfBuffer();
+    if (!buf) return;
+    void di.runFullPipeline(buf.buffer as ArrayBuffer);
+  }, [di]);
+
   const handleEngine = useCallback((api: CanvasEngineAPI) => {
     setEngine(api);
     engineRef.current = api;
@@ -218,6 +230,9 @@ export default function StudioLayout() {
               onScanReady={handleScanReady}
               onScanComplete={handleScanComplete}
               onContextMenu={handleContextMenu}
+              diCandidates={di.state.candidates}
+              onDIConfirm={di.confirmCandidate}
+              onDIReject={di.rejectCandidate}
             />
             {/* CalibrationModal renders inside this relative container so
                 its `absolute inset-0` covers only the canvas area, not the panels */}
@@ -227,18 +242,31 @@ export default function StudioLayout() {
             engine={engine}
             showTypeLibrary={showTypeLibrary}
             onToggleTypeLibrary={() => setShowTypeLibrary(v => !v)}
+            showDrawingIntelligence={showDrawingIntelligence}
+            onToggleDrawingIntelligence={() => setShowDrawingIntelligence(v => !v)}
             onScanPage={handleScanPage}
             isScanRunning={isScanRunning}
           />
         </div>
 
-        {/* Right side: type library | structural panel | properties panel */}
+        {/* Right side: DI panel | type library | structural panel | properties panel */}
         {structuralShape ? (
           <aside className="w-80 flex-shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col">
             <StructuralPanel
               shape={structuralShape}
               onClose={() => setStructuralShape(null)}
               onAttach={handleStructuralAttach}
+            />
+          </aside>
+        ) : showDrawingIntelligence ? (
+          <aside className="w-72 flex-shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col overflow-hidden">
+            <DrawingIntelligencePanel
+              state={di.state}
+              onRunScan={handleDIScan}
+              onConfirm={di.confirmCandidate}
+              onReject={di.rejectCandidate}
+              onAbort={di.abort}
+              onReset={di.reset}
             />
           </aside>
         ) : showTypeLibrary ? (

@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useCanvasEngine, CanvasEngineAPI } from '../../hooks/useCanvasEngine';
+import { useStudioStore } from '../../store/useStudioStore';
 import { useParametricTool } from '../../hooks/useParametricTool';
 import { useRakeTool }       from '../../hooks/useRakeTool';
 import { useCountTool }      from '../../hooks/useCountTool';
@@ -10,11 +11,13 @@ import { useGhostDetector }  from '../../hooks/useGhostDetector';
 import FrameOverlay          from '../parametric/FrameOverlay';
 import GhostOverlay          from './GhostOverlay';
 import CitationCaptureLayer   from './CitationCaptureLayer';
+import { DrawingIntelligenceOverlay } from './DrawingIntelligenceOverlay';
 import RakeOverlay           from '../parametric/RakeOverlay';
 import { CountOverlay }      from '../parametric/CountOverlay';
 import { GridEditor }        from '../parametric/GridEditor';
 import type { ScanResult }   from '../../hooks/useAIAutoScan';
 import type { ContextMenuTarget } from './ShapeContextMenu';
+import type { CandidateWithReview } from '../../hooks/useDrawingIntelligence';
 
 interface StudioCanvasProps {
   /** Parent receives the engine API so the Toolbar can call fitToPage, zoomIn, zoomOut */
@@ -25,6 +28,10 @@ interface StudioCanvasProps {
   onScanComplete?: (results: ScanResult[]) => void;
   /** Called when the user right-clicks a frame/polygon highlight. */
   onContextMenu?:  (target: ContextMenuTarget) => void;
+  /** Drawing Intelligence candidates to overlay */
+  diCandidates?: CandidateWithReview[];
+  onDIConfirm?:  (id: string) => void;
+  onDIReject?:   (id: string) => void;
 }
 
 /**
@@ -34,9 +41,15 @@ interface StudioCanvasProps {
  * All rendering and event handling lives in the hook; this component only
  * provides the DOM refs and lifts the stable engine API to the layout.
  */
-export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, onContextMenu }: StudioCanvasProps) {
+export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, onContextMenu, diCandidates, onDIConfirm, onDIReject }: StudioCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef    = useRef<HTMLCanvasElement>(null);
+
+  // Reactive selectors for DI overlay
+  const pages        = useStudioStore(s => s.pages);
+  const activePageId = useStudioStore(s => s.activePageId);
+  const cameraScale  = useStudioStore(s => s.cameraScale);
+  const activePdfPageIndex = pages.find(p => p.id === activePageId)?.pdfPageIndex ?? 0;
 
   const engine = useCanvasEngine(containerRef, canvasRef, onContextMenu);
 
@@ -122,6 +135,20 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
         <CitationCaptureLayer pageToScreen={engine.pageToScreen} />
       )}
 
+      {/* ── Drawing Intelligence candidate overlay (Sprint 6) ─────────── */}
+      {engine && diCandidates && diCandidates.length > 0 && (
+        <DrawingIntelligenceOverlay
+          candidates={diCandidates}
+          currentPageNum={activePdfPageIndex}
+          pdfToScreen={engine.pageToScreen}
+          scale={cameraScale}
+          onConfirm={onDIConfirm ?? (() => {})}
+          onReject={onDIReject ?? (() => {})}
+          canvasWidth={containerRef.current?.clientWidth ?? 0}
+          canvasHeight={containerRef.current?.clientHeight ?? 0}
+        />
+      )}
+
       {/* ── Wand scanning indicator ─────────────────────────────────────── */}
       {isScanning && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 20 }}>
@@ -137,7 +164,6 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
 // ---------------------------------------------------------------------------
 // Tiny status bar overlay (bottom-left), reads zoom from the store
 // ---------------------------------------------------------------------------
-import { useStudioStore } from '../../store/useStudioStore';
 
 function ZoomStatusBar() {
   const zoom = useStudioStore(s => s.cameraScale);

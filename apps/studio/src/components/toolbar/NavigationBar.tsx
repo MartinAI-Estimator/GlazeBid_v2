@@ -3,11 +3,14 @@ import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 
 function TypeLibraryIcon() { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" /><path strokeLinecap="round" strokeLinejoin="round" d="M3 9h18M9 21V9" /><circle cx="16" cy="15" r="1.5" fill="currentColor" stroke="none" /></svg>; }
 function AiScanIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m9 0h4.5m-4.5 0v4.5m-9 11.25H3.75m0 0v-4.5m16.5 4.5h-4.5m4.5 0v-4.5M9 9l1.5 1.5L13.5 7" /><circle cx="12" cy="12" r="4" strokeDasharray="2 1.5" /></svg>; }
+function DIIcon()           { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5M14.25 3.104c.251.023.501.05.75.082M19 14.5l-1.756 4.388a1.5 1.5 0 01-1.394.952H8.15a1.5 1.5 0 01-1.394-.952L5 14.5m14 0H5" /></svg>; }
 
 type Props = {
   engine: CanvasEngineAPI | null;
   showTypeLibrary?: boolean;
   onToggleTypeLibrary?: () => void;
+  showDrawingIntelligence?: boolean;
+  onToggleDrawingIntelligence?: () => void;
   onScanPage?: () => void;
   isScanRunning?: boolean;
 };
@@ -24,7 +27,7 @@ function ChevronRightIcon() { return <svg className="w-4 h-4" fill="none" viewBo
 function SelectIcon()       { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 15l-5.879 5.879a3 3 0 01-4.243-4.243l7.396-7.396A3 3 0 0116.5 7.5" /><path strokeLinecap="round" strokeLinejoin="round" d="M9.5 4.5l4 1 1 4 4 1 1 4-4-1-1-4-4-1z" /></svg>; }
 function PanIcon()          { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75L12 2.25l4.5 1.5M12 2.25v19.5M4.5 7.5L3 12l1.5 4.5M19.5 7.5L21 12l-1.5 4.5M7.5 20.25L12 21.75l4.5-1.5" /></svg>; }
 
-export default function NavigationBar({ engine, showTypeLibrary, onToggleTypeLibrary, onScanPage, isScanRunning }: Props) {
+export default function NavigationBar({ engine, showTypeLibrary, onToggleTypeLibrary, showDrawingIntelligence, onToggleDrawingIntelligence, onScanPage, isScanRunning }: Props) {
   const cameraScale      = useStudioStore(s => s.cameraScale);
   const objectSnap       = useStudioStore(s => s.objectSnap);
   const showGrid         = useStudioStore(s => s.showGrid);
@@ -135,7 +138,7 @@ export default function NavigationBar({ engine, showTypeLibrary, onToggleTypeLib
 
       <Sep />
 
-      {/* Frame Type Library + AI Scan */}
+      {/* Frame Type Library + Drawing Intelligence + AI Scan */}
       {onToggleTypeLibrary && (
         <Btn
           onClick={onToggleTypeLibrary}
@@ -144,6 +147,16 @@ export default function NavigationBar({ engine, showTypeLibrary, onToggleTypeLib
           activeClass="bg-brand-600/25 text-brand-300 ring-1 ring-brand-600/40"
         >
           <TypeLibraryIcon />
+        </Btn>
+      )}
+      {onToggleDrawingIntelligence && (
+        <Btn
+          onClick={onToggleDrawingIntelligence}
+          title="Drawing Intelligence"
+          active={showDrawingIntelligence}
+          activeClass="bg-blue-600/25 text-blue-300 ring-1 ring-blue-600/40"
+        >
+          <DIIcon />
         </Btn>
       )}
       <Btn

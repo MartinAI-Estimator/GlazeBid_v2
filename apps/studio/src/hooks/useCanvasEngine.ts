@@ -101,6 +101,8 @@ export type CanvasEngineAPI = {
    * indicator appears immediately.  Safe to call on every mousemove.
    */
   getSnap: (pagePt: PagePoint) => SnapResult;
+  /** Return the last loaded PDF buffer (for sidecar scan). */
+  getPdfBuffer: () => Uint8Array | null;
   /** Tool cursors for new plugin tools. */
   rake:  never; count: never; wand: never; ghost: never;  // presence check only, not used directly
 };
@@ -113,6 +115,7 @@ export function useCanvasEngine(
   onContextMenu?:  (target: ContextMenuTarget) => void,
 ): CanvasEngineAPI {
   const cameraRef      = useRef(new Camera());
+  const pdfBufferRef   = useRef<Uint8Array | null>(null);
   const tileManagerRef = useRef(new PdfTileManager());
   const stateRef       = useRef<EngineState>({
     activeTool:       'select',
@@ -267,6 +270,7 @@ export function useCanvasEngine(
     fileName: string,
     role:     import('../store/useStudioStore').PdfTabRole,
   ) => {
+    pdfBufferRef.current = buffer;
     const loaded = await loadPdfFromBuffer(buffer, fileName);
 
     // Register page proxies with the tile manager
@@ -353,7 +357,7 @@ export function useCanvasEngine(
   }, [scheduleRedraw]);
 
   const api = useMemo<CanvasEngineAPI>(
-    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
+    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, getPdfBuffer: () => pdfBufferRef.current, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
     [fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap],
   );
 
