@@ -313,6 +313,111 @@ async def sync_sheets_endpoint(request: SyncSheetsRequest):
         return {"status": "error", "error": str(e), "is_reliable": False}
 
 
+# ── Detect Glazing Endpoint ───────────────────────────────────────────────────
+
+class DetectGlazingRequest(BaseModel):
+    """Request to run full glazing detection on a single PDF page."""
+    pdf_base64: str
+    page_num: int = 0
+    sheet_type: str = "elevation"
+    scale_factor: float = 0.0
+    scale_confidence: float = 0.0
+
+
+@app.post("/detect-glazing")
+async def detect_glazing_endpoint(request: DetectGlazingRequest):
+    """
+    Run the complete glazing detection pipeline on a single PDF page:
+    Layer 0 (normalize) → Layer 2 (extract graph) → Rules Engine (detect candidates)
+
+    Returns GlazingCandidate list ready for Studio UI display.
+    This is the primary endpoint called by the Studio DrawingIntelligence panel.
+    """
+    from layers.rules_engine import run_rules_engine, GlazingCandidate
+
+    try:
+        pdf_bytes = base64.b64decode(request.pdf_base64)
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+            f.write(pdf_bytes)
+            tmp_path = f.name
+
+        try:
+            graph: GraphData = extract_vector_graph(
+                tmp_path,
+                page_num=request.page_num,
+                sheet_type=request.sheet_type,
+            )
+        finally:
+            os.unlink(tmp_path)
+
+        if not graph.is_valid:
+            return {
+                "status": "error",
+                "error": "; ".join(graph.validation_errors),
+                "candidates": [],
+                "page_num": request.page_num,
+            }
+
+        candidates = run_rules_engine(
+            graph.x,
+            graph.edge_index,
+            graph.edge_attr,
+            scale_factor=graph.scale.scale_factor,
+            scale_confidence=graph.scale.scale_confidence,
+            source_sheet=f"page_{request.page_num}",
+        )
+
+        # Filter to non-rejected candidates for the UI
+        ui_candidates = [c for c in candidates if c.status != "rejected"]
+
+        def candidate_to_dict(c: GlazingCandidate) -> dict:
+            return {
+                "candidate_id": c.candidate_id,
+                "bounding_box": {
+                    "x": c.bounding_box.x,
+                    "y": c.bounding_box.y,
+                    "width": c.bounding_box.width,
+                    "height": c.bounding_box.height,
+                },
+                "width_pts": c.width_pts,
+                "height_pts": c.height_pts,
+                "width_inches": c.width_inches,
+                "height_inches": c.height_inches,
+                "scale_factor": c.scale_factor,
+                "scale_confidence": c.scale_confidence,
+                "bay_count": c.bay_count,
+                "confidence": c.confidence,
+                "rules_passed": c.rules_passed,
+                "rules_failed": c.rules_failed,
+                "system_hint": c.system_hint,
+                "source_sheet": c.source_sheet,
+                "status": c.status,
+            }
+
+        return {
+            "status": "ok",
+            "page_num": request.page_num,
+            "candidate_count": len(ui_candidates),
+            "candidates": [candidate_to_dict(c) for c in ui_candidates],
+            "scale": {
+                "scale_factor": graph.scale.scale_factor,
+                "scale_confidence": graph.scale.scale_confidence,
+                "source": graph.scale.source,
+            },
+            "graph_meta": {
+                "node_count": graph.node_count,
+                "edge_count": graph.edge_count,
+            },
+            "warnings": graph.validation_warnings,
+        }
+
+    except ValueError as e:
+        return {"status": "error", "error": str(e), "candidates": [], "page_num": request.page_num}
+    except Exception as e:
+        logger.exception(f"/detect-glazing failed: {e}")
+        return {"status": "error", "error": str(e), "candidates": [], "page_num": request.page_num}
+
+
 # ── Prescan Endpoint ──────────────────────────────────────────────────────────
 
 class PrescanRequest(BaseModel):
