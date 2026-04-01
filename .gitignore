@@ -35,6 +35,11 @@ lerna-debug.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+# Sidecar test data (real PDFs + generated outputs)
+sidecar/qaqc/test_data/*.pdf
+sidecar/qaqc/test_data/*.svg
+sidecar/.pytest_cache/
 *.sw?
 
 # TypeScript build info
