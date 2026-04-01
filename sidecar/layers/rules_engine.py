@@ -54,7 +54,7 @@ WEIGHT_SYMMETRY      = 0.10
 WEIGHT_CONTINUITY    = 0.15
 
 AUTO_ACCEPT_THRESHOLD = 0.70
-NEEDS_REVIEW_THRESHOLD = 0.50
+NEEDS_REVIEW_THRESHOLD = 0.40
 
 # System classification thresholds (in feet)
 CW_MIN_WIDTH_FT  = 20.0  # curtain wall: wider than 20ft

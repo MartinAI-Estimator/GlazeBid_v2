@@ -92,45 +92,66 @@ def _parse_scale_ratio(text: str) -> Optional[float]:
     Parse a scale string into a pts-per-inch factor.
 
     Handles common architectural scale formats:
-    - '1/8" = 1\'-0"' → 9.0 pts per inch (1/8 inch on paper = 12 inches real)
-    - '1:100' → 100/72 * 72 = 100 pts per inch
-    - '1/4" = 1\'-0"' → 4.5 pts per inch
-    - '3/32" = 1\'-0"' → 12.0 pts per inch
+    - '1/8" = 1\'-0"'    → paper 1/8 inch = 1 real foot
+    - '1/8"=1\'-0"'      → same without spaces
+    - '3/32" = 1\'-0"'
+    - '1/4" = 1\'-0"'
+    - '1" = 1\'-0"'      → 1:12
+    - '1:96'             → metric ratio (1/8" = 1'-0" is 1:96)
+    - '1:100', '1:50'    → metric ratios
+    - '3/16'             → shorthand (assumed = 1'-0")
 
     Returns pts_per_inch or None if unparseable.
     PDF points: 72 pts = 1 inch.
     """
     text = text.strip().upper()
 
-    # Pattern: "1/8" = 1'-0"" style (paper fraction = real foot)
-    # paper_inches : real_inches = pts_per_inch
-    fraction_pattern = re.compile(
+    # Remove common prefixes
+    for prefix in ['SCALE:', 'DRAWING SCALE:', 'SCALE =', 'SCL:']:
+        if text.startswith(prefix):
+            text = text[len(prefix):].strip()
+
+    # Pattern 1: "N/D" = 1'-0" style (with or without spaces around =)
+    # Handles: 1/8"=1'-0"  1/8" = 1'-0"  3/32"=1'-0"
+    fraction_eq_foot = re.compile(
         r'(\d+)\s*/\s*(\d+)\s*["\u201d]?\s*=\s*1\s*[\'-]'
     )
-    m = fraction_pattern.search(text)
+    m = fraction_eq_foot.search(text)
     if m:
         num, den = int(m.group(1)), int(m.group(2))
         if den > 0:
             paper_inches = num / den
             real_inches = 12.0  # 1 foot
-            # pts per real inch = 72 * paper_inches / real_inches... wait:
-            # paper_inches on paper = real_inches in reality
-            # 1 real inch = paper_inches/real_inches paper inches
-            # 1 paper inch = 72 pts
-            # pts per real inch = 72 * paper_inches / real_inches
             pts_per_inch = 72.0 * paper_inches / real_inches
             return pts_per_inch
 
-    # Pattern: "1:N" ratio
+    # Pattern 2: Integer inches = 1'-0" style (e.g. 1" = 1'-0", 2" = 1'-0")
+    int_eq_foot = re.compile(r'(\d+)\s*["\u201d]\s*=\s*1\s*[\'-]')
+    m = int_eq_foot.search(text)
+    if m:
+        paper_inches = float(m.group(1))
+        pts_per_inch = 72.0 * paper_inches / 12.0
+        return pts_per_inch
+
+    # Pattern 3: 1:N ratio (metric)
     ratio_pattern = re.compile(r'1\s*:\s*(\d+(?:\.\d+)?)')
     m = ratio_pattern.search(text)
     if m:
         ratio = float(m.group(1))
-        # 1:100 means 1 paper unit = 100 real units
-        # 1 paper inch = 72 pts, 1 paper inch = 100 real inches
-        # pts per real inch = 72 / 100
-        pts_per_inch = 72.0 / ratio
-        return pts_per_inch
+        if ratio > 0:
+            pts_per_inch = 72.0 / ratio
+            return pts_per_inch
+
+    # Pattern 4: Shorthand fraction with no "= 1'-0"" (e.g. "3/16", "1/8")
+    # Assume = 1'-0" convention
+    shorthand = re.compile(r'^(\d+)\s*/\s*(\d+)\s*["\u201d]?\s*$')
+    m = shorthand.search(text.strip())
+    if m:
+        num, den = int(m.group(1)), int(m.group(2))
+        if den > 0:
+            paper_inches = num / den
+            pts_per_inch = 72.0 * paper_inches / 12.0
+            return pts_per_inch
 
     return None
 
@@ -139,56 +160,70 @@ def detect_scale(page: fitz.Page) -> ScaleCalibration:
     """
     Attempts to detect the drawing scale using three methods in priority order.
 
-    Method 1: Graphic scale bar
-        Look for a horizontal line segment with nearby text containing
-        a scale ratio pattern (e.g., '1/8" = 1\'-0"').
+    Method 1: Title block text search
+        Search all text blocks for 'SCALE:' or ratio patterns.
 
-    Method 2: Dimension string correlation
-        Find text blocks that contain dimension values (e.g., '10\'-0"').
-        Find nearby horizontal or vertical line segments.
-        Compute the pts-per-inch ratio from segment length vs. dimension value.
-        Use the median of all found ratios.
+    Method 2: Full page text scan
+        Scan all text on the page for scale ratio patterns.
+        Use median of all found ratios for robustness.
 
-    Method 3: Title block text search
-        Search all text on the page for 'SCALE:' or 'DRAWING SCALE' followed
-        by a scale value.
+    Method 3: Dimension string correlation (future enhancement)
 
     Returns ScaleCalibration with confidence=0.0 and source='unknown' if all fail.
     Never raises exceptions.
     """
     try:
-        # ── Method 3: Title block text search (simplest, try first for speed) ──
-        blocks = page.get_text("blocks")
-        for block in blocks:
-            text = block[4].upper() if len(block) > 4 else ""
-            if "SCALE:" in text or "DRAWING SCALE" in text:
-                # Extract the scale value from the same text block
-                pts = _parse_scale_ratio(text)
-                if pts and pts > 0:
-                    return ScaleCalibration(
-                        scale_factor=pts,
-                        scale_confidence=0.75,
-                        source="title_block"
-                    )
+        all_text_blocks = page.get_text("blocks")
 
-        # ── Method 1 + 2: Scan text blocks for scale patterns ──
+        # ── Method 1: Title block search (bottom 20% + right 25%) ──
+        rect = page.rect
+        w, h = rect.width, rect.height
+
+        title_regions = [
+            fitz.Rect(0, h * 0.80, w, h),           # bottom 20%
+            fitz.Rect(w * 0.75, 0, w, h),            # right 25%
+        ]
+
+        for region in title_regions:
+            blocks = page.get_text("blocks", clip=region)
+            for block in blocks:
+                if len(block) <= 4:
+                    continue
+                text = block[4].strip()
+                # Check each line in the block
+                for line in text.split('\n'):
+                    pts = _parse_scale_ratio(line)
+                    if pts and pts > 0:
+                        return ScaleCalibration(
+                            scale_factor=pts,
+                            scale_confidence=0.90,
+                            source="title_block"
+                        )
+
+        # ── Method 2: Full page scan — collect all ratio matches ──
         ratios = []
-        for block in blocks:
+        for block in all_text_blocks:
             if len(block) <= 4:
                 continue
-            text = block[4]
-            pts = _parse_scale_ratio(text)
-            if pts and pts > 0:
-                ratios.append(pts)
+            text = block[4].strip()
+            for line in text.split('\n'):
+                pts = _parse_scale_ratio(line)
+                if pts and pts > 0:
+                    # Sanity check: architectural scales typically 3-300 pts/inch
+                    # 3 pts/in = 1:24 (very large scale)
+                    # 300 pts/in = 25:1 (very small detail)
+                    if 3.0 <= pts <= 300.0:
+                        ratios.append(pts)
 
         if ratios:
-            # Use median for robustness
             median_pts = float(np.median(ratios))
-            confidence = min(0.85, 0.5 + 0.1 * len(ratios))
+            # More matches = higher confidence
+            confidence = min(0.85, 0.55 + 0.05 * len(ratios))
+            source = "title_block" if len(ratios) == 1 else "dimension_string"
             return ScaleCalibration(
                 scale_factor=median_pts,
                 scale_confidence=confidence,
-                source="dimension_string" if len(ratios) > 1 else "scale_bar"
+                source=source
             )
 
         # All methods failed
