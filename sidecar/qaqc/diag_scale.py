@@ -59,10 +59,11 @@ def run(pdf_path: str, page_num: int):
             if not line:
                 continue
             pts = _parse_scale_ratio(line)
-            scale_info = f" → {pts:.4f} pts/in ✓" if pts else ""
-            # Sanitize for console output (handle Unicode chars)
-            safe_line = line[:80].encode('ascii', 'replace').decode('ascii')
-            print(f"  [{region_str:10s}] {safe_line}{scale_info}")
+            scale_info = f" -> {pts:.4f} pts/in MATCH" if pts else ""
+            # Safe print — replace unencodeable chars
+            safe_line = line[:80].encode('ascii', errors='replace').decode('ascii')
+            out_str = f"  [{region_str:10s}] {safe_line}{scale_info}"
+            print(out_str.encode('ascii', errors='replace').decode('ascii'))
 
     # Run actual scale detection
     print(f"\n--- Scale Detection Result ---")

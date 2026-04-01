@@ -92,11 +92,13 @@ def _parse_scale_ratio(text: str) -> Optional[float]:
     Parse a scale string into a pts-per-inch factor.
 
     Handles common architectural scale formats:
-    - '1/8" = 1\'-0"'    → paper 1/8 inch = 1 real foot
-    - '1/8"=1\'-0"'      → same without spaces
-    - '3/32" = 1\'-0"'
-    - '1/4" = 1\'-0"'
-    - '1" = 1\'-0"'      → 1:12
+    - '1/8" = 1'-0"'    → paper 1/8 inch = 1 real foot
+    - '1/8"=1'-0"'      → same without spaces
+    - '⅛" = 1'-0"'      → Unicode fraction variant
+    - '¾" = 1'-0"'      → Unicode fraction variant
+    - '3/32" = 1'-0"'
+    - '1/4" = 1'-0"'
+    - '1" = 1'-0"'      → 1:12
     - '1:96'             → metric ratio (1/8" = 1'-0" is 1:96)
     - '1:100', '1:50'    → metric ratios
     - '3/16'             → shorthand (assumed = 1'-0")
@@ -104,7 +106,47 @@ def _parse_scale_ratio(text: str) -> Optional[float]:
     Returns pts_per_inch or None if unparseable.
     PDF points: 72 pts = 1 inch.
     """
-    text = text.strip().upper()
+    # Unicode fraction character → decimal mapping
+    UNICODE_FRACTIONS = {
+        '\u00BC': 0.25,   # ¼
+        '\u00BD': 0.5,    # ½
+        '\u00BE': 0.75,   # ¾
+        '\u2150': 1/7,    # ⅐
+        '\u2151': 1/9,    # ⅑
+        '\u2152': 1/10,   # ⅒
+        '\u2153': 1/3,    # ⅓
+        '\u2154': 2/3,    # ⅔
+        '\u2155': 0.2,    # ⅕
+        '\u2156': 0.4,    # ⅖
+        '\u2157': 0.6,    # ⅗
+        '\u2158': 0.8,    # ⅘
+        '\u2159': 1/6,    # ⅙
+        '\u215A': 5/6,    # ⅚
+        '\u215B': 0.125,  # ⅛
+        '\u215C': 3/8,    # ⅜
+        '\u215D': 5/8,    # ⅝
+        '\u215E': 7/8,    # ⅞
+    }
+
+    text = text.strip()
+
+    # Replace Unicode fraction characters with decimal equivalents before parsing
+    # Check for Unicode fraction followed by " = 1'-0" pattern FIRST
+    for char, value in UNICODE_FRACTIONS.items():
+        if char in text:
+            # Pattern: ⅛" = 1'-0" → treat as fraction = 1 foot
+            frac_pattern = re.compile(
+                re.escape(char) + r'\s*["\u201d]?\s*=\s*1\s*[\'-]',
+                re.IGNORECASE
+            )
+            m = frac_pattern.search(text)
+            if m:
+                paper_inches = value
+                real_inches = 12.0
+                pts_per_inch = 72.0 * paper_inches / real_inches
+                return pts_per_inch
+
+    text = text.upper()
 
     # Remove common prefixes
     for prefix in ['SCALE:', 'DRAWING SCALE:', 'SCALE =', 'SCL:']:
@@ -142,16 +184,10 @@ def _parse_scale_ratio(text: str) -> Optional[float]:
             pts_per_inch = 72.0 / ratio
             return pts_per_inch
 
-    # Pattern 4: Shorthand fraction with no "= 1'-0"" (e.g. "3/16", "1/8")
-    # Assume = 1'-0" convention
-    shorthand = re.compile(r'^(\d+)\s*/\s*(\d+)\s*["\u201d]?\s*$')
-    m = shorthand.search(text.strip())
-    if m:
-        num, den = int(m.group(1)), int(m.group(2))
-        if den > 0:
-            paper_inches = num / den
-            pts_per_inch = 72.0 * paper_inches / 12.0
-            return pts_per_inch
+    # Pattern 4: Shorthand fraction with no "= 1'-0"" (e.g. "SCALE: 3/16")
+    # Only match if text starts with digits (i.e. the SCALE: prefix was stripped)
+    # and nothing else follows the fraction. Too risky to assume = 1'-0" from bare text.
+    # Disabled: bare fractions like "3/4"" match too many dimension callouts.
 
     return None
 
@@ -209,10 +245,11 @@ def detect_scale(page: fitz.Page) -> ScaleCalibration:
             for line in text.split('\n'):
                 pts = _parse_scale_ratio(line)
                 if pts and pts > 0:
-                    # Sanity check: architectural scales typically 3-300 pts/inch
-                    # 3 pts/in = 1:24 (very large scale)
-                    # 300 pts/in = 25:1 (very small detail)
-                    if 3.0 <= pts <= 300.0:
+                    # Sanity check: architectural scales typically 0.3-300 pts/inch
+                    # 0.375 pts/in = 1/16"=1'-0" (very small scale, large buildings)
+                    # 0.75 pts/in  = 1/8"=1'-0"  (most common elevation scale)
+                    # 300 pts/in   = 25:1 (very small detail)
+                    if 0.3 <= pts <= 300.0:
                         ratios.append(pts)
 
         if ratios:
