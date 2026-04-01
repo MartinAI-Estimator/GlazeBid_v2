@@ -220,3 +220,39 @@ def test_TS09_real_pdf_full_pipeline():
     print(f"\n  [TS09] classify={r1.json()['sheet_type']} "
           f"nodes={d2['node_count']} "
           f"labels={r3.json()['label_count']}")
+
+
+# ── TS10: Prescan endpoint ────────────────────────────────────────────────────
+
+def test_TS10_prescan_drawing_set():
+    """TS10: POST /prescan-drawing-set returns structured page lists."""
+    pdf_b64 = _make_minimal_pdf_base64()
+    response = client.post("/prescan-drawing-set", json={
+        "pdf_base64": pdf_b64,
+        "max_pages": 5
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert "total_pages" in data
+    assert "scan_pages" in data
+    assert "reference_pages" in data
+    assert "skip_pages" in data
+    assert "results" in data
+    assert isinstance(data["scan_pages"], list)
+    assert isinstance(data["skip_pages"], list)
+
+
+@pytest.mark.skipif(not HAS_REAL_PDF, reason="No real PDF at qaqc/test_data/test_elevation.pdf")
+def test_TS11_prescan_real_pdf():
+    """TS11: Prescan on the real test PDF returns at least one scan page."""
+    pdf_b64 = _real_pdf_base64()
+    response = client.post("/prescan-drawing-set", json={"pdf_base64": pdf_b64})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert data["total_pages"] > 0
+    print(f"\n  [TS11] total={data['total_pages']} "
+          f"scan={data['scan_pages']} "
+          f"reference={len(data['reference_pages'])} "
+          f"skip={len(data['skip_pages'])}")

@@ -100,9 +100,9 @@ def run():
     from layers.layer_prescan import prescan_drawing_set, prescan_summary
     prescan = prescan_drawing_set(TEST_PDF)
     print(prescan_summary(prescan))
-    print(f"\n  Full pipeline will run on {len(prescan.scan_pages)} of "
-          f"{prescan.total_pages} pages.")
-    print(f"  Time saved: ~{prescan.total_pages - len(prescan.scan_pages)} pages skipped")
+    print(f"\n  Full pipeline running on page 0 only for this POC.")
+    print(f"  In production: run full pipeline only on pages {prescan.scan_pages}")
+    print()
 
     print(f"\nRunning Layer 0 + Layer 2 extraction...")
 
