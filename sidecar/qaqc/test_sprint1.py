@@ -1033,24 +1033,35 @@ def test_TR02_rectangularity_rejects_extreme_aspect():
     assert "rectangularity" in rule
 
 
-# ── TR03: T1.3 Dimensional feasibility skipped when scale unknown ────────────
+# ── TR03: T1.3 Geometry fallback when scale unknown ──────────────────────────
 
-def test_TR03_dimension_skipped_low_scale_confidence():
-    """TR03: When scale_confidence < 0.5, dimensional check passes with skip note."""
-    tiny = Rect(x=0, y=0, width=2, height=2)  # Would fail if scale were known
+def test_TR03_geometry_fallback_when_scale_unknown():
+    """
+    TR03: When scale_confidence < 0.5, dimensional check uses geometry-only
+    fallback. A tiny rect (2x2 pts) fails the geometry fallback.
+    A properly-sized rect (100x200 pts) passes.
+    """
+    # Tiny rect: fails geometry fallback (area too small)
+    tiny = Rect(x=0, y=0, width=2, height=2)
     ok, rule = check_dimensional_feasibility(tiny, scale_factor=72.0, scale_confidence=0.3)
-    assert ok == True
-    assert "skipped" in rule
+    assert ok == False, "Tiny rect should fail geometry fallback"
+    assert "geometry" in rule.lower()
+
+    # Proper-sized rect: passes geometry fallback
+    proper = Rect(x=0, y=0, width=200, height=400)
+    ok2, rule2 = check_dimensional_feasibility(proper, scale_factor=72.0, scale_confidence=0.3)
+    assert ok2 == True, f"Proper rect should pass geometry fallback, got: {rule2}"
 
 
 # ── TR04: T1.3 Dimensional feasibility rejects out-of-range dimensions ───────
 
-def test_TR04_dimension_rejects_too_small():
-    """TR04: A candidate smaller than GLASS_MIN_WIDTH_IN fails dimensional check."""
-    # 72 pts/inch scale, 3pt wide = 3/72 = 0.042 inches — below minimum
+def test_TR04_dimension_rejects_too_small_with_known_scale():
+    """TR04: When scale IS known (confidence >= 0.5), a candidate smaller than
+    GLASS_MIN_WIDTH_IN fails dimensional check.
+    At 72 pts/inch scale, 3pt wide = 3/72 = 0.042 inches -- below minimum."""
     tiny = Rect(x=0, y=0, width=3, height=100)
     ok, rule = check_dimensional_feasibility(tiny, scale_factor=72.0, scale_confidence=0.9)
-    assert ok == False
+    assert ok == False, f"Tiny rect with known scale should fail. Got: {ok}, {rule}"
     assert "dimension" in rule
 
 

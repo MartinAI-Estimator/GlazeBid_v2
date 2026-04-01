@@ -38,6 +38,12 @@ logger = logging.getLogger(__name__)
 
 # ── Physical Constants ────────────────────────────────────────────────────────
 
+# Geometry-only fallback thresholds (used when scale is unknown)
+GEOM_MIN_HEIGHT_PTS  = 30.0    # pts — eliminates dimension lines
+GEOM_MIN_AREA_PTS2   = 2000.0  # pts² — eliminates annotation rectangles
+GEOM_MAX_ASPECT      = 30.0    # width/height — eliminates horizontal bars
+GEOM_MIN_WIDTH_PTS   = 20.0    # pts — too narrow to be glazing
+
 GLASS_MIN_WIDTH_IN   = 6.0    # inches — minimum manufacturable glass width
 GLASS_MAX_WIDTH_IN   = 120.0  # inches — maximum standard glass width
 GLASS_MIN_HEIGHT_IN  = 6.0    # inches
@@ -375,31 +381,72 @@ def check_dimensional_feasibility(
     scale_confidence: float
 ) -> Tuple[bool, str]:
     """
-    T1.3 Dimensional Feasibility: Width and height must be within
-    physically manufacturable glass ranges.
+    T1.3 Dimensional Feasibility
 
-    ONLY applied when scale_confidence >= 0.5.
-    If scale is unknown, this check is skipped (returns pass with warning).
+    When scale IS known (confidence >= 0.5):
+        Width and height must be within physically manufacturable glass ranges.
+
+    When scale is UNKNOWN (confidence < 0.5):
+        Apply geometry-only fallback filters to reject clearly non-glazing shapes:
+        - Minimum height: 30 pts (~0.4" at 1/8" scale — eliminates dimension lines)
+        - Maximum aspect ratio: 30:1 (eliminates long thin dimension lines)
+        - Minimum area: 2000 pts² (eliminates tiny annotation rectangles)
+        - Maximum bay count proxy: width/height ratio <= 15 (not a dimension string)
+
+    These geometry-only thresholds are deliberately loose — they reject obvious
+    noise while preserving genuine glazing candidates for human review.
     """
-    if scale_confidence < 0.5:
-        return True, "T1.3_dimension_skipped_low_scale_confidence"
+    if scale_confidence >= 0.5 and scale_factor > 0:
+        # Full dimensional check with real-world units
+        width_in = rect.width / scale_factor
+        height_in = rect.height / scale_factor
 
-    if scale_factor <= 0:
-        return True, "T1.3_dimension_skipped_zero_scale"
+        if width_in < GLASS_MIN_WIDTH_IN:
+            return False, f"T1.3_dimension: width {width_in:.1f}\" below minimum {GLASS_MIN_WIDTH_IN}\""
+        if width_in > GLASS_MAX_WIDTH_IN:
+            return False, f"T1.3_dimension: width {width_in:.1f}\" above maximum {GLASS_MAX_WIDTH_IN}\""
+        if height_in < GLASS_MIN_HEIGHT_IN:
+            return False, f"T1.3_dimension: height {height_in:.1f}\" below minimum {GLASS_MIN_HEIGHT_IN}\""
+        if height_in > GLASS_MAX_HEIGHT_IN:
+            return False, f"T1.3_dimension: height {height_in:.1f}\" above maximum {GLASS_MAX_HEIGHT_IN}\""
 
-    width_in = rect.width / scale_factor
-    height_in = rect.height / scale_factor
+        return True, "T1.3_dimensional_feasibility"
 
-    if width_in < GLASS_MIN_WIDTH_IN:
-        return False, f"T1.3_dimension: width {width_in:.1f}\" below minimum {GLASS_MIN_WIDTH_IN}\""
-    if width_in > GLASS_MAX_WIDTH_IN:
-        return False, f"T1.3_dimension: width {width_in:.1f}\" above maximum {GLASS_MAX_WIDTH_IN}\""
-    if height_in < GLASS_MIN_HEIGHT_IN:
-        return False, f"T1.3_dimension: height {height_in:.1f}\" below minimum {GLASS_MIN_HEIGHT_IN}\""
-    if height_in > GLASS_MAX_HEIGHT_IN:
-        return False, f"T1.3_dimension: height {height_in:.1f}\" above maximum {GLASS_MAX_HEIGHT_IN}\""
+    else:
+        # Geometry-only fallback when scale is unknown
+        # Reject obvious noise: dimension lines, annotation boxes, hatching
 
-    return True, "T1.3_dimensional_feasibility"
+        # Minimum height: must be tall enough to be a glazing opening
+        # At typical 1/8" scale, 30pts ≈ 3.3" real height — below any glazing
+        if rect.height < GEOM_MIN_HEIGHT_PTS:
+            return False, (
+                f"T1.3_geometry: height {rect.height:.1f}pts below minimum {GEOM_MIN_HEIGHT_PTS}pts "
+                f"(likely dimension line or annotation)"
+            )
+
+        # Minimum area: must have substance
+        if rect.area < GEOM_MIN_AREA_PTS2:
+            return False, (
+                f"T1.3_geometry: area {rect.area:.0f}pts² below minimum {GEOM_MIN_AREA_PTS2}pts² "
+                f"(likely annotation rectangle)"
+            )
+
+        # Maximum aspect ratio: width/height — glazing is not extremely wide and flat
+        aspect = rect.width / rect.height if rect.height > 0 else 0
+        if aspect > GEOM_MAX_ASPECT:
+            return False, (
+                f"T1.3_geometry: aspect ratio {aspect:.1f} exceeds {GEOM_MAX_ASPECT}:1 "
+                f"(likely dimension string or header bar)"
+            )
+
+        # Minimum width: must be wider than a door
+        if rect.width < GEOM_MIN_WIDTH_PTS:
+            return False, (
+                f"T1.3_geometry: width {rect.width:.1f}pts below minimum {GEOM_MIN_WIDTH_PTS}pts "
+                f"(too narrow to be glazing)"
+            )
+
+        return True, "T1.3_geometry_fallback_passed"
 
 
 def check_orientation(rect: Rect) -> Tuple[bool, str]:
