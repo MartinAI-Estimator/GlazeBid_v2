@@ -341,15 +341,15 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
       setProgress(55);
 
       // Determine final spec list:
-      // - If we scanned specs and found some with Div 08 → use only those (keptSpecs)
-      // - If we scanned specs but none had Div 08 → empty (all moved to 'other')
-      // - If no spec files were uploaded at all → use whatever was categorized as 'spec'
-      const didScanSpecs = specFiles.length > 0;
-      const finalSpecs = didScanSpecs
-        ? keptSpecs   // Only Div 08 specs (may be empty — that's correct)
+      // All files dropped in the "Specifications" zone stay as specs — the
+      // Division 08 scan enriches them with section metadata but never removes
+      // them from the spec category.
+      const allSpecNames = specFiles.map(f => f.name);
+      const finalSpecs = allSpecNames.length > 0
+        ? allSpecNames
         : (files || []).filter(f => fileCategories[f.name] === 'spec').map(f => f.name);
 
-      console.log(`📑 Spec splitter results: scanned=${didScanSpecs}, kept=${keptSpecs.length}, rejected=${rejectedSpecs.length}, final=${finalSpecs.length}`);
+      console.log(`📑 Spec splitter results: scanned=${specFiles.length}, div8=${keptSpecs.length}, noDiv8=${rejectedSpecs.length}, final=${finalSpecs.length}`);
       if (div8Sections.length > 0) {
         console.log(`📑 Division 08 sections found:`, div8Sections.map(s => `${s.code} ${s.name}`).join(', '));
       }
@@ -365,7 +365,7 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
           .map(f => f.name),
         structural: [],
         spec: finalSpecs,
-        other: rejectedSpecs,
+        other: [],
         file_categories: fileCategories,
         specSections: allSpecSections,
         div8Sections,

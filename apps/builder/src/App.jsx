@@ -843,11 +843,13 @@ function App() {
 
     // Spec Viewer for Specifications
     if (currentView === 'documentViewer') {
+      const specSheet = sheets.find(s => s.id === documentViewerPath);
       return (
         <SpecViewer 
           project={currentProject}
           documentPath={documentViewerPath}
-          documentName={sheets.find(s => s.id === documentViewerPath)?.name || 'Specifications'}
+          documentName={specSheet?.name || 'Specifications'}
+          filePath={specSheet?.path || ''}
           onClose={() => setCurrentView('projectHome')}
         />
       );

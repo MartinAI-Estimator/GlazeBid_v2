@@ -109,6 +109,7 @@ const SpecViewer = ({
   project, 
   documentPath,
   documentName,
+  filePath,
   onClose 
 }) => {
   // Document state
@@ -834,31 +835,43 @@ const SpecViewer = ({
 
   // Load PDF document
   useEffect(() => {
-    if (!documentPath) return;
+    if (!documentPath && !filePath) return;
 
     const loadPdf = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Only http/https URLs are supported in offline/Electron mode.
-        let pdfUrl;
-        if (documentPath.startsWith('http')) {
-          pdfUrl = documentPath;
-        } else {
-          setError('Document not available in offline mode. Re-import the file to view it.');
+        let pdfData = null;
+
+        // Try 1: Load from filesystem via Electron IPC
+        if (filePath && window.electronAPI?.readPdfFile) {
+          console.log('📄 Loading spec from disk:', filePath);
+          const result = await window.electronAPI.readPdfFile(filePath);
+          if (result?.ok && result.buffer) {
+            pdfData = { data: result.buffer };
+          } else {
+            console.warn('⚠️ Electron read-pdf failed:', result?.error);
+          }
+        }
+
+        // Try 2: HTTP URL
+        if (!pdfData && documentPath?.startsWith('http')) {
+          console.log('📄 Loading spec from URL:', documentPath);
+          pdfData = {
+            url: documentPath,
+            cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@' + PDFJS_VERSION + '/cmaps/',
+            cMapPacked: true,
+          };
+        }
+
+        if (!pdfData) {
+          setError('No PDF file available. Re-import the spec to view it.');
           setLoading(false);
           return;
         }
 
-        console.log('📄 Loading spec document:', pdfUrl);
-        
-        const loadingTask = pdfjsLib.getDocument({
-          url: pdfUrl,
-          cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@' + PDFJS_VERSION + '/cmaps/',
-          cMapPacked: true,
-        });
-        
+        const loadingTask = pdfjsLib.getDocument(pdfData);
         const pdf = await loadingTask.promise;
         
         setPdfDoc(pdf);
@@ -884,7 +897,7 @@ const SpecViewer = ({
     };
 
     loadPdf();
-  }, [documentPath, project]);
+  }, [documentPath, filePath, project]);
 
   // Extract detailed requirements for in-scope sections
   const extractRequirements = async () => {

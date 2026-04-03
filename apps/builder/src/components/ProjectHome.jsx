@@ -78,7 +78,7 @@ const ProjectHome = ({
     other: categoryCounts.other || 0,
   };
 
-  const totalSheets = counts.architectural + counts.structural + counts.other;
+  const totalSheets = counts.architectural + counts.structural + counts.specifications + counts.other;
 
   const categories = [
     {
@@ -523,7 +523,7 @@ const ProjectHome = ({
                             >
                               <div style={styles.documentRowLeft}>
                                 <FileText size={16} color="#6b7280" />
-                                <span style={styles.documentName}>{sheet.display || sheet.id}</span>
+                                <span style={styles.documentName}>{sheet.name || sheet.display || sheet.id}</span>
                               </div>
                               <span style={styles.documentDate}>Today</span>
                             </div>
