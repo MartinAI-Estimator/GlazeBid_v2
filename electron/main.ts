@@ -73,8 +73,8 @@ const SIDECAR_HEALTH_URL = `http://localhost:${SIDECAR_PORT}/health`;
 
 function getSidecarPythonPath(): string {
   const candidates = [
-    path.join(__dirname, '../../.venv/Scripts/python.exe'),
-    path.join(__dirname, '../../.venv/bin/python'),
+    path.join(__dirname, '../.venv/Scripts/python.exe'),
+    path.join(__dirname, '../.venv/bin/python'),
     path.join(process.cwd(), '.venv/Scripts/python.exe'),
     path.join(process.cwd(), '.venv/bin/python'),
   ];
@@ -85,7 +85,7 @@ function getSidecarPythonPath(): string {
 }
 
 function getSidecarDir(): string {
-  return path.join(__dirname, '../../sidecar');
+  return path.join(__dirname, '../sidecar');
 }
 
 async function checkSidecarHealth(): Promise<boolean> {
