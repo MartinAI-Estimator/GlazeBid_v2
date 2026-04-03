@@ -244,8 +244,6 @@ export default function StudioLayout() {
             onToggleTypeLibrary={() => setShowTypeLibrary(v => !v)}
             showDrawingIntelligence={showDrawingIntelligence}
             onToggleDrawingIntelligence={() => setShowDrawingIntelligence(v => !v)}
-            onScanPage={handleScanPage}
-            isScanRunning={isScanRunning}
           />
         </div>
 

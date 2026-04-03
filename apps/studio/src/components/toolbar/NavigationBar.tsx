@@ -11,8 +11,6 @@ type Props = {
   onToggleTypeLibrary?: () => void;
   showDrawingIntelligence?: boolean;
   onToggleDrawingIntelligence?: () => void;
-  onScanPage?: () => void;
-  isScanRunning?: boolean;
 };
 
 function ZoomInIcon()  { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" /></svg>; }
@@ -27,7 +25,7 @@ function ChevronRightIcon() { return <svg className="w-4 h-4" fill="none" viewBo
 function SelectIcon()       { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 15l-5.879 5.879a3 3 0 01-4.243-4.243l7.396-7.396A3 3 0 0116.5 7.5" /><path strokeLinecap="round" strokeLinejoin="round" d="M9.5 4.5l4 1 1 4 4 1 1 4-4-1-1-4-4-1z" /></svg>; }
 function PanIcon()          { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75L12 2.25l4.5 1.5M12 2.25v19.5M4.5 7.5L3 12l1.5 4.5M19.5 7.5L21 12l-1.5 4.5M7.5 20.25L12 21.75l4.5-1.5" /></svg>; }
 
-export default function NavigationBar({ engine, showTypeLibrary, onToggleTypeLibrary, showDrawingIntelligence, onToggleDrawingIntelligence, onScanPage, isScanRunning }: Props) {
+export default function NavigationBar({ engine, showTypeLibrary, onToggleTypeLibrary, showDrawingIntelligence, onToggleDrawingIntelligence }: Props) {
   const cameraScale      = useStudioStore(s => s.cameraScale);
   const objectSnap       = useStudioStore(s => s.objectSnap);
   const showGrid         = useStudioStore(s => s.showGrid);
@@ -159,14 +157,6 @@ export default function NavigationBar({ engine, showTypeLibrary, onToggleTypeLib
           <DIIcon />
         </Btn>
       )}
-      <Btn
-        onClick={onScanPage}
-        title={isScanRunning ? 'Scanning…' : 'AI Auto-Scan'}
-        active={isScanRunning}
-        activeClass="bg-brand-600/20 text-brand-300 ring-1 ring-brand-600/30 cursor-wait"
-      >
-        <AiScanIcon />
-      </Btn>
     </div>
   );
 }

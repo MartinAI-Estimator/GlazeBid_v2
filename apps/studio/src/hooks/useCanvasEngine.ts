@@ -502,6 +502,32 @@ export function useCanvasEngine(
       return res.snapped ? res.point : raw;
     }
 
+    /**
+     * Constrain a point to 0°/45°/90° from a starting point (Shift-lock).
+     * Used for straight-line drawing in calibrate and line tools.
+     */
+    function constrainAngle(start: { x: number; y: number }, end: { x: number; y: number }): { x: number; y: number } {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      const adx = Math.abs(dx);
+      const ady = Math.abs(dy);
+      // Determine dominant axis for snap direction
+      if (adx > ady * 2) {
+        // Horizontal (0°)
+        return { x: end.x, y: start.y };
+      } else if (ady > adx * 2) {
+        // Vertical (90°)
+        return { x: start.x, y: end.y };
+      } else {
+        // 45° diagonal — project onto nearest 45° line
+        const dist = Math.max(adx, ady);
+        return {
+          x: start.x + dist * Math.sign(dx),
+          y: start.y + dist * Math.sign(dy),
+        };
+      }
+    }
+
     function updateCursor(): void {
       const s = stateRef.current;
       canvas.style.cursor = ptrRef.current.isPanning
@@ -563,8 +589,9 @@ export function useCanvasEngine(
           if (!ip || ip.type !== 'line' || !ip.start) {
             inProgressRef.current = { type: 'line', start: pt, cursor: pt };
           } else {
-            // Second click → commit
-            commitLine(ip.start, pt, s);
+            // Second click → commit (shift-constrain to 0°/45°/90°)
+            const finalPt = e.shiftKey ? constrainAngle(ip.start, pt) : pt;
+            commitLine(ip.start, finalPt, s);
             inProgressRef.current = null;
             snapRef.current = SNAP_NONE;
           }
@@ -623,10 +650,10 @@ export function useCanvasEngine(
 
       const ip = inProgressRef.current;
       if (ip) {
-        if (ip.type === 'line'      && ip.start)         ip.cursor = pt;
+        if (ip.type === 'line'      && ip.start)         ip.cursor = e.shiftKey ? constrainAngle(ip.start, pt) : pt;
         if (ip.type === 'rect'      && ip.start)         ip.cursor = pt;
         if (ip.type === 'polygon')                       ip.cursor = pt;
-        if (ip.type === 'calibrate' && ip.start)         ip.cursor = pt;
+        if (ip.type === 'calibrate' && ip.start)         ip.cursor = e.shiftKey ? constrainAngle(ip.start, pt) : pt;
       }
 
       ptrRef.current.hasMoved =
@@ -663,10 +690,11 @@ export function useCanvasEngine(
       if (s.activeTool === 'calibrate') {
         const ip = inProgressRef.current;
         if (ip?.type === 'calibrate' && ip.start && ptrRef.current.hasMoved) {
-          const dist = distancePx(ip.start, pt);
+          const finalPt = e.shiftKey ? constrainAngle(ip.start, pt) : pt;
+          const dist = distancePx(ip.start, finalPt);
           useStudioStore.getState().setPendingCalibrationLine({
             start:  ip.start,
-            end:    pt,
+            end:    finalPt,
             distPx: dist,
           });
           inProgressRef.current = null;

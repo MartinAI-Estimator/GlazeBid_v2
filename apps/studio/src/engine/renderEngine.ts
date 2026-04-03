@@ -368,9 +368,12 @@ function drawShape(
     ctx.stroke();
     dot(ctx, shape.start, 3 / scale, color);
     dot(ctx, shape.end,   3 / scale, color);
-    const mx = (shape.start.x + shape.end.x) / 2;
-    const my = (shape.start.y + shape.end.y) / 2;
-    drawLabel(ctx, `${shape.lengthInches.toFixed(2)}"`, mx, my - 7 / scale, scale);
+    // Only show dimension label when selected
+    if (selected) {
+      const mx = (shape.start.x + shape.end.x) / 2;
+      const my = (shape.start.y + shape.end.y) / 2;
+      drawLabel(ctx, `${shape.lengthInches.toFixed(2)}"`, mx, my - 7 / scale, scale);
+    }
 
   } else if (shape.type === 'rect') {
     const { origin: o, widthPx: w, heightPx: h } = shape;
@@ -379,9 +382,11 @@ function drawShape(
     ctx.strokeStyle = color;
     ctx.lineWidth   = lw;
     ctx.strokeRect(o.x, o.y, w, h);
-    // Dimension labels
-    drawLabel(ctx, `${shape.widthInches.toFixed(2)}"`, o.x + w / 2,      o.y - 7 / scale,      scale);
-    drawLabel(ctx, `${shape.heightInches.toFixed(2)}"`, o.x + w + 8 / scale, o.y + h / 2, scale, C.label, true);
+    // Dimension labels only when selected
+    if (selected) {
+      drawLabel(ctx, `${shape.widthInches.toFixed(2)}"`, o.x + w / 2,      o.y - 7 / scale,      scale);
+      drawLabel(ctx, `${shape.heightInches.toFixed(2)}"`, o.x + w + 8 / scale, o.y + h / 2, scale, C.label, true);
+    }
     if (shape.label) {
       drawLabel(ctx, shape.label, o.x + w / 2, o.y + h / 2, scale, '#f1f5f9');
     }

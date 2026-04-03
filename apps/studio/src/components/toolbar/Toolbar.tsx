@@ -86,9 +86,6 @@ const TOOLS: ToolDef[] = [
   { id: 'calibrate', label: 'Calibrate',       icon: <CalibrateIcon />, shortcut: 'A' },
   { id: 'frame',     label: 'Frame Highlight', icon: <FrameIcon />,     shortcut: 'F' },
   { id: 'rake',      label: 'Raked Frame',     icon: <RakeIcon />,      shortcut: 'R' },
-  { id: 'count',     label: 'Count Marker',    icon: <CountIcon />,     shortcut: 'C' },
-  { id: 'wand',      label: 'Magic Wand',      icon: <WandIcon />,      shortcut: 'W' },
-  { id: 'ghost',     label: 'Ghost Detector',  icon: <GhostIcon />,     shortcut: 'G' },
 ];
 
 // ── Toolbar ────────────────────────────────────────────────────────────────────

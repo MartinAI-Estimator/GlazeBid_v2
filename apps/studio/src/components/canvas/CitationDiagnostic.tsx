@@ -47,7 +47,7 @@ export function CitationDiagnostic() {
 
   return (
     <div style={{
-      position: 'fixed', bottom: 12, left: 80, zIndex: 99999,
+      position: 'fixed', bottom: 56, left: 80, zIndex: 99999,
       background: '#0f172a', border: '1px solid #1e3a5f',
       borderRadius: 8, padding: '10px 14px', fontSize: 11,
       fontFamily: 'monospace', color: '#94a3b8', minWidth: 260,

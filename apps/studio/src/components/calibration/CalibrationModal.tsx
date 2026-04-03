@@ -2,6 +2,63 @@ import { useState } from 'react';
 import { useStudioStore } from '../../store/useStudioStore';
 import { calibrateFromLine } from '../../engine/coordinateSystem';
 
+// ── Calibration input parser ──────────────────────────────────────────────────
+/**
+ * Parse a calibration length string into inches.
+ * Accepts:
+ *   36, 36", 36in        → 36 inches
+ *   3', 3ft              → 36 inches
+ *   3'6", 3'-6", 3 6     → 42 inches
+ *   3'6, 3'-6            → 42 inches
+ */
+function parseCalibrationInput(input: string): number | null {
+  const s = input.trim();
+  if (!s) return null;
+
+  // feet-and-inches: 3'6", 3'-6", 3' 6", 3'6, 3'-6
+  const feetInches = s.match(/^(\d+(?:\.\d+)?)\s*['′ft]\s*[-–]?\s*(\d+(?:\.\d+)?)\s*["″in]*$/i);
+  if (feetInches) {
+    const ft = parseFloat(feetInches[1]);
+    const inches = parseFloat(feetInches[2]);
+    const total = ft * 12 + inches;
+    return total > 0 ? total : null;
+  }
+
+  // feet only: 3', 3ft
+  const feetOnly = s.match(/^(\d+(?:\.\d+)?)\s*['′ft]+$/i);
+  if (feetOnly) {
+    const ft = parseFloat(feetOnly[1]);
+    return ft > 0 ? ft * 12 : null;
+  }
+
+  // inches: 36", 36in, or plain number
+  const inchesMatch = s.match(/^(\d+(?:\.\d+)?)\s*["″in]*$/i);
+  if (inchesMatch) {
+    const val = parseFloat(inchesMatch[1]);
+    return val > 0 ? val : null;
+  }
+
+  // "3 6" shorthand (feet inches with just a space)
+  const spaceMatch = s.match(/^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/);
+  if (spaceMatch) {
+    const ft = parseFloat(spaceMatch[1]);
+    const inches = parseFloat(spaceMatch[2]);
+    const total = ft * 12 + inches;
+    return total > 0 ? total : null;
+  }
+
+  return null;
+}
+
+/** Format inches as a human-readable string with feet and inches. */
+function formatInchesPreview(inches: number): string {
+  const ft  = Math.floor(inches / 12);
+  const rem = inches % 12;
+  if (ft === 0) return `${rem % 1 === 0 ? rem : rem.toFixed(2)} inches`;
+  if (rem === 0) return `${ft}'-0"`;
+  return `${ft}'-${rem % 1 === 0 ? rem : rem.toFixed(2)}"`;
+}
+
 // ── Standard architectural / engineering scales ───────────────────────────────
 // ratio = how many real-world inches one paper-inch represents.
 // E.g. 1/4" = 1'-0"  →  1 paper inch = 4 feet = 48 real inches  →  ratio = 48
@@ -78,15 +135,16 @@ export default function CalibrationModal() {
         pending.distPx / (PDF_PPI / selectedScale.ratio),   // known inches
         activePageId,
       );
-      setCalibration(cal);
+      // Store calibration without the visual reference line
+      setCalibration({ ...cal, refStartPx: undefined, refEndPx: undefined });
     } else {
-      const inches = parseFloat(inputValue);
-      if (isNaN(inches) || inches <= 0) {
-        setError('Enter a positive number of inches.');
+      const inches = parseCalibrationInput(inputValue);
+      if (inches === null) {
+        setError('Enter a valid length. Examples: 36, 36", 3\', 3\'6"');
         return;
       }
       const cal = calibrateFromLine(pending.start, pending.end, inches, activePageId);
-      setCalibration(cal);
+      setCalibration({ ...cal, refStartPx: undefined, refEndPx: undefined });
     }
     setPending(null);
     setInputValue('');
@@ -197,19 +255,33 @@ export default function CalibrationModal() {
         {mode === 'custom' && (
           <>
             <label className="block text-[11px] font-medium text-slate-400 mb-1.5">
-              Real-world length of this line (inches)
+              Real-world length of this line
             </label>
             <input
               autoFocus
-              type="number"
-              min="0.01"
-              step="any"
-              placeholder='e.g. 36 for a 3-foot door header'
+              type="text"
+              placeholder={`e.g. 36, 3', 3'6"`}
               value={inputValue}
               onChange={e => { setInputValue(e.target.value); setError(''); }}
               onKeyDown={handleKeyDown}
-              className="w-full bg-slate-800 border border-slate-700 focus:border-brand-500 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full bg-slate-800 border border-slate-700 focus:border-brand-500 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none"
             />
+            {/* Live preview of parsed value */}
+            {inputValue.trim() && (() => {
+              const parsed = parseCalibrationInput(inputValue);
+              if (parsed !== null) {
+                return (
+                  <p className="mt-1.5 text-[11px] text-amber-300 font-mono">
+                    = {formatInchesPreview(parsed)}
+                  </p>
+                );
+              }
+              return (
+                <p className="mt-1.5 text-[11px] text-slate-500">
+                  Try: 36, 36", 3', 3'6"
+                </p>
+              );
+            })()}
           </>
         )}
 

@@ -65,6 +65,11 @@ export default function QuickAssignMenu() {
     if (!pending) return;
     function onMouseDown(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        // Don't dismiss if the click is on the canvas while the frame tool is
+        // active — the user is starting a new frame, and useParametricTool will
+        // set a new pendingFrameBounds on mouseup.
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'CANVAS' && useStudioStore.getState().activeTool === 'frame') return;
         setPending(null);
       }
     }
