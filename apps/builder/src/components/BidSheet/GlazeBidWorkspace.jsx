@@ -77,6 +77,7 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
       return false;
     }
   });
+  const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
 
   // ── Reactive rate subscription — triggers re-render when rates change ──
   const laborRate = useProductionRatesStore(s => s.laborRate);
@@ -1171,6 +1172,108 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
               ))}
 
             </div>
+          </div>
+
+          {/* ── Specialty Glazing Systems (collapsible) ── */}
+          <div>
+            <button
+              onClick={() => setIsSpecialtyOpen(o => !o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%',
+                padding: '0.55rem 0.75rem', borderRadius: 10,
+                border: '1px solid var(--border-subtle)', background: 'var(--bg-card)',
+                cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'; e.currentTarget.style.background = 'rgba(139,92,246,0.06)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.background = 'var(--bg-card)'; }}
+            >
+              <span style={{ fontSize: '0.8rem' }}>{isSpecialtyOpen ? '▼' : '▶'}</span>
+              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>Specialty Glazing Systems</span>
+              <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginLeft: 4 }}>
+                Custom scope cards — each opens as a Custom System workspace
+              </span>
+            </button>
+
+            {isSpecialtyOpen && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
+                {[
+                  { label: 'All Glass Interior Partitions',   icon: '🪟', color: '#38bdf8' },
+                  { label: 'Hollow Metal Glazing',            icon: '🔩', color: '#64748b' },
+                  { label: 'Interior Aluminum Partitions',    icon: '🏛️', color: '#10b981' },
+                  { label: 'Ballistic Curtain Wall',          icon: '🛡️', color: '#ef4444' },
+                  { label: 'Fire Rated Storefront',           icon: '🔥', color: '#f97316' },
+                  { label: 'Window Wall',                     icon: '🏢', color: '#3b82f6' },
+                  { label: 'Structural Glass Wall',           icon: '🔷', color: '#06b6d4' },
+                  { label: 'Ballistic Storefront',            icon: '🛡️', color: '#dc2626' },
+                  { label: 'Terrace Doors',                   icon: '🚪', color: '#a78bfa' },
+                  { label: 'Glass Partitions',                icon: '🪞', color: '#67e8f9' },
+                  { label: 'Bi-Folding / Sliding Doors',     icon: '↔️', color: '#4ade80' },
+                  { label: 'Revolving Doors',                 icon: '🔄', color: '#fb923c' },
+                  { label: 'Aluminum Windows',                icon: '⊞',  color: '#60a5fa' },
+                  { label: 'Glazing Only',                    icon: '🔲', color: '#c084fc' },
+                  { label: 'Transaction Windows',             icon: '🏦', color: '#fbbf24' },
+                  { label: 'Sun Control Devices',             icon: '☀️', color: '#f59e0b' },
+                  { label: 'Automatic Sliding Doors',         icon: '🚗', color: '#34d399' },
+                  { label: 'Louvers',                         icon: '🌬️', color: '#94a3b8' },
+                  { label: 'Skylights',                       icon: '🌤️', color: '#7dd3fc' },
+                  { label: 'Markerboards',                    icon: '📋', color: '#d1d5db' },
+                  { label: 'Translucent Panel System',        icon: '💡', color: '#fde68a' },
+                  { label: 'Back Painted Glazing',            icon: '🎨', color: '#f9a8d4' },
+                  { label: 'Glass Handrail System',           icon: '🔧', color: '#6ee7b7' },
+                  { label: 'Showers',                         icon: '🚿', color: '#93c5fd' },
+                  { label: 'Glass Canopy',                    icon: '⛺', color: '#86efac' },
+                  { label: 'Mirrors',                         icon: '🪞', color: '#e2e8f0' },
+                  { label: 'Glass Display Case Systems',      icon: '🏪', color: '#fca5a5' },
+                ].map(({ label, icon, color }) => (
+                  <div key={label} style={{
+                    borderRadius: 12, border: '1px solid var(--border-subtle)', background: 'var(--bg-card)',
+                    overflow: 'hidden', transition: 'all 0.18s',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.8rem 1rem 0.5rem' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 9, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.15rem', flexShrink: 0 }}>
+                        {icon}
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>{label}</p>
+                        <p style={{ margin: 0, fontSize: '0.68rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>Custom System workspace</p>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', padding: '0.5rem 1rem 0.8rem' }}>
+                      <button
+                        onClick={() => {
+                          const newId = `custom-system-${Date.now()}`;
+                          const blankSystem = {
+                            id: newId,
+                            type: 'custom-system',
+                            name: label,
+                            shortName: label.length > 12 ? label.slice(0, 12) + '…' : label,
+                            description: label,
+                            frames: [],
+                            materials: [],
+                            laborTasks: [],
+                            totals: { totalFrames: 0, totalQuantity: 0, totalSF: 0, shopMHs: 0, distMHs: 0, fieldMHs: 0, totalCost: 0 },
+                          };
+                          setImportedSystems(prev => [...prev, blankSystem]);
+                          setShowDropZone(false);
+                          setShowHomeBase(false);
+                          setSelectedSystem(blankSystem);
+                        }}
+                        style={{
+                          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem',
+                          padding: '0.4rem 0.5rem', borderRadius: 7, border: '1px solid var(--border-subtle)',
+                          background: 'var(--bg-deep)', color: 'var(--text-secondary)', fontSize: '0.72rem',
+                          fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.color = color; e.currentTarget.style.background = `${color}0a`; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'var(--bg-deep)'; }}
+                      >
+                        + Create
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ── Existing Systems — re-open for editing ── */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import topLogo from '../assets/TOP_LOGO.svg';
 
 const TOOLS = [
@@ -29,6 +29,22 @@ const TOOLS = [
     icon: '🪟',
     accent: '#e879f9',
     description: 'Compute glass lite weight by size, make-up, and thickness for crane and handling planning.',
+  },
+  {
+    id: 'doorBuilder',
+    label: 'Door Builder',
+    icon: '🚪',
+    accent: '#3B82F6',
+    description: 'Build aluminum doors for quote and order — configure size, swing, stiles, rails, finish, glass, framing, and hardware. Generates a door schedule and quote PDF.',
+    tags: ['Door Schedule', 'Quote PDF', 'Hardware'],
+  },
+  {
+    id: 'specSplitter',
+    label: 'Spec Splitter',
+    icon: '📄',
+    accent: '#f43f5e',
+    description: 'Upload a project specification book — automatically splits by CSI section, scans for glazing scope, and flags key requirements like BOD, finish, performance, and warranty.',
+    tags: ['Spec Scan', 'BOD', 'Risk Check'],
   },
 ];
 

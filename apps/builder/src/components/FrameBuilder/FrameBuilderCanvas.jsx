@@ -283,7 +283,7 @@ function drawFrame(ctx, frame, camera, layers, canvasSize, selectedEl, hoveredEl
       }
       drawArchedFrame(ctx, frame, geo);
       if (layers.dimensions) {
-        drawDimensions(ctx, geo, zoom);
+        drawDimensions(ctx, geo, zoom, frame, layers);
       }
       if (layers.labels) {
         drawArchedLabels(ctx, frame, geo, zoom);
@@ -309,7 +309,7 @@ function drawFrame(ctx, frame, camera, layers, canvasSize, selectedEl, hoveredEl
       }
       drawRectangularFrame(ctx, geo, zoom, finishType, selectedEl, hoveredEl, frame);
       if (layers.dimensions) {
-        drawDimensions(ctx, geo, zoom);
+        drawDimensions(ctx, geo, zoom, frame, layers);
       }
       if (layers.labels) {
         drawLabels(ctx, geo, zoom);
@@ -567,8 +567,8 @@ function drawRectangularFrame(ctx, geo, zoom, finishType, selectedEl, hoveredEl,
     if (headSel) { ctx.fillStyle = 'rgba(59,130,246,0.15)'; ctx.fillRect(fL, fT, frameWidth, pw); }
     if (sillSel) { ctx.fillStyle = 'rgba(59,130,246,0.15)'; ctx.fillRect(fL, fB - pw, frameWidth, pw); }
     for (let b = 0; b < bays; b++) {
-      const leftX  = panelX[b];
-      const rightX = panelX[b] + dloBayW[b];
+      const leftX  = (b === 0)        ? fL + pw : panelX[b];
+      const rightX = (b === bays - 1) ? fR - pw : panelX[b] + dloBayW[b];
       line(leftX, fT + pw, rightX, fT + pw, { type: 'head' }, '#e8e8e8', 1.5);
       line(leftX, fB - pw, rightX, fB - pw, { type: 'sill' }, '#e8e8e8', 1.5);
     }
@@ -677,75 +677,239 @@ function drawRectangularFrame(ctx, geo, zoom, finishType, selectedEl, hoveredEl,
   }
 }
 
-// ─── Dimension Strings ──────────────────────────────────────────────────────
-function drawDimensions(ctx, geo, zoom) {
-  const { frameLeft, frameTop, panelX, panelY, dloBayW, dloRowH,
-          profileWidth, frameWidth, frameHeight, bays, rows } = getDLOGeometry(geo);
+// ─── Architectural Dimension Constants ─────────────────────────────────────
+const DIM = {
+  textPrimary:    12,  // overall dim text  (screen px → divide by zoom)
+  textSecondary:  10,  // bay/row DLO text  (screen px)
+  textTertiary:    9,  // preset extra dims (screen px)
+  firstOffset:    28,  // frame edge → first dim string (screen px)
+  stringSpacing:  18,  // gap between parallel dim strings (screen px)
+  extGap:          4,  // object → extension line start (screen px)
+  extOvershoot:    5,  // extension line past dim line (screen px)
+  tickSize:        7,  // 45° tick mark length (screen px)
+  dimLineWeight: 0.8,  // dim line stroke (screen px)
+  extLineWeight: 0.5,  // extension line stroke (screen px)
+};
 
-  const dimLineColor = 'rgba(100,170,200,0.5)';
-  const dimTextMain  = '#7ec8e3';
-  const dimTextSub   = 'rgba(100,170,200,0.55)';
-  const tick = 8 / zoom;           // tick mark half-length in world units
-  const lw   = 1 / zoom;           // dimension line weight
+// ── AIA/NCS 45° architectural slash tick mark ────────────────────────────────
+function drawArchTick(ctx, x, y, zoom) {
+  const s = (DIM.tickSize * 0.5) / zoom;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(Math.PI / 4);
+  ctx.strokeStyle = 'rgba(100,170,200,0.6)';
+  ctx.lineWidth = 1.2 / zoom;
+  ctx.beginPath();
+  ctx.moveTo(0, -s);
+  ctx.lineTo(0,  s);
+  ctx.stroke();
+  ctx.restore();
+}
 
-  // ── Helper: horizontal dim line with architectural ticks ──
-  function dimH(x1, x2, y, label, textColor, fontSize) {
-    ctx.strokeStyle = dimLineColor;
-    ctx.lineWidth = lw;
-    // dim line
-    ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke();
-    // ticks (vertical, above+below the dim line)
-    ctx.beginPath(); ctx.moveTo(x1, y - tick); ctx.lineTo(x1, y + tick); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x2, y - tick); ctx.lineTo(x2, y + tick); ctx.stroke();
-    // text above line
+// ── Complete architectural linear dimension ──────────────────────────────────
+// All DIM.* values are screen pixels — divide by zoom to convert to world coords.
+function drawLinearDim(ctx, x1, y1, x2, y2, label, offsetPx, isVertical, isPrimary, zoom) {
+  const textSize  = (isPrimary ? DIM.textPrimary : DIM.textSecondary) / zoom;
+  const lineColor = 'rgba(100,170,200,0.5)';
+  const textColor = isPrimary ? '#7ec8e3' : 'rgba(140,190,210,0.8)';
+  const offset  = offsetPx / zoom;
+  const extGap  = DIM.extGap / zoom;
+  const extOver = DIM.extOvershoot / zoom;
+
+  if (!isVertical) {
+    // Horizontal dim — above the frame (y1 === y2 === fT)
+    const dimY  = y1 - offset;
+    const extY1 = y1 - extGap;
+    const extY2 = dimY + extOver;
+
+    // Extension lines (dotted)
+    ctx.setLineDash([3 / zoom, 3 / zoom]);
+    ctx.strokeStyle = 'rgba(100,170,200,0.25)';
+    ctx.lineWidth = DIM.extLineWeight / zoom;
+    ctx.beginPath(); ctx.moveTo(x1, extY1); ctx.lineTo(x1, extY2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, extY1); ctx.lineTo(x2, extY2); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Dim line
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = DIM.dimLineWeight / zoom;
+    ctx.beginPath(); ctx.moveTo(x1, dimY); ctx.lineTo(x2, dimY); ctx.stroke();
+
+    // 45° ticks at each end
+    drawArchTick(ctx, x1, dimY, zoom);
+    drawArchTick(ctx, x2, dimY, zoom);
+
+    // Label above dim line (centered, uppercase per NCS)
     ctx.fillStyle = textColor;
-    ctx.font = `${fontSize / zoom}px "SF Mono", monospace`;
+    ctx.font = `${textSize}px "JetBrains Mono", monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
-    ctx.fillText(label, (x1 + x2) / 2, y - 2 / zoom);
-  }
+    ctx.fillText(label, (x1 + x2) / 2, dimY - 2 / zoom);
 
-  // ── Helper: vertical dim line with ticks ──
-  function dimV(x, y1, y2, label, textColor, fontSize) {
-    ctx.strokeStyle = dimLineColor;
-    ctx.lineWidth = lw;
-    ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x - tick, y1); ctx.lineTo(x + tick, y1); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x - tick, y2); ctx.lineTo(x + tick, y2); ctx.stroke();
-    // rotated text
-    const midY = (y1 + y2) / 2;
+  } else {
+    // Vertical dim — right of the frame (x1 === x2 === fR)
+    const dimX  = x2 + offset;
+    const extX1 = x2 + extGap;
+    const extX2 = dimX + extOver;
+
+    // Extension lines (dotted)
+    ctx.setLineDash([3 / zoom, 3 / zoom]);
+    ctx.strokeStyle = 'rgba(100,170,200,0.25)';
+    ctx.lineWidth = DIM.extLineWeight / zoom;
+    ctx.beginPath(); ctx.moveTo(extX1, y1); ctx.lineTo(extX2, y1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(extX1, y2); ctx.lineTo(extX2, y2); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Dim line
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = DIM.dimLineWeight / zoom;
+    ctx.beginPath(); ctx.moveTo(dimX, y1); ctx.lineTo(dimX, y2); ctx.stroke();
+
+    // 45° ticks
+    drawArchTick(ctx, dimX, y1, zoom);
+    drawArchTick(ctx, dimX, y2, zoom);
+
+    // Label rotated 90° — reads upward (bottom-to-top)
     ctx.save();
-    ctx.translate(x - 4 / zoom, midY);
+    ctx.translate(dimX + extOver + 2 / zoom, (y1 + y2) / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.fillStyle = textColor;
-    ctx.font = `${fontSize / zoom}px "SF Mono", monospace`;
+    ctx.font = `${textSize}px "JetBrains Mono", monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     ctx.fillText(label, 0, 0);
     ctx.restore();
   }
+}
 
-  // ── Overall width (above frame) ──
-  const owY = frameTop - 24 / zoom;
-  dimH(frameLeft, frameLeft + frameWidth, owY, fmt(frameWidth), dimTextMain, 11);
+// ─── Dimension Strings ──────────────────────────────────────────────────────
+function drawDimensions(ctx, geo, zoom, frame, layers) {
+  const { frameLeft, frameTop, panelX, panelY, dloBayW, dloRowH,
+          profileWidth, frameWidth, frameHeight, bays, rows } = getDLOGeometry(geo);
 
-  // ── Bay widths: DLO dim per bay, just below the overall line ──
-  if (bays > 1) {
-    const bwY = frameTop - 10 / zoom;
-    for (let b = 0; b < bays; b++) {
-      dimH(panelX[b], panelX[b] + dloBayW[b], bwY, fmt(dloBayW[b]), dimTextSub, 9);
+  const fL = frameLeft;
+  const fT = frameTop;
+  const fR = frameLeft + frameWidth;
+  const fB = frameTop  + frameHeight;
+  const pw = profileWidth;
+  const dimPresets = layers?.dimPresets ?? {};
+
+  // ── Standard dims (always shown when Dim layer is on) ─────────────────────
+
+  // TOP — String 1: Overall frame width (outermost)
+  drawLinearDim(ctx, fL, fT, fR, fT, fmt(frameWidth),
+    DIM.firstOffset + DIM.stringSpacing, false, true, zoom);
+
+  // TOP — String 2: Bay DLO widths (inner)
+  for (let b = 0; b < bays; b++) {
+    const leftX  = panelX[b];
+    const rightX = panelX[b] + dloBayW[b];
+    drawLinearDim(ctx, leftX, fT, rightX, fT, fmt(dloBayW[b]),
+      DIM.firstOffset, false, false, zoom);
+  }
+
+  // RIGHT — String 1: Overall frame height (outermost)
+  drawLinearDim(ctx, fR, fT, fR, fB, fmt(frameHeight),
+    DIM.firstOffset + DIM.stringSpacing, true, true, zoom);
+
+  // RIGHT — String 2: Row DLO heights (inner)
+  for (let r = 0; r < rows; r++) {
+    const topY    = panelY[r];
+    const bottomY = panelY[r] + dloRowH[r];
+    drawLinearDim(ctx, fR, topY, fR, bottomY, fmt(dloRowH[r]),
+      DIM.firstOffset, true, false, zoom);
+  }
+
+  // ── Preset: Centerlines ───────────────────────────────────────────────────
+  if (dimPresets.centerlines) {
+    for (let b = 1; b < bays; b++) {
+      const clX = panelX[b] - pw / 2;
+      // Dashed centerline through full frame height
+      ctx.strokeStyle = 'rgba(100,200,100,0.4)';
+      ctx.lineWidth   = 0.8 / zoom;
+      ctx.setLineDash([4 / zoom, 4 / zoom]);
+      ctx.beginPath();
+      ctx.moveTo(clX, fT - 8 / zoom);
+      ctx.lineTo(clX, fB + 8 / zoom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // C/L marker above frame
+      ctx.fillStyle = 'rgba(100,200,100,0.7)';
+      ctx.font = `${DIM.textTertiary / zoom}px "JetBrains Mono", monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('C/L', clX, fT - 10 / zoom);
+      // Dim: left jamb to this C/L (innermost string, closer to frame)
+      drawLinearDim(ctx, fL, fT, clX, fT, fmt(clX - fL),
+        Math.max(DIM.firstOffset - DIM.stringSpacing, 8), false, false, zoom);
     }
   }
 
-  // ── Overall height (right of frame) ──
-  const ohX = frameLeft + frameWidth + 24 / zoom;
-  dimV(ohX, frameTop, frameTop + frameHeight, fmt(frameHeight), dimTextMain, 11);
+  // ── Preset: AFF Dims ─────────────────────────────────────────────────────
+  if (dimPresets.affDims && frame) {
+    const sillAFF = frame.sillAFF || 0;
+    const headAFF = sillAFF + frameHeight;
+    const datumY  = fB + 20 / zoom;
+    // Datum line
+    ctx.strokeStyle = 'rgba(100,200,100,0.3)';
+    ctx.lineWidth   = 0.6 / zoom;
+    ctx.setLineDash([4 / zoom, 4 / zoom]);
+    ctx.beginPath();
+    ctx.moveTo(fL - 10 / zoom, datumY);
+    ctx.lineTo(fR + 10 / zoom, datumY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(100,200,100,0.5)';
+    ctx.font = `${DIM.textTertiary / zoom}px "JetBrains Mono", monospace`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('DATUM', fR + 4 / zoom, datumY + 1 / zoom);
+    // Sill AFF (datum → sill)
+    if (sillAFF > 0) {
+      ctx.strokeStyle = 'rgba(100,200,100,0.4)';
+      ctx.lineWidth   = 0.8 / zoom;
+      ctx.beginPath(); ctx.moveTo(fL - 6 / zoom, fB); ctx.lineTo(fL - 6 / zoom, datumY); ctx.stroke();
+      ctx.fillStyle = 'rgba(100,200,100,0.7)';
+      ctx.font = `${DIM.textTertiary / zoom}px "JetBrains Mono", monospace`;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(fmt(sillAFF) + ' AFF', fL - 8 / zoom, (fB + datumY) / 2);
+    }
+    // Head AFF (datum → head)
+    ctx.strokeStyle = 'rgba(100,200,100,0.4)';
+    ctx.lineWidth   = 0.8 / zoom;
+    ctx.beginPath(); ctx.moveTo(fL - 6 / zoom, fT); ctx.lineTo(fL - 6 / zoom, datumY); ctx.stroke();
+    ctx.fillStyle = 'rgba(100,200,100,0.7)';
+    ctx.font = `${DIM.textTertiary / zoom}px "JetBrains Mono", monospace`;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(fmt(headAFF) + ' AFF', fL - 8 / zoom, (fT + datumY) / 2);
+  }
 
-  // ── Row heights: DLO dim per row ──
-  if (rows > 1) {
-    const rhX = frameLeft + frameWidth + 10 / zoom;
-    for (let r = 0; r < rows; r++) {
-      dimV(rhX, panelY[r], panelY[r] + dloRowH[r], fmt(dloRowH[r]), dimTextSub, 9);
+  // ── Preset: Rough Opening ─────────────────────────────────────────────────
+  if (dimPresets.roughOpening) {
+    const roOffset = DIM.firstOffset + DIM.stringSpacing * 2;
+    drawLinearDim(ctx, fL, fT, fR, fT, fmt(frameWidth) + ' (RO)',
+      roOffset, false, false, zoom);
+    drawLinearDim(ctx, fR, fT, fR, fB, fmt(frameHeight) + ' (RO)',
+      roOffset, true, false, zoom);
+  }
+
+  // ── Preset: Glass Sizes ───────────────────────────────────────────────────
+  if (dimPresets.glassSizes) {
+    const bite = frame?.glassBiteInches ?? 0.375;
+    for (let b = 0; b < bays; b++) {
+      for (let r = 0; r < rows; r++) {
+        const glasW = dloBayW[b] + 2 * bite;
+        const glasH = dloRowH[r] + 2 * bite;
+        const cx = panelX[b] + dloBayW[b] / 2;
+        const cy = panelY[r] + dloRowH[r] / 2;
+        ctx.fillStyle = 'rgba(200,220,100,0.6)';
+        ctx.font = `${DIM.textTertiary / zoom}px "JetBrains Mono", monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${fmt(glasW)} × ${fmt(glasH)} GL`, cx, cy + 8 / zoom);
+      }
     }
   }
 }
@@ -1366,7 +1530,9 @@ export default function FrameBuilderCanvas({ onElementSelect }) {
   const hitRegionsRef = useRef([]);
 
   const [camera,   setCamera  ] = useState({ x: 0, y: 0, zoom: 1 });
-  const [layers,   setLayers  ] = useState({ grid: true, dimensions: true, glass: true, labels: true, context: true, section: false });
+  const [layers,   setLayers  ] = useState({ grid: true, dimensions: true, glass: true, labels: true, context: true, section: false,
+    dimPresets: { centerlines: false, affDims: false, roughOpening: false, glassSizes: false } });
+  const [dimPanelOpen, setDimPanelOpen] = useState(false);
   const [canvasSize,setCanvasSize]=useState({ w: 800, h: 600 });
   const [isPanning, setIsPanning]=useState(false);
   const [panStart,  setPanStart ]=useState({ x: 0, y: 0 });
@@ -1659,8 +1825,16 @@ export default function FrameBuilderCanvas({ onElementSelect }) {
     return () => clearTimeout(t);
   }, [activeFrameId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Toggle layer visibility
+  // Toggle layer visibility (handles dimPresets_* keys)
   const toggleLayer = (layerName) => {
+    if (layerName.startsWith('dimPresets_')) {
+      const key = layerName.replace('dimPresets_', '');
+      setLayers(prev => ({
+        ...prev,
+        dimPresets: { ...(prev.dimPresets ?? {}), [key]: !(prev.dimPresets?.[key] ?? false) },
+      }));
+      return;
+    }
     setLayers((prev) => ({
       ...prev,
       [layerName]: !prev[layerName],
@@ -1760,8 +1934,68 @@ export default function FrameBuilderCanvas({ onElementSelect }) {
           Grid
         </button>
 
+        {/* Dim toggle + presets dropdown */}
+        <div style={{ position: 'relative' }}>
+          <button
+            onClick={() => toggleLayer('dimensions')}
+            title="Toggle dimensions"
+            style={{
+              background: layers.dimensions ? 'rgba(14, 165, 233, 0.2)' : 'transparent',
+              border: '1px solid ' + (layers.dimensions ? '#0ea5e9' : 'rgba(255,255,255,0.15)'),
+              color: layers.dimensions ? '#0ea5e9' : '#94a3b8',
+              cursor: 'pointer',
+              padding: '2px 4px',
+              fontSize: '10px',
+              borderRadius: '3px 0 0 3px',
+            }}
+          >
+            Dim
+          </button>
+          <button
+            onClick={() => setDimPanelOpen(p => !p)}
+            title="Dimension presets"
+            style={{
+              background: dimPanelOpen ? 'rgba(14, 165, 233, 0.15)' : 'transparent',
+              border: '1px solid ' + (layers.dimensions ? '#0ea5e9' : 'rgba(255,255,255,0.15)'),
+              borderLeft: 'none',
+              color: layers.dimensions ? '#0ea5e9' : '#94a3b8',
+              cursor: 'pointer',
+              padding: '2px 4px',
+              fontSize: '9px',
+              borderRadius: '0 3px 3px 0',
+            }}
+          >
+            ▾
+          </button>
+          {dimPanelOpen && (
+            <div style={{
+              position: 'absolute', top: '100%', left: 0, zIndex: 10,
+              background: 'rgba(10,15,25,0.96)', border: '1px solid #1a3040',
+              borderRadius: 6, padding: '8px 12px', minWidth: 160,
+              display: 'flex', flexDirection: 'column', gap: 6,
+              marginTop: 4,
+            }}>
+              {[
+                ['centerlines',  'Centerlines'],
+                ['affDims',      'Sill / Head AFF'],
+                ['roughOpening', 'Rough Opening'],
+                ['glassSizes',   'Glass Sizes'],
+              ].map(([key, lbl]) => (
+                <label key={key} style={{ display: 'flex', alignItems: 'center',
+                  gap: 8, fontSize: 11, color: '#94b8c8', cursor: 'pointer' }}>
+                  <input type="checkbox"
+                    checked={layers.dimPresets?.[key] ?? false}
+                    onChange={() => toggleLayer('dimPresets_' + key)}
+                  />
+                  {lbl}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Layer toggles */}
-        {['dimensions', 'glass', 'labels', 'context'].map((layer) => (
+        {['glass', 'labels', 'context'].map((layer) => (
           <button
             key={layer}
             onClick={() => toggleLayer(layer)}

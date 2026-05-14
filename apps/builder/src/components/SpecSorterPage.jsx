@@ -661,43 +661,80 @@ function PageCanvas({ pdfDoc, pageNum, containerWidth, shouldRender, highlight }
     const { page, vp, dpr } = renderInfo.current;
 
     page.getTextContent().then(tc => {
-      // Rebuild the EXACT same text the scanner builds in extractPageTexts:
-      //   tc.items.map(item => item.str).join(' ')
-      // The excerpt is a slice of that string, so we can find it via indexOf.
-      const strs = tc.items.map(it => (it.str || ''));
-      const fullText = strs.join(' ');
-      const normFull = fullText.toLowerCase();
+      // ── Shared normalizer (identical to what both scanners use) ──────────
+      const norm = s =>
+        s.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
-      // Strip leading/trailing ellipsis that specScanner adds, then lowercase
+      // Strip leading/trailing ellipsis specScanner adds to excerpts
       const cleanExcerpt = highlight
-        .replace(/^[\u2026\.]+/, '')
-        .replace(/[\u2026\.]+$/, '')
+        .replace(/^[\u2026\.]{1,3}/, '')
+        .replace(/[\u2026\.]{1,3}$/, '')
         .trim();
-      const normExcerpt = cleanExcerpt.toLowerCase();
+      const normExcerpt = norm(cleanExcerpt);
       if (normExcerpt.length < 8) return;
 
-      // Try progressively shorter prefixes until we get an indexOf hit
-      let matchIdx = -1;
-      let matchLen = 0;
-      for (let len = Math.min(normExcerpt.length, 90); len >= 8; len = Math.floor(len * 0.75)) {
-        const sub = normExcerpt.slice(0, len);
-        const i = normFull.indexOf(sub);
-        if (i >= 0) { matchIdx = i; matchLen = len; break; }
-      }
-      if (matchIdx < 0) return;
+      // ── Build two candidate text representations of this page ────────────
+      // 1) Natural pdfjs order — matches specScanner excerpts exactly
+      // 2) Y-sorted line order — matches specReader excerpts exactly
+      //    (specReader uses collapseItemsToLines which sorts by y desc, then x asc)
+      const realItems = tc.items.filter(it => typeof it.str === 'string' && it.str);
 
-      // Walk the items character-by-character and highlight any item whose
-      // char range overlaps [matchIdx, matchIdx + matchLen)
-      let pos = 0;
+      const naturalItems = realItems;
+
+      const sortedItems = [...realItems].sort((a, b) => {
+        const ay = Math.round(a.transform?.[5] ?? 0);
+        const by = Math.round(b.transform?.[5] ?? 0);
+        if (ay !== by) return by - ay;  // Y descending (PDF y=0 is bottom)
+        return (a.transform?.[4] ?? 0) - (b.transform?.[4] ?? 0); // X ascending
+      });
+
+      // Try to find the excerpt in both orderings; prefer the one that matches.
+      function tryMatch(items) {
+        const normFull = norm(items.map(it => it.str).join(' '));
+        let mStart = -1, mLen = 0;
+        for (let len = Math.min(normExcerpt.length, 90); len >= 8; len = Math.floor(len * 0.75)) {
+          const i = normFull.indexOf(normExcerpt.slice(0, len));
+          if (i >= 0) { mStart = i; mLen = len; break; }
+        }
+        return { normFull, matchStart: mStart, matchLen: mLen };
+      }
+
+      let { normFull, matchStart, matchLen } = tryMatch(naturalItems);
+      let itemsToUse = naturalItems;
+      if (matchStart < 0) {
+        ({ normFull, matchStart, matchLen } = tryMatch(sortedItems));
+        itemsToUse = sortedItems;
+      }
+      if (matchStart < 0) return; // genuine miss — excerpt not on this page
+      const matchEnd = matchStart + matchLen;
+
+      // ── Alpha-character counting: map normFull[matchStart..matchEnd] → items ─
+      // CRITICAL: use case-insensitive /[a-z0-9]/gi so UPPERCASE spec text
+      // contributes the same alpha-count as its lowercased normFull equivalent.
+      const countAlpha = s => (s.match(/[a-z0-9]/gi) || []).length;
+
+      let alphaBefore = 0;
+      for (let i = 0; i < matchStart; i++) {
+        if (/[a-z0-9]/i.test(normFull[i])) alphaBefore++;
+      }
+      let alphaIn = 0;
+      for (let i = matchStart; i < matchEnd; i++) {
+        if (/[a-z0-9]/i.test(normFull[i])) alphaIn++;
+      }
+      if (alphaIn === 0) return;
+
+      let acc = 0;
       ctx.save();
       ctx.fillStyle = 'rgba(250, 210, 0, 0.45)';
-      for (let i = 0; i < strs.length; i++) {
-        const itemStart = pos;
-        const itemEnd = pos + strs[i].length;
-        pos += strs[i].length + 1; // +1 for the join space
-        if (itemEnd <= matchIdx || itemStart >= matchIdx + matchLen) continue;
-        const item = tc.items[i];
-        if (!item?.transform || !item.width) continue;
+      for (const item of itemsToUse) {
+        const iAlpha = countAlpha(item.str);
+        const iStart = acc;
+        const iEnd   = acc + iAlpha;
+        acc += iAlpha;
+
+        if (iEnd <= alphaBefore || iStart >= alphaBefore + alphaIn) continue;
+        if (!item.transform || !item.width) continue;
+
         const [, , , , e, f] = item.transform;
         const fontH = item.height || Math.abs(item.transform[3]) || Math.abs(item.transform[0]) || 10;
         const [x1, y1] = applyMatrix([e, f + fontH], vp.transform);

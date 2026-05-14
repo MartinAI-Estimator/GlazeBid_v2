@@ -39,11 +39,21 @@ if (typeof ReadableStream !== 'undefined' && !ReadableStream.prototype[Symbol.as
 
 // ── Known glazing manufacturer names ─────────────────────────────────────────
 const KNOWN_MANUFACTURERS = [
+  // Framing systems
   'Kawneer', 'Tubelite', 'YKK AP', 'YKK', 'EFCO', 'Oldcastle',
   'Oldcastle Building Envelope', 'Pittco', 'Wausau', 'Arcadia',
-  'Guardian', 'Viracon', 'Vitro', 'Cardinal', 'PPG', 'AGC',
-  'Cristacurva', 'CR Laurence', 'C\\.R\\. Laurence', 'Traco',
   'Peerless', 'United States Aluminum', 'US Aluminum',
+  'Traco', 'Therma\\-Tru', 'Vistawall', 'Thermovation',
+  'Graham Architectural', 'Winco', 'Nana Wall', 'NanaWall',
+  'Aluprof', 'Alumil', 'Reynaers', 'Schüco', 'Schuco',
+  'Metal Sales', 'Quanex', 'PGT', 'CGI', 'WinDoor',
+  // Glass suppliers
+  'Guardian', 'Viracon', 'Vitro', 'Cardinal', 'PPG', 'AGC',
+  'Cristacurva', 'Pilkington', 'Apogee', 'Interpane',
+  'Solarban', 'Suncoat', 'Starphire',
+  // Hardware / accessory
+  'CR Laurence', 'C\\.R\\. Laurence', 'Assa Abloy', 'Dormakaba',
+  'Allegion', 'Norton', 'LCN', 'Sargent', 'Yale',
 ];
 const MFR_RE = new RegExp(KNOWN_MANUFACTURERS.join('|'), 'i');
 
@@ -54,7 +64,10 @@ const PATTERNS = {
     /BASIS\s+OF\s+DESIGN/i,
     /ACCEPTABLE\s+MANUFACTURERS?/i,
     /APPROVED\s+(MANUFACTURERS?|EQUAL|PRODUCT)/i,
+    /NAMED\s+MANUFACTURER/i,
+    /MANUFACTURERS?\s*:/i,
     /OR\s+EQUAL/i,
+    /COMPARABLE\s+PRODUCTS?/i,
     MFR_RE,
   ],
   finish: [

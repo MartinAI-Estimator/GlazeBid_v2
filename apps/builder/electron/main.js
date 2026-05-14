@@ -11,7 +11,7 @@
 
 'use strict';
 
-const { app, BrowserWindow, shell, session, ipcMain, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, shell, session, ipcMain, nativeImage, dialog, net } = require('electron');
 const fs   = require('fs');
 const path = require('path');
 
@@ -49,6 +49,17 @@ let mainWindow   = null;
 let studioWindow = null;
 let studioReady  = false;
 let pendingProject = null;
+
+// ── IPC: CORS-safe HTTP GET for renderer (bypasses Electron's CORS restrictions) ─
+ipcMain.handle('glazebid:http-get', async (_event, url) => {
+  try {
+    const res = await net.fetch(url, { bypassCustomProtocolHandlers: false });
+    const text = await res.text();
+    return { ok: res.ok, status: res.status, body: text };
+  } catch (err) {
+    return { ok: false, status: 0, error: String(err) };
+  }
+});
 
 // ── IPC: read PDF from disk ───────────────────────────────────────────────────
 ipcMain.handle('glazebid:read-pdf', async (_event, filePath) => {

@@ -4,7 +4,6 @@ import {
   FileDown,
   FileCheck,
   Brain,
-  BookOpen,
 } from 'lucide-react';
 const ProjectSideNav = ({
   currentView,
@@ -29,7 +28,6 @@ const ProjectSideNav = ({
   const bidCartActive = currentView === 'bid-cart';
   const proposalActive = currentView === 'proposal';
   const aiSettingsActive = currentView === 'ai-settings';
-  const specSorterActive = currentView === 'spec-sorter';
 
   return (
     <div style={styles.sidebar}>
@@ -54,17 +52,6 @@ const ProjectSideNav = ({
       {/* Actions section */}
       <div style={{ ...styles.section, marginTop: 12 }}>
         <span style={styles.label}>Actions</span>
-
-        <Btn
-          title="Spec Sorter"
-          active={specSorterActive}
-          hovered={hoveredItem === 'spec-sorter'}
-          onClick={() => onNavigate('spec-sorter')}
-          onEnter={() => setHoveredItem('spec-sorter')}
-          onLeave={() => setHoveredItem(null)}
-        >
-          <BookOpen size={15} style={{ flexShrink: 0, color: '#f59e0b' }} />
-        </Btn>
 
         <Btn
           title="Bid Builder"

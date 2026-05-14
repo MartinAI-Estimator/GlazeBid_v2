@@ -288,6 +288,8 @@ function App() {
     else if (moduleId === 'brakeMetalCalc') setCurrentView('brakeMetalCalc');
     else if (moduleId === 'caulkingCalc') setCurrentView('caulkingCalc');
     else if (moduleId === 'glassWeightCalc') setCurrentView('glassWeightCalc');
+    else if (moduleId === 'specSplitter') setCurrentView('spec-sorter');
+    else if (moduleId === 'openProjects') { setShowProjectList(true); setCurrentView('home'); }
   };
 
   // Safety check to reset to home screen
@@ -928,6 +930,18 @@ function App() {
       );
     }
 
+    // Spec Sorter — works with or without a loaded project
+    if (currentView === 'spec-sorter') {
+      const backDest = currentProject ? 'projectHome' : 'suite';
+      return (
+        <SpecSorterPage
+          project={currentProject}
+          sheets={sheets}
+          onBack={() => setCurrentView(backDest)}
+        />
+      );
+    }
+
     // Project Intake or Project List (Home)
     if (currentView === 'home' || !currentProject) {
       // Show project list if requested
@@ -971,17 +985,6 @@ function App() {
           onBidSettingsChange={setBidSettings}
           activeSidebarSection={activeSidebarSection}
           setActiveSidebarSection={setActiveSidebarSection}
-        />
-      );
-    }
-
-    // Spec Sorter
-    if (currentView === 'spec-sorter') {
-      return (
-        <SpecSorterPage
-          project={currentProject}
-          sheets={sheets}
-          onBack={() => setCurrentView('projectHome')}
         />
       );
     }

@@ -1,6 +1,91 @@
 import React from 'react';
 import { FolderOpen, FileText, Building2, LayoutGrid, ArrowLeft, Clock, Calendar, CheckCircle, Play, FileDown, ChevronRight, ChevronDown, FileSpreadsheet } from 'lucide-react';
 
+// ─── Module & Tool card data ──────────────────────────────────────────────────
+const MODULES = [
+  { id: 'bidbuilder',   label: 'Bid Builder',              icon: '📋', accent: '#10b981', description: 'Full estimation suite — system cards, labor MH breakdown, materials, pricing, and proposal generation.', tags: ['Labor', 'Materials', 'Pricing', 'Proposals'] },
+  { id: 'studio',       label: 'Studio',                   icon: '📐', accent: '#60a5fa', description: 'PDF takeoff canvas — load blueprints, calibrate scale, draw frames, and send counts to Bid Builder.',   tags: ['PDF Takeoff', 'Auto-Scan', 'Frame Counting', 'BOM'] },
+  { id: 'framebuilder', label: 'Parametric Frame Builder', icon: '🏗️', accent: '#a78bfa', description: 'Engineer individual frames parametrically — specify geometry, system type, grid layout, glass, and generate cut lists.', tags: ['Frame Design', 'BOM', 'Cut List', 'Glass Takeout'] },
+  { id: 'shopDrawings', label: 'Shop Drawings',            icon: '📏', accent: '#fbbf24', description: 'Generate shop-ready drawing packages from bid data — elevations, sections, details, and submittal cover sheets.', tags: ['Elevations', 'Sections', 'Submittal', 'PDF Export'] },
+];
+
+const TOOLS = [
+  { id: 'structuralCalc',  label: 'Structural Calculator',  icon: '🧱', accent: '#06b6d4', description: 'Deflection, moment, and load analysis for mullions and frames per AAMA/ASTM standards.' },
+  { id: 'brakeMetalCalc',  label: 'Brake Metal Calculator', icon: '⚙️', accent: '#f97316', description: 'Calculate bend allowances, flat blank lengths, and material quantities for custom flashings.' },
+  { id: 'caulkingCalc',    label: 'Caulking Calculator',    icon: '🔧', accent: '#84cc16', description: 'Estimate sausage or cartridge counts from joint dimensions — perimeter, depth, and width.' },
+  { id: 'glassWeightCalc', label: 'Glass Weight Calculator',icon: '🪟', accent: '#e879f9', description: 'Compute glass lite weight by size, make-up, and thickness for crane and handling planning.' },
+  { id: 'quickQuote',      label: 'Quick Quote',            icon: '💲', accent: '#fbbf24', description: 'Fast multi-scope estimate — build system takeoffs, apply labor and material rates, and generate a summary.' },
+  { id: 'doorBuilder',     label: 'Door Builder',           icon: '🚪', accent: '#3B82F6', description: 'Build aluminum doors for quote and order — configure size, swing, stiles, rails, finish, glass, framing, and hardware.', tags: ['Door Schedule', 'Quote PDF', 'Hardware'] },
+  { id: 'specSplitter',    label: 'Spec Splitter',          icon: '📄', accent: '#f43f5e', description: 'Upload a project spec book — automatically splits by CSI section, scans for glazing scope, and flags requirements.', tags: ['Spec Scan', 'BOD', 'Risk Check'] },
+  { id: 'proposal',         label: 'Proposal Generator',     icon: '📑', accent: '#10b981', description: 'Generate a professional branded proposal PDF from your bid data — cover letter, scope summary, pricing, and terms.', tags: ['Proposal PDF', 'Cover Letter', 'Pricing'] },
+];
+
+// Small hook-free card components so we can use hover state without touching the class component
+function ModuleCard({ mod, onLaunch }) {
+  const [hov, setHov] = React.useState(false);
+  return (
+    <button
+      style={{ ...cs.modCard, borderColor: hov ? mod.accent : 'rgba(255,255,255,0.07)', boxShadow: hov ? `0 0 0 1px ${mod.accent}, 0 8px 40px ${mod.accent}22` : '0 2px 12px rgba(0,0,0,0.4)', transform: hov ? 'translateY(-3px)' : 'none' }}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      onClick={() => onLaunch(mod.id)}
+    >
+      <div style={{ ...cs.accentBar, background: mod.accent }} />
+      <div style={cs.cardIcon}>{mod.icon}</div>
+      <h2 style={{ ...cs.cardTitle, color: hov ? mod.accent : '#e6edf3' }}>{mod.label}</h2>
+      <p style={cs.cardDesc}>{mod.description}</p>
+      <div style={cs.cardTags}>
+        {(mod.tags || []).map(t => <span key={t} style={{ ...cs.tag, background: `${mod.accent}18`, color: mod.accent, borderColor: `${mod.accent}35` }}>{t}</span>)}
+      </div>
+      <div style={{ ...cs.launchBtn, background: hov ? mod.accent : 'rgba(255,255,255,0.05)', color: hov ? '#000' : '#8b949e' }}>Open {mod.label} →</div>
+    </button>
+  );
+}
+
+function ToolCard({ tool, onLaunch }) {
+  const [hov, setHov] = React.useState(false);
+  return (
+    <button
+      style={{ ...cs.toolCard, borderColor: hov ? tool.accent : 'rgba(255,255,255,0.07)', boxShadow: hov ? `0 0 0 1px ${tool.accent}, 0 4px 24px ${tool.accent}22` : '0 2px 8px rgba(0,0,0,0.35)', transform: hov ? 'translateY(-2px)' : 'none' }}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      onClick={() => onLaunch(tool.id)}
+    >
+      <div style={{ ...cs.toolAccentBar, background: tool.accent }} />
+      <div style={cs.toolRow}>
+        <span style={cs.toolIcon}>{tool.icon}</span>
+        <span style={{ ...cs.toolLabel, color: hov ? tool.accent : '#e6edf3' }}>{tool.label}</span>
+      </div>
+      <p style={cs.toolDesc}>{tool.description}</p>
+      <div style={{ ...cs.toolBtn, background: hov ? tool.accent : 'rgba(255,255,255,0.04)', color: hov ? '#000' : '#8b949e' }}>Use Tool →</div>
+    </button>
+  );
+}
+
+// Card grid styles (scoped, won't clash with existing `styles` object below)
+const cs = {
+  modulesGrid:  { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 20, marginBottom: 28 },
+  toolsGrid:    { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 36 },
+  sectionHead:  { display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 14, paddingBottom: 10, borderBottom: '1px solid rgba(255,255,255,0.06)' },
+  sectionTitle: { fontSize: 15, fontWeight: 800, color: '#e6edf3', letterSpacing: '-0.01em' },
+  sectionSub:   { fontSize: 12, color: '#5c6370' },
+  // Module card
+  modCard:    { position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '28px 22px 18px', background: '#161b22', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, cursor: 'pointer', textAlign: 'left', overflow: 'hidden', transition: 'border-color 0.18s, box-shadow 0.18s, transform 0.18s' },
+  accentBar:  { position: 'absolute', top: 0, left: 0, right: 0, height: 4, borderRadius: '14px 14px 0 0' },
+  cardIcon:   { fontSize: '2.3rem', marginBottom: 12, marginTop: 4, lineHeight: 1 },
+  cardTitle:  { margin: '0 0 8px', fontSize: '1.05rem', fontWeight: 800, transition: 'color 0.15s' },
+  cardDesc:   { margin: '0 0 14px', fontSize: '0.8rem', color: '#8b949e', lineHeight: 1.6, flex: 1 },
+  cardTags:   { display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 16 },
+  tag:        { fontSize: '0.68rem', padding: '2px 8px', borderRadius: 20, border: '1px solid', fontWeight: 600 },
+  launchBtn:  { width: '100%', padding: '9px 0', borderRadius: 7, fontWeight: 700, fontSize: '0.82rem', textAlign: 'center', transition: 'background 0.18s, color 0.18s', boxSizing: 'border-box' },
+  // Tool card
+  toolCard:     { position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '16px 16px 12px', background: '#161b22', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, cursor: 'pointer', textAlign: 'left', overflow: 'hidden', transition: 'border-color 0.18s, box-shadow 0.18s, transform 0.18s' },
+  toolAccentBar:{ position: 'absolute', top: 0, left: 0, right: 0, height: 2 },
+  toolRow:      { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7, marginTop: 3 },
+  toolIcon:     { fontSize: '1.25rem' },
+  toolLabel:    { fontSize: 13, fontWeight: 700, transition: 'color 0.15s' },
+  toolDesc:     { margin: '0 0 12px', fontSize: 11, color: '#8b949e', lineHeight: 1.55, flex: 1 },
+  toolBtn:      { width: '100%', padding: '6px 0', borderRadius: 5, fontWeight: 700, fontSize: 11, textAlign: 'center', transition: 'background 0.18s, color 0.18s', boxSizing: 'border-box' },
+};
+
 /**
  * Project Home Page - Estimator's Dashboard
  * 
@@ -14,6 +99,7 @@ const ProjectHome = ({
   onCategorySelect,
   onBack,
   onNavigate,
+  onLaunch,
   bidSettings = {},
   onBidSettingsChange,
 }) => {
@@ -159,6 +245,27 @@ const ProjectHome = ({
             </div>
           </div>
         </div>
+
+        {/* ── SUITE MODULES & TOOLS ── */}
+        {onLaunch && (
+          <>
+            <div style={cs.sectionHead}>
+              <span style={cs.sectionTitle}>Suite Modules</span>
+              <span style={cs.sectionSub}>Full commercial glazing workflow</span>
+            </div>
+            <div style={cs.modulesGrid}>
+              {MODULES.map(mod => <ModuleCard key={mod.id} mod={mod} onLaunch={onLaunch} />)}
+            </div>
+
+            <div style={cs.sectionHead}>
+              <span style={cs.sectionTitle}>Tools</span>
+              <span style={cs.sectionSub}>Quick-access calculators for glaziers</span>
+            </div>
+            <div style={cs.toolsGrid}>
+              {TOOLS.map(tool => <ToolCard key={tool.id} tool={tool} onLaunch={onLaunch} />)}
+            </div>
+          </>
+        )}
 
         {/* ── BENTO GRID ── */}
         <div style={styles.bentoGrid}>

@@ -106,6 +106,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   windowMaximize: () => ipcRenderer.send('window-maximize'),
   windowClose: () => ipcRenderer.send('window-close'),
 
+  /** CORS-safe HTTP GET via main process (use instead of fetch() for external APIs). */
+  httpGet: (url) => ipcRenderer.invoke('glazebid:http-get', url),
+
   // ── Citation Store ──────────────────────────────────────────────────────
   /** Save extracted spec section PDFs to a folder on disk (main-process fs). */
   saveSections: (sections, folderPath) => ipcRenderer.invoke('spec:saveSections', sections, folderPath),

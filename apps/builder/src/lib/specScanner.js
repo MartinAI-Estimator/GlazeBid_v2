@@ -44,7 +44,12 @@ export const SCAN_CATEGORIES = [
     description: 'Named manufacturer or basis-of-design product',
     patterns: [
       /basis[\s\-]+of[\s\-]+design/i,
-      /\b(kawneer|oldcastle(?:\s+building\s+envelope)?|ykk[\s\-]?ap|wausau|tubelite|efco|arcadia|peerless|viracon|guardian\s+glass|cr\s?laurence|c\.r\.\s+laurence|thermovation|traco|vistawall|united\s+states\s+aluminum|usa[\s\-]?arch)\b/i,
+      /acceptable\s+manufacturers?/i,
+      /approved\s+(manufacturers?|equal|product)/i,
+      /named\s+manufacturer/i,
+      /comparable\s+products?/i,
+      /manufacturers?\s*:/i,
+      /\b(kawneer|oldcastle(?:\s+building\s+envelope)?|ykk[\s\-]?ap|wausau|tubelite|efco|arcadia|peerless|viracon|guardian\s+glass|cr\s?laurence|c\.r\.\s+laurence|thermovation|traco|vistawall|united\s+states\s+aluminum|usa[\s\-]?arch|vitro|pilkington|cardinal\s+(glass|industries)|ppg\s+(glass|industries)|graham\s+architectural|winco|nana\s*wall|pittco)\b/i,
     ],
   },
   {
@@ -436,11 +441,11 @@ function scanCategory(category, pageTexts) {
     for (const pattern of category.patterns) {
       const match = pattern.exec(text);
       if (match) {
-        const start = Math.max(0, match.index - 55);
-        const end = Math.min(text.length, match.index + match[0].length + 110);
+        const start = Math.max(0, match.index - 80);
+        const end = Math.min(text.length, match.index + match[0].length + 160);
         const raw = text.slice(start, end).replace(/\s+/g, ' ').trim();
         const excerpt = (start > 0 ? '…' : '') + raw + (end < text.length ? '…' : '');
-        return { found: true, excerpt: excerpt.slice(0, 220), page };
+        return { found: true, excerpt: excerpt.slice(0, 300), page };
       }
     }
   }
