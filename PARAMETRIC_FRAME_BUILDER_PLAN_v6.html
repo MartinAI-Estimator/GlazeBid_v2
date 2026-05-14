@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parametric Frame Builder — Master Plan v6</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --border: #e2e0d8;
+  --text: #1a1917;
+  --text-2: #5a5854;
+  --text-3: #9a9894;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --blue-bg: #e8f0fb; --blue-text: #1a3a6e; --blue-border: #b0c8f0;
+  --teal-bg: #e0f4ee; --teal-text: #0a4a36; --teal-border: #8ed4bc;
+  --amber-bg: #fdf0d8; --amber-text: #5a3200; --amber-border: #f0c878;
+  --purple-bg: #eeecfc; --purple-text: #30286a; --purple-border: #c0b8f0;
+  --green-bg: #e8f2dc; --green-text: #1e4a0a; --green-border: #a8d080;
+  --coral-bg: #fceae4; --coral-text: #6a2010; --coral-border: #f0a890;
+  --red-bg: #fceaea; --red-text: #6a1a1a; --red-border: #f0a8a8;
+  --gray-bg: #f0efea; --gray-text: #3a3836; --gray-border: #d0cec8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.6; }
+.page { max-width: 980px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+.cover { padding-bottom: 2.5rem; margin-bottom: 3rem; border-bottom: 2px solid var(--border); }
+.cover-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; margin-bottom: 12px; }
+.cover-title { font-size: 38px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 8px; }
+.cover-title span { color: var(--text-3); font-weight: 300; }
+.cover-sub { font-size: 15px; color: var(--text-2); margin-bottom: 1.5rem; line-height: 1.6; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+.t-blue { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
+.t-teal { background: var(--teal-bg); color: var(--teal-text); border-color: var(--teal-border); }
+.t-amber { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber-border); }
+.t-green { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
+.t-purple { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple-border); }
+.t-coral { background: var(--coral-bg); color: var(--coral-text); border-color: var(--coral-border); }
+.t-gray { background: var(--gray-bg); color: var(--gray-text); border-color: var(--gray-border); }
+.stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 2.5rem; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.stat-val { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+.stat-label { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.section { margin-bottom: 3rem; }
+.sh { display: flex; align-items: baseline; gap: 12px; margin-bottom: 1.5rem; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.sn { font-family: var(--mono); font-size: 11px; color: var(--text-3); min-width: 24px; }
+.st { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.prose { font-size: 14px; line-height: 1.8; color: var(--text-2); margin-bottom: 1.25rem; }
+.prose strong { color: var(--text); font-weight: 500; }
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 1rem 0 1.5rem; }
+.fn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 500; }
+.fn.active { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue-text); }
+.fa { font-size: 13px; color: var(--text-3); }
+.principles { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+.principle { background: var(--surface); border-left: 3px solid var(--blue-border); border-radius: 0 10px 10px 0; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 14px 16px; }
+.principle-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.principle-body { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
+.app-layout { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 1rem 0 1.5rem; }
+.app-titlebar { background: #1a1e24; padding: 8px 14px; display: flex; align-items: center; gap: 8px; }
+.app-dot { width: 10px; height: 10px; border-radius: 50%; }
+.app-dot.r { background: #e05050; }
+.app-dot.y { background: #e0a030; }
+.app-dot.g { background: #40a050; }
+.app-title-text { font-family: var(--mono); font-size: 11px; color: #666; margin-left: 6px; }
+.app-body { display: grid; grid-template-columns: 48px 220px 1fr; min-height: 280px; }
+.app-sidebar-icons { background: #f2f1ed; border-right: 1px solid var(--border); padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.app-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.app-icon.active { background: var(--blue-bg); }
+.app-sidebar-nav { border-right: 1px solid var(--border); padding: 16px 12px; background: #faf9f6; }
+.nav-section { margin-bottom: 16px; }
+.nav-section-label { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 6px; padding-left: 4px; }
+.nav-item { font-size: 12px; padding: 5px 8px; border-radius: 6px; color: var(--text-2); margin-bottom: 2px; cursor: default; }
+.nav-item.active { background: var(--blue-bg); color: var(--blue-text); font-weight: 500; }
+.app-main { padding: 16px; background: var(--surface); }
+.app-main-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; font-family: var(--mono); }
+.top-tabs { display: flex; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+.top-tab { flex: 1; padding: 8px 6px; text-align: center; border-right: 1px solid var(--border); }
+.top-tab:last-child { border-right: none; }
+.top-tab.active { background: var(--surface); }
+.top-tab-name { font-size: 11px; font-weight: 600; color: var(--text-2); }
+.top-tab.active .top-tab-name { color: var(--blue-text); }
+.top-tab-sub { font-size: 9px; color: var(--text-3); margin-top: 1px; }
+.input-tabs { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1rem 0 1.5rem; background: var(--surface); }
+.it { padding: 10px 6px; border-right: 1px solid var(--border); text-align: center; }
+.it:last-child { border-right: none; }
+.it-n { font-family: var(--mono); font-size: 9px; color: var(--text-3); margin-bottom: 3px; }
+.it-name { font-size: 11px; font-weight: 600; color: var(--text); }
+.it-desc { font-size: 10px; color: var(--text-3); margin-top: 2px; line-height: 1.3; }
+.ag-tabs { display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1rem 0 1.5rem; background: var(--surface); }
+.decisions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.decision { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; }
+.decision.locked { border-left: 3px solid #1a8a5a; }
+.decision.dropped { border-left: 3px solid #cc8844; opacity: 0.65; }
+.dec-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.decision.locked .dec-label { color: #1a8a5a; }
+.decision.dropped .dec-label { color: #cc8844; }
+.dec-body { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+.dec-body strong { color: var(--text); font-weight: 500; }
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.5rem; }
+.vs-them { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.vs-us { background: var(--teal-bg); border: 1px solid var(--teal-border); border-radius: 12px; padding: 16px 18px; }
+.vs-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.vs-them .vs-label { color: var(--text-3); }
+.vs-us .vs-label { color: var(--teal-text); }
+.vs-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.vs-list li { font-size: 12.5px; padding-left: 16px; position: relative; line-height: 1.5; }
+.vs-them .vs-list li { color: var(--text-2); }
+.vs-them .vs-list li::before { content: '✗'; position: absolute; left: 0; color: #cc4444; font-size: 10px; top: 2px; }
+.vs-us .vs-list li { color: var(--teal-text); }
+.vs-us .vs-list li::before { content: '✓'; position: absolute; left: 0; color: #1a8a5a; font-size: 10px; top: 2px; }
+.module-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.module { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; }
+.module.new-m { border-color: var(--green-border); }
+.module.core-m { border-color: var(--blue-border); }
+.module.ag-m { border-color: var(--teal-border); }
+.module.ux-m { border-color: var(--purple-border); }
+.mod-title { font-size: 12.5px; font-weight: 600; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+.npill { font-size: 9px; font-weight: 600; border-radius: 8px; padding: 1px 6px; }
+.np-green { background: var(--green-bg); color: var(--green-text); }
+.np-teal { background: var(--teal-bg); color: var(--teal-text); }
+.np-purple { background: var(--purple-bg); color: var(--purple-text); }
+.mod-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.mod-list li { font-size: 11px; color: var(--text-2); padding-left: 11px; position: relative; line-height: 1.45; }
+.mod-list li::before { content: '·'; position: absolute; left: 1px; color: var(--text-3); }
+.data-flow { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 1rem 0 1.5rem; }
+.df-header { background: var(--bg); padding: 10px 16px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
+.df-row { display: grid; grid-template-columns: 180px 1fr 160px; padding: 10px 16px; border-bottom: 1px solid var(--border); align-items: start; gap: 16px; }
+.df-row:last-child { border-bottom: none; }
+.df-group { font-size: 12px; font-weight: 600; color: var(--text); }
+.df-items { font-size: 12px; color: var(--text-2); line-height: 1.6; }
+.df-dest { font-size: 11px; font-family: var(--mono); color: var(--text-3); }
+.pill { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 8px; font-weight: 500; }
+.pill-blue { background: var(--blue-bg); color: var(--blue-text); }
+.pill-teal { background: var(--teal-bg); color: var(--teal-text); }
+.pill-green { background: var(--green-bg); color: var(--green-text); }
+.pill-amber { background: var(--amber-bg); color: var(--amber-text); }
+.pill-red { background: var(--red-bg); color: var(--red-text); }
+.phase-list { display: flex; flex-direction: column; gap: 14px; }
+.phase { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.phase-hd { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--bg); flex-wrap: wrap; }
+.phase-tag { font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 20px; white-space: nowrap; font-family: var(--mono); }
+.ph1 { background: var(--blue-bg); color: var(--blue-text); }
+.ph2 { background: var(--teal-bg); color: var(--teal-text); }
+.ph3 { background: var(--purple-bg); color: var(--purple-text); }
+.ph4 { background: var(--amber-bg); color: var(--amber-text); }
+.ph5 { background: var(--coral-bg); color: var(--coral-text); }
+.ph6 { background: var(--green-bg); color: var(--green-text); }
+.ph7 { background: var(--blue-bg); color: #185fa5; }
+.ph8 { background: var(--amber-bg); color: #854f0b; }
+.phase-name { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+.phase-focus { font-size: 11px; color: var(--text-3); font-style: italic; }
+.phase-bd { padding: 16px 18px; }
+.col-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.col-title { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 8px; }
+.p-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.p-list li { font-size: 12.5px; color: var(--text-2); padding-left: 15px; position: relative; line-height: 1.5; }
+.p-list li::before { content: '—'; position: absolute; left: 0; color: var(--text-3); font-size: 11px; top: 1px; }
+.p-list li.new { color: var(--text); }
+.p-list li.new::before { content: '★'; color: #3a8a1a; font-size: 9px; top: 3px; }
+.risk-list { display: flex; flex-direction: column; gap: 8px; }
+.risk { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+.rl { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px; white-space: nowrap; margin-top: 2px; }
+.rc { background: var(--red-bg); color: var(--red-text); }
+.rm { background: var(--amber-bg); color: var(--amber-text); }
+.rlo { background: var(--teal-bg); color: var(--teal-text); }
+.rd { background: var(--gray-bg); color: var(--text-3); }
+.risk-body { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.risk-body strong { color: var(--text); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="cover">
+    <div class="cover-eyebrow">GlazeBid Ecosystem · Master Planning Document · v6.0 · April 2026 · Final</div>
+    <div class="cover-title">Parametric Frame Builder <span>— Complete Plan</span></div>
+    <div class="cover-sub">Every session consolidated. All features, decisions, architecture, and 8-phase build sequence. This is the definitive planning document.</div>
+    <div class="tag-row">
+      <span class="tag t-blue">GlazeBid v2 native</span>
+      <span class="tag t-teal">PartnerPak successor</span>
+      <span class="tag t-amber">CRL competitor</span>
+      <span class="tag t-coral">GDS competitor</span>
+      <span class="tag t-purple">Electron · React · TypeScript</span>
+      <span class="tag t-green">38 modules · 8 phases · Final</span>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-val">8</div><div class="stat-label">Build phases</div></div>
+    <div class="stat"><div class="stat-val">38</div><div class="stat-label">Feature modules</div></div>
+    <div class="stat"><div class="stat-val">3</div><div class="stat-label">Seeded vendors</div></div>
+    <div class="stat"><div class="stat-val">4"</div><div class="stat-label">Min panel width</div></div>
+    <div class="stat"><div class="stat-val">8%</div><div class="stat-label">Scrap target</div></div>
+    <div class="stat"><div class="stat-val">7</div><div class="stat-label">Input tabs</div></div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">01</span><span class="st">What this is</span></div>
+    <div class="prose">Parametric Frame Builder is the third core module of the GlazeBid ecosystem. It lives as a <strong>sidebar tab inside Builder</strong> — the same pattern as Studio. Its job is to transform raw frame dimensions into a complete, fabrication-ready engineering package — bill of materials, cut lists, glass schedule, metal material list, door schedule, structural analysis, and shop drawings — using real vendor part numbers and rules-based accessory calculations.</div>
+    <div class="flow">
+      <div class="fn">Studio takeoff</div><div class="fa">→</div>
+      <div class="fn active">Frame Builder</div><div class="fa">→</div>
+      <div class="fn">Builder pricing</div><div class="fa">→</div>
+      <div class="fn">Proposal + shops</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">02</span><span class="st">UX philosophy — three non-negotiables</span></div>
+    <div class="principles">
+      <div class="principle"><div class="principle-title">Visual immediacy</div><div class="principle-body">Every input produces an immediate visual response in the CAD canvas. No calculate button. No update preview. The frame is alive. Type a width, the frame redraws. Change bay count, a mullion appears. Adjust a panel, adjacent panels redistribute. The BOM updates in the same moment.</div></div>
+      <div class="principle"><div class="principle-title">Estimators think visually</div><div class="principle-body">Everything built in Frame Builder is represented visually at all times. The CAD workspace is the source of truth the estimator trusts. Numbers in fields are confirmed by what they see on screen. If the visual is wrong, the inputs are wrong.</div></div>
+      <div class="principle"><div class="principle-title">Sidebar native — no context switching</div><div class="principle-body">Frame Builder lives inside Builder as a sidebar tab. The estimator builds frames and the bid sheet prices them in real time. No export step, no transfer, no sync to wait for. Finishing a frame and clicking the Bid Sheet tab shows the line items immediately.</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">03</span><span class="st">Where Frame Builder lives in the application</span></div>
+    <div class="app-layout">
+      <div class="app-titlebar">
+        <div class="app-dot r"></div><div class="app-dot y"></div><div class="app-dot g"></div>
+        <div class="app-title-text">GlazeBid Builder — 123 Main Street Commercial</div>
+      </div>
+      <div class="app-body">
+        <div class="app-sidebar-icons">
+          <div class="app-icon">🏠</div><div class="app-icon">📋</div>
+          <div class="app-icon active">🔧</div><div class="app-icon">💰</div><div class="app-icon">📄</div>
+        </div>
+        <div class="app-sidebar-nav">
+          <div class="nav-section">
+            <div class="nav-section-label">Frame Builder</div>
+            <div class="nav-item active">Framed Systems</div>
+            <div class="nav-item">All-Glass Walls</div>
+            <div class="nav-item">Glass Takeoff</div>
+            <div class="nav-item">Metal List</div>
+            <div class="nav-item">Dashboard</div>
+          </div>
+          <div class="nav-section">
+            <div class="nav-section-label">Project</div>
+            <div class="nav-item">Bid Sheet</div>
+            <div class="nav-item">Bid Cart</div>
+            <div class="nav-item">Proposal</div>
+          </div>
+        </div>
+        <div class="app-main">
+          <div class="app-main-label">Frame Builder — Framed Systems</div>
+          <div class="top-tabs">
+            <div class="top-tab active"><div class="top-tab-name">Framed Systems</div><div class="top-tab-sub">SF · CW · Int SF</div></div>
+            <div class="top-tab"><div class="top-tab-name">All-Glass Walls</div><div class="top-tab-sub">Interior frameless</div></div>
+            <div class="top-tab"><div class="top-tab-name">Glass Takeoff</div><div class="top-tab-sub">All lites</div></div>
+            <div class="top-tab"><div class="top-tab-name">Metal List</div><div class="top-tab-sub">Extrusions + base shoe</div></div>
+            <div class="top-tab"><div class="top-tab-name">Dashboard</div><div class="top-tab-sub">Project summary</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);text-align:center;padding:20px 0;">CAD workspace renders here — dark environment, live frame preview, dimension callouts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">04</span><span class="st">Competitive position</span></div>
+    <div class="vs-grid">
+      <div class="vs-them">
+        <div class="vs-label">Every existing tool</div>
+        <ul class="vs-list">
+          <li>Locked to one manufacturer</li>
+          <li>No multi-vendor alternates on same frame</li>
+          <li>No visual immediacy — calculate buttons everywhere</li>
+          <li>Generic non-submittal shop drawings</li>
+          <li>No door builder or hardware schedule</li>
+          <li>No interior all-glass wall module</li>
+          <li>No all-glass door hardware BOM</li>
+          <li>No brake metal or caulking calculator</li>
+          <li>No cut list optimizer with scrap analysis</li>
+          <li>No revision tracker between drawing sets</li>
+          <li>No structural advisor with active recommendations</li>
+          <li>No spec compliance or ADA checker</li>
+          <li>No glass area ratio check</li>
+          <li>No quick take fast entry mode</li>
+          <li>No bid unit price calculator</li>
+          <li>No estimator notes on frames</li>
+          <li>No frame grouping or elevation sets</li>
+        </ul>
+      </div>
+      <div class="vs-us">
+        <div class="vs-label">Parametric Frame Builder</div>
+        <ul class="vs-list">
+          <li>Archetype-based, any vendor, any system</li>
+          <li>Base bid + 2–3 vendor alternates per frame</li>
+          <li>Every input updates the canvas immediately — live</li>
+          <li>Submittal-ready project-specific shop drawings</li>
+          <li>Full door builder + hardware schedule</li>
+          <li>Interior all-glass wall module with panel layout engine</li>
+          <li>All-glass door: floor closer, patch fittings, pivot, pulls, lock</li>
+          <li>Brake metal sidecar + caulking sausage count by type</li>
+          <li>Bin-pack optimizer, 8% target, saw diagram output</li>
+          <li>Drawing revision diff tracker</li>
+          <li>ASCE 7-22 active structural advisor + anchor calculator</li>
+          <li>Spec compliance + ADA/IBC door compliance checker</li>
+          <li>Glass area vs. rough opening ratio check</li>
+          <li>Quick take mode for repetitive scope</li>
+          <li>Bid unit price calculator ($/LF and $/SF by system)</li>
+          <li>Estimator notes per frame — travel with BOM and shops</li>
+          <li>Frame groups standard, elevation toggle optional</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">05</span><span class="st">Architecture decisions — locked</span></div>
+    <div class="decisions">
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Two-layer data model.</strong> Archetype (geometry truth, system-agnostic) + Vendor mapping (resolves member roles to real part numbers). BOM computed once, resolved N times for alternates.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Frame Builder = sidebar tab in Builder.</strong> Not a third Electron window. Lives inside Builder like Studio. Sidebar resizable. Direct store write — no IPC relay for data transfer to bid sheet.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Visual immediacy is non-negotiable.</strong> Every input field triggers an immediate CAD canvas re-render and BOM update. No calculate button anywhere in the application.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Frame groups standard, elevation toggle optional.</strong> System, finish, and glass assigned at group level and cascade. Elevation grouping off by default, on when the job warrants it.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Cut optimizer scrap thresholds.</strong> Under 8% = green. 8–10% = yellow warning. Over 10% = red review flag. Applied per part number in the metal material list.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Sill height = AFF, available at bid time.</strong> Entered on Identity tab. Feeds CAD environment, structural anchor spacing, tempering auto-flag, and high-base advisory.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>All-glass panel layout.</strong> Equal default. Auto-redistribute on every adjustment. LINKED groups when panels share the same size. Door panels LOCKED and upstream of the pool. Minimum panel width = 4".</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>All-glass hardware vendors.</strong> CRL, Dorma, ASSA ABLOY, Blumcraft. One vendor per job when possible. Same two-layer archetype + vendor mapping model as framed systems.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Custom conditions are always manual.</strong> High bases, corners, specialty trim — manual add. Soft advisory shown when sill is at or near grade. No rule engine guessing design intent.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Alternate summary is customer-facing.</strong> Title block, company logo, professional deliverable language. Part of the bid package submitted to the GC.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Dashboard lives in both Frame Builder and Builder.</strong> Frame Builder view: frames, scrap, structural flags, spec compliance. Builder view adds cost, margin, and labor cost.</div></div>
+      <div class="decision locked"><div class="dec-label">Locked</div><div class="dec-body"><strong>Vendor data entry.</strong> Seeded library for 3 vendors + CW counterparts. Price book PDF upload with AI extraction for all others. Custom parts library per company for non-catalog items.</div></div>
+      <div class="decision dropped"><div class="dec-label">Dropped</div><div class="dec-body"><strong>Project templates.</strong> Every project is unique. Templates create false head starts. Not building this.</div></div>
+      <div class="decision dropped"><div class="dec-label">Dropped</div><div class="dec-body"><strong>Installation sequence, submittal log, RFI generator, hardware finish checker, lead time flags, field verification checklist.</strong> Good ideas, not needed for the initial build. Can be added post-launch.</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">06</span><span class="st">Estimator input flows</span></div>
+    <div class="prose"><strong>Framed systems — 7-tab flow.</strong> Keyboard navigation: Tab advances fields within a section, Ctrl+→ advances to the next tab. Standard rectangular storefront in under 60 seconds.</div>
+    <div class="input-tabs">
+      <div class="it"><div class="it-n">01</div><div class="it-name">Identity</div><div class="it-desc">Mark, group, AFF, scope, qty, notes</div></div>
+      <div class="it"><div class="it-n">02</div><div class="it-name">Geometry</div><div class="it-desc">W, H, shape, DLO, joint width</div></div>
+      <div class="it"><div class="it-n">03</div><div class="it-name">System</div><div class="it-desc">Vendor, profile, finish, color, alternates</div></div>
+      <div class="it"><div class="it-n">04</div><div class="it-name">Grid</div><div class="it-desc">Bays, rows, doors, transoms</div></div>
+      <div class="it"><div class="it-n">05</div><div class="it-name">Glass</div><div class="it-desc">Type per zone, spandrel, temp flags</div></div>
+      <div class="it"><div class="it-n">06</div><div class="it-name">Structural</div><div class="it-desc">Wind, span check, steel, anchors</div></div>
+      <div class="it"><div class="it-n">07</div><div class="it-name">BOM</div><div class="it-desc">Cut list, accessories, caulk, alternates</div></div>
+    </div>
+    <div class="prose"><strong>All-glass walls — 6-tab flow.</strong> Simpler — no grid tab. Door width set on Doors tab and locked upstream of the panel pool.</div>
+    <div class="ag-tabs">
+      <div class="it"><div class="it-n">01</div><div class="it-name">Identity</div><div class="it-desc">Mark, group, AFF, scope, notes</div></div>
+      <div class="it"><div class="it-n">02</div><div class="it-name">Wall</div><div class="it-desc">Run LF, height, joints, corners</div></div>
+      <div class="it"><div class="it-n">03</div><div class="it-name">Glass</div><div class="it-desc">Panel layout, thickness, edge work, fins</div></div>
+      <div class="it"><div class="it-n">04</div><div class="it-name">Hardware</div><div class="it-desc">Vendor, base shoe, cap rail</div></div>
+      <div class="it"><div class="it-n">05</div><div class="it-name">Doors</div><div class="it-desc">Width locked, swing, hardware set</div></div>
+      <div class="it"><div class="it-n">06</div><div class="it-name">BOM</div><div class="it-desc">Glass schedule, hardware list, sealant</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">07</span><span class="st">Complete data flow — Frame Builder to Builder</span></div>
+    <div class="data-flow">
+      <div class="df-header">FrameEngineeringPackage — what flows to Builder</div>
+      <div class="df-row"><div class="df-group">Aluminum BOM</div><div class="df-items">Part number, description, member role, total LF, bar count, lbs/ft, total lbs, list price, finish multiplier, extended cost.</div><div class="df-dest"><span class="pill pill-blue">Material cost</span></div></div>
+      <div class="df-row"><div class="df-group">Glass schedule</div><div class="df-items">Mark, width, height, shape, glass spec, quantity, SF, $/SF (when received), extended cost.</div><div class="df-dest"><span class="pill pill-teal">Glass cost</span></div></div>
+      <div class="df-row"><div class="df-group">Accessories</div><div class="df-items">Setting blocks, screws, weep baffles, end dams, shim tape, vinyl — part number, unit, quantity, unit cost, extended cost.</div><div class="df-dest"><span class="pill pill-green">Sundries</span></div></div>
+      <div class="df-row"><div class="df-group">Sealant</div><div class="df-items">Type (silicone, urethane, structural, latex), joint LF, sausage count, unit cost.</div><div class="df-dest"><span class="pill pill-green">Sealant cost</span></div></div>
+      <div class="df-row"><div class="df-group">Brake metal</div><div class="df-items">Condition label, profile name, total LF, flat pattern LF, SF, weight (lbs), cost.</div><div class="df-dest"><span class="pill pill-blue">Metal cost</span></div></div>
+      <div class="df-row"><div class="df-group">Labor</div><div class="df-items">Shop hours, distribution hours, field hours — per frame and aggregated by system class.</div><div class="df-dest"><span class="pill pill-amber">Labor cost</span></div></div>
+      <div class="df-row"><div class="df-group">Doors + hardware</div><div class="df-items">Mark, hardware set, material cost, labor hours. All-glass doors include floor closer, top pivot, patch fittings, pulls, lock.</div><div class="df-dest"><span class="pill pill-amber">Hardware cost</span></div></div>
+      <div class="df-row"><div class="df-group">Alternates</div><div class="df-items">Same BOM resolved against alternate vendor mappings. Base bid + Alt 1 + Alt 2.</div><div class="df-dest"><span class="pill pill-blue">Alt pricing</span></div></div>
+      <div class="df-row"><div class="df-group">Structural note</div><div class="df-items">Status (pass/steel/upgrade/engineer), steel spec if applicable, note for shop drawing title block.</div><div class="df-dest"><span class="pill pill-teal">Shops</span></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">08</span><span class="st">Build sequence — 8 phases</span></div>
+    <div class="phase-list">
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph1">Phase 1</span><span class="phase-name">Data schema, archetypes, fabrication rules engine</span><span class="phase-focus">Foundation</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">Core types</div><ul class="p-list"><li>Archetype, VendorSystem, MemberMapping, FabricationRules, BOMOutput</li><li>FrameIdentity: mark, group, elevation, class, scope, AFF, mock-up, qty, notes</li><li>FrameGeometryType enum: RECT, RAKED, ARCHED, ARCH_FULL, CIRCLE, TRIANGLE, POLYGON, RIBBON</li><li>AllGlassPanelState: EQUAL, LINKED, LOCKED</li><li>FrameContext: wall type, AFF datum, head condition, adjacent frame IDs</li><li>MetalTakeoffRecord, RevisionRecord, FrameEngineeringPackage types</li></ul></div><div><div class="col-title">Engine + seed data</div><ul class="p-list"><li>10 core archetypes: 5 storefront, 4 curtain wall, 1 window wall</li><li>Fabrication rules engine — industry defaults</li><li>BOM resolver: archetype + vendor + dimensions → full BOM</li><li>Seed: Kawneer 451T, Tubelite T1400, Oldcastle FG-3000 (storefront first)</li><li>Panel layout engine: EQUAL/LINKED/LOCKED, 4" minimum, auto-redistribute</li><li>Unit test all calculations against real-world outputs</li></ul></div></div></div></div>
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph2">Phase 2</span><span class="phase-name">Frame builder UI — CAD workspace, 7-tab input, quick take, visual immediacy</span><span class="phase-focus">Primary estimator workspace</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">CAD workspace</div><ul class="p-list"><li class="new">Sidebar tab integration inside Builder — resizable panel</li><li class="new">Top-level tab bar: Framed Systems / All-Glass Walls / Glass Takeoff / Metal List / Dashboard</li><li class="new">Dark CAD workspace — grid, zoom/pan, coordinate readout, scale selector</li><li class="new">Reactive rendering pipeline — every input triggers immediate canvas re-render</li><li class="new">Dimension callouts rendered live — string, grid, DLO, AFF labels</li><li class="new">Layer toggles: frame, glass, dims, context, labels</li></ul></div><div><div class="col-title">Input + workflow</div><ul class="p-list"><li>7-tab framed input flow with keyboard navigation</li><li class="new">Quick take mode: fast table entry, group settings auto-applied</li><li class="new">Estimator notes field on Identity tab</li><li>Shape type selector, finish selector, joint width, custom DLO override</li><li>Multi-vendor alternate selector (base + alt 1, alt 2)</li><li class="new">Frame group assignment and group-level cascade</li><li class="new">Copy / typical frame function</li><li>Studio intake: RawTakeoff auto-fills dimensions and identity</li><li>Caulking calculator auto-runs on BOM resolve</li></ul></div></div></div></div>
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph3">Phase 3</span><span class="phase-name">All-glass wall module, glass library, takeoff sheets, brake metal</span><span class="phase-focus">Material output and all-glass scope</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">All-glass wall</div><ul class="p-list"><li class="new">6-tab input flow</li><li class="new">Panel layout engine UI: EQUAL/LINKED/LOCKED, 4" minimum, live redistribution</li><li class="new">Structural glass thickness check: L/60</li><li class="new">Glass fins when lateral span exceeded</li><li class="new">All-glass door hardware BOM</li><li class="new">Structural silicone sausage count for butt joints</li></ul></div><div><div class="col-title">Glass + metal lists</div><ul class="p-list"><li>Glass library: named specs, U-value, SHGC</li><li>Tempering auto-flag: code rules + AFF + override</li><li>Glass takeoff sheet — auto-populated, never manual</li><li class="new">Metal material list: aggregated, scrap thresholds, export</li><li class="new">Brake metal sidecar: profile designer, flat pattern, presets</li><li class="new">Glass area ratio check vs. spec minimum</li></ul></div></div></div></div>
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph4">Phase 4</span><span class="phase-name">Structural advisor, anchor calculator, compliance checks</span><span class="phase-focus">Engineering intelligence</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">Structural + anchors</div><ul class="p-list"><li class="new">ASCE 7-22 wind pressure, deflection, bending stress</li><li class="new">Decision ladder: Pass → Steel → Upgrade → Engineer Required</li><li class="new">Steel HSS rec with part number auto-added to BOM</li><li class="new">Anchor calculator: substrate, spacing, embed depth</li><li class="new">Wind zone city presets</li></ul></div><div><div class="col-title">Compliance</div><ul class="p-list"><li class="new">Spec compliance: requirement-by-requirement check</li><li class="new">ADA/IBC door compliance: clear width, vision panel AFF, hardware height</li><li class="new">Bid unit price calculator: $/LF and $/SF by system class</li></ul></div></div></div></div>
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph5">Phase 5</span><span class="phase-name">Door builder, operable vents, non-rectangular geometry, vendor seed data</span><span class="phase-focus">Special conditions and schedules</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">Doors, vents, vendor data</div><ul class="p-list"><li>Door configuration, schedule + hardware schedule export</li><li class="new">Operable vent scheduler</li><li class="new">Seed all-glass hardware vendors: CRL, Dorma, ASSA ABLOY, Blumcraft</li></ul></div><div><div class="col-title">Non-rectangular geometry</div><ul class="p-list"><li class="new">Raked: per-mullion height calc, trapezoidal glass</li><li class="new">Arched: spring line, arch height, segmental glass dims</li><li class="new">Circle: diameter, continuous extrusion, single curved lite</li><li class="new">Custom polygon: N-sided, per-member length + miter angle</li></ul></div></div></div></div>
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph6">Phase 6</span><span class="phase-name">Firestop, expansion joints, cut list optimizer, weight estimate</span><span class="phase-focus">Scope completeness and material efficiency</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">Firestop + movement</div><ul class="p-list"><li class="new">Firestop calc: floor-line LF, mineral wool, intumescent strip, sealant, UL system</li><li class="new">Expansion joint locations from run length + temp differential</li></ul></div><div><div class="col-title">Optimizer + weight</div><ul class="p-list"><li class="new">Cut list optimizer: bin-pack, 21' or 24' stock, bar-by-bar saw diagram</li><li class="new">Savings vs. unoptimized shown as $ amount</li><li class="new">Weight + shipping estimate: aluminum + glass → truck count</li></ul></div></div></div></div>
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph7">Phase 7</span><span class="phase-name">Revision tracker, purchase order, frame schedule, labor reports, dashboard</span><span class="phase-focus">Project lifecycle and procurement</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">Revision + procurement</div><ul class="p-list"><li class="new">Revision tracker: import new Studio takeoff, diff view, accept/reject, history log</li><li class="new">Purchase order summary: all part numbers aggregated, PO export</li><li class="new">Frame schedule export: mark, dims, system, finish, glass, qty</li></ul></div><div><div class="col-title">Reports + dashboard</div><ul class="p-list"><li class="new">Labor phase report: shop/dist/field by frame and system class</li><li class="new">Project summary dashboard — engineering view in Frame Builder, cost view in Builder</li><li class="new">Bid unit prices exposed in dashboard and bid form output</li></ul></div></div></div></div>
+      <div class="phase"><div class="phase-hd"><span class="phase-tag ph8">Phase 8</span><span class="phase-name">Shop drawings, submittal package, alternate summary, vendor library manager</span><span class="phase-focus">Customer deliverables and vendor data infrastructure</span></div><div class="phase-bd"><div class="col-grid"><div><div class="col-title">Submittal package</div><ul class="p-list"><li>Per-frame shop drawing: elevation, grid, callouts, glass labels, notes</li><li>All-glass wall elevation + hardware callouts + door details</li><li>Structural notes, expansion joint marks, mock-up labels</li><li class="new">Submittal cover sheet auto-generated from project data</li><li class="new">Alternate bid summary: customer-facing, title block, side-by-side</li><li>Submittal-ready PDF — full set assembled automatically</li></ul></div><div><div class="col-title">Vendor data infrastructure</div><ul class="p-list"><li>Price book PDF upload + AI extraction pipeline</li><li>Member role mapping confirmation UI</li><li>Fabrication rules populated from vendor fab guides</li><li>CW systems seeded for Kawneer, Tubelite, Oldcastle</li><li>Custom parts library per company</li></ul></div></div></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sh"><span class="sn">09</span><span class="st">Open items and risks</span></div>
+    <div class="risk-list">
+      <div class="risk"><span class="rl rc">Critical</span><div class="risk-body"><strong>Vendor fabrication rules.</strong> Screws per joint, setting block placement, and all accessory rules must come from actual vendor fab manuals. Industry defaults in place but must be replaced before production use.</div></div>
+      <div class="risk"><span class="rl rm">Medium</span><div class="risk-body"><strong>Phase 1 test case.</strong> Before writing Phase 1 code, define one real frame — vendor, system, dimensions, grid, finish — to validate every formula against known real-world output.</div></div>
+      <div class="risk"><span class="rl rm">Medium</span><div class="risk-body"><strong>Price book extraction quality.</strong> Vendor PDFs vary in structure. AI extraction needs validation against real price books before trusting output.</div></div>
+      <div class="risk"><span class="rl rm">Medium</span><div class="risk-body"><strong>Curtain wall phasing.</strong> Prove all architecture on storefront first in Phases 1–3, then extend to CW in Phases 4–6.</div></div>
+      <div class="risk"><span class="rl rlo">Low</span><div class="risk-body"><strong>IPC contract compatibility.</strong> Frame Builder introduces FrameEngineeringPackage and RevisionRecord. Existing RawTakeoff and EngineeredFrame contracts must remain untouched. New channels only.</div></div>
+      <div class="risk"><span class="rl rd">Out of scope</span><div class="risk-body"><strong>Not building (initial release):</strong> project templates, installation sequence, submittal log, RFI generator, hardware finish checker, lead time flags, field verification checklist, unitized CW, BIM/Revit export, CNC output, thermal compliance simulation, multi-user collaboration.</div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

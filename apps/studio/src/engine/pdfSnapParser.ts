@@ -49,7 +49,7 @@ import type { PagePoint } from './coordinateSystem';
 
 const _cache = new Map<string, PagePoint[]>();
 
-const MAX_POINTS = 25_000;
+const MAX_POINTS = 50_000;
 const MIN_SEG_SQ = 0.01; // skip zero-length degenerate moves only
 
 // â”€â”€ CTM helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

@@ -419,16 +419,40 @@ const SpecViewer = ({
     });
   };
 
-  // Group sections by category
+  // Group sections by CSI Division (first 2 digits of code)
+  const DIVISION_NAMES = {
+    '01': 'General Requirements', '02': 'Existing Conditions', '03': 'Concrete',
+    '04': 'Masonry', '05': 'Metals', '06': 'Wood/Plastics/Composites',
+    '07': 'Thermal & Moisture', '08': 'Openings (Glazing)', '09': 'Finishes',
+    '10': 'Specialties', '11': 'Equipment', '12': 'Furnishings',
+    '13': 'Special Construction', '14': 'Conveying', '21': 'Fire Suppression',
+    '22': 'Plumbing', '23': 'HVAC', '26': 'Electrical',
+    '28': 'Electronic Safety', '31': 'Earthwork', '32': 'Exterior Improvements',
+    '33': 'Utilities',
+  };
   const groupSectionsByCategory = (sections) => {
     const grouped = {};
     sections.forEach(section => {
-      if (!grouped[section.category]) {
-        grouped[section.category] = [];
+      const divNum = (section.code || '').replace(/[\s\-\.]/g, '').substring(0, 2);
+      const label = DIVISION_NAMES[divNum]
+        ? `Division ${divNum} — ${DIVISION_NAMES[divNum]}`
+        : `Division ${divNum || '??'}`;
+      if (!grouped[label]) {
+        grouped[label] = [];
       }
-      grouped[section.category].push(section);
+      grouped[label].push(section);
     });
-    return grouped;
+    // Sort so Division 08 appears first, then by key
+    const sorted = {};
+    Object.keys(grouped)
+      .sort((a, b) => {
+        const a08 = a.includes('08') ? -1 : 0;
+        const b08 = b.includes('08') ? -1 : 0;
+        if (a08 !== b08) return a08 - b08;
+        return a.localeCompare(b);
+      })
+      .forEach(k => { sorted[k] = grouped[k]; });
+    return sorted;
   };
 
   // Mouse event handlers for annotation drawing

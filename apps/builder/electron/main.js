@@ -11,7 +11,7 @@
 
 'use strict';
 
-const { app, BrowserWindow, shell, session, ipcMain, nativeImage } = require('electron');
+const { app, BrowserWindow, shell, session, ipcMain, nativeImage, dialog } = require('electron');
 const fs   = require('fs');
 const path = require('path');
 
@@ -59,6 +59,14 @@ ipcMain.handle('glazebid:read-pdf', async (_event, filePath) => {
     console.error('[Builder] glazebid:read-pdf error:', err);
     return { ok: false, error: String(err) };
   }
+});
+
+ipcMain.handle('dialog:selectFolder', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory', 'createDirectory'],
+  });
+  if (result.canceled) return null;
+  return result.filePaths[0];
 });
 
 // ── IPC: Studio renderer signals it is fully initialised ──────────────────────

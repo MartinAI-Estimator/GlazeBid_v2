@@ -86,6 +86,18 @@ const MODIFIER_DEFS = [
     color: '#0ea5e9',
   },
   {
+    id: 'modifier-receptor',
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M3 18h18" />
+        <path d="M5 18v-8h14v8" />
+        <path d="M8 10V6h8v4" />
+      </svg>
+    ),
+    label: 'Receptor',
+    color: '#06b6d4',
+  },
+  {
     id: 'modifier-ssg',
     icon: (
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">

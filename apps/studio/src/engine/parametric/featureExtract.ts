@@ -37,6 +37,8 @@
  *   Python SessionLearner — cosine_similarity(), set_anchor(), re_rank_ghosts()
  */
 
+import { isOnnxLoaded, extractFeaturesONNX } from '../onnxRuntime';
+
 // ── Public types ──────────────────────────────────────────────────────────────
 
 /** 128-dimensional L2-normalised feature vector. */
@@ -154,4 +156,38 @@ export function cosineSimilarity(a: FeatureVector, b: FeatureVector): number {
   let dot = 0;
   for (let i = 0; i < DIM; i++) dot += a[i] * b[i];
   return dot < -1 ? -1 : dot > 1 ? 1 : dot;
+}
+
+/**
+ * Async version of extractFeaturesFromBuffer that tries ONNX first.
+ * Falls back to canvas-native synchronously if no model is loaded or ONNX fails.
+ *
+ * Use this function in async contexts (e.g., scanning loop) to leverage ONNX
+ * inference when available, while gracefully degrading to canvas-native when not.
+ *
+ * @param data    `ImageData.data` (Uint8ClampedArray, RGBA, row-major).
+ * @param bw      Physical buffer width  (canvas.width).
+ * @param bh      Physical buffer height (canvas.height).
+ * @param bufX    Left edge of the region in buffer px.
+ * @param bufY    Top  edge of the region in buffer px.
+ * @param bufW    Width  of the region in buffer px.
+ * @param bufH    Height of the region in buffer px.
+ * @returns       A 128-element L2-normalised Float32Array, or null when the
+ *                region is too small to sample reliably.
+ */
+export async function extractFeatures(
+  data: Uint8ClampedArray,
+  bw: number,
+  bh: number,
+  bufX: number,
+  bufY: number,
+  bufW: number,
+  bufH: number,
+): Promise<FeatureVector | null> {
+  if (isOnnxLoaded()) {
+    const onnxResult = await extractFeaturesONNX(data, bw, bh, bufX, bufY, bufW, bufH);
+    if (onnxResult) return onnxResult;
+  }
+  // Fall back to canvas-native (synchronous)
+  return extractFeaturesFromBuffer(data, bw, bh, bufX, bufY, bufW, bufH);
 }

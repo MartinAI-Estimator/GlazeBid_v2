@@ -10,102 +10,78 @@ const ProjectList = ({ onProjectSelect, onNewProject, onSettings }) => {
     fetchProjects();
   }, []);
 
-  const fetchProjects = async () => {
+  const fetchProjects = () => {
     try {
       setLoading(true);
-      // Recover locally saved projects from known keys.
-      const projectMap = new Map();
 
-      const addProject = (name, modified = null, status = 'in_progress') => {
-        if (!name || typeof name !== 'string') return;
-        const cleanName = name.trim();
-        if (!cleanName) return;
-        const existing = projectMap.get(cleanName);
-        const date = modified ? new Date(modified) : new Date();
-        const normalizedModified = Number.isNaN(date.getTime())
-          ? new Date().toISOString()
-          : date.toISOString();
-
-        if (!existing) {
-          projectMap.set(cleanName, {
-            name: cleanName,
-            status,
-            modified: normalizedModified,
-          });
-          return;
-        }
-
-        // Keep the most recent modified timestamp if duplicate discovered.
-        if (new Date(normalizedModified).getTime() > new Date(existing.modified).getTime()) {
-          existing.modified = normalizedModified;
-        }
-      };
-
-      // 1) Derive names from namespaced per-project keys.
-      for (let i = 0; i < localStorage.length; i += 1) {
-        const key = localStorage.key(i);
-        if (!key) continue;
-
-        let match = key.match(/^glazebid:sheets:(.+)$/);
-        if (match) {
-          addProject(match[1]);
-          continue;
-        }
-
-        match = key.match(/^glazebid:bidSettings:(.+)$/);
-        if (match) {
-          addProject(match[1]);
-          continue;
-        }
-
-        match = key.match(/^glazebid:selectedSheet:(.+)$/);
-        if (match) {
-          addProject(match[1]);
-          continue;
-        }
-      }
-
-      // 2) Current/singleton project fallbacks.
-      addProject(localStorage.getItem('currentProject'));
-
+      // --- Step 1: Read the registry (sole source of truth). ---
+      let registry = [];
       try {
-        const pdRaw = localStorage.getItem('projectData');
-        if (pdRaw) {
-          const pd = JSON.parse(pdRaw);
-          addProject(pd?.projectName || pd?.name, pd?.updatedAt || pd?.modified);
+        const regRaw = localStorage.getItem('glazebid:projectRegistry');
+        if (regRaw) {
+          const parsed = JSON.parse(regRaw);
+          if (Array.isArray(parsed)) registry = parsed;
         }
       } catch {
-        // Ignore malformed singleton data.
+        // Ignore malformed registry.
       }
 
-      // 3) Legacy arrays if present.
-      for (const listKey of ['glazebid:projects', 'recentProjects', 'projects']) {
-        try {
-          const raw = localStorage.getItem(listKey);
-          if (!raw) continue;
-          const arr = JSON.parse(raw);
-          if (!Array.isArray(arr)) continue;
-          arr.forEach((p) => {
-            if (typeof p === 'string') {
-              addProject(p);
-            } else {
-              addProject(
-                p?.projectName || p?.name || p?.title,
-                p?.updatedAt || p?.modified || p?.lastOpened,
-                p?.status || 'in_progress'
-              );
-            }
-          });
-        } catch {
-          // Ignore malformed legacy arrays.
+      // --- Step 2: One-time migration — only scan localStorage keys when the
+      //             registry is empty so we pick up any pre-registry projects.
+      //             After the first run the registry is saved and this is skipped. ---
+      if (registry.length === 0) {
+        const discovered = new Map(); // name → modified ISO string
+
+        const tryAdd = (name, modified) => {
+          if (!name || typeof name !== 'string' || !name.trim()) return;
+          const key = name.trim();
+          if (discovered.has(key)) return;
+          const ts = modified ? new Date(modified) : null;
+          discovered.set(key, (ts && !Number.isNaN(ts.getTime())) ? ts.toISOString() : new Date().toISOString());
+        };
+
+        // Scan namespaced keys — collect all keys first so order doesn't matter.
+        const allKeys = [];
+        for (let i = 0; i < localStorage.length; i += 1) {
+          const k = localStorage.key(i);
+          if (k) allKeys.push(k);
         }
+        allKeys.sort(); // Stable alphabetical order — removes any index-order randomness.
+
+        for (const k of allKeys) {
+          const m = k.match(/^glazebid:(?:sheets|bidSettings|selectedSheet|specFolder|specSections|specScanResults|specReaderResults|filePath):(.+)$/);
+          if (m) tryAdd(m[1], null);
+        }
+
+        // Legacy singletons.
+        tryAdd(localStorage.getItem('currentProject'), null);
+        try {
+          const pd = JSON.parse(localStorage.getItem('projectData') || 'null');
+          if (pd) tryAdd(pd?.projectName || pd?.name, pd?.updatedAt || pd?.modified);
+        } catch { /* ignore */ }
+
+        registry = [...discovered.entries()].map(([name, modified]) => ({
+          name,
+          modified,
+          status: 'in_progress',
+        }));
+
+        // Persist so next render skips this scan entirely.
+        try {
+          localStorage.setItem('glazebid:projectRegistry', JSON.stringify(registry));
+        } catch { /* ignore */ }
       }
 
-      const recovered = [...projectMap.values()].sort(
-        (a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime()
-      );
+      // --- Step 3: Sort by modified descending, then name for a stable tie-break. ---
+      const sorted = [...registry]
+        .filter(e => e?.name)
+        .sort((a, b) => {
+          const diff = new Date(b.modified).getTime() - new Date(a.modified).getTime();
+          if (diff !== 0) return diff;
+          return (a.name || '').localeCompare(b.name || '');
+        });
 
-      setProjects(recovered);
+      setProjects(sorted);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -218,7 +194,6 @@ const styles = {
     maxWidth: '1400px',
     margin: '0 auto',
     backgroundColor: 'var(--bg-deep)',
-    minHeight: 'calc(100vh - 70px)',
   },
   header: {
     display: 'flex',

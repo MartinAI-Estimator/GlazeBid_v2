@@ -1,6 +1,7 @@
 import React from 'react';
+import { SYSTEM_TYPE_NAMES, SYSTEM_TYPES } from '../../utils/systemTypeConfig.js';
 
-const SystemDashboard = ({ systems, onSelectSystem, onAddSystem, onDeleteSystem }) => {
+const SystemDashboard = ({ systems, onSelectSystem, onAddSystem, onDeleteSystem, onUpdateSystem }) => {
   const pendingSystems   = (systems || []).filter(s => s.status !== 'completed');
   const completedSystems = (systems || []).filter(s => s.status === 'completed');
 
@@ -94,7 +95,28 @@ const SystemDashboard = ({ systems, onSelectSystem, onAddSystem, onDeleteSystem 
       </div>
 
       {/* Quick stats */}
-      <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
+      <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '0.82rem', alignItems: 'center' }}>
+        {/* System type selector */}
+        {sys.type === 'partnerpak-import' && onUpdateSystem && (
+          <select
+            value={sys.systemType || 'Ext SF'}
+            onClick={e => e.stopPropagation()}
+            onChange={e => {
+              e.stopPropagation();
+              onUpdateSystem(sys.id, { systemType: e.target.value });
+            }}
+            style={{
+              padding: '2px 6px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 700,
+              background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)',
+              color: '#60a5fa', cursor: 'pointer', outline: 'none',
+              appearance: 'auto', minWidth: '72px',
+            }}
+          >
+            {SYSTEM_TYPE_NAMES.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        )}
         {isStudioCard ? (
           <>
             <span>📐 {sys.totals?.totalQuantity || 0} highlights</span>

@@ -46,7 +46,7 @@ function gpmColor(pct) {
 
 const fmt = n => (typeof n === 'number' ? n : 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-export default function ProjectSettingsPanel({ bidSettings = {}, onBidSettingsChange, onClose }) {
+export default function ProjectSettingsPanel({ bidSettings = {}, onBidSettingsChange, onClose, inline = false }) {
   const [localSettings, setLocalSettings] = useState({ ...bidSettings });
   const [saved, setSaved] = useState(false);
 
@@ -76,10 +76,14 @@ export default function ProjectSettingsPanel({ bidSettings = {}, onBidSettingsCh
       {/* Header */}
       <div style={{ background: 'var(--bg-panel)', borderBottom: '1px solid var(--border-subtle)', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}>
-            ← Back
-          </button>
-          <span style={{ color: 'var(--border-subtle)' }}>|</span>
+          {!inline && (
+            <>
+              <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}>
+                ← Back
+              </button>
+              <span style={{ color: 'var(--border-subtle)' }}>|</span>
+            </>
+          )}
           <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
             ⚙️ Project Settings
           </h2>

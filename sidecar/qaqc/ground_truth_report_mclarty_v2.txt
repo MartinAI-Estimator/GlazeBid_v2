@@ -1,0 +1,238 @@
+========================================================================
+GLAZEBID AiQ GROUND-TRUTH VALIDATION v2 — McLarty Mazda
+Generated: April 13, 2026
+Fixes applied: prescan detail-page promotion (CURTAINWALL keyword); production-mode scan pages.
+========================================================================
+
+── PDF Info ──────────────────────────────────────────────────────────
+  Marked set:  McLarty Mazda - Bid Plans.pdf          (12 pages)
+  Clean set:   McLarty Mazda - Bid Plans - Non Marked.pdf (12 pages)
+
+── Step 1: Ground-Truth Annotations ─────────────────────────────────
+  Total annotations extracted: 127
+  Annotated pages (10): [1, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  Type distribution:
+    Polygon              126
+    Highlight            1
+  Color distribution:
+    #FF8000   35
+    #008000   31
+    #80FFFF   27
+    #FF0080   24
+    #800040   8
+    #FFFF00   1
+    #008080   1
+
+── Step 2: AiQ Candidates (conf ≥ 70%) ────────────────────────────
+  Total candidates: 86
+  System type distribution:
+    unknown                   41
+    storefront                35
+    window_wall               10
+  Page distribution:
+    page   0   26 candidates
+    page   1   19 candidates
+    page   4   22 candidates
+    page   5   19 candidates
+
+── Step 3: Match Table (center-containment or coverage ≥ 50%) ──────
+  True  positives  (TP annots):  77  ← Martin's items AiQ found
+  False negatives  (FN annots):  50  ← Martin's items AiQ missed
+  True  pos cands  (TP cands):   11  ← AiQ candidates confirmed as real scope
+  False positives  (FP cands):   75  ← AiQ candidates with no markup
+
+  True Positives (annotations covered):
+    p 4 Polygon      #008000  → cand page_4_C0009  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0009  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0009  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #FF8000  → cand page_4_C0009  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #FF8000  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #FF8000  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #FF8000  → cand page_4_C0142  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0009  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0009  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0009  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0047  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0047  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0047  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0047  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #FF8000  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #FF8000  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #800040  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #800040  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #800040  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0001  unknown               conf=0.70  IoU=1.00
+    p 4 Polygon      #008080  → cand page_4_C0047  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0059  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0059  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0059  unknown               conf=0.85  IoU=1.00
+    p 4 Polygon      #008000  → cand page_4_C0059  unknown               conf=0.85  IoU=1.00
+    p 5 Polygon      #800040  → cand page_5_C0086  unknown               conf=0.75  IoU=1.00
+    p 5 Polygon      #800040  → cand page_5_C0086  unknown               conf=0.75  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0103  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0112  unknown               conf=0.80  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0112  unknown               conf=0.80  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0103  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #80FFFF  → cand page_5_C0016  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0103  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0103  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0103  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0103  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0130  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0027  unknown               conf=0.70  IoU=1.00
+    p 5 Polygon      #FF0080  → cand page_5_C0016  unknown               conf=0.70  IoU=1.00
+
+  False Negatives (missed annotations):
+    p 1 Polygon      #008000  rect=(692,263,882,380)  label='A = 240.959 sf\rW = 20\'-15/16"\rH = 12\'-0"'
+    p 1 Polygon      #008000  rect=(881,263,1009,380)  label='A = 158.6599 sf\rW = 13\'-2 11/16"\rH = 12\'-0"'
+    p 1 Polygon      #008000  rect=(1845,2213,1984,2330)  label='A = 172.4801 sf\rW = 14\'-4 1/2"\rH = 12\'-0"'
+    p 1 Polygon      #FF8000  rect=(1126,380,1341,479)  label='A = 229.2189 sf\rW = 22\'-11 1/16"\rH = 10\'-0"'
+    p 1 Polygon      #FF8000  rect=(1359,380,1473,479)  label='A = 117.072 sf\rW = 11\'-8 3/8"\rH = 10\'-1/8"'
+    p 1 Polygon      #FF8000  rect=(315,1629,537,1728)  label='A = 236.533 sf\rW = 23\'-7 13/16"\rH = 10\'-0"'
+    p 1 Polygon      #FF8000  rect=(538,1629,642,1728)  label='A = 105.4805 sf\rW = 10\'-6 9/16"\rH = 10\'-0"'
+    p 1 Polygon      #FF8000  rect=(647,1629,772,1728)  label='A = 128.7256 sf\rW = 12\'-10 1/16"\rH = 10\'-5/16"'
+    p 1 Polygon      #FF8000  rect=(778,1629,818,1728)  label='A = 33.8782 sf\rW = 3\'-4 7/8"\rH = 9\'-11 5/16"'
+    p 1 Polygon      #FF8000  rect=(1402,2330,1475,2429)  label='A = 70.4576 sf\rW = 7\'-13/16"\rH = 9\'-11 5/8"'
+    p 1 Polygon      #FF8000  rect=(1515,2330,1587,2429)  label='A = 70.0002 sf\rW = 7\'-0"\rH = 10\'-0"'
+    p 1 Polygon      #FF8000  rect=(1627,2330,1699,2429)  label='A = 70.0006 sf\rW = 7\'-0"\rH = 10\'-0"'
+    p 1 Polygon      #008000  rect=(692,380,882,479)  label='A = 200.5817 sf\rW = 20\'-11/16"\rH = 10\'-0"'
+    p 1 Polygon      #FF8000  rect=(1985,258,3246,308)  label='Ext SF Highlight'
+    p 1 Polygon      #FF8000  rect=(1985,356,3246,399)  label='Ext SF Highlight'
+    p 1 Polygon      #FF8000  rect=(1985,1025,3246,1073)  label='Ext SF Highlight'
+    p 1 Polygon      #008000  rect=(1985,988,3246,1035)  label='Ext CW Highlight'
+    p 1 Polygon      #008000  rect=(880,379,1009,479)  label='Ext CW Highlight'
+    p 1 Polygon      #800040  rect=(296,2357,345,2398)  label='Glazing Only Highlight'
+    p 1 Polygon      #800040  rect=(337,2357,387,2398)  label='Glazing Only Highlight'
+    p 1 Polygon      #800040  rect=(379,2357,429,2398)  label='Glazing Only Highlight'
+    p 1 Polygon      #008000  rect=(1845,2330,1984,2429)  label='A = 143.7337 sf\rW = 14\'-4 1/2"\rH = 10\'-0"'
+    p 1 Polygon      #008000  rect=(1070,2330,1341,2432)  label='A = 300.007 sf\rW = 29\'-3/8"\rH = 10\'-4"'
+    p 1 Highlight    #FFFF00  rect=(1995,720,2837,753)  label='GF-1 GLASS FILM 3M DENSITY: 100% AT TOP TO O% AT BOTTOM CONTACT: (888) 650-3497\rFASARA, ILLUMINA \rSH2FGIM-G'
+    p 3 Polygon      #80FFFF  rect=(79,1255,1682,1291)  label='All Glass Wall Highlight'
+    p 3 Polygon      #80FFFF  rect=(1673,134,3276,205)  label='All Glass Wall Highlight'
+    p 4 Polygon      #FF8000  rect=(2040,327,2475,517)  label='Ext SF Highlight'
+    p 4 Polygon      #FF8000  rect=(2592,327,2792,517)  label='Ext SF Highlight'
+    p 4 Polygon      #FF8000  rect=(2933,327,3173,517)  label='Ext SF Highlight'
+    p 5 Polygon      #FF8000  rect=(146,171,270,361)  label='Int SF Highlight'
+    p 5 Polygon      #FF8000  rect=(346,171,652,361)  label='Int SF Highlight'
+    p 5 Polygon      #FF8000  rect=(733,171,857,361)  label='Int SF Highlight'
+    p 5 Polygon      #FF8000  rect=(367,451,663,587)  label='Int SF Highlight'
+    p 6 Polygon      #FF8000  rect=(85,643,313,708)  label='Ext SF Highlight'
+    p 6 Polygon      #FF8000  rect=(774,604,1001,669)  label='Ext SF Highlight'
+    p 6 Polygon      #FF8000  rect=(1422,609,1645,669)  label='Ext SF Highlight'
+    p 6 Polygon      #FF8000  rect=(2021,604,2228,669)  label='Ext SF Highlight'
+    p 6 Polygon      #FF8000  rect=(2624,599,2859,669)  label='Ext SF Highlight'
+    p 6 Polygon      #FF8000  rect=(85,1296,304,1367)  label='Ext SF Highlight'
+    p 6 Polygon      #008000  rect=(1647,2497,1895,2553)  label='Ext CW Highlight'
+    p 7 Polygon      #FF8000  rect=(1649,1849,1913,1917)  label='Ext SF Highlight'
+    p 7 Polygon      #FF8000  rect=(2428,1849,2669,1917)  label='Ext SF Highlight'
+    p 8 Polygon      #FF8000  rect=(2105,2497,2345,2553)  label='Ext SF Highlight'
+    p 8 Polygon      #008000  rect=(1326,2497,1553,2553)  label='Ext CW Highlight'
+    p 8 Polygon      #008000  rect=(2618,2497,2849,2553)  label='Ext CW Highlight'
+    p 9 Polygon      #008000  rect=(85,589,311,666)  label='Ext CW Highlight'
+    p 9 Polygon      #FF8000  rect=(769,607,995,666)  label='Int SF Highlight'
+    p10 Polygon      #008000  rect=(85,607,311,666)  label='Ext CW Highlight'
+    p10 Polygon      #008000  rect=(769,589,995,666)  label='Ext CW Highlight'
+    p11 Polygon      #80FFFF  rect=(2669,589,2921,666)  label='All Glass Wall Highlight'
+
+  False Positives (unmatched AiQ candidates):
+    p 0 page_0_C0195  storefront            conf=0.85
+    p 0 page_0_C0233  storefront            conf=0.85
+    p 0 page_0_C0123  window_wall           conf=0.80
+    p 0 page_0_C0174  storefront            conf=0.80
+    p 0 page_0_C0183  storefront            conf=0.80
+    p 0 page_0_C0186  storefront            conf=0.80
+    p 0 page_0_C0237  storefront            conf=0.80
+    p 0 page_0_C0054  storefront            conf=0.75
+    p 0 page_0_C0055  window_wall           conf=0.75
+    p 0 page_0_C0125  window_wall           conf=0.75
+    p 0 page_0_C0170  window_wall           conf=0.75
+    p 0 page_0_C0181  storefront            conf=0.75
+    p 0 page_0_C0090  storefront            conf=0.70
+    p 0 page_0_C0092  storefront            conf=0.70
+    p 0 page_0_C0127  window_wall           conf=0.70
+    p 0 page_0_C0208  storefront            conf=0.70
+    p 0 page_0_C0210  storefront            conf=0.70
+    p 0 page_0_C0238  storefront            conf=0.70
+    p 0 page_0_C0242  storefront            conf=0.70
+    p 0 page_0_C0243  storefront            conf=0.70
+    p 0 page_0_C0248  storefront            conf=0.70
+    p 0 page_0_C0249  storefront            conf=0.70
+    p 0 page_0_C0251  storefront            conf=0.70
+    p 0 page_0_C0253  storefront            conf=0.70
+    p 0 page_0_C0256  storefront            conf=0.70
+    p 0 page_0_C0257  storefront            conf=0.70
+    p 1 page_1_C0129  window_wall           conf=1.00
+    p 1 page_1_C0137  window_wall           conf=1.00
+    p 1 page_1_C0141  window_wall           conf=1.00
+    p 1 page_1_C0145  window_wall           conf=1.00
+    p 1 page_1_C0150  window_wall           conf=1.00
+    p 1 page_1_C0226  storefront            conf=0.85
+    p 1 page_1_C0244  storefront            conf=0.85
+    p 1 page_1_C0266  storefront            conf=0.85
+    p 1 page_1_C0268  storefront            conf=0.85
+    p 1 page_1_C0287  storefront            conf=0.85
+    p 1 page_1_C0290  storefront            conf=0.85
+    p 1 page_1_C0243  storefront            conf=0.80
+    p 1 page_1_C0270  storefront            conf=0.80
+    p 1 page_1_C0225  storefront            conf=0.75
+    p 1 page_1_C0273  storefront            conf=0.70
+    p 1 page_1_C0277  storefront            conf=0.70
+    p 1 page_1_C0279  storefront            conf=0.70
+    p 1 page_1_C0288  storefront            conf=0.70
+    p 1 page_1_C0291  storefront            conf=0.70
+    p 4 page_4_C0016  unknown               conf=0.85
+    p 4 page_4_C0161  unknown               conf=0.85
+    p 4 page_4_C0163  unknown               conf=0.85
+    p 4 page_4_C0191  unknown               conf=0.85
+    p 4 page_4_C0195  unknown               conf=0.85
+    … and 25 more
+
+── Final Scores ──────────────────────────────────────────────────────
+  Precision : 0.128  (11 TP candidates / 86 total candidates)
+  Recall    : 0.606  (77 annotations found / 127 total)
+  F1 Score  : 0.211
+
+  Interpretation:
+    61% of Martin's scope items on scanned pages were detected by AiQ (recall).
+    13% of AiQ's candidates correspond to marked scope (precision).
+    Pages not selected by prescan are counted as false negatives.
+    Scan pages used: [].
+========================================================================

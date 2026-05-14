@@ -52,13 +52,29 @@
     --text-muted:     #71717a;
   }
 
+  html {
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
   body {
     margin: 0;
+    height: 100%;
+    height: 100dvh;
     background-color: var(--bg-main);
     color: var(--text-primary);
     font-family: 'Geist', 'Inter Variable', 'Inter', 'Segoe UI', system-ui, sans-serif;
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Sleek 5px scrollbar */
@@ -148,6 +164,7 @@ button[style*="right: 8px"]:hover {
 
 .App {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--bg-deep);

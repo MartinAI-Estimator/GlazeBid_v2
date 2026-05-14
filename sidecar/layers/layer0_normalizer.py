@@ -35,6 +35,11 @@ IQ_TEXT_THRESHOLD = 0.30        # Isoperimetric quotient below this = likely tex
 MAX_SEGMENT_COUNT_TEXT = 8      # More segments than this = likely text character
 MIN_SEGMENT_LENGTH = 2.0        # Segments shorter than this are noise (points)
 
+# Hatch fill detection constants
+HATCH_MAX_LENGTH = 20.0         # Max segment length (pts) to be considered hatch fill
+HATCH_ANGLE_TOLERANCE = 10.0    # Degrees from orthogonal axes to exclude (keep near 0/90°)
+
+
 
 # ── Data Structures ───────────────────────────────────────────────────────────
 
@@ -161,6 +166,74 @@ def is_text_path(path: dict) -> bool:
     return False
 
 
+# ── Hatch Fill Detection ──────────────────────────────────────────────────────
+
+def is_hatch_segment(
+    seg: Tuple[Tuple[float, float], Tuple[float, float]]
+) -> bool:
+    """
+    Returns True if a line segment is likely part of a crosshatch fill pattern.
+
+    Hatch fill lines in architectural elevation drawings are:
+    - Short (< HATCH_MAX_LENGTH pts, typically 1-15 pts)
+    - Non-orthogonal (angled, typically 45° or 135° for glass fill patterns)
+
+    Orthogonal segments (within HATCH_ANGLE_TOLERANCE of 0° or 90°) are NEVER
+    classified as hatch — they are mullions, rails, sills, and frame members.
+
+    Args:
+        seg: ((x1, y1), (x2, y2)) line segment
+
+    Returns:
+        True if the segment should be discarded as hatch fill
+    """
+    (x1, y1), (x2, y2) = seg
+    dx = x2 - x1
+    dy = y2 - y1
+    length = math.sqrt(dx * dx + dy * dy)
+
+    # Long segments are never hatch
+    if length >= HATCH_MAX_LENGTH:
+        return False
+
+    # Zero-length degenerate — not hatch (already filtered by MIN_SEGMENT_LENGTH)
+    if length < 1e-9:
+        return False
+
+    # Compute angle in degrees (0-180 range)
+    angle = abs(math.degrees(math.atan2(dy, dx))) % 180
+
+    # Near-horizontal (0° or 180°) → NOT hatch
+    if angle < HATCH_ANGLE_TOLERANCE or angle > (180 - HATCH_ANGLE_TOLERANCE):
+        return False
+
+    # Near-vertical (90°) → NOT hatch
+    if abs(angle - 90) < HATCH_ANGLE_TOLERANCE:
+        return False
+
+    # Short + non-orthogonal = hatch fill
+    return True
+
+
+def filter_hatch_segments(
+    segments: List[Tuple[Tuple[float, float], Tuple[float, float]]]
+) -> List[Tuple[Tuple[float, float], Tuple[float, float]]]:
+    """
+    Remove hatch fill segments from a list of line segments.
+
+    Keeps all orthogonal segments (mullions, rails, frame members) and
+    any diagonal segments that are long enough to be structural braces
+    or dimension lines.
+
+    Args:
+        segments: List of ((x1,y1), (x2,y2)) line segments
+
+    Returns:
+        Filtered list with hatch segments removed
+    """
+    return [seg for seg in segments if not is_hatch_segment(seg)]
+
+
 # ── Normalization Functions ───────────────────────────────────────────────────
 
 def _extract_line_segments(
@@ -206,6 +279,10 @@ def normalize_elevation(page: fitz.Page) -> List[NormalizedPath]:
             if is_text_path(d):
                 continue
             segments = _extract_line_segments(d)
+            if not segments:
+                continue
+            # Remove hatch fill patterns (short diagonal lines)
+            segments = filter_hatch_segments(segments)
             if not segments:
                 continue
             result.append(NormalizedPath(

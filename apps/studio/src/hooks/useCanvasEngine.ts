@@ -29,6 +29,7 @@ import { PdfTileManager } from '../engine/pdfTileManager';
 import { loadPdfFromBuffer, THUMB_SCALE } from '../engine/pdfLoader';
 import type { InProgressShape, DrawnShape, RectShape, LineShape, PolygonShape } from '../types/shapes';
 import type { ContextMenuTarget } from '../components/canvas/ShapeContextMenu';
+import { getClipboard, setClipboard } from '../utils/clipboard';
 import {
   useStudioStore,
   DEFAULT_PAGE_W,
@@ -270,7 +271,9 @@ export function useCanvasEngine(
     fileName: string,
     role:     import('../store/useStudioStore').PdfTabRole,
   ) => {
-    pdfBufferRef.current = buffer;
+    // Copy the buffer immediately — Electron IPC may detach the original
+    // ArrayBuffer after structured-clone transfer, making it unreadable later.
+    pdfBufferRef.current = new Uint8Array(buffer);
     const loaded = await loadPdfFromBuffer(buffer, fileName);
 
     // Register page proxies with the tile manager
@@ -538,6 +541,7 @@ export function useCanvasEngine(
     // ── Wheel (zoom) ─────────────────────────────────────────────────────────
     function handleWheel(e: WheelEvent): void {
       e.preventDefault();
+      console.log('[wheel] fired, deltaY:', e.deltaY);
       const sc = screenXY(e as unknown as MouseEvent);
       if (e.ctrlKey) {
         // Trackpad pinch
@@ -581,6 +585,7 @@ export function useCanvasEngine(
         case 'select': {
           // Hit-test: find topmost shape covering the click
           const hit = hitTest(pt, s.shapes.filter(sh => sh.pageId === s.activePageId));
+          console.log('[select] click at', pt, 'shapes on page:', s.shapes.filter(sh => sh.pageId === s.activePageId).length, 'hit:', hit?.id, hit?.type);
           useStudioStore.getState().selectShape(hit?.id ?? null);
           break;
         }
@@ -743,6 +748,56 @@ export function useCanvasEngine(
         return;
       }
 
+      // ── Ctrl+C = Copy selected shape ─────────────────────────────────
+      if (e.key === 'c' && (e.ctrlKey || e.metaKey)) {
+        const selId = stateRef.current.selectedId;
+        if (selId) {
+          const shape = stateRef.current.shapes.find(s => s.id === selId);
+          if (shape) setClipboard({ ...shape });
+        }
+        e.preventDefault();
+        return;
+      }
+
+      // ── Ctrl+V = Paste from clipboard ────────────────────────────────
+      if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
+        const clip = getClipboard();
+        if (clip && (clip.type === 'rect' || clip.type === 'polygon')) {
+          const cloned = { ...clip, id: crypto.randomUUID(), pageId: stateRef.current.activePageId } as typeof clip;
+          if (cloned.type === 'rect') {
+            cloned.origin = { x: cloned.origin.x + 20, y: cloned.origin.y + 20 };
+          } else if (cloned.type === 'polygon') {
+            cloned.points = cloned.points.map(p => ({ x: p.x + 20, y: p.y + 20 }));
+          }
+          store.addShape(cloned);
+          store.selectShape(cloned.id);
+          scheduleRedraw();
+        }
+        e.preventDefault();
+        return;
+      }
+
+      // ── Ctrl+D = Duplicate selected shape ────────────────────────────
+      if (e.key === 'd' && (e.ctrlKey || e.metaKey)) {
+        const selId = stateRef.current.selectedId;
+        if (selId) {
+          const shape = stateRef.current.shapes.find(s => s.id === selId);
+          if (shape && (shape.type === 'rect' || shape.type === 'polygon')) {
+            const cloned = { ...shape, id: crypto.randomUUID() } as typeof shape;
+            if (cloned.type === 'rect') {
+              cloned.origin = { x: cloned.origin.x + 20, y: cloned.origin.y + 20 };
+            } else if (cloned.type === 'polygon') {
+              cloned.points = cloned.points.map(p => ({ x: p.x + 20, y: p.y + 20 }));
+            }
+            store.addShape(cloned);
+            store.selectShape(cloned.id);
+            scheduleRedraw();
+          }
+        }
+        e.preventDefault();
+        return;
+      }
+
       // Tool shortcuts
       // Note: 'r'→rake, 'c'→count, 'w'→wand take priority over old rect/calibrate.
       // Rect is now 'b' (box), calibrate is 'a'.
@@ -782,10 +837,11 @@ export function useCanvasEngine(
     function handleContextMenu(e: MouseEvent): void {
       e.preventDefault();
       const cb = onContextMenuRef.current;
-      if (!cb) return;
       const rect    = canvas.getBoundingClientRect();
       const pagePt  = cameraRef.current.screenToPage(e.clientX - rect.left, e.clientY - rect.top);
       const hit     = hitTest(pagePt, stateRef.current.shapes);
+      console.log('[contextMenu] right-click at', { clientX: e.clientX, clientY: e.clientY, pagePt }, 'hit:', hit?.id, hit?.type, 'callback:', !!cb);
+      if (!cb) return;
       if (hit && (hit.type === 'rect' || hit.type === 'polygon')) {
         useStudioStore.getState().selectShape(hit.id);
         cb({ shape: hit as RectShape | PolygonShape, screenX: e.clientX, screenY: e.clientY });

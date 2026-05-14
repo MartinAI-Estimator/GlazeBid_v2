@@ -188,6 +188,24 @@ def _compute_relevance(
 
     # ── Detail: useful for system identification ──
     if sheet_type == "detail":
+        # Promote to glazing_detection if the page has both:
+        # (a) very high path density (likely contains full elevation geometry, not just
+        #     isolated details), AND
+        # (b) system-level glazing terminology that  appears in elevation drawings/
+        #     specs-of-work, not just generic "glass"/"glazing" incidental mentions.
+        #
+        # Specifically look for the no-space/hyphen/compound forms and compound phrases
+        # that tend to appear in view titles and assembly callouts rather than in
+        # specification notes that reference glass incidentally.
+        _ELEVATION_SYSTEM_TERMS = {
+            'CURTAINWALL', 'CURTAIN-WALL',
+            'STOREFRONT SYSTEM', 'STOREFRONT ELEVATION',
+            'CURTAIN WALL SYSTEM', 'CURTAIN WALL ELEVATION',
+            'WINDOWWALL', 'WINDOW WALL',
+        }
+        is_system_specific = bool(set(keywords_found) & _ELEVATION_SYSTEM_TERMS)
+        if is_system_specific and path_count >= 2000:
+            return 0.7, True, "glazing_detection", ""
         return 0.3, False, "cross_reference", ""
 
     # ── Unknown with strong keyword signal ──

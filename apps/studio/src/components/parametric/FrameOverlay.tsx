@@ -13,6 +13,7 @@
  */
 
 import QuickAssignMenu from './QuickAssignMenu';
+import { useStudioStore } from '../../store/useStudioStore';
 import type { FramePreview } from '../../hooks/useParametricTool';
 
 type Props = {
@@ -21,6 +22,8 @@ type Props = {
 };
 
 export default function FrameOverlay({ framePreview, calibrationRequired }: Props) {
+  const hasPending = useStudioStore(s => s.pendingFrameBounds !== null);
+
   return (
     // Full-size overlay — sits above the <canvas> but below any modal dialogs.
     <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 10 }}>
@@ -80,8 +83,8 @@ export default function FrameOverlay({ framePreview, calibrationRequired }: Prop
       )}
 
       {/* ── QuickAssignMenu ─────────────────────────────────────────────── */}
-      {/* pointer-events reset to auto so the menu is interactive */}
-      <div className="pointer-events-auto">
+      {/* pointer-events reset to auto ONLY when menu is visible, so wheel events pass through */}
+      <div className={hasPending ? 'pointer-events-auto' : 'pointer-events-none'}>
         <QuickAssignMenu />
       </div>
 

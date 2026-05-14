@@ -33,6 +33,9 @@ from pydantic import BaseModel
 # Import layer modules
 from layers.layer1_router import classify_sheet, SheetClassification
 from layers.layer2_extractor import extract_vector_graph, GraphData
+
+# Minimum node count to consider a graph worth running detection on
+MIN_NODE_COUNT = 10
 from layers.layer9_homography import detect_grid_labels, sync_sheets
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -333,7 +336,8 @@ async def detect_glazing_endpoint(request: DetectGlazingRequest):
     Returns GlazingCandidate list ready for Studio UI display.
     This is the primary endpoint called by the Studio DrawingIntelligence panel.
     """
-    from layers.rules_engine import run_rules_engine, GlazingCandidate
+    from layers.rules_engine import run_rules_engine, GlazingCandidate, match_schedule_to_candidates
+    from layers.layer6_scope_filter import filter_by_scope
 
     try:
         pdf_bytes = base64.b64decode(request.pdf_base64)
@@ -350,7 +354,9 @@ async def detect_glazing_endpoint(request: DetectGlazingRequest):
         finally:
             os.unlink(tmp_path)
 
-        if not graph.is_valid:
+        # Only hard-fail when graph is truly empty/broken.
+        # Validation warnings (e.g. out-of-bounds nodes) are non-fatal.
+        if not graph.is_valid and graph.node_count < MIN_NODE_COUNT:
             return {
                 "status": "error",
                 "error": "; ".join(graph.validation_errors),
@@ -358,19 +364,42 @@ async def detect_glazing_endpoint(request: DetectGlazingRequest):
                 "page_num": request.page_num,
             }
 
+        # Use request-level scale as fallback when page detection fails.
+        # This allows the frontend to propagate scale from prescan or
+        # adjacent pages that had successful scale detection.
+        eff_scale_factor = graph.scale.scale_factor
+        eff_scale_confidence = graph.scale.scale_confidence
+        if eff_scale_confidence < 0.5 and request.scale_confidence >= 0.5:
+            eff_scale_factor = request.scale_factor
+            eff_scale_confidence = request.scale_confidence
+
         candidates = run_rules_engine(
             graph.x,
             graph.edge_index,
             graph.edge_attr,
-            scale_factor=graph.scale.scale_factor,
-            scale_confidence=graph.scale.scale_confidence,
+            scale_factor=eff_scale_factor,
+            scale_confidence=eff_scale_confidence,
             source_sheet=f"page_{request.page_num}",
         )
+
+        # Schedule cross-reference (soft metadata, no confidence change)
+        # Note: schedule_inventory is optional — pass empty dict if not available
+        schedule_inventory = getattr(request, "schedule_inventory", None) or {}
+        if schedule_inventory:
+            candidates = match_schedule_to_candidates(candidates, schedule_inventory)
+
+        # Scope filter classification
+        scope_results = filter_by_scope(candidates)
 
         # Filter to non-rejected candidates for the UI
         ui_candidates = [c for c in candidates if c.status != "rejected"]
 
         def candidate_to_dict(c: GlazingCandidate) -> dict:
+            # Look up scope result for this candidate
+            scope_entry = next(
+                (s for s in scope_results if s["candidate_id"] == c.candidate_id),
+                {"scope": "scope_review", "reason": "not classified"},
+            )
             return {
                 "candidate_id": c.candidate_id,
                 "bounding_box": {
@@ -392,6 +421,8 @@ async def detect_glazing_endpoint(request: DetectGlazingRequest):
                 "system_hint": c.system_hint,
                 "source_sheet": c.source_sheet,
                 "status": c.status,
+                "schedule_match": c.schedule_match,
+                "scope": scope_entry["scope"],
             }
 
         return {

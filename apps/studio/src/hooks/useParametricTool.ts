@@ -104,6 +104,7 @@ export function useParametricTool(
     function handleMouseDown(e: MouseEvent): void {
       if (e.button !== 0) return;                          // left-click only
       const store = useStudioStore.getState();
+      console.log('[parametric] mousedown, activeTool:', store.activeTool);
       if (store.activeTool !== 'frame') return;            // frame tool only
       if (spaceRef.current) return;                        // space-pan pass-through
 
@@ -185,6 +186,7 @@ export function useParametricTool(
       const hIn   = pageToInches(hPx, cal.pixelsPerInch);
 
       const shapeId = crypto.randomUUID();
+      console.log('[parametric] mouseup: committing frame', { shapeId, wIn, hIn, wPx, hPx });
 
       // Commit the frame as a RectShape with default "unassigned" blue colour.
       // QuickAssignMenu will update color + frameSystemId once the user picks a system.
@@ -208,13 +210,15 @@ export function useParametricTool(
       const midX = (Math.min(start.screenX, endScreen.x) + Math.max(start.screenX, endScreen.x)) / 2;
       const topY = Math.min(start.screenY, endScreen.y);
 
-      store.setPendingFrameBounds({
+      const pendingBounds = {
         shapeId,
         widthInches:  wIn,
         heightInches: hIn,
         screenX:      midX,
         screenY:      topY,
-      });
+      };
+      console.log('[parametric] setPendingFrameBounds:', pendingBounds);
+      store.setPendingFrameBounds(pendingBounds);
 
       e.stopImmediatePropagation();
     }

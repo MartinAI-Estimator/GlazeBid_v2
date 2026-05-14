@@ -77,45 +77,55 @@ const AddendumViewer = ({ isOpen, onClose, project }) => {
       formData.append('new_pdf', newSheet.file);
 
       // Call comparison endpoint
-      const compareResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/compare`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          old_pdf_path: oldSheet.name,
-          new_pdf_path: newSheet.name,
-          output_path: `diff_${Date.now()}.jpg`
-        })
-      });
+      let compareResult = null;
+      try {
+        const compareResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/compare`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            old_pdf_path: oldSheet.name,
+            new_pdf_path: newSheet.name,
+            output_path: `diff_${Date.now()}.jpg`
+          }),
+          signal: AbortSignal.timeout(2000)
+        });
 
-      if (!compareResponse.ok) {
-        throw new Error('Comparison failed');
+        if (compareResponse.ok) {
+          compareResult = await compareResponse.json();
+          // For now, use placeholder diff image
+          // In production, this would be the actual diff image path
+          setDiffImage(compareResult.diff_image || oldSheet.preview);
+        }
+      } catch {
+        // Backend not available — use fallback
+        console.warn('Visual diff backend unavailable — showing original sheet');
+        setDiffImage(oldSheet.preview);
       }
-
-      const compareResult = await compareResponse.json();
-      
-      // For now, use placeholder diff image
-      // In production, this would be the actual diff image path
-      setDiffImage(compareResult.diff_image || oldSheet.preview);
 
       // Get impact report
-      const impactResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/impact-report`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          old_sheet_path: oldSheet.name,
-          new_sheet_path: newSheet.name
-        })
-      });
+      try {
+        const impactResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/impact-report`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            old_sheet_path: oldSheet.name,
+            new_sheet_path: newSheet.name
+          }),
+          signal: AbortSignal.timeout(2000)
+        });
 
-      if (impactResponse.ok) {
-        const impact = await impactResponse.json();
-        setImpactReport(impact.impact_report);
+        if (impactResponse.ok) {
+          const impact = await impactResponse.json();
+          setImpactReport(impact.impact_report);
+        }
+      } catch {
+        // Backend not available — impact report stays null
+        console.warn('Impact report generation unavailable — skipping');
       }
-
     } catch {
       setError('Visual diff comparison is not available in offline mode.');
     } finally {

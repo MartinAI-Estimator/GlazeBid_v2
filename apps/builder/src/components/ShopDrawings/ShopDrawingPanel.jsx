@@ -69,7 +69,7 @@ function FrameRow({ frame, index }) {
 
 // ─── Main Panel ───────────────────────────────────────────────────────────────
 
-export default function ShopDrawingPanel() {
+export default function ShopDrawingPanel({ onBack }) {
   const frames = useBidStore(s => s.frames);
 
   const [status, setStatus] = useState('idle');
@@ -135,6 +135,14 @@ export default function ShopDrawingPanel() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between mb-6">
         <div>
+          {onBack && (
+            <button
+              onClick={onBack}
+              style={{ background: 'none', border: 'none', color: '#71717a', fontSize: 12, cursor: 'pointer', padding: 0, marginBottom: 6, display: 'block' }}
+            >
+              ← Suite
+            </button>
+          )}
           <h1 className="text-2xl font-bold text-white tracking-tight">
             Shop Drawing Generator
           </h1>

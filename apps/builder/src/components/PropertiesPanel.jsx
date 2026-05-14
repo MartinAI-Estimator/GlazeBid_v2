@@ -15,13 +15,21 @@ const PropertiesPanel = ({ selectedMarkup, systemLibrary, projectName }) => {
         const fetchVerification = async () => {
             setLoadingVerification(true);
             try {
-                const encodedProjectName = encodeURIComponent(projectName);
-                const response = await fetch(
-                    `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/projects/${encodedProjectName}/verify-entity/${selectedMarkup.id}`
-                );
-                const data = await response.json();
-                
-                if (data.success) {
+                let data = null;
+                try {
+                    const encodedProjectName = encodeURIComponent(projectName);
+                    const response = await fetch(
+                        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/projects/${encodedProjectName}/verify-entity/${selectedMarkup.id}`,
+                        { signal: AbortSignal.timeout(2000) }
+                    );
+                    if (response.ok) {
+                        data = await response.json();
+                    }
+                } catch {
+                    // Backend not available — data stays null
+                }
+
+                if (data?.success) {
                     setVerification(data.verification);
                 }
             } catch {

@@ -93,6 +93,8 @@ export default function QuickAssignMenu() {
     if (pending) { setShowNewForm(false); setNewName(''); setNewType('ext-sf-1'); }
   }, [pending]);
 
+  console.log('[QuickAssignMenu] render, pending:', pending ? { shapeId: pending.shapeId, screenX: pending.screenX, screenY: pending.screenY } : null);
+
   if (!pending) return null;
 
   // ── Assign to an existing system ─────────────────────────────────────────
@@ -129,12 +131,15 @@ export default function QuickAssignMenu() {
     });
 
     // Trigger GridEditor so the estimator can set mullion layout immediately
-    setPendingGridEdit({
+    const gridEditData = {
       shapeId:      pending.shapeId,
       widthInches:  pending.widthInches,
       heightInches: pending.heightInches,
-    });
+    };
+    console.log('[QuickAssignMenu] setPendingGridEdit:', gridEditData);
+    setPendingGridEdit(gridEditData);
 
+    console.log('[QuickAssignMenu] clearing pendingFrameBounds');
     setPending(null);
   }
 

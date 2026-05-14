@@ -27,22 +27,7 @@ export const ProjectProvider = ({ children }) => {
     caulkBeads: 2
   });
 
-  // 3.5. Labor Crew Composition (The Crew Builder)
-  const [laborCrew, setLaborCrew] = useState([
-    { id: 1, role: 'Foreman', count: 1, baseRate: 65, burdenPct: 40 },
-    { id: 2, role: 'Glazier', count: 2, baseRate: 55, burdenPct: 42 },
-    { id: 3, role: 'Apprentice', count: 1, baseRate: 35, burdenPct: 38 }
-  ]);
-
-  // 3.6. Equipment Library (General Conditions / Lift Calculator)
-  const [equipmentLibrary, setEquipmentLibrary] = useState([
-    { id: 1, name: '60\' Boom Lift', category: 'Aerial Lift', dailyRate: 450, weeklyRate: 1800, monthlyRate: 5500, mobilizationCost: 350 },
-    { id: 2, name: '40\' Scissor Lift', category: 'Aerial Lift', dailyRate: 250, weeklyRate: 900, monthlyRate: 2800, mobilizationCost: 200 },
-    { id: 3, name: 'Telehandler 10K', category: 'Material Handler', dailyRate: 350, weeklyRate: 1400, monthlyRate: 4200, mobilizationCost: 300 },
-    { id: 4, name: 'Crane Service (Day)', category: 'Crane', dailyRate: 1200, weeklyRate: 0, monthlyRate: 0, mobilizationCost: 800 }
-  ]);
-
-  // 3.6.5. Glass Library (Project-Specific Glass Types)
+  // 3.6. Glass Library (Project-Specific Glass Types)
   const [glassTypes, setGlassTypes] = useState([
     {
       id: 1,
@@ -252,98 +237,41 @@ export const ProjectProvider = ({ children }) => {
     }
   ]);
 
-  // 4. Admin Settings - Management Backend (The "Golden Rules")
+  // 4. Admin Settings — company-wide defaults consumed by bid math.
+  //    UI for editing these will be built in the new Admin section.
   const ADMIN_DEFAULTS = {
-    // ── Phase 5: Company-wide rate defaults (AdminSettingsPanel) ──────────
-    suppliesPct:        0.5,
-    contingencyPct:     1.25,
-    defaultLaborRate:   42,
-    defaultCrewSize:    2,
-    defaultLaborCont:   2.5,
-    defaultMarkupPct:   40,
-    defaultTaxPct:      8.2,
-    glassSurchargePct:  17,
-    glassBreakagePct:   3,
-    gpmThresholds: [
-      { label: '$0 – $250k',   minGPM: 30 },
-      { label: '$250k – $1M',  minGPM: 27 },
-      { label: '$1M+',         minGPM: 25 },
-    ],
-    // Labor Library - Production rates
-    laborLibrary: [
-      { id: 'frame_assembly', name: 'Frame Assembly', category: 'Fabrication', hoursPerUnit: 0.150, unit: 'SF' },
-      { id: 'glass_setting', name: 'Glass Setting', category: 'Installation', hoursPerUnit: 0.120, unit: 'SF' },
-      { id: 'caulking', name: 'Perimeter Caulk', category: 'Installation', hoursPerUnit: 0.080, unit: 'SF' },
-      { id: 'anchor_install', name: 'Anchor Installation', category: 'Installation', hoursPerUnit: 0.100, unit: 'EA' },
-      { id: 'glazing_bead', name: 'Glazing Bead Install', category: 'Installation', hoursPerUnit: 0.050, unit: 'LF' },
-      { id: 'hardware_install', name: 'Hardware Installation', category: 'Installation', hoursPerUnit: 0.200, unit: 'EA' },
-      { id: 'panel_erection', name: 'Panel Erection', category: 'Installation', hoursPerUnit: 0.180, unit: 'SF' },
-      { id: 'cleanup', name: 'Cleanup & Protection', category: 'Closeout', hoursPerUnit: 0.030, unit: 'SF' }
-    ],
-    // Financial Defaults
+    // ── Material section defaults (SOWMaterialTracker) ──────────────────────
+    suppliesPct:     0.5,    // % auto-computed supplies line per breakout section
+    contingencyPct:  1.25,   // % auto-computed contingency per breakout section
+
+    // ── Glass pricing defaults ───────────────────────────────────────────────
+    glassSurchargePct: 17,   // surcharge on top of raw glass cost (handling, shipping)
+    glassBreakagePct:  3,    // breakage allowance applied after surcharge
+
+    // ── Financial defaults (read by useBidMath + syncProject) ───────────────
     financialDefaults: {
-      markupPct: 35,
-      laborRate: 45,
-      taxRate: 7.25,
-      contingencyPct: 10,      // % buffer added to raw labor hours
-      caulkBeads: 2,
-      glassWastePct: 5,        // Glass waste/breakage allowance
-      // Base Pricing (Used by Pricing Logic Engine)
-      metalPerLb: 4.50,        // $ per pound of aluminum
-      glassPerSF: 12.00,       // $ per SF of glass (basic)
-      caulkPerLF: 2.50,        // $ per linear foot of caulk
-      anchorPerEA: 8.00,       // $ per anchor
-      steelPerLb: 2.75,        // $ per pound of steel reinforcement
-      // GPM Tiers — Chief Estimator sets these company-wide
-      // Each tier: { upTo: number | null, gpm: number }
-      // null upTo = "over" (last tier, no ceiling)
+      laborRate:       45,    // $/hr burdened labor rate
+      taxRate:         8.2,   // material sales tax % (key read by useBidMath & syncProject)
+      markupPct:       30,    // manual GPM override default (read by useBidMath as fin.markupPct)
+      contingencyPct:  10,    // % buffer added to raw labor hours
       gpmTiers: [
-        { id: 'tier_sm',  label: 'Small Job',  upTo: 250000,   gpm: 30 },
-        { id: 'tier_md',  label: 'Mid Job',    upTo: 1000000,  gpm: 27 },
-        { id: 'tier_lg',  label: 'Large Job',  upTo: null,     gpm: 25 },
+        { id: 'tier_sm', label: 'Small Job', upTo: 250000,  gpm: 30 },
+        { id: 'tier_md', label: 'Mid Job',   upTo: 1000000, gpm: 27 },
+        { id: 'tier_lg', label: 'Large Job', upTo: null,    gpm: 25 },
       ],
     },
-    // System Templates - Which tasks apply to each system type
-    systemTemplates: {
-      ext_storefront: {
-        label: 'Exterior Storefront',
-        tasks: ['frame_assembly', 'glass_setting', 'caulking', 'anchor_install', 'hardware_install', 'cleanup']
-      },
-      int_storefront: {
-        label: 'Interior Storefront',
-        tasks: ['frame_assembly', 'glass_setting', 'glazing_bead', 'hardware_install', 'cleanup']
-      },
-      curtain_wall: {
-        label: 'Curtain Wall (SSG)',
-        tasks: ['frame_assembly', 'glass_setting', 'caulking', 'anchor_install', 'panel_erection', 'cleanup']
-      }
-    },
-    // Master Data - Layer 26
-    costGroups: [
-      "02-Metal",
-      "02-Glass",
-      "02-Finish",
-      "02-Labor",
-      "02-Sundries",
-      "02-Equipment"
-    ],
+
+    // ── Material categories (MaterialDrawer dropdown) ────────────────────────
+    materialCategories: [],
+
+    // ── Breakout categories (SystemArchitect proposal grouping) ─────────────
     breakoutCategories: [
-      "Exterior Storefront",
-      "Curtain Wall",
-      "Interior Storefront",
-      "All Glass Entrances",
-      "Mirrors"
+      'Exterior Storefront',
+      'Curtain Wall',
+      'Interior Storefront',
+      'All Glass Entrances',
+      'Mirrors',
     ],
-    // Material Categories - Drives the category dropdown in the bid builder materials section
-    materialCategories: [
-      { id: 'aluminum',      icon: '🔩', label: 'Aluminum (02-Metal)' },
-      { id: 'glass',         icon: '🪟', label: 'Glass' },
-      { id: 'doors',         icon: '🚪', label: 'Doors (Leaves)' },
-      { id: 'hardware',      icon: '🔑', label: 'Hardware Sets' },
-      { id: 'equipment',     icon: '🏗️', label: 'Equipment' },
-      { id: 'caulking',      icon: '🪣', label: 'Caulking & Misc' },
-      { id: 'subcontractor', icon: '👷', label: 'Subcontractor / Labor' },
-    ]
   };
   const [adminSettings, setAdminSettings] = useState(() => {
     try {
@@ -351,7 +279,17 @@ export const ProjectProvider = ({ children }) => {
       if (saved) {
         const parsed = JSON.parse(saved);
         // Merge with defaults so any new fields added in code still appear
-        return { ...ADMIN_DEFAULTS, ...parsed };
+        const merged = { ...ADMIN_DEFAULTS, ...parsed };
+        // Migration: if materialCategories still contains the old hardcoded
+        // defaults (identifiable by the original ids), wipe them so the
+        // tab starts blank as intended.
+        const OLD_DEFAULT_IDS = ['aluminum','glass','doors','hardware','equipment','caulking','subcontractor'];
+        const cats = merged.materialCategories || [];
+        const isOldDefaults =
+          cats.length === OLD_DEFAULT_IDS.length &&
+          cats.every((c, i) => c.id === OLD_DEFAULT_IDS[i]);
+        if (isOldDefaults) merged.materialCategories = [];
+        return merged;
       }
     } catch (e) {}
     return ADMIN_DEFAULTS;
@@ -478,10 +416,6 @@ export const ProjectProvider = ({ children }) => {
         addImportedItems,
         globalSettings, 
         setGlobalSettings,
-        laborCrew,
-        setLaborCrew,
-        equipmentLibrary,
-        setEquipmentLibrary,
         glassTypes,
         setGlassTypes,
         systemDefinitions,

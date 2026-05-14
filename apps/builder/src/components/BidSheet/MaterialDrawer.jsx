@@ -27,9 +27,10 @@ const MaterialDrawer = ({
   importedSystems,
   setImportedSystems,
   projectIsTaxExempt = false,
+  inline = false,
 }) => {
   const { adminSettings } = useProject();
-  const categories = (adminSettings?.materialCategories?.length ? adminSettings.materialCategories : DEFAULT_CATEGORIES);
+  const categories = (adminSettings?.materialCategories?.length ? adminSettings.materialCategories : []);
   const catLabels = categories.map(c => c.label);
 
   const [materials, setMaterials] = useState([]);
@@ -95,20 +96,24 @@ const MaterialDrawer = ({
   const finalMaterialTotal = totalMaterialCost * (1 + contingency / 100 + supplies / 100);
   const fmt = (n) => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+  const inlineStyle = inline
+    ? { flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }
+    : {
+        position: 'fixed',
+        top: 0, right: 0, bottom: 0,
+        width: 420,
+        background: 'var(--bg-card)',
+        borderLeft: '1px solid var(--border-subtle)',
+        boxShadow: '-8px 0 40px rgba(0,0,0,0.6)',
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 50,
+        transform: isDrawerOpen ? 'translateX(0)' : 'translateX(100%)',
+        transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
+      };
+
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, right: 0, bottom: 0,
-      width: 420,
-      background: 'var(--bg-card)',
-      borderLeft: '1px solid var(--border-subtle)',
-      boxShadow: '-8px 0 40px rgba(0,0,0,0.6)',
-      display: 'flex',
-      flexDirection: 'column',
-      zIndex: 50,
-      transform: isDrawerOpen ? 'translateX(0)' : 'translateX(100%)',
-      transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
-    }}>
+    <div style={inlineStyle}>
 
       {/* Header */}
       <div style={{
@@ -128,7 +133,7 @@ const MaterialDrawer = ({
         </div>
         <button
           onClick={toggleDrawer}
-          style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', fontSize: '1.5rem', lineHeight: 1, cursor: 'pointer', padding: '2px 6px', borderRadius: 4 }}
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', fontSize: '1.5rem', lineHeight: 1, cursor: 'pointer', padding: '2px 6px', borderRadius: 4, display: inline ? 'none' : undefined }}
         >
           &times;
         </button>
@@ -164,7 +169,7 @@ const MaterialDrawer = ({
                 style={{ ...inputBase, flex: 1, background: 'var(--bg-panel)' }}
               >
                 {categories.map(cat => (
-                  <option key={cat.id} value={cat.label}>{cat.icon} {cat.label}</option>
+                  <option key={cat.id} value={cat.label}>{cat.label}</option>
                 ))}
               </select>
               <button

@@ -1,19 +1,20 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { parsePartnerPakFile } from '../../utils/parsePartnerPak';
 
-const PartnerPakDropZone = ({ onImportComplete, projectName }) => {
+const PartnerPakDropZone = ({ onImportComplete, projectName, compact }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingFile, setLoadingFile] = useState('');
   const [error, setError] = useState(null);
 
-  const onDrop = useCallback((acceptedFiles, fileRejections) => {
+  const onDrop = useCallback(async (acceptedFiles, fileRejections) => {
     // If dropzone rejected all files (MIME mismatch), still try the first one
     const file = acceptedFiles[0] || fileRejections?.[0]?.file;
     if (!file) return;
 
     const ext = file.name.split('.').pop().toLowerCase();
     if (!['csv', 'xls', 'xlsx'].includes(ext)) {
-      setError(`Unsupported file type ".${ext}". Please upload a PartnerPak CSV, XLS, or XLSX export.`);
+      setError(`Unsupported file type ".${ext}". Please upload a CSV, XLS, or XLSX file.`);
       return;
     }
 
@@ -21,34 +22,18 @@ const PartnerPakDropZone = ({ onImportComplete, projectName }) => {
     setLoadingFile(file.name);
     setError(null);
 
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const safeName = encodeURIComponent(projectName || 'unknown');
-    fetch(`/api/bidsheet/projects/${safeName}/smart-import`, {
-      method: 'POST',
-      body: formData
-    })
-    .then(res => res.json().then(data => ({ ok: res.ok, status: res.status, data })))
-    .then(({ ok, status, data }) => {
-      if (ok && data.success) {
-        // Debug: confirm bays/dlos are arriving from backend
-        console.log('[PartnerPak] col_map detected:', data._debug_col_map);
-        const sample = data.systems?.[0]?.frames?.[0];
-        console.log('[PartnerPak] first frame sample:', sample);
-        onImportComplete(data.systems);
-      } else {
-        const msg = data.detail || data.error || `Import failed (HTTP ${status}). Check your file format.`;
-        setError(msg);
-        setIsLoading(false);
-      }
-    })
-    .catch(err => {
-      console.error('Upload error:', err);
-      setError('Network error — could not reach the server. Make sure the backend is running.');
+    try {
+      const { systems, colMap } = await parsePartnerPakFile(file);
+      console.log('[PartnerPak] col_map detected:', colMap);
+      const sample = systems?.[0]?.frames?.[0];
+      console.log('[PartnerPak] first frame sample:', sample);
+      onImportComplete(systems);
+    } catch (err) {
+      console.error('PartnerPak parse error:', err);
+      setError(err.message || 'Import failed. Check your file format.');
       setIsLoading(false);
-    });
-  }, [onImportComplete, projectName]);
+    }
+  }, [onImportComplete]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -152,7 +137,7 @@ const PartnerPakDropZone = ({ onImportComplete, projectName }) => {
       ) : (
         <>
           <p style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 0.3rem' }}>
-            PartnerPak Import
+            Import Spreadsheet
           </p>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', marginBottom: '0.9rem' }}>
             CSV or Excel files accepted — auto-generates your visual layouts.

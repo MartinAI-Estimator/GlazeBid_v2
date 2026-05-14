@@ -1,0 +1,23 @@
+{
+  "included_systems": [
+    "storefront",
+    "curtain_wall",
+    "window_wall",
+    "frameless_glass",
+    "glass_railing",
+    "translucent_panel",
+    "glass_canopy",
+    "storefront_entry"
+  ],
+  "excluded_systems": [
+    "overhead_coiling",
+    "sectional",
+    "hollow_metal",
+    "louver",
+    "rolling_steel",
+    "vision_lite_hm"
+  ],
+  "scope_review_systems": [
+    "spandrel_panel"
+  ]
+}

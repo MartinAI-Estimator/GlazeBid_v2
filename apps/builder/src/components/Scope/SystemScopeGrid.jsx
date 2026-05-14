@@ -161,7 +161,7 @@ const SystemScopeGrid = ({ rows, onUpdateRow, system }) => {
       borderRadius: '8px',
       border: '1px solid #30363d',
       overflow: 'auto',
-      maxHeight: 'calc(100vh - 400px)'
+      maxHeight: '600px'
     }}>
       <table style={{
         width: '100%',

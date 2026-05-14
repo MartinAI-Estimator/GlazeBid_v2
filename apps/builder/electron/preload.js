@@ -22,6 +22,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // ── File I/O ──────────────────────────────────────────────────────────────
   /** Read a PDF from disk and return its ArrayBuffer + basename. */
   readPdfFile: (filePath) => ipcRenderer.invoke('glazebid:read-pdf', filePath),
+  /** Prompt user to choose a target folder for saved section PDFs. */
+  selectFolder: () => ipcRenderer.invoke('dialog:selectFolder'),
+  /** Write extracted spec section PDFs to disk via main process (fs unavailable in renderer). */
+  saveSections: (sections, folderPath) => ipcRenderer.invoke('spec:saveSections', sections, folderPath),
   /** Get the real filesystem path from a File object (contextIsolation-safe). */
   getPathForFile: (file) => webUtils.getPathForFile(file),
 
@@ -103,6 +107,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   windowClose: () => ipcRenderer.send('window-close'),
 
   // ── Citation Store ──────────────────────────────────────────────────────
+  /** Save extracted spec section PDFs to a folder on disk (main-process fs). */
+  saveSections: (sections, folderPath) => ipcRenderer.invoke('spec:saveSections', sections, folderPath),
   /** Write a validated citation to the SQLite store. */
   writeCitation:        (raw) => ipcRenderer.invoke('citation:write', raw),
   /** Get all citations for a project. */

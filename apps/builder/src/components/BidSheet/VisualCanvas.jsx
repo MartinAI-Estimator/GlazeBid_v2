@@ -1,7 +1,7 @@
 import React from 'react';
 import FrameCard from './FrameCard';
 
-const VisualCanvas = ({ systemName, frames, onBack, activeTool, onFrameClick }) => {
+const VisualCanvas = ({ systemName, frames, onBack, activeTool, onFrameClick, onUpdateFrameField, systemType }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', background: 'var(--bg-deep)' }}>
 
@@ -35,7 +35,7 @@ const VisualCanvas = ({ systemName, frames, onBack, activeTool, onFrameClick }) 
                 gap: '0.35rem',
               }}
             >
-              ← Systems
+              ← Back
             </button>
           )}
           {onBack && <span style={{ color: 'var(--border-subtle)' }}>|</span>}
@@ -73,8 +73,11 @@ const VisualCanvas = ({ systemName, frames, onBack, activeTool, onFrameClick }) 
               <FrameCard
                 key={frame.id ?? idx}
                 frame={{ ...frame, id: frame.id ?? String(idx) }}
+                frameIndex={idx}
                 activeTool={activeTool}
                 onFrameClick={onFrameClick}
+                onUpdateFrameField={onUpdateFrameField}
+                systemType={systemType}
               />
             ))}
           </div>

@@ -49,12 +49,21 @@ const MarkupTransfer = ({
       setError(null);
 
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/load-markups?project=${encodeURIComponent(project)}&sheet=${encodeURIComponent(sourceSheet)}`
-        );
-        const data = await response.json();
-        
-        if (data.status === 'success') {
+        let data = null;
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/load-markups?project=${encodeURIComponent(project)}&sheet=${encodeURIComponent(sourceSheet)}`,
+            { signal: AbortSignal.timeout(2000) }
+          );
+          if (response.ok) {
+            data = await response.json();
+          }
+        } catch {
+          // Backend not available — data stays null
+          console.warn('Markup loading unavailable — backend server not running');
+        }
+
+        if (data?.status === 'success') {
           setSourceMarkups(data.markups || []);
           // Select all by default
           setSelectedMarkups(new Set(data.markups.map(m => m.id)));
@@ -64,6 +73,7 @@ const MarkupTransfer = ({
         }
       } catch {
         // Backend not available in offline/Electron mode — start with empty list.
+        console.warn('Failed to load markups: backend unavailable');
         setSourceMarkups([]);
         setSelectedMarkups(new Set());
       } finally {
@@ -109,17 +119,20 @@ const MarkupTransfer = ({
     setError(null);
     setTransferResult(null);
 
+    let successCount = 0;
+    let transferredMarkups = [];
+
     try {
       // Get selected markups
       const markupsToTransfer = sourceMarkups.filter(m => selectedMarkups.has(m.id));
-      
+
       // Apply offset and generate new IDs
-      const transferredMarkups = markupsToTransfer.map(markup => {
+      transferredMarkups = markupsToTransfer.map(markup => {
         const newMarkup = { ...markup };
         newMarkup.id = `transferred_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         newMarkup.sourceSheet = sourceSheet;
         newMarkup.transferredAt = new Date().toISOString();
-        
+
         // Apply coordinate offset if set
         if ((offsetX !== 0 || offsetY !== 0) && newMarkup.points) {
           newMarkup.points = newMarkup.points.map(point => ({
@@ -128,7 +141,7 @@ const MarkupTransfer = ({
             y: point.y + offsetY
           }));
         }
-        
+
         // Update center point if exists
         if (newMarkup.center) {
           newMarkup.center = {
@@ -136,25 +149,31 @@ const MarkupTransfer = ({
             y: newMarkup.center.y + offsetY
           };
         }
-        
+
         return newMarkup;
       });
 
       // Save each markup to target sheet
-      let successCount = 0;
+      successCount = 0;
       for (const markup of transferredMarkups) {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/save-markup`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            project,
-            sheet: targetSheet,
-            markup
-          })
-        });
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/save-markup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              project,
+              sheet: targetSheet,
+              markup
+            }),
+            signal: AbortSignal.timeout(2000)
+          });
 
-        if (response.ok) {
-          successCount++;
+          if (response.ok) {
+            successCount++;
+          }
+        } catch {
+          // Individual markup save failed — continue with next
+          console.warn('Failed to save markup to target sheet: backend unavailable or timeout');
         }
       }
 
@@ -181,8 +200,13 @@ const MarkupTransfer = ({
         });
       }
 
-    } catch {
-      setError('Markup transfer is not available in offline mode.');
+    } catch (err) {
+      console.error('Markup transfer error:', err);
+      if (successCount > 0) {
+        setError(`Partially transferred: ${successCount} of ${transferredMarkups.length} markups. Backend unavailable.`);
+      } else {
+        setError('Markup transfer requires the AI analysis server. Cannot reach backend.');
+      }
     } finally {
       setIsTransferring(false);
     }

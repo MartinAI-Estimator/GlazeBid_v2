@@ -1,0 +1,98 @@
+{
+  "experiment": "elevation_marks_mclarty",
+  "run_date": "2026-04-18T03:23:58.214073+00:00",
+  "config": {
+    "mark_regex": "^(SF|CW|W|GL|SG|IG|SP|AL|A)-\\d+[A-Z]?$",
+    "proximity_pts": 200,
+    "dim_tolerance": 0.25,
+    "reject_threshold": 0.5,
+    "min_candidate_conf": 0.7,
+    "match_threshold": 0.5,
+    "elevation_pages": [
+      0,
+      1,
+      4,
+      5
+    ]
+  },
+  "input_files": {
+    "clean_pdf": "McLarty Mazda - Bid Plans - Non Marked.pdf",
+    "marked_pdf": "McLarty Mazda - Bid Plans.pdf",
+    "clean_pages": 12,
+    "marked_pages": 12
+  },
+  "constraint_extraction": {
+    "scan_pages": [
+      0,
+      1,
+      4,
+      5
+    ],
+    "marks_found": [
+      "SF-1",
+      "SF-2"
+    ],
+    "confidence": "partial",
+    "source": "elevation_text pages=[0, 1, 4, 5] proximity=200pts",
+    "marks_detail": [
+      {
+        "mark_id": "SF-1",
+        "width_ft": null,
+        "height_ft": null,
+        "bay_count": null,
+        "source_page": 1
+      },
+      {
+        "mark_id": "SF-2",
+        "width_ft": null,
+        "height_ft": null,
+        "bay_count": null,
+        "source_page": 1
+      }
+    ]
+  },
+  "pipeline": {
+    "scan_pages": [
+      0,
+      1,
+      4,
+      5
+    ],
+    "total_candidates": 86,
+    "total_annotations": 127
+  },
+  "baseline": {
+    "precision": 0.5066,
+    "recall": 0.6063,
+    "f1": 0.552,
+    "tp": 77,
+    "fp": 75,
+    "fn": 50,
+    "total_candidates": 86,
+    "total_annotations": 127
+  },
+  "constrained": {
+    "precision": 0.5066,
+    "recall": 0.6063,
+    "f1": 0.552,
+    "tp": 77,
+    "fp": 75,
+    "fn": 50,
+    "total_candidates": 86,
+    "total_annotations": 127,
+    "rejected_by_constraint": 0,
+    "status_breakdown": {
+      "partial": 86
+    }
+  },
+  "delta": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+  },
+  "prerequisite_notes": [
+    "Experiment 1 (Hope Aquatic / schedule constraint): BLOCKED \u2014 no marked ground-truth PDF available in test_data/.",
+    "Tesseract not required \u2014 PyMuPDF extracts vector text directly.",
+    "PDF paths differ from spec (data/ground_truth/\u2026) \u2014 using sidecar/qaqc/test_data/ convention."
+  ]
+}

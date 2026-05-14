@@ -33,5 +33,11 @@ interface Window {
     verifyCitation:         (citationId: string) => Promise<{ ok: boolean; error?: string }>;
     getImplications:        (params: { systemType?: string; specSections?: string[]; keywords?: string[] }) => Promise<{ ok: boolean; suggestions: unknown[]; error?: string }>;
     recordImplicationUsage: (implId: string) => Promise<{ ok: boolean; error?: string }>;
+
+    // AiQ Sidecar
+    aiq?: {
+      health: () => Promise<{ healthy: boolean; port?: number }>;
+      restartSidecar: () => Promise<{ healthy: boolean }>;
+    };
   };
 }

@@ -31,6 +31,12 @@
  *
  * Misc:
  *   open-studio          Simple Studio open (no project data, for back-compat)
+ *
+ * AI Chat (Anthropic claude-haiku-3-5):
+ *   ai:key-save          Encrypt + persist Anthropic API key via safeStorage
+ *   ai:key-check         Returns { hasKey: boolean }
+ *   ai:key-clear         Remove stored key
+ *   ai:chat              Stream a single assistant turn; returns { ok, text, error }
  */
 
 // electron.d.ts is loaded by VS Code as a global ambient file, so
@@ -38,7 +44,7 @@
 // Cast using an inline object type whose members come from the global
 // `Electron` ambient namespace — works in every TS project context.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell, Menu } =
+const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell, Menu, screen } =
   require('electron') as {
     app:         Electron.App;
     BrowserWindow: typeof Electron.BrowserWindow;
@@ -48,6 +54,7 @@ const { app, BrowserWindow, ipcMain, dialog, session, nativeImage, shell, Menu }
     nativeImage: { createFromPath(path: string): Electron.NativeImage };
     shell:       Electron.Shell;
     Menu:        typeof Electron.Menu;
+    screen:      Electron.Screen;
   };
 
 /** Instance type of Electron.BrowserWindow – used for variable/param annotations. */
@@ -55,6 +62,7 @@ type BW = InstanceType<typeof BrowserWindow>;
 import path from 'path';
 import fs from 'fs';
 import { spawn, type ChildProcess } from 'child_process';
+import { autoUpdater } from 'electron-updater';
 import {
   initCitationStore,
   writeCitation,
@@ -64,6 +72,26 @@ import {
   getImplicationSuggestions,
   recordImplicationUsage,
 } from '../apps/builder/src/db/citationStore';
+
+// ── Auto-Updater ──────────────────────────────────────────────────────────────
+// Only active in production builds — not in dev mode
+function setupAutoUpdater(mainWindow: BW): void {
+  if (!app.isPackaged) return; // skip in dev
+
+  autoUpdater.checkForUpdatesAndNotify();
+
+  autoUpdater.on('update-available', () => {
+    mainWindow.webContents.send('update-available');
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    mainWindow.webContents.send('update-downloaded');
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('Auto-updater error:', err);
+  });
+}
 
 // ── AiQ Sidecar Process Manager ───────────────────────────────────────────────
 
@@ -207,11 +235,17 @@ const _appIcon = (() => {
 
 // ── Create Builder window ──────────────────────────────────────────────────────
 function createBuilderWindow(): void {
+  // Use work area (excludes taskbar) so the window is never hidden behind it
+  const { width: screenW, height: screenH } = screen.getPrimaryDisplay().workAreaSize;
+  const winW = Math.min(1400, screenW);
+  const winH = Math.min(900,  screenH);
+
   const win = new BrowserWindow({
-    width:           1400,
-    height:          900,
+    width:           winW,
+    height:          winH,
     minWidth:        900,
     minHeight:       600,
+    center:          true,   // always opens fully within the work area
     title:           'GlazeBid Builder',
     autoHideMenuBar: true,
     backgroundColor: '#0b162a',
@@ -239,7 +273,10 @@ function createBuilderWindow(): void {
     );
   });
 
-  win.once('ready-to-show', () => win.show());
+  win.once('ready-to-show', () => {
+    win.show();
+    setupAutoUpdater(win);
+  });
 
   if (isDev) {
     const builderUrl = process.env.VITE_DEV_SERVER_URL ?? 'http://localhost:5173';
@@ -248,6 +285,12 @@ function createBuilderWindow(): void {
     if (process.env.GLAZEBID_DEVTOOLS === '1') {
       win.webContents.openDevTools({ mode: 'detach' });
     }
+    // Ctrl+Shift+I toggles DevTools in dev mode
+    win.webContents.on('before-input-event', (_ev, input) => {
+      if (input.control && input.shift && input.key.toLowerCase() === 'i') {
+        win.webContents.toggleDevTools();
+      }
+    });
   } else {
     win.loadFile(path.join(__dirname, '../apps/builder/dist/index.html'));
   }
@@ -327,6 +370,15 @@ function createStudioWindow(projectData?: unknown): void {
 
   // Hide native menu bar — Studio uses a custom React title bar
   sWin.setMenu(null);
+
+  // Ctrl+Shift+I toggles DevTools in dev mode
+  if (isDev) {
+    sWin.webContents.on('before-input-event', (_ev, input) => {
+      if (input.control && input.shift && input.key.toLowerCase() === 'i') {
+        sWin.webContents.toggleDevTools();
+      }
+    });
+  }
 
   if (projectData) pendingProject = projectData;
 
@@ -618,6 +670,37 @@ app.whenReady().then(async () => {
     }
   });
 
+  // ── spec:saveSections — write extracted spec PDFs to disk in main process ───
+  // Renderer cannot use fs directly (Vite externalises Node built-ins to stubs).
+  ipcMain.handle('spec:saveSections', async (_event,
+    sections: Array<{ sectionNumber: string; sectionTitle: string; buffer: Uint8Array }>,
+    folderPath: string,
+  ) => {
+    try {
+      fs.mkdirSync(folderPath, { recursive: true });
+      const savedPaths: string[] = [];
+      for (const section of sections) {
+        const safeName = `${section.sectionNumber} - ${section.sectionTitle || 'Section'}.pdf`
+          .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
+        const fullPath = path.join(folderPath, safeName);
+        fs.writeFileSync(fullPath, Buffer.from(section.buffer));
+        savedPaths.push(fullPath);
+      }
+      return { ok: true, savedPaths };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── dialog:selectFolder — folder picker for spec section save ──────────────
+  ipcMain.handle('dialog:selectFolder', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory', 'createDirectory'],
+    });
+    if (result.canceled) return null;
+    return result.filePaths[0];
+  });
+
   // ── AiQ sidecar IPC ─────────────────────────────────────────────────────────
   ipcMain.handle('aiq:health', async () => {
     const healthy = await checkSidecarHealth();
@@ -630,6 +713,80 @@ app.whenReady().then(async () => {
     await startSidecar();
     const healthy = await checkSidecarHealth();
     return { healthy };
+  });
+
+  // ── AI Chat (Anthropic Haiku) ─────────────────────────────────────────────
+  // Key is encrypted at rest via Electron safeStorage so it never sits in
+  // plain text in localStorage or the app bundle.
+  const AI_KEY_PATH = path.join(app.getPath('userData'), '.ai_key');
+
+  function loadAiKey(): string | null {
+    try {
+      if (!fs.existsSync(AI_KEY_PATH)) return null;
+      const { safeStorage } = require('electron') as { safeStorage: Electron.SafeStorage };
+      if (!safeStorage.isEncryptionAvailable()) {
+        // Fallback: plain text (dev machines without keychain)
+        return fs.readFileSync(AI_KEY_PATH, 'utf-8').trim() || null;
+      }
+      const enc = fs.readFileSync(AI_KEY_PATH);
+      return safeStorage.decryptString(enc);
+    } catch { return null; }
+  }
+
+  ipcMain.handle('ai:key-save', (_event, rawKey: string) => {
+    try {
+      const { safeStorage } = require('electron') as { safeStorage: Electron.SafeStorage };
+      if (safeStorage.isEncryptionAvailable()) {
+        const enc = safeStorage.encryptString(rawKey.trim());
+        fs.writeFileSync(AI_KEY_PATH, enc);
+      } else {
+        fs.writeFileSync(AI_KEY_PATH, rawKey.trim(), 'utf-8');
+      }
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  ipcMain.handle('ai:key-check', () => {
+    return { hasKey: !!loadAiKey() };
+  });
+
+  ipcMain.handle('ai:key-clear', () => {
+    try { if (fs.existsSync(AI_KEY_PATH)) fs.unlinkSync(AI_KEY_PATH); } catch {}
+    return { ok: true };
+  });
+
+  ipcMain.handle('ai:chat', async (_event, payload: {
+    messages: Array<{ role: 'user' | 'assistant'; content: string }>;
+    systemPrompt: string;
+  }) => {
+    const apiKey = loadAiKey();
+    if (!apiKey) return { ok: false, error: 'No API key configured. Add your Anthropic key in Settings → AI.' };
+    try {
+      // Dynamic require keeps the cold-start fast when AI is not used
+      const Anthropic = require('@anthropic-ai/sdk');
+      const client = new Anthropic.default({ apiKey });
+      const response = await client.messages.create({
+        model:      'claude-haiku-3-5-20241022',
+        max_tokens: 1024,
+        system:     payload.systemPrompt,
+        messages:   payload.messages,
+      });
+      const text = response.content
+        .filter((b: { type: string }) => b.type === 'text')
+        .map((b: { text: string }) => b.text)
+        .join('');
+      return { ok: true, text };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return { ok: false, error: msg };
+    }
+  });
+
+  // ── updater:install-now — quit and install pending update ───────────────────
+  ipcMain.handle('updater:install-now', () => {
+    autoUpdater.quitAndInstall();
   });
 
   app.on('activate', () => {

@@ -5,6 +5,7 @@
  */
 
 import { COST_CODES } from './SOWMaterialTracker';
+import { calculatePricing } from '../../utils/PricingEngine';
 
 const fmt2 = (n) => (typeof n === 'number' ? n : 0).toFixed(2);
 
@@ -16,7 +17,7 @@ const fmt2 = (n) => (typeof n === 'number' ? n : 0).toFixed(2);
  * @param {boolean} isTaxExempt
  * @returns {Array} rows — one per cost code that has a non-zero value
  */
-export function buildCostCodeReport(systems = [], markupPct = 40, taxPct = 8.2, isTaxExempt = false) {
+export function buildCostCodeReport(systems = [], markupPct = 40, taxPct = 8.2, isTaxExempt = false, pricingMode = 'margin') {
   // Aggregate costs by cost code across all systems
   const totals = {};
   COST_CODES.forEach(cc => { totals[cc.code] = 0; });
@@ -37,9 +38,17 @@ export function buildCostCodeReport(systems = [], markupPct = 40, taxPct = 8.2, 
   // Build report rows
   const rows = COST_CODES.map(cc => {
     const baseCost  = totals[cc.code] || 0;
-    const taxAmt    = (!isTaxExempt && cc.group !== 'auto') ? baseCost * (taxPct / 100) : 0;
-    const markupAmt = baseCost * (markupPct / 100);
-    const total     = baseCost + taxAmt + markupAmt;
+    const pricing = calculatePricing({
+      materialCost: baseCost,
+      laborCost: 0,
+      taxPercent: taxPct,
+      isTaxExempt,
+      pricingMode,
+      pricingPercent: markupPct,
+    });
+    const taxAmt = pricing.taxAmount;
+    const markupAmt = pricing.pricingAmount;
+    const total = pricing.finalBid;
     return {
       code:     cc.code,
       label:    cc.label,
@@ -61,7 +70,7 @@ export function buildCostCodeReport(systems = [], markupPct = 40, taxPct = 8.2, 
   return {
     rows,
     totals: { baseCost: grandBase, taxAmt: grandTax, markupAmt: grandMarkup, total: grandTotal },
-    meta: { markupPct, taxPct, isTaxExempt, generatedAt: new Date().toISOString() },
+    meta: { markupPct, taxPct, isTaxExempt, pricingMode, generatedAt: new Date().toISOString() },
   };
 }
 
@@ -78,6 +87,7 @@ export function exportCostCodeCSV(report, projectName = 'GlazeBid Project') {
   lines.push(`"Project","${projectName}"`);
   lines.push(`"Generated","${new Date(meta.generatedAt).toLocaleString()}"`);
   lines.push(`"Markup","${meta.markupPct}%"`);
+  lines.push(`"Pricing Mode","${meta.pricingMode || 'margin'}"`);
   lines.push(`"Tax","${meta.isTaxExempt ? 'Exempt' : meta.taxPct + '%'}"`);
   lines.push('');
 

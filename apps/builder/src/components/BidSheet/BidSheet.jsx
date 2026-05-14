@@ -2,9 +2,10 @@
  * BidSheet Main Component
  * Multi-system estimating with modern UI
  */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { BidSheetProvider, useBidSheet } from '../../context/BidSheetContext';
 import { getSystemOptions } from '../../config/systemRegistry';
+import useBidStore from '../../store/useBidStore';
 import './BidSheet.css';
 
 // Subcomponents
@@ -36,7 +37,7 @@ class BidSheetErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div style={{
-          minHeight: '100vh',
+          height: '100%',
           background: '#f8fafc',
           display: 'flex',
           alignItems: 'center',
@@ -99,8 +100,38 @@ function BidSheetContent({ projectName, onNavigate, bidSettings, onBidSettingsCh
     loading,
     error,
     productionRates,
-    hrFunctionRates
+    hrFunctionRates,
+    addFrame
   } = useBidSheet();
+
+  // Subscribe to frames from useBidStore (Frame Builder + StudioInbox)
+  const bidStoreFrames = useBidStore((s) => s.frames);
+
+  // Detect frames in useBidStore that aren't in BidSheetContext yet
+  const syncableFrames = useMemo(() => {
+    const contextFrameIds = new Set(frames.map(f => f.id));
+    return bidStoreFrames.filter(f => !contextFrameIds.has(f.frameId));
+  }, [bidStoreFrames, frames]);
+
+  // Sync: convert useBidStore frame format to BidSheetContext format
+  const syncFromFrameBuilder = useCallback(() => {
+    const sqFtPerFrame = (w, h) => (w * h) / 144;
+
+    for (const bidFrame of syncableFrames) {
+      const totalSF = bidFrame.bom?.totalGlassSqFt ??
+        sqFtPerFrame(bidFrame.inputs?.width ?? 0, bidFrame.inputs?.height ?? 0);
+
+      addFrame({
+        mark:        bidFrame.elevationTag || 'Imported',
+        width:       bidFrame.inputs?.width      ?? 0,
+        height:      bidFrame.inputs?.height     ?? 0,
+        quantity:    bidFrame.quantity           ?? 1,
+        sf:          totalSF,
+        dlos:        bidFrame.bom?.glassLitesCount ?? 1,
+        description: `${bidFrame.systemType}${bidFrame.elevationTag ? ` — ${bidFrame.elevationTag}` : ''}`,
+      });
+    }
+  }, [syncableFrames, addFrame]);
 
   // 'visual' = new Visual Workspace, 'classic' = original frame grid
   const [mode, setMode] = useState('visual');
@@ -113,7 +144,7 @@ function BidSheetContent({ projectName, onNavigate, bidSettings, onBidSettingsCh
     const allSystemOptions = getSystemOptions();
 
     return (
-      <div className="bidsheet-container" style={{ minHeight: '100vh', background: '#f8fafc' }}>
+      <div className="bidsheet-container" style={{ height: '100%', background: 'var(--bg-deep, #0b0e11)' }}>
         {/* Empty State Modal */}
         <div className="bidsheet-empty-modal-overlay">
           <div className="bidsheet-empty-modal">
@@ -156,8 +187,8 @@ function BidSheetContent({ projectName, onNavigate, bidSettings, onBidSettingsCh
   if (mode === 'classic' && (!totals || !productionRates || !hrFunctionRates)) {
     return (
       <div style={{
-        minHeight: '100vh',
-        background: '#f8fafc',
+        height: '100%',
+        background: 'var(--bg-deep, #0b0e11)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -179,7 +210,41 @@ function BidSheetContent({ projectName, onNavigate, bidSettings, onBidSettingsCh
   }
   
   return (
-    <div className="bidsheet-container" style={{ minHeight: '100vh', background: '#f8fafc' }}>
+    <div className="bidsheet-container" style={{ height: '100%', background: 'var(--bg-deep, #0b0e11)' }}>
+      {/* ── SYNC BANNER — Frames from Frame Builder ready to add ── */}
+      {syncableFrames.length > 0 && (
+        <div style={{
+          background: '#1e3a5f',
+          border: '1px solid #0ea5e9',
+          borderRadius: 6,
+          padding: '10px 16px',
+          margin: '12px 16px 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          flexWrap: 'wrap'
+        }}>
+          <span style={{ color: '#7dd3fc', fontSize: 13 }}>
+            {syncableFrames.length} frame{syncableFrames.length > 1 ? 's' : ''} from Frame Builder ready to add
+          </span>
+          <button
+            onClick={syncFromFrameBuilder}
+            style={{
+              background: '#0ea5e9',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 4,
+              padding: '4px 14px',
+              fontSize: 12,
+              cursor: 'pointer',
+              fontWeight: 600
+            }}
+          >
+            + Add to Bid Sheet
+          </button>
+        </div>
+      )}
+
       {/* ── VISUAL WORKSPACE MODE ── */}
       {mode === 'visual' && (
       <GlazeBidWorkspace ref={workspaceRef} projectName={projectName} onNavigate={onNavigate} bidSettings={bidSettings} onBidSettingsChange={onBidSettingsChange} />

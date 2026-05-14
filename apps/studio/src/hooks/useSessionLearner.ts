@@ -102,6 +102,20 @@ export type SessionLearnerAPI = {
   ) => (T & { confidence: number })[];
   /** Clear all session state, ready for a new anchor. */
   reset: () => void;
+  /** Serialize current session state for .gbid persistence. */
+  serializeSession: () => {
+    anchor: FeatureVector | null;
+    hardNegatives: FeatureVector[];
+    positiveExamples: FeatureVector[];
+    threshold: number;
+  };
+  /** Restore session state from a deserialized .gbid payload. */
+  restoreSession: (data: {
+    anchor: FeatureVector | null;
+    hardNegatives: FeatureVector[];
+    positiveExamples: FeatureVector[];
+    threshold: number;
+  }) => void;
 };
 
 // ── Hook ──────────────────────────────────────────────────────────────────────
@@ -197,6 +211,29 @@ export function useSessionLearner(): SessionLearnerAPI {
     setHasAnchor(false);
   }, []);
 
+  const serializeSession = useCallback(() => ({
+    anchor: anchorRef.current,
+    hardNegatives: hardNegativesRef.current,
+    positiveExamples: positiveExamplesRef.current,
+    threshold: thresholdRef.current,
+  }), []);
+
+  const restoreSession = useCallback((data: {
+    anchor: FeatureVector | null;
+    hardNegatives: FeatureVector[];
+    positiveExamples: FeatureVector[];
+    threshold: number;
+  }) => {
+    anchorRef.current = data.anchor ? data.anchor.slice() as FeatureVector : null;
+    hardNegativesRef.current = data.hardNegatives.map(v => v.slice() as FeatureVector);
+    positiveExamplesRef.current = data.positiveExamples.map(v => v.slice() as FeatureVector);
+    thresholdRef.current = data.threshold;
+    setThresholdState(data.threshold);
+    setPositiveCount(data.positiveExamples.length);
+    setNegativeCount(data.hardNegatives.length);
+    setHasAnchor(data.anchor !== null);
+  }, []);
+
   return {
     threshold,
     hasAnchor,
@@ -207,5 +244,7 @@ export function useSessionLearner(): SessionLearnerAPI {
     rejectGhost,
     rankCandidates,
     reset,
+    serializeSession,
+    restoreSession,
   };
 }

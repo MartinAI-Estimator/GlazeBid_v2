@@ -4,7 +4,7 @@
  */
 
 .material-tracker-container {
-  min-height: 100vh;
+  min-height: 100%;
   background-color: #0b0e11;
   padding: 32px 40px;
   max-width: 1600px;

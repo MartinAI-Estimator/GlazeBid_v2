@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { buildCostCodeReport, downloadCostCodeCSV } from './CostCodeExport';
+import { calculatePricing } from '../../utils/PricingEngine';
+import { calcSystemAncillary, DEFAULT_ANCILLARY_CONFIG } from '../../utils/ancillaryPricing';
 
 // ─── Hr Function defaults (modifier labour hours) ────────────────────────────
 const DEFAULT_HR_FUNCTIONS = {
@@ -10,6 +12,7 @@ const DEFAULT_HR_FUNCTIONS = {
   'modifier-brake-metal':   0.5,
   'modifier-steel':         1.0,
   'modifier-subsill':       0.25,
+  'modifier-receptor':      0.25,
   'modifier-ssg':           0.75,
 };
 
@@ -45,6 +48,7 @@ const BidSummaryDashboard = ({
   const [markupPercent, setMarkupPercent] = useState(initMarkup);
   const [taxPercent,    setTaxPercent]    = useState(initTax);
   const [isTaxExempt,  setIsTaxExempt]   = useState(false);
+  const [pricingMode, setPricingMode]    = useState('margin'); // 'margin' | 'legacy-markup'
 
   const handleMarkupChange = (v) => { setMarkupPercent(v); onMarkupChange?.(v); };
   const handleTaxChange    = (v) => { setTaxPercent(v);    onTaxChange?.(v);    };
@@ -79,7 +83,14 @@ const BidSummaryDashboard = ({
     let totalLaborCost   = 0;
 
     importedSystems.forEach(sys => {
-      materialCost += (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
+      const systemMaterials = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
+      const frameManualMaterials = (sys.frames || []).reduce((s, f) => s + (Number(f.manualMaterialCost) || 0), 0);
+      const ancillary = calcSystemAncillary(
+        sys.frames || [],
+        sys.ancillaryConfig || DEFAULT_ANCILLARY_CONFIG,
+        { systemType: sys.systemType || sys.name }
+      );
+      materialCost += systemMaterials + frameManualMaterials + ancillary.totalCost;
 
       const shopMHs  = Number(sys.totals?.shopMHs)  || 0;
       const fieldMHs = Number(sys.totals?.fieldMHs) || 0;
@@ -92,20 +103,21 @@ const BidSummaryDashboard = ({
       totalLaborCost   += (shopMHs + fieldMHs + distMHs + modMHs) * laborRate;
     });
 
-    const subtotal = materialCost + totalLaborCost;
+    const pricing = calculatePricing({
+      materialCost,
+      laborCost: totalLaborCost,
+      taxPercent,
+      isTaxExempt,
+      pricingMode,
+      pricingPercent: markupPercent,
+    });
 
-    // Tax on materials only — labor is not taxed
-    const taxAmount = isTaxExempt ? 0 : materialCost * (taxPercent / 100);
-
-    // Markup on COST only (materials + labor), NOT on cost+tax
-    const markupAmount = subtotal * (markupPercent / 100);
-    const finalBid     = subtotal + taxAmount + markupAmount;
-
-    // GPM% = Markup / (Cost + Markup) — margin on revenue excluding tax
-    const gpmDollars = markupAmount;
-    const gpmPct     = (subtotal + markupAmount) > 0
-      ? (markupAmount / (subtotal + markupAmount)) * 100
-      : 0;
+    const subtotal = pricing.preTaxCost;
+    const taxAmount = pricing.taxAmount;
+    const markupAmount = pricing.pricingAmount;
+    const finalBid = pricing.finalBid;
+    const gpmDollars = pricing.pricingAmount;
+    const gpmPct = pricing.gpmPct;
 
     return {
       materialCost,
@@ -120,7 +132,7 @@ const BidSummaryDashboard = ({
       gpmDollars,
       gpmPct,
     };
-  }, [importedSystems, markupPercent, taxPercent, isTaxExempt, customDefMap, initLaborRate]);
+  }, [importedSystems, markupPercent, taxPercent, isTaxExempt, customDefMap, initLaborRate, pricingMode]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg-deep)', overflowY: 'auto' }}>
@@ -159,7 +171,7 @@ const BidSummaryDashboard = ({
           </div>
           <button
             onClick={() => {
-              const report = buildCostCodeReport(importedSystems, markupPercent, taxPercent, isTaxExempt);
+              const report = buildCostCodeReport(importedSystems, markupPercent, taxPercent, isTaxExempt, pricingMode);
               downloadCostCodeCSV(report, projectName);
             }}
             style={{
@@ -242,7 +254,15 @@ const BidSummaryDashboard = ({
               </thead>
               <tbody>
                 {importedSystems.map(sys => {
-                  const matCost   = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
+                    const ancillary = calcSystemAncillary(
+                      sys.frames || [],
+                      sys.ancillaryConfig || DEFAULT_ANCILLARY_CONFIG,
+                      { systemType: sys.systemType || sys.name }
+                    );
+                  const matCost   =
+                    (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0)
+                    + (sys.frames || []).reduce((s, f) => s + (Number(f.manualMaterialCost) || 0), 0)
+                    + ancillary.totalCost;
                   const shopMHs   = Number(sys.totals?.shopMHs)  || 0;
                   const fieldMHs  = Number(sys.totals?.fieldMHs) || 0;
                   const distMHs   = Number(sys.totals?.distMHs)  || 0;
@@ -297,7 +317,7 @@ const BidSummaryDashboard = ({
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)' }}>
-                    {['Alternate', 'Items', 'Add Cost', 'Markup', 'Add Total'].map(h => (
+                    {['Alternate', 'Items', 'Add Cost', pricingMode === 'margin' ? 'O&P' : 'Markup', 'Add Total'].map(h => (
                       <th key={h} style={{ padding: '0.6rem 1.5rem', fontWeight: 600 }}>{h}</th>
                     ))}
                   </tr>
@@ -305,8 +325,16 @@ const BidSummaryDashboard = ({
                 <tbody>
                   {Object.entries(altGroups).map(([altName, lines], i) => {
                     const addCost    = lines.reduce((s, l) => s + (Number(l.cost) || 0), 0);
-                    const addMarkup  = addCost * (markupPercent / 100);
-                    const addTotal   = addCost + addMarkup;
+                    const altPricing = calculatePricing({
+                      materialCost: addCost,
+                      laborCost: 0,
+                      taxPercent,
+                      isTaxExempt,
+                      pricingMode,
+                      pricingPercent: markupPercent,
+                    });
+                    const addMarkup  = altPricing.pricingAmount;
+                    const addTotal   = altPricing.finalBid;
                     return (
                       <tr key={altName} style={{ borderBottom: '1px solid var(--border-subtle)', fontSize: '0.85rem', background: i % 2 === 1 ? 'rgba(167,139,250,0.03)' : 'transparent' }}>
                         <td style={{ padding: '0.85rem 1.5rem', fontWeight: 700, color: '#a78bfa' }}>
@@ -339,7 +367,15 @@ const BidSummaryDashboard = ({
                     totals.finalBid +
                     Object.values(altGroups).reduce((s, lines) => {
                       const ac = lines.reduce((x, l) => x + (Number(l.cost) || 0), 0);
-                      return s + ac + ac * (markupPercent / 100);
+                      const priced = calculatePricing({
+                        materialCost: ac,
+                        laborCost: 0,
+                        taxPercent,
+                        isTaxExempt,
+                        pricingMode,
+                        pricingPercent: markupPercent,
+                      });
+                      return s + priced.finalBid;
                     }, 0)
                   )}
                 </span>
@@ -375,7 +411,51 @@ const BidSummaryDashboard = ({
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                Overhead & Profit Markup (%)
+                Pricing Mode
+              </label>
+              <div style={{ display: 'flex', border: '1px solid var(--border-subtle)', borderRadius: 6, overflow: 'hidden' }}>
+                <button
+                  onClick={() => setPricingMode('margin')}
+                  style={{
+                    flex: 1,
+                    padding: '0.55rem 0.7rem',
+                    border: 'none',
+                    background: pricingMode === 'margin' ? 'rgba(59,130,246,0.15)' : 'var(--bg-card)',
+                    color: pricingMode === 'margin' ? 'var(--accent-blue)' : 'var(--text-secondary)',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Margin (Warren)
+                </button>
+                <button
+                  onClick={() => setPricingMode('legacy-markup')}
+                  style={{
+                    flex: 1,
+                    padding: '0.55rem 0.7rem',
+                    border: 'none',
+                    borderLeft: '1px solid var(--border-subtle)',
+                    background: pricingMode === 'legacy-markup' ? 'rgba(59,130,246,0.15)' : 'var(--bg-card)',
+                    color: pricingMode === 'legacy-markup' ? 'var(--accent-blue)' : 'var(--text-secondary)',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Legacy Markup
+                </button>
+              </div>
+              <p style={{ margin: '0.35rem 0 0', fontSize: '0.68rem', color: 'var(--text-secondary)' }}>
+                {pricingMode === 'margin'
+                  ? 'Final Bid = Total Cost / (1 - Margin%)'
+                  : 'Final Bid = Cost + Tax + Markup% of pre-tax cost'}
+              </p>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                {pricingMode === 'margin' ? 'Overhead & Profit Margin (%)' : 'Overhead & Profit Markup (%)'}
               </label>
               <input
                 type="number" step="0.5" value={markupPercent}
@@ -383,7 +463,9 @@ const BidSummaryDashboard = ({
                 style={{ width: '100%', padding: '0.7rem', borderRadius: 6, border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '0.95rem', boxSizing: 'border-box' }}
               />
               <p style={{ margin: '0.35rem 0 0', fontSize: '0.68rem', color: 'var(--text-secondary)' }}>
-                Applied to cost (materials + labor) — before tax
+                {pricingMode === 'margin'
+                  ? 'Applied as Warren-style margin on (materials + labor + tax)'
+                  : 'Applied as legacy markup on pre-tax cost (materials + labor)'}
               </p>
             </div>
 
@@ -418,7 +500,7 @@ const BidSummaryDashboard = ({
               { label: 'Labor',                                                              value: totals.totalLaborCost },
               { label: 'Subtotal',                                                           value: totals.subtotal, bold: true },
               { label: `Tax (${isTaxExempt ? 'exempt' : taxPercent + '%'} on materials)`,   value: totals.taxAmount },
-              { label: `Markup (${markupPercent}% on cost)`,                                value: totals.markupAmount },
+              { label: pricingMode === 'margin' ? `O&P (${markupPercent}% margin)` : `Markup (${markupPercent}% on cost)`, value: totals.markupAmount },
             ].map(row => (
               <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: row.bold ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: row.bold ? 700 : 400 }}>
                 <span>{row.label}</span>
@@ -450,7 +532,7 @@ const BidSummaryDashboard = ({
                 </span>
               </div>
               <p style={{ margin: '0.2rem 0 0', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
-                ${fmt(totals.gpmDollars)} gross profit · markup ÷ (cost + markup)
+                ${fmt(totals.gpmDollars)} gross profit · {pricingMode === 'margin' ? 'margin-based sell price' : 'markup-based sell price'}
               </p>
             </div>
           </div>

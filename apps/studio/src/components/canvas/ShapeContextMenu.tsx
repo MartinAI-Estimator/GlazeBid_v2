@@ -4,7 +4,9 @@
  * Right-click context menu for frame highlights (RectShape / PolygonShape).
  *
  * Actions:
+ *   📋  Copy / Paste / Duplicate
  *   ✏️  Edit label
+ *   🔲  Edit Bays / Rows
  *   📐  Open in Frame Builder   → sends highlight dims to Builder via IPC
  *   ⚙️  Send to Custom System   → opens CustomSystemModal
  *   🏗️  Check Structural        → opens StructuralPanel slide-in
@@ -16,6 +18,8 @@
 
 import { useEffect, useRef } from 'react';
 import type { RectShape, PolygonShape } from '../../types/shapes';
+import { getClipboard, setClipboard, hasClipboard } from '../../utils/clipboard';
+import { useStudioStore } from '../../store/useStudioStore';
 
 export type ContextMenuTarget = {
   shape:   RectShape | PolygonShape;
@@ -67,11 +71,59 @@ export default function ShapeContextMenu({
     };
   }, [onClose]);
 
+  // ── Copy / Paste / Duplicate handlers ──────────────────────────────────
+  function handleCopy() {
+    setClipboard({ ...shape });
+    onClose();
+  }
+
+  function handlePaste() {
+    const clip = getClipboard();
+    if (!clip || (clip.type !== 'rect' && clip.type !== 'polygon')) return;
+    const store = useStudioStore.getState();
+    const cloned = { ...clip, id: crypto.randomUUID(), pageId: store.activePageId };
+    // Offset by 20 page-px so it doesn't sit directly on top
+    if (cloned.type === 'rect') {
+      cloned.origin = { x: cloned.origin.x + 20, y: cloned.origin.y + 20 };
+    } else if (cloned.type === 'polygon') {
+      cloned.points = cloned.points.map(p => ({ x: p.x + 20, y: p.y + 20 }));
+    }
+    store.addShape(cloned);
+    store.selectShape(cloned.id);
+    onClose();
+  }
+
+  function handleDuplicate() {
+    const store = useStudioStore.getState();
+    const cloned = { ...shape, id: crypto.randomUUID() } as typeof shape;
+    if (cloned.type === 'rect') {
+      cloned.origin = { x: cloned.origin.x + 20, y: cloned.origin.y + 20 };
+    } else if (cloned.type === 'polygon') {
+      cloned.points = cloned.points.map(p => ({ x: p.x + 20, y: p.y + 20 }));
+    }
+    store.addShape(cloned);
+    store.selectShape(cloned.id);
+    onClose();
+  }
+
+  function handleEditBaysRows() {
+    const store = useStudioStore.getState();
+    store.setPendingGridEdit({
+      shapeId:      shape.id,
+      widthInches:  widthIn,
+      heightInches: heightIn,
+    });
+    onClose();
+  }
+
   // Keep menu inside the viewport
   const MENU_W = 240;
-  const MENU_H = 240; // approximate
+  const MENU_H = 360; // approximate — taller with new items
   const left   = Math.min(screenX, window.innerWidth  - MENU_W - 8);
   const top    = Math.min(screenY, window.innerHeight - MENU_H - 8);
+
+  const canPaste = hasClipboard();
+  const canEditGrid = shape.type === 'rect';
 
   return (
     <div
@@ -95,10 +147,38 @@ export default function ShapeContextMenu({
       {/* Menu items */}
       <div className="py-1">
         <MenuItem
+          icon="📋"
+          label="Copy"
+          shortcut="Ctrl+C"
+          onClick={handleCopy}
+        />
+        <MenuItem
+          icon="📋"
+          label="Paste"
+          shortcut="Ctrl+V"
+          onClick={handlePaste}
+          disabled={!canPaste}
+        />
+        <MenuItem
+          icon="🔲"
+          label="Duplicate"
+          shortcut="Ctrl+D"
+          onClick={handleDuplicate}
+        />
+        <Divider />
+        <MenuItem
           icon="✏️"
           label="Edit label"
           onClick={() => { onEditLabel(shape); onClose(); }}
         />
+        {canEditGrid && (
+          <MenuItem
+            icon="⊞"
+            label="Edit Bays / Rows"
+            sublabel="Mullion grid layout"
+            onClick={handleEditBaysRows}
+          />
+        )}
         <Divider />
         <MenuItem
           icon="📐"
@@ -125,6 +205,7 @@ export default function ShapeContextMenu({
         <MenuItem
           icon="🗑️"
           label="Delete highlight"
+          shortcut="Del"
           onClick={() => { onDelete(shape.id); onClose(); }}
           danger
         />
@@ -145,16 +226,20 @@ function MenuItem({
   icon,
   label,
   sublabel,
+  shortcut,
   onClick,
   accent,
   danger = false,
+  disabled = false,
 }: {
   icon:      string;
   label:     string;
   sublabel?: string;
+  shortcut?: string;
   onClick:   () => void;
   accent?:   AccentColor;
   danger?:   boolean;
+  disabled?: boolean;
 }) {
   const accentClass: Record<AccentColor, string> = {
     sky:    'group-hover:text-sky-300',
@@ -165,14 +250,17 @@ function MenuItem({
   return (
     <button
       className={`group w-full flex items-start gap-2.5 px-3 py-1.5 text-left transition-colors
-        ${danger
-          ? 'hover:bg-red-900/30 text-red-400 hover:text-red-300'
-          : 'hover:bg-slate-700/60 text-slate-200'
+        ${disabled
+          ? 'opacity-40 cursor-default'
+          : danger
+            ? 'hover:bg-red-900/30 text-red-400 hover:text-red-300'
+            : 'hover:bg-slate-700/60 text-slate-200'
         }`}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
     >
       <span className="mt-0.5 text-sm shrink-0">{icon}</span>
-      <span className="flex flex-col min-w-0">
+      <span className="flex flex-col min-w-0 flex-1">
         <span className={`text-xs font-medium leading-tight ${accent ? accentClass[accent] : ''} truncate`}>
           {label}
         </span>
@@ -182,6 +270,9 @@ function MenuItem({
           </span>
         )}
       </span>
+      {shortcut && (
+        <span className="text-[10px] text-slate-600 mt-0.5 shrink-0 ml-auto">{shortcut}</span>
+      )}
     </button>
   );
 }

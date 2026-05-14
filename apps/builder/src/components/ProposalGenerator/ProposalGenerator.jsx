@@ -4,15 +4,22 @@
  */
 import React, { useState } from 'react';
 import { FileSpreadsheet, Download, Eye, FileText, Settings } from 'lucide-react';
+import useBidStore from '../../store/useBidStore';
 import './ProposalGenerator.css';
 
-const ProposalGenerator = ({ project }) => {
+const ProposalGenerator = ({ project, onNavigate }) => {
+  const frames = useBidStore((s) => s.frames);
+  const frameCount = frames.length;
+  const totalLaborHours = frames.reduce((sum, f) => sum + (f.bom?.labor?.totalLaborHours || 0), 0);
+  const scopeDescription = `${frameCount} glazing frame${frameCount !== 1 ? 's' : ''} — ${totalLaborHours.toFixed(1)} labor hours estimated`;
+
   const [proposalData, setProposalData] = useState({
     projectName: project || '',
     clientName: '',
     projectAddress: '',
     proposalDate: new Date().toISOString().split('T')[0],
     validUntil: '',
+    scopeDescription,
     includeDrawings: true,
     includeSpecifications: true,
     includeBreakdown: true,
@@ -42,6 +49,18 @@ const ProposalGenerator = ({ project }) => {
 
   return (
     <div className="proposal-generator-container">
+      {/* Workflow breadcrumb */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 16px', height: 32, background: '#0a0a0b', borderBottom: '1px solid #1f1f23' }}>
+        <button
+          onClick={() => onNavigate?.('bid-cart')}
+          style={{ background: 'none', border: 'none', color: '#71717a', fontSize: 11, cursor: 'pointer', padding: 0 }}
+        >
+          ← Back to Bid Cart
+        </button>
+        <span style={{ color: '#3f3f46', fontSize: 11 }}>›</span>
+        <span style={{ color: '#a1a1aa', fontSize: 11, fontWeight: 500 }}>Proposal Generator</span>
+      </div>
+
       {/* Header */}
       <div className="proposal-header">
         <div className="proposal-title">

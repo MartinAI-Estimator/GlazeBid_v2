@@ -7,7 +7,7 @@
  * Designed to slot into the legacy Builder alongside the existing BidSheet.
  */
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useInboxStore } from '../store/useInboxStore';
 import useBidStore from '../store/useBidStore';
 
@@ -21,14 +21,16 @@ function sqFt(w, h) {
   return ((w * h) / 144).toFixed(2);
 }
 
-export default function StudioInbox({ className = '' }) {
+export default function StudioInbox({ className = '', onNavigate = null }) {
   const inbox = useInboxStore((s) => s.inbox);
   const addFrame = useBidStore((s) => s.addFrame);
+  const [lastAdded, setLastAdded] = useState(null);
 
   const addGroupToBid = useCallback((g) => {
     const sqFtEach = (g.widthInches * g.heightInches) / 144;
+    const frameId = `studio-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     addFrame({
-      frameId: `studio-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      frameId,
       elevationTag: g.label !== '—' ? g.label : `${g.widthInches.toFixed(0)}"x${g.heightInches.toFixed(0)}"`,
       systemType: 'Studio Takeoff',
       inputs: { width: g.widthInches, height: g.heightInches, bays: 1, rows: 1, glassBite: 0.75, sightline: 2 },
@@ -40,6 +42,8 @@ export default function StudioInbox({ className = '' }) {
         glassSizes: { widthInches: g.widthInches, heightInches: g.heightInches, qty: g.qty },
       },
     });
+    setLastAdded(frameId);
+    setTimeout(() => setLastAdded(null), 4000);
   }, [addFrame]);
 
   // Group by (widthInches × heightInches × type × label) for concise display
@@ -62,11 +66,44 @@ export default function StudioInbox({ className = '' }) {
     return Object.values(map).sort((a, b) => b.widthInches * b.heightInches - a.widthInches * a.heightInches);
   }, [inbox]);
 
+  const handleAddAll = useCallback(() => {
+    groups.forEach((g) => {
+      const sqFtEach = (g.widthInches * g.heightInches) / 144;
+      const frameId = `studio-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      addFrame({
+        frameId,
+        elevationTag: g.label !== '—' ? g.label : `${g.widthInches.toFixed(0)}"x${g.heightInches.toFixed(0)}"`,
+        systemType: 'Studio Takeoff',
+        inputs: { width: g.widthInches, height: g.heightInches, bays: 1, rows: 1, glassBite: 0.75, sightline: 2 },
+        bom: {
+          totalAluminumLF: (2 * (g.widthInches + g.heightInches) / 12) * g.qty,
+          totalGlassSqFt:  sqFtEach * g.qty,
+          glassLitesCount: g.qty,
+          cutList: [],
+          glassSizes: { widthInches: g.widthInches, heightInches: g.heightInches, qty: g.qty },
+        },
+      });
+    });
+    setLastAdded('all');
+    setTimeout(() => setLastAdded(null), 4000);
+  }, [groups, addFrame]);
+
   if (inbox.length === 0) {
     return (
       <div className={`studio-inbox-empty ${className}`} style={styles.empty}>
-        <p style={styles.emptyText}>No Studio takeoffs yet.</p>
-        <p style={styles.emptyHint}>Open Studio and draw your glazing areas — they'll appear here in real time.</p>
+        <div style={{ fontSize: 40, marginBottom: 16 }}>📐</div>
+        <p style={styles.emptyText}>No takeoffs yet</p>
+        <p style={styles.emptyHint}>Open Studio, load your PDF drawings, and draw glazing regions. Takeoffs will appear here automatically.</p>
+        <button
+          onClick={() => {
+            if (window.electronAPI?.openStudio) {
+              window.electronAPI.openStudio();
+            }
+          }}
+          style={styles.emptyCtaBtn}
+        >
+          Open Studio →
+        </button>
       </div>
     );
   }
@@ -76,6 +113,24 @@ export default function StudioInbox({ className = '' }) {
       <div style={styles.header}>
         <span style={styles.headerTitle}>Studio Takeoffs</span>
         <span style={styles.headerCount}>{inbox.length} item{inbox.length !== 1 ? 's' : ''} · {groups.length} unique size{groups.length !== 1 ? 's' : ''}</span>
+      </div>
+
+      {/* Action prompt when items exist */}
+      <div style={styles.actionPrompt}>
+        <div style={{ flex: 1 }}>
+          <div style={styles.promptTitle}>
+            {groups.length} glazing takeoff{groups.length !== 1 ? 's' : ''} ready
+          </div>
+          <div style={styles.promptHint}>
+            Click "+ Add to Bid" on each row, or use "Add All" to import everything at once.
+          </div>
+        </div>
+        <button
+          onClick={handleAddAll}
+          style={styles.addAllBtn}
+        >
+          Add All to Bid
+        </button>
       </div>
 
       <div style={styles.tableWrapper}>
@@ -107,10 +162,10 @@ export default function StudioInbox({ className = '' }) {
                 <td style={styles.td}>
                   <button
                     onClick={() => addGroupToBid(g)}
-                    style={styles.addBtn}
+                    style={lastAdded === g.key ? styles.addBtnActive : styles.addBtn}
                     title="Add to BidSheet"
                   >
-                    + Bid
+                    {lastAdded === g.key ? '✓ Added' : '+ Add to Bid'}
                   </button>
                 </td>
               </tr>
@@ -139,6 +194,22 @@ export default function StudioInbox({ className = '' }) {
           </b>
         </span>
       </div>
+
+      {/* Success notification */}
+      {lastAdded && (
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#111113', border: '1px solid #10b981', borderRadius: 8, padding: '12px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.4)', zIndex: 1000, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ color: '#10b981', fontSize: 13 }}>
+            {lastAdded === 'all' ? `✓ ${groups.length} frames added to bid` : '✓ Frame added to bid'}
+          </span>
+          <button
+            onClick={() => onNavigate?.('bid-cart')}
+            style={{ background: '#10b981', border: 'none', color: '#fff', fontSize: 11, padding: '4px 12px', borderRadius: 4, cursor: 'pointer' }}
+          >
+            View Bid Cart →
+          </button>
+          <button onClick={() => setLastAdded(null)} style={{ background: 'none', border: 'none', color: '#52525b', cursor: 'pointer', fontSize: 14 }}>✕</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -236,14 +307,73 @@ const styles = {
     fontSize: 13,
   },
   addBtn: {
-    background: '#1d4ed8',
+    background: '#0ea5e9',
     color: '#fff',
     border: 'none',
     borderRadius: 4,
-    padding: '3px 10px',
-    fontSize: 11,
+    padding: '4px 12px',
+    fontSize: 12,
     fontWeight: 600,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+    transition: 'background 0.15s',
+  },
+  addBtnActive: {
+    background: '#10b981',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 4,
+    padding: '4px 12px',
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  },
+  actionPrompt: {
+    padding: '12px 16px',
+    background: 'rgba(16, 185, 129, 0.08)',
+    border: '1px solid #047857',
+    borderRadius: 0,
+    margin: 0,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+  },
+  promptTitle: {
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#10b981',
+    marginBottom: 2,
+  },
+  promptHint: {
+    fontSize: 11,
+    color: '#6ee7b7',
+    marginTop: 2,
+    lineHeight: 1.4,
+  },
+  addAllBtn: {
+    background: '#10b981',
+    border: 'none',
+    color: '#fff',
+    padding: '6px 16px',
+    borderRadius: 4,
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: 'pointer',
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    transition: 'background 0.15s',
+  },
+  emptyCtaBtn: {
+    background: '#0ea5e9',
+    border: 'none',
+    color: '#fff',
+    padding: '10px 24px',
+    borderRadius: 6,
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginTop: 16,
+    transition: 'background 0.15s',
   },
 };

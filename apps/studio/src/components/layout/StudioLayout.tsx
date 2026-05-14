@@ -92,6 +92,7 @@ function PdfTabBar() {
  */
 export default function StudioLayout() {
   const [engine, setEngine] = useState<CanvasEngineAPI | null>(null);
+  const pdfFileName = useStudioStore(s => s.pdfFileName);
   // Keep a stable ref so the IPC listener can call loadPdfBuffer even after
   // engine state updates (avoids stale closure over null).
   const engineRef = useRef<CanvasEngineAPI | null>(null);
@@ -102,6 +103,14 @@ export default function StudioLayout() {
   // ── Drawing Intelligence panel toggle + hook ──────────────────────────────
   const [showDrawingIntelligence, setShowDrawingIntelligence] = useState(false);
   const di = useDrawingIntelligence();
+
+  // Auto-check sidecar health when the DI panel is opened
+  useEffect(() => {
+    if (showDrawingIntelligence) {
+      void di.checkHealth();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showDrawingIntelligence]);
 
   // ── AI Auto-Scan state ─────────────────────────────────────────────────────
   const [scanResults,   setScanResults]   = useState<ScanResult[] | null>(null);
@@ -176,9 +185,16 @@ export default function StudioLayout() {
   const handleDialogDismiss = useCallback(() => setScanResults(null), []);
 
   const handleDIScan = useCallback(() => {
+    console.log('[DI] Scan button clicked');
     const buf = engineRef.current?.getPdfBuffer();
-    if (!buf) return;
-    void di.runFullPipeline(buf.buffer as ArrayBuffer);
+    if (!buf || buf.byteLength === 0) {
+      console.warn('[DI] No PDF buffer available — load a drawing set first');
+      return;
+    }
+    console.log('[DI] PDF buffer size:', buf.byteLength, 'bytes');
+    // Convert Uint8Array directly to ArrayBuffer (avoids detached .buffer issues)
+    const ab = buf.slice().buffer as ArrayBuffer;
+    di.runFullPipeline(ab).catch(err => console.error('[DI] Pipeline rejected:', err));
   }, [di]);
 
   const handleEngine = useCallback((api: CanvasEngineAPI) => {
@@ -265,6 +281,7 @@ export default function StudioLayout() {
               onReject={di.rejectCandidate}
               onAbort={di.abort}
               onReset={di.reset}
+              hasPdf={!!pdfFileName}
             />
           </aside>
         ) : showTypeLibrary ? (

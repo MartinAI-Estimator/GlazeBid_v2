@@ -21,27 +21,47 @@ const DoorSchedule = ({ project, projectData }) => {
     // Backend not available in local/Electron mode — degrade gracefully.
     // Schedules remain null, which triggers the empty-state UI below.
     try {
-      const classifyResponse = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/classify`,
-        { method: 'POST' }
-      );
-      if (!classifyResponse.ok) throw new Error('no server');
-      const classifyData = await classifyResponse.json();
-      if (classifyData.success) setClassifiedDoors(classifyData);
+      // Classify doors
+      try {
+        const classifyResponse = await fetch(
+          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/classify`,
+          { method: 'POST', signal: AbortSignal.timeout(2000) }
+        );
+        if (classifyResponse.ok) {
+          const classifyData = await classifyResponse.json();
+          if (classifyData.success) setClassifiedDoors(classifyData);
+        }
+      } catch {
+        // Server unavailable — classifiedDoors stays null
+      }
 
-      const aluminumResponse = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/aluminum-schedule`
-      );
-      if (!aluminumResponse.ok) throw new Error('no server');
-      const aluminumData = await aluminumResponse.json();
-      if (aluminumData.success) setAluminumSchedule(aluminumData);
+      // Get aluminum schedule
+      try {
+        const aluminumResponse = await fetch(
+          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/aluminum-schedule`,
+          { signal: AbortSignal.timeout(2000) }
+        );
+        if (aluminumResponse.ok) {
+          const aluminumData = await aluminumResponse.json();
+          if (aluminumData.success) setAluminumSchedule(aluminumData);
+        }
+      } catch {
+        // Server unavailable — aluminumSchedule stays null
+      }
 
-      const glazingResponse = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/glazing-schedule`
-      );
-      if (!glazingResponse.ok) throw new Error('no server');
-      const glazingData = await glazingResponse.json();
-      if (glazingData.success) setGlazingSchedule(glazingData);
+      // Get glazing schedule
+      try {
+        const glazingResponse = await fetch(
+          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/glazing-schedule`,
+          { signal: AbortSignal.timeout(2000) }
+        );
+        if (glazingResponse.ok) {
+          const glazingData = await glazingResponse.json();
+          if (glazingData.success) setGlazingSchedule(glazingData);
+        }
+      } catch {
+        // Server unavailable — glazingSchedule stays null
+      }
     } catch {
       // Server unavailable — schedules stay null, empty-state UI renders instead.
     } finally {
@@ -53,17 +73,19 @@ const DoorSchedule = ({ project, projectData }) => {
     try {
       const endpoint = activeTab === 'aluminum' ? 'aluminum' : 'glazing';
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/export/${endpoint}`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/export/${endpoint}`,
+        { signal: AbortSignal.timeout(2000) }
       );
-      if (!response.ok) throw new Error('no server');
-      const data = await response.json();
-      const blob = new Blob([data.content], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = data.filename;
-      a.click();
-      window.URL.revokeObjectURL(url);
+      if (response.ok) {
+        const data = await response.json();
+        const blob = new Blob([data.content], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = data.filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
     } catch {
       // Export not available in local mode — no server running.
       console.warn('CSV export unavailable: backend server is not running.');
@@ -380,11 +402,12 @@ const DoorSchedule = ({ project, projectData }) => {
 const styles = {
   container: {
     width: '100%',
-    height: '100vh',
+    height: '100%',
     backgroundColor: '#0b0e11',
     color: '#ffffff',
     overflow: 'auto',
     padding: '40px',
+    boxSizing: 'border-box',
   },
   header: {
     display: 'flex',

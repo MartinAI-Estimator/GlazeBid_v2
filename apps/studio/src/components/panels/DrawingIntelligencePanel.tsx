@@ -3,10 +3,11 @@
  *
  * Right sidebar panel for the Drawing Intelligence feature.
  * Shows prescan results, scan progress, and candidate list.
- * Follows the PropertiesPanel.tsx pattern for layout.
+ * Includes confidence / page / system-type filters and bulk actions
+ * to reduce 300+ raw candidates to a reviewable shortlist.
  */
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import type {
   DrawingIntelligenceState,
   CandidateWithReview,
@@ -19,6 +20,75 @@ interface Props {
   onReject: (id: string) => void;
   onAbort: () => void;
   onReset: () => void;
+  hasPdf?: boolean;
+}
+
+type SortKey = 'confidence' | 'page' | 'system';
+
+/**
+ * Compute IoU (Intersection over Union) for two bounding boxes.
+ */
+function boxIoU(
+  a: { x: number; y: number; width: number; height: number },
+  b: { x: number; y: number; width: number; height: number },
+): number {
+  const ix1 = Math.max(a.x, b.x);
+  const iy1 = Math.max(a.y, b.y);
+  const ix2 = Math.min(a.x + a.width, b.x + b.width);
+  const iy2 = Math.min(a.y + a.height, b.y + b.height);
+  if (ix2 <= ix1 || iy2 <= iy1) return 0;
+  const inter = (ix2 - ix1) * (iy2 - iy1);
+  const union = a.width * a.height + b.width * b.height - inter;
+  return union > 0 ? inter / union : 0;
+}
+
+/**
+ * Remove overlapping candidates on the same page, keeping higher confidence.
+ * Two candidates overlap if IoU > threshold (default 0.60).
+ */
+function deduplicateCandidates<T extends CandidateWithReview>(
+  candidates: T[],
+  threshold = 0.60,
+): T[] {
+  // Sort by confidence descending so we always keep the best
+  const sorted = [...candidates].sort((a, b) => b.confidence - a.confidence);
+  const kept: T[] = [];
+  for (const c of sorted) {
+    const dominated = kept.some(
+      k => k.pageNum === c.pageNum && boxIoU(k.bounding_box, c.bounding_box) > threshold,
+    );
+    if (!dominated) kept.push(c);
+  }
+  return kept;
+}
+
+/* ── tiny reusable pill toggle ──────────────────────────────── */
+function FilterPill({
+  label,
+  active,
+  count,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  count?: number;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium border transition-colors ${
+        active
+          ? 'bg-blue-100 border-blue-400 text-blue-700'
+          : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'
+      }`}
+    >
+      {label}
+      {count !== undefined && (
+        <span className="ml-0.5 opacity-60">{count}</span>
+      )}
+    </button>
+  );
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -64,12 +134,14 @@ function CandidateRow({
           {(candidate.confidence * 100).toFixed(0)}%
         </span>
       </div>
-      <div className="text-gray-500 mb-1">
+      <div className="text-gray-500 mb-0.5">
         {candidate.system_hint !== 'unknown' ? candidate.system_hint : 'unknown system'} ·
         pg {candidate.pageNum + 1}
-        {candidate.width_inches > 0 && (
-          <span> · {candidate.width_inches.toFixed(0)}" × {candidate.height_inches.toFixed(0)}"</span>
-        )}
+      </div>
+      <div className="text-gray-600 font-mono text-[10px] mb-1">
+        {candidate.width_inches > 0 && candidate.height_inches > 0
+          ? `${(candidate.width_inches / 12).toFixed(1)}ft × ${(candidate.height_inches / 12).toFixed(1)}ft`
+          : 'dimensions unknown'}
       </div>
       {candidate.userStatus === 'pending' && (
         <div className="flex gap-1 mt-1">
@@ -101,10 +173,93 @@ export function DrawingIntelligencePanel({
   onReject,
   onAbort,
   onReset,
+  hasPdf = false,
 }: Props) {
   const isRunning = ['checking', 'prescanning', 'scanning'].includes(state.status);
-  const pending = state.candidates.filter(c => c.userStatus === 'pending');
-  const confirmed = state.candidates.filter(c => c.userStatus === 'confirmed');
+
+  /* ── Filter state ─────────────────────────────────────────── */
+  const [minConfidence, setMinConfidence] = useState(50);
+  const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
+  const [selectedSystems, setSelectedSystems] = useState<Set<string>>(new Set());
+  const [sortBy, setSortBy] = useState<SortKey>('confidence');
+  const [filtersOpen, setFiltersOpen] = useState(true);
+
+  /* ── Derived: unique pages / systems from all candidates ──── */
+  const uniquePages = useMemo(() => {
+    const set = new Set(state.candidates.map(c => c.pageNum));
+    return Array.from(set).sort((a, b) => a - b);
+  }, [state.candidates]);
+
+  const uniqueSystems = useMemo(() => {
+    const set = new Set(state.candidates.map(c => c.system_hint || 'unknown'));
+    return Array.from(set).sort();
+  }, [state.candidates]);
+
+  /* ── Filtered + sorted candidates ─────────────────────────── */
+  const filtered = useMemo(() => {
+    let list = state.candidates.filter(c => {
+      if (c.confidence * 100 < minConfidence) return false;
+      if (selectedPages.size > 0 && !selectedPages.has(c.pageNum)) return false;
+      if (selectedSystems.size > 0 && !selectedSystems.has(c.system_hint || 'unknown')) return false;
+      return true;
+    });
+    // Deduplicate overlapping candidates on the same page (>60% IoU)
+    list = deduplicateCandidates(list);
+    list.sort((a, b) => {
+      if (sortBy === 'confidence') return b.confidence - a.confidence;
+      if (sortBy === 'page') return a.pageNum - b.pageNum || b.confidence - a.confidence;
+      // system
+      return (a.system_hint || '').localeCompare(b.system_hint || '') || b.confidence - a.confidence;
+    });
+    return list;
+  }, [state.candidates, minConfidence, selectedPages, selectedSystems, sortBy]);
+
+  const pending = filtered.filter(c => c.userStatus === 'pending');
+  const confirmed = filtered.filter(c => c.userStatus === 'confirmed');
+  const rejected = filtered.filter(c => c.userStatus === 'rejected');
+
+  /* ── Summary stats ────────────────────────────────────────── */
+  const totalCandidates = state.candidates.length;
+  const tiers = useMemo(() => {
+    const t = { high: 0, mid: 0, low: 0, reject: 0 };
+    for (const c of state.candidates) {
+      const pct = c.confidence * 100;
+      if (pct >= 90) t.high++;
+      else if (pct >= 70) t.mid++;
+      else if (pct >= 50) t.low++;
+      else t.reject++;
+    }
+    return t;
+  }, [state.candidates]);
+
+  /* ── Toggle helpers ───────────────────────────────────────── */
+  const togglePage = (pg: number) => {
+    setSelectedPages(prev => {
+      const next = new Set(prev);
+      next.has(pg) ? next.delete(pg) : next.add(pg);
+      return next;
+    });
+  };
+  const toggleSystem = (sys: string) => {
+    setSelectedSystems(prev => {
+      const next = new Set(prev);
+      next.has(sys) ? next.delete(sys) : next.add(sys);
+      return next;
+    });
+  };
+  const clearFilters = () => {
+    setMinConfidence(50);
+    setSelectedPages(new Set());
+    setSelectedSystems(new Set());
+  };
+
+  /* ── Bulk actions ─────────────────────────────────────────── */
+  const confirmAllVisible = () => {
+    for (const c of pending) onConfirm(c.candidate_id);
+  };
+  const rejectAllVisible = () => {
+    for (const c of pending) onReject(c.candidate_id);
+  };
 
   return (
     <div className="flex flex-col h-full bg-white text-sm">
@@ -119,10 +274,24 @@ export function DrawingIntelligencePanel({
         <StatusBadge status={state.status} />
       </div>
 
-      {/* Unavailable state */}
+      {/* Sidecar connected (idle with health) */}
+      {state.status === 'idle' && state.health?.status === 'ok' && (
+        <div className="p-3 text-xs text-green-600 bg-green-50 border-b">
+          <div className="font-medium">AiQ Sidecar connected</div>
+          <div className="text-green-500">v{state.health.version || '?'} · {state.health.layers?.length || 0} layers</div>
+        </div>
+      )}
+
+      {/* Error / unavailable state */}
       {state.status === 'unavailable' && (
         <div className="p-3 text-xs text-red-600 bg-red-50 border-b">
           <div className="font-medium mb-1">Sidecar not running</div>
+          <div className="text-red-500">{state.error}</div>
+        </div>
+      )}
+      {state.status === 'error' && state.error && (
+        <div className="p-3 text-xs text-red-600 bg-red-50 border-b">
+          <div className="font-medium mb-1">Scan failed</div>
           <div className="text-red-500">{state.error}</div>
         </div>
       )}
@@ -132,10 +301,11 @@ export function DrawingIntelligencePanel({
         {!isRunning ? (
           <button
             onClick={onRunScan}
-            disabled={state.status === 'unavailable'}
+            disabled={state.status === 'unavailable' || !hasPdf}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white text-xs py-1.5 rounded font-medium"
           >
-            {state.status === 'idle' ? 'Scan Drawing Set' :
+            {!hasPdf ? 'Load a PDF first' :
+             state.status === 'idle' ? 'Scan Drawing Set' :
              state.status === 'complete' ? 'Re-scan' : 'Scan Drawing Set'}
           </button>
         ) : (
@@ -193,7 +363,140 @@ export function DrawingIntelligencePanel({
         </div>
       )}
 
-      {/* Candidate list */}
+      {/* ── Summary stats ───────────────────────────────────── */}
+      {totalCandidates > 0 && (
+        <div className="px-3 py-2 border-b bg-gray-50">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-gray-600">
+              {totalCandidates} detected
+            </span>
+            <span className="text-[10px] text-gray-400">
+              showing {filtered.length}
+            </span>
+          </div>
+          <div className="flex gap-1">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700">{tiers.high} high</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700">{tiers.mid} mid</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">{tiers.low} low</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-700">{tiers.reject} reject</span>
+          </div>
+        </div>
+      )}
+
+      {/* ── Filter toolbar ──────────────────────────────────── */}
+      {totalCandidates > 0 && (
+        <div className="border-b">
+          <button
+            onClick={() => setFiltersOpen(o => !o)}
+            className="w-full px-3 py-1.5 flex items-center justify-between text-xs font-medium text-gray-600 hover:bg-gray-50"
+          >
+            <span>Filters {filtered.length !== totalCandidates && `(${filtered.length}/${totalCandidates})`}</span>
+            <span className="text-gray-400">{filtersOpen ? '▾' : '▸'}</span>
+          </button>
+
+          {filtersOpen && (
+            <div className="px-3 pb-2 space-y-2">
+              {/* Confidence slider */}
+              <div>
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] text-gray-500">Min confidence</span>
+                  <span className="text-[10px] font-mono text-gray-700">{minConfidence}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={0} max={100} step={5}
+                  value={minConfidence}
+                  onChange={e => setMinConfidence(Number(e.target.value))}
+                  className="w-full h-1 accent-blue-600"
+                />
+              </div>
+
+              {/* Page pills */}
+              {uniquePages.length > 1 && (
+                <div>
+                  <div className="text-[10px] text-gray-500 mb-0.5">Pages</div>
+                  <div className="flex flex-wrap gap-0.5">
+                    {uniquePages.map(pg => {
+                      const pageCount = state.candidates.filter(c => c.pageNum === pg).length;
+                      return (
+                        <FilterPill
+                          key={pg}
+                          label={`${pg + 1}`}
+                          active={selectedPages.has(pg)}
+                          count={pageCount}
+                          onClick={() => togglePage(pg)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* System type pills */}
+              {uniqueSystems.length > 1 && (
+                <div>
+                  <div className="text-[10px] text-gray-500 mb-0.5">System type</div>
+                  <div className="flex flex-wrap gap-0.5">
+                    {uniqueSystems.map(sys => {
+                      const sysCount = state.candidates.filter(c => (c.system_hint || 'unknown') === sys).length;
+                      return (
+                        <FilterPill
+                          key={sys}
+                          label={sys}
+                          active={selectedSystems.has(sys)}
+                          count={sysCount}
+                          onClick={() => toggleSystem(sys)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Sort + clear */}
+              <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] text-gray-500">Sort:</span>
+                  {(['confidence', 'page', 'system'] as SortKey[]).map(k => (
+                    <button
+                      key={k}
+                      onClick={() => setSortBy(k)}
+                      className={`text-[10px] px-1 py-0.5 rounded ${
+                        sortBy === k ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-500 hover:bg-gray-100'
+                      }`}
+                    >
+                      {k}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={clearFilters} className="text-[10px] text-gray-400 hover:text-gray-600 underline">
+                  Clear
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Bulk actions ────────────────────────────────────── */}
+      {pending.length > 1 && (
+        <div className="px-3 py-1.5 border-b flex gap-1">
+          <button
+            onClick={confirmAllVisible}
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white text-[10px] py-1 rounded font-medium"
+          >
+            Confirm All ({pending.length})
+          </button>
+          <button
+            onClick={rejectAllVisible}
+            className="flex-1 bg-red-400 hover:bg-red-500 text-white text-[10px] py-1 rounded font-medium"
+          >
+            Reject All ({pending.length})
+          </button>
+        </div>
+      )}
+
+      {/* ── Candidate list ──────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto px-3 py-2">
         {state.candidates.length === 0 && state.status !== 'idle' && (
           <div className="text-xs text-gray-400 text-center py-4">
@@ -203,6 +506,11 @@ export function DrawingIntelligencePanel({
         {state.candidates.length === 0 && state.status === 'idle' && (
           <div className="text-xs text-gray-400 text-center py-4">
             Load a drawing set and click Scan
+          </div>
+        )}
+        {filtered.length > 0 && totalCandidates > 0 && filtered.length === 0 && (
+          <div className="text-xs text-gray-400 text-center py-4">
+            No candidates match filters
           </div>
         )}
         {pending.length > 0 && (
@@ -216,11 +524,21 @@ export function DrawingIntelligencePanel({
           </div>
         )}
         {confirmed.length > 0 && (
-          <div>
+          <div className="mb-2">
             <div className="text-xs font-medium text-blue-700 mb-1">
               Confirmed ({confirmed.length})
             </div>
             {confirmed.map(c => (
+              <CandidateRow key={c.candidate_id} candidate={c} onConfirm={onConfirm} onReject={onReject} />
+            ))}
+          </div>
+        )}
+        {rejected.length > 0 && (
+          <div>
+            <div className="text-xs font-medium text-gray-400 mb-1">
+              Rejected ({rejected.length})
+            </div>
+            {rejected.map(c => (
               <CandidateRow key={c.candidate_id} candidate={c} onConfirm={onConfirm} onReject={onReject} />
             ))}
           </div>
@@ -231,7 +549,7 @@ export function DrawingIntelligencePanel({
       {state.status === 'complete' && (
         <div className="px-3 py-2 border-t bg-gray-50">
           <div className="text-xs text-gray-500 mb-1">
-            {confirmed.length} confirmed · {pending.length} pending review
+            {confirmed.length} confirmed · {pending.length} pending · {rejected.length} rejected
           </div>
           <button
             onClick={onReset}

@@ -220,7 +220,7 @@ const ExtSFWorksheet = ({
     <div style={{
       backgroundColor: '#f6f8fa',
       padding: '24px',
-      minHeight: '100vh'
+      minHeight: '100%'
     }}>
       
       {/* Dashboard Grid Layout */}

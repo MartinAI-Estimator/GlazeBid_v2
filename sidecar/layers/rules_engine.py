@@ -45,9 +45,9 @@ GEOM_MAX_ASPECT      = 30.0    # width/height — eliminates horizontal bars
 GEOM_MIN_WIDTH_PTS   = 20.0    # pts — too narrow to be glazing
 
 GLASS_MIN_WIDTH_IN   = 6.0    # inches — minimum manufacturable glass width
-GLASS_MAX_WIDTH_IN   = 120.0  # inches — maximum standard glass width
+GLASS_MAX_WIDTH_IN   = 720.0  # inches (60ft) — max assembly width (storefront runs)
 GLASS_MIN_HEIGHT_IN  = 6.0    # inches
-GLASS_MAX_HEIGHT_IN  = 216.0  # inches — 18 feet max for structural glazing
+GLASS_MAX_HEIGHT_IN  = 600.0  # inches (50ft) — max assembly height (multi-story CW)
 
 PARALLELISM_DOT_MIN  = 0.9994 # cos(2°) — opposing edges must be this parallel
 RECTANGULARITY_DEG   = 5.0    # interior angles must be within 5° of 90°
@@ -58,6 +58,12 @@ WEIGHT_PARALLELISM   = 0.20
 WEIGHT_PERIODICITY   = 0.15
 WEIGHT_SYMMETRY      = 0.10
 WEIGHT_CONTINUITY    = 0.15
+
+# Base confidence awarded for passing all Tier 1 checks
+# A candidate that passes closure, rectangularity, dimensional feasibility,
+# and orientation is a geometrically valid glazing opening. This base credit
+# ensures Tier 2 scores can push candidates above the auto-accept threshold.
+TIER1_BASE_CONFIDENCE = 0.40
 
 AUTO_ACCEPT_THRESHOLD = 0.70
 NEEDS_REVIEW_THRESHOLD = 0.40
@@ -133,6 +139,9 @@ class GlazingCandidate:
     # Cross-sheet (populated by Layer 9 if available)
     cross_references: List[str] = field(default_factory=list)
     cross_sheet_status: str = "unverified"
+
+    # Schedule cross-reference (populated by match_schedule_to_candidates)
+    schedule_match: Optional[Dict[str, Any]] = None
 
     # Status
     status: str = "needs_review"   # auto_accepted|needs_review|rejected
@@ -296,6 +305,133 @@ def find_rectangular_regions(
         logger.warning(f"find_rectangular_regions failed: {e}")
 
     return candidates
+
+
+# ── Post-Detection Region Merge ───────────────────────────────────────────────
+
+# Merge thresholds
+MERGE_HORIZONTAL_OVERLAP_MIN = 0.50  # 50% horizontal overlap required
+MERGE_DEFAULT_GAP_INCHES = 24.0      # 24 inches max vertical gap between fragments
+MERGE_MAX_WIDTH_GROWTH = 1.20        # merged width <= 120% of wider input rect
+
+
+def merge_overlapping_regions(
+    rects: List[Rect],
+    max_gap_pts: float = 72.0,
+    horizontal_overlap_min: float = MERGE_HORIZONTAL_OVERLAP_MIN,
+    max_width_growth: float = MERGE_MAX_WIDTH_GROWTH,
+) -> List[Rect]:
+    """
+    Merge vertically stacked fragment rectangles into full assemblies.
+
+    find_rectangular_regions pairs adjacent horizontal edge rows
+    (head↔transom, transom↔sill), producing 3'×1.5' fragments instead
+    of one 10'×9' assembly. This function merges those fragments.
+
+    Two rects merge if:
+        1. Horizontal overlap > horizontal_overlap_min (fraction of smaller width)
+        2. Vertical gap between them < max_gap_pts (or they overlap vertically)
+        3. Merged width <= max_width_growth × max(width_a, width_b)
+           (prevents horizontal snowball across unrelated assemblies)
+
+    Iterates until no more merges are possible.
+
+    Args:
+        rects: Raw candidate bounding boxes from find_rectangular_regions
+        max_gap_pts: Maximum vertical gap in PDF points for merge eligibility
+        horizontal_overlap_min: Minimum horizontal overlap as fraction of
+            the narrower rect's width (0.0–1.0)
+        max_width_growth: Maximum allowed width growth ratio on merge (1.0+)
+
+    Returns:
+        Merged list of Rect objects. Never raises.
+    """
+    if len(rects) <= 1:
+        return list(rects)
+
+    try:
+        # Work on a mutable copy sorted by left edge (X), then top edge (Y)
+        merged = [Rect(x=r.x, y=r.y, width=r.width, height=r.height) for r in rects]
+        merged.sort(key=lambda r: (r.x, r.y))
+
+        changed = True
+        while changed:
+            changed = False
+            new_merged: List[Rect] = []
+            consumed = set()
+
+            for i in range(len(merged)):
+                if i in consumed:
+                    continue
+
+                current = merged[i]
+
+                for j in range(i + 1, len(merged)):
+                    if j in consumed:
+                        continue
+
+                    other = merged[j]
+
+                    # ── Check horizontal overlap ──
+                    overlap_x_min = max(current.x, other.x)
+                    overlap_x_max = min(current.x_max, other.x_max)
+                    overlap_width = max(0.0, overlap_x_max - overlap_x_min)
+                    min_width = min(current.width, other.width)
+
+                    if min_width <= 0 or (overlap_width / min_width) < horizontal_overlap_min:
+                        continue
+
+                    # ── Check vertical adjacency ──
+                    # Only merge rects that are vertically STACKED with a gap,
+                    # not rects that overlap in Y-space (which are handled by
+                    # deduplicate_candidates downstream).
+                    # "Stacked" means: one rect is clearly above the other.
+                    if current.y_max <= other.y:
+                        # current is above other
+                        gap = other.y - current.y_max
+                    elif other.y_max <= current.y:
+                        # other is above current
+                        gap = current.y - other.y_max
+                    else:
+                        # They overlap vertically — skip, let dedup handle it
+                        continue
+
+                    if gap > max_gap_pts:
+                        continue
+
+                    # ── Check width growth ──
+                    # Prevent horizontal snowball: merged width must not grow
+                    # beyond max_width_growth × wider input rect
+                    new_x = min(current.x, other.x)
+                    new_x_max = max(current.x_max, other.x_max)
+                    new_width = new_x_max - new_x
+                    max_input_width = max(current.width, other.width)
+
+                    if max_input_width > 0 and new_width > max_input_width * max_width_growth:
+                        continue
+
+                    # ── Merge: union bounding box ──
+                    new_y = min(current.y, other.y)
+                    new_y_max = max(current.y_max, other.y_max)
+
+                    current = Rect(
+                        x=new_x,
+                        y=new_y,
+                        width=new_width,
+                        height=new_y_max - new_y,
+                    )
+                    consumed.add(j)
+                    changed = True
+
+                new_merged.append(current)
+
+            merged = new_merged
+
+    except Exception as e:
+        logger.warning(f"merge_overlapping_regions failed: {e}")
+        return list(rects)
+
+    return merged
 
 
 def _detect_bays(
@@ -519,51 +655,126 @@ def check_parallelism(
 
 def check_periodicity(
     candidates: List[Rect],
-    current_rect: Rect
+    current_rect: Rect,
+    x: Optional[List[List[float]]] = None,
+    edge_index: Optional[List[List[int]]] = None,
+    edge_attr: Optional[List[List[float]]] = None,
 ) -> Tuple[bool, str, float]:
     """
-    T2.2 Periodicity: If multiple similar-sized candidates exist on the
-    same row, their center-to-center spacing should be consistent
-    within PERIODICITY_VARIANCE (5%).
+    T2.2 Periodicity: Check for regular bay spacing within the candidate.
 
-    Args:
-        candidates: All candidates found on this sheet (for comparison)
-        current_rect: The candidate being evaluated
+    Two strategies (in order of preference):
+    1. **Internal mullions** — if graph data is provided, find vertical edges
+       inside the candidate rect and check their X-spacing regularity.
+    2. **Sibling comparison** — find similar-sized rects on the same row
+       and check center-to-center spacing regularity.
+
+    Uses **modal bay spacing** — the most frequent spacing value (±10%) —
+    to tolerate outlier gaps from merged sub-assemblies.
+
+    Pass criteria: at least 60% of spacings match the modal spacing (±10%),
+    AND the variance among modal-matching spacings is <= PERIODICITY_VARIANCE.
     """
+    MODAL_TOLERANCE = 0.10
+    MODAL_MIN_RATIO = 0.60
+    MIN_SPAN_RATIO = 0.40
+
     try:
-        # Find candidates on the same row (similar Y center)
-        cy = current_rect.center[1]
-        row_mates = [
-            r for r in candidates
-            if abs(r.center[1] - cy) < current_rect.height * 0.3
-            and r is not current_rect
-        ]
+        spacings: List[float] = []
 
-        if len(row_mates) < 2:
-            # Not enough siblings to evaluate periodicity
-            return True, "T2.2_periodicity_insufficient_siblings", 0.0
+        # Strategy 1: Internal mullions from graph data
+        if x is not None and edge_index is not None and edge_attr is not None:
+            mullion_xs: set = set()
+            src_nodes = edge_index[0]
+            dst_nodes = edge_index[1]
 
-        # Compute center-to-center spacings
-        all_centers = sorted(
-            [r.center[0] for r in row_mates] + [current_rect.center[0]]
-        )
-        spacings = [all_centers[i + 1] - all_centers[i]
-                    for i in range(len(all_centers) - 1)]
+            for i, (u, v) in enumerate(zip(src_nodes, dst_nodes)):
+                if u >= len(x) or v >= len(x):
+                    continue
+                attr = edge_attr[i] if i < len(edge_attr) else [0, 0, 0, 0]
+                dx_val = attr[2]
+                dy_val = attr[3]
+
+                if abs(dy_val) < abs(dx_val):
+                    continue
+
+                pu = x[u]
+                pv = x[v]
+                mid_x = (pu[0] + pv[0]) / 2
+                mid_y = (pu[1] + pv[1]) / 2
+
+                margin = current_rect.width * 0.02
+                if not (current_rect.x - margin <= mid_x <= current_rect.x_max + margin):
+                    continue
+                if not (current_rect.y <= mid_y <= current_rect.y_max):
+                    continue
+
+                span_y = abs(pv[1] - pu[1])
+                if span_y < current_rect.height * MIN_SPAN_RATIO:
+                    continue
+
+                mullion_xs.add(round(mid_x / 5.0) * 5.0)
+
+            if len(mullion_xs) >= 3:
+                sorted_xs = sorted(mullion_xs)
+                spacings = [sorted_xs[j + 1] - sorted_xs[j]
+                           for j in range(len(sorted_xs) - 1)]
+
+        # Strategy 2: Sibling comparison (fallback)
+        if not spacings:
+            cy = current_rect.center[1]
+            SIZE_TOL = 0.50
+            row_mates = [
+                r for r in candidates
+                if abs(r.center[1] - cy) < current_rect.height * 0.3
+                and r is not current_rect
+                and (current_rect.width > 0 and abs(r.width - current_rect.width) / current_rect.width <= SIZE_TOL)
+                and (current_rect.height > 0 and abs(r.height - current_rect.height) / current_rect.height <= SIZE_TOL)
+            ]
+
+            if len(row_mates) < 2:
+                return True, "T2.2_periodicity_insufficient_siblings", 0.0
+
+            all_centers = sorted(
+                [r.center[0] for r in row_mates] + [current_rect.center[0]]
+            )
+            spacings = [all_centers[j + 1] - all_centers[j]
+                        for j in range(len(all_centers) - 1)]
 
         if not spacings:
             return True, "T2.2_periodicity_no_spacings", 0.0
 
-        mean_spacing = sum(spacings) / len(spacings)
-        if mean_spacing < 1.0:
+        # ── Find modal spacing ──
+        best_mode = spacings[0]
+        best_count = 0
+        for s in spacings:
+            if s < 1.0:
+                continue
+            count = sum(1 for other in spacings if abs(other - s) / s <= MODAL_TOLERANCE)
+            if count > best_count:
+                best_count = count
+                best_mode = s
+
+        if best_mode < 1.0:
             return True, "T2.2_periodicity_zero_spacing", 0.0
 
-        variance = max(abs(s - mean_spacing) / mean_spacing for s in spacings)
+        modal_ratio = best_count / len(spacings)
+        if modal_ratio < MODAL_MIN_RATIO:
+            return False, (
+                f"T2.2_periodicity_failed (no dominant mode: "
+                f"best={best_count}/{len(spacings)}={modal_ratio:.0%}, "
+                f"need>={MODAL_MIN_RATIO:.0%})"
+            ), 0.0
+
+        modal_spacings = [s for s in spacings if abs(s - best_mode) / best_mode <= MODAL_TOLERANCE]
+        modal_mean = sum(modal_spacings) / len(modal_spacings)
+        variance = max(abs(s - modal_mean) / modal_mean for s in modal_spacings)
 
         if variance <= PERIODICITY_VARIANCE:
             return True, "T2.2_periodicity", WEIGHT_PERIODICITY
         else:
             return False, (
-                f"T2.2_periodicity_failed (variance={variance:.0%}, "
+                f"T2.2_periodicity_failed (modal variance={variance:.0%}, "
                 f"threshold={PERIODICITY_VARIANCE:.0%})"
             ), 0.0
 
@@ -742,7 +953,7 @@ def classify_system(
         return "curtain_wall"
 
     if SF_MIN_WIDTH_FT <= width_ft <= SF_MAX_WIDTH_FT:
-        if height_ft >= 2.0:
+        if height_ft >= 1.0:
             return "storefront"
 
     if width_ft >= CW_MIN_WIDTH_FT and height_ft < CW_MIN_HEIGHT_FT:
@@ -831,6 +1042,69 @@ def deduplicate_candidates(
         return candidates
 
 
+# ── Schedule Cross-Reference ──────────────────────────────────────────────────
+
+SCHEDULE_MATCH_TOLERANCE = 0.20  # ±20% dimension match
+
+def match_schedule_to_candidates(
+    candidates: List[GlazingCandidate],
+    schedule_inventory: Dict[str, Any],
+    tolerance: float = SCHEDULE_MATCH_TOLERANCE
+) -> List[GlazingCandidate]:
+    """
+    Soft cross-reference: match candidates to schedule entries by dimensions.
+
+    For each candidate with known real-world dimensions (width_inches > 0,
+    height_inches > 0), check if any schedule entry's width/height is within
+    ±tolerance of the candidate's width/height. If so, populate schedule_match.
+
+    This is metadata only — does NOT change confidence scores.
+
+    Args:
+        candidates: GlazingCandidate list from run_rules_engine
+        schedule_inventory: Dict[mark, ScheduleEntry] from layer3_schedule_parser
+        tolerance: fractional tolerance for dimension matching (default 20%)
+
+    Returns:
+        Same candidate list with schedule_match populated where matches found.
+    """
+    if not schedule_inventory:
+        return candidates
+
+    for candidate in candidates:
+        if candidate.width_inches <= 0 or candidate.height_inches <= 0:
+            continue
+
+        best_match = None
+        best_err = float("inf")
+
+        for mark, entry in schedule_inventory.items():
+            ew = getattr(entry, "width_in", 0.0) or 0.0
+            eh = getattr(entry, "height_in", 0.0) or 0.0
+            if ew <= 0 or eh <= 0:
+                continue
+
+            w_err = abs(candidate.width_inches - ew) / ew
+            h_err = abs(candidate.height_inches - eh) / eh
+
+            if w_err <= tolerance and h_err <= tolerance:
+                total_err = w_err + h_err
+                if total_err < best_err:
+                    best_err = total_err
+                    best_match = {
+                        "mark": mark,
+                        "width_in": ew,
+                        "height_in": eh,
+                        "qty": getattr(entry, "qty", 1),
+                        "system_type": getattr(entry, "system_type", ""),
+                        "dimension_error": round(total_err, 3),
+                    }
+
+        candidate.schedule_match = best_match
+
+    return candidates
+
+
 # ── Main Engine ───────────────────────────────────────────────────────────────
 
 def run_rules_engine(
@@ -875,6 +1149,11 @@ def run_rules_engine(
             return []
 
         logger.info(f"Found {len(rects)} rectangular regions on '{source_sheet}'")
+
+        # ── Step 1b: Merge vertically stacked fragments into assemblies ──
+        max_gap_pts = MERGE_DEFAULT_GAP_INCHES * scale_factor if scale_factor > 0 else 72.0
+        rects = merge_overlapping_regions(rects, max_gap_pts=max_gap_pts)
+        logger.info(f"After merge: {len(rects)} regions on '{source_sheet}'")
 
         # ── Step 2: Apply rules to each candidate ──
         for idx, rect in enumerate(rects):
@@ -982,6 +1261,8 @@ def run_rules_engine(
             rules_passed.append(rule)
 
             # ── Tier 2: Confidence scoring ──
+            # All Tier 1 checks passed — award base confidence
+            confidence = TIER1_BASE_CONFIDENCE
             ok, rule, delta = check_parallelism(rect, x, edge_index, edge_attr)
             if ok:
                 confidence += delta
@@ -990,7 +1271,7 @@ def run_rules_engine(
                 rules_failed.append(rule)
 
             # Collect all rects for periodicity check
-            ok, rule, delta = check_periodicity(rects, rect)
+            ok, rule, delta = check_periodicity(rects, rect, x, edge_index, edge_attr)
             if ok:
                 confidence += delta
                 rules_passed.append(rule)

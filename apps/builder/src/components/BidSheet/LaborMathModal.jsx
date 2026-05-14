@@ -9,6 +9,7 @@ const DEFAULT_HR_FUNCTIONS = {
   'modifier-brake-metal':   0.5,
   'modifier-steel':         1.0,
   'modifier-subsill':       0.25,
+  'modifier-receptor':      0.25,
   'modifier-ssg':           0.75,
 };
 

@@ -130,12 +130,19 @@ export function GridEditor({ engine }: Props): React.ReactElement | null {
   const handleCancel = useCallback(() => setPending(null), [setPending]);
 
   // ── Early-exit guard (after all hooks) ────────────────────────────────────
+  console.log('[GridEditor] guard check:', {
+    hasPendingGridEdit: !!pendingGridEdit,
+    hasLocalGrid: !!localGrid,
+    hasShape: !!shape,
+    shapeType: shape?.type,
+    hasAsm: !!asm,
+  });
   if (!pendingGridEdit || !localGrid || !shape || shape.type !== 'rect' || !asm) return null;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div
-      style={{ position: 'absolute', inset: 0, pointerEvents: dragging ? 'auto' : 'none' }}
+      style={{ position: 'absolute', inset: 0, zIndex: 30, pointerEvents: dragging ? 'auto' : 'none' }}
       onPointerMove={handleOverlayPointerMove}
       onPointerUp={handleOverlayPointerUp}
     >

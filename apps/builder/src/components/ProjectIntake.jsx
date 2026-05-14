@@ -14,7 +14,7 @@ import { useProject } from '../context/ProjectContext';
 import { saveToLocalFolder, isFileSystemAccessSupported } from '../utils/saveSortedFiles';
 import { extractSpecSections } from '../utils/specSectionExtractor';
 
-const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
+const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings, onBack }) => {
   const { setMarkups, setArchitecturalFiles, setIntakeFileCategories } = useProject();
   const [dragging, setDragging] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -253,12 +253,14 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
     });
 
     if (files.length > 0) {
-      // Route through the two-zone sort modal so the user can categorise
-      // drawings vs specifications before naming the project.
+      // Go directly to project metadata — spec sorter is its own page now
       setPendingDrawings(files);
       setPendingSpecs([]);
       setPendingFileCategories({});
-      setShowUploadModal(true);
+      const defaultName = files[0].name.replace(/\.(pdf|zip)$/i, '').replace(/_/g, ' ');
+      setProjectName(defaultName);
+      setBidDate('');
+      setShowProjectMetadataModal(true);
     } else {
       setError('Please drop PDF or ZIP files only');
       setTimeout(() => setError(null), 3000);
@@ -1156,6 +1158,9 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
 
       {/* ── TOP NAV ── */}
       <header style={styles.bentoNav}>
+        {onBack && (
+          <button onClick={onBack} style={styles.suiteBackBtn}>← Suite Home</button>
+        )}
         <div style={styles.bentoSearchWrap}>
           <Search size={14} color="#6b7280" style={{ flexShrink: 0 }} />
           <input
@@ -1174,7 +1179,7 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
         </div>
         <div style={{ flex: 1 }} />
         <button style={styles.bentoNavIcon} onClick={onSettings} title="Settings"><Settings size={16} color="#6b7280" /></button>
-        <button style={styles.bentoNavNew} onClick={() => setShowUploadModal(true)}>
+        <button style={styles.bentoNavNew} onClick={() => { setPendingDrawings([]); setPendingSpecs([]); setPendingFileCategories({}); setProjectName(''); setBidDate(''); setShowProjectMetadataModal(true); }}>
           <Plus size={15} style={{ marginRight: 5 }} />New Project
         </button>
       </header>
@@ -1235,13 +1240,13 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
-                  onClick={() => setShowUploadModal(true)}
+                  onClick={() => { setPendingDrawings([]); setPendingSpecs([]); setPendingFileCategories({}); setProjectName(''); setBidDate(''); setShowProjectMetadataModal(true); }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = '#27272a'; }}
                 >
                   <Plus size={32} color="#0ea5e9" style={{ marginBottom: 12 }} />
                   <div style={{ fontSize: 16, fontWeight: 700, color: '#e4e4e7', marginBottom: 6 }}>Start your first project</div>
-                  <div style={{ fontSize: 13, color: '#52525b' }}>Drop drawings &amp; specs to begin intake</div>
+                  <div style={{ fontSize: 13, color: '#52525b' }}>Click to name your new project</div>
                 </motion.div>
               )}
 
@@ -1330,15 +1335,15 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.42, ease: [0.23, 1, 0.32, 1] }}
-                onClick={() => setShowUploadModal(true)}
+                onClick={() => { setPendingDrawings([]); setPendingSpecs([]); setPendingFileCategories({}); setProjectName(''); setBidDate(''); setShowProjectMetadataModal(true); }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; e.currentTarget.style.background = 'rgba(14,165,233,0.04)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = '#3f3f46'; e.currentTarget.style.background = 'transparent'; }}
               >
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
                   <Plus size={20} color="#0ea5e9" />
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7', marginBottom: 4 }}>Start New Takeoff</div>
-                <div style={{ fontSize: 12, color: '#52525b', lineHeight: 1.4 }}>Drop drawings &amp; specs or browse files to begin</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7', marginBottom: 4 }}>Start New Project</div>
+                <div style={{ fontSize: 12, color: '#52525b', lineHeight: 1.4 }}>Name your project and begin estimating</div>
               </motion.div>
 
             </div>
@@ -1495,12 +1500,23 @@ const styles = {
   // ── Bento Box Layout ──────────────────────────────────────────────
   bentoPage: {
     backgroundColor: 'var(--bg-deep)',
-    height: '100vh',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     overflow: 'hidden',
     color: 'var(--text-primary)',
+  },
+  suiteBackBtn: {
+    background: 'none',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: '#8b949e',
+    padding: '5px 14px',
+    borderRadius: 6,
+    cursor: 'pointer',
+    fontSize: '0.82rem',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
   },
   bentoNav: {
     display: 'flex',
@@ -1713,8 +1729,7 @@ const styles = {
   // ── Legacy layout styles (kept for results/processing/modal views) ──
   dashboardContainer: {
     backgroundColor: 'var(--bg-deep)',
-    minHeight: '100vh',
-    height: '100vh',
+    height: '100%',
     display: 'flex',
     flexDirection: 'row',
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -2156,7 +2171,7 @@ const styles = {
     maxWidth: '1600px',
     margin: '0 auto',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    height: '100vh',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: '#060f1c',

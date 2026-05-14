@@ -76,7 +76,7 @@ async function pdfToBase64(pdfBuffer: ArrayBuffer): Promise<string> {
 export async function checkSidecarHealth(): Promise<SidecarHealth> {
   // Prefer IPC when running inside Electron (main process manages the sidecar)
   try {
-    const aiq = (window as any).electron?.aiq;
+    const aiq = window.electron?.aiq;
     if (aiq?.health) {
       const { healthy } = await aiq.health();
       if (healthy) {
@@ -105,10 +105,10 @@ export async function checkSidecarHealth(): Promise<SidecarHealth> {
 }
 
 export async function prescanDrawingSet(
-  pdfBuffer: ArrayBuffer
+  pdfOrBase64: ArrayBuffer | string
 ): Promise<PrescanResult> {
   try {
-    const pdf_base64 = await pdfToBase64(pdfBuffer);
+    const pdf_base64 = typeof pdfOrBase64 === 'string' ? pdfOrBase64 : await pdfToBase64(pdfOrBase64);
     const res = await fetch(`${SIDECAR_URL}/prescan-drawing-set`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -127,12 +127,14 @@ export async function prescanDrawingSet(
 }
 
 export async function detectGlazing(
-  pdfBuffer: ArrayBuffer,
+  pdfOrBase64: ArrayBuffer | string,
   pageNum: number,
-  sheetType: string = 'elevation'
+  sheetType: string = 'elevation',
+  scaleFactor: number = 0,
+  scaleConfidence: number = 0,
 ): Promise<DetectResult> {
   try {
-    const pdf_base64 = await pdfToBase64(pdfBuffer);
+    const pdf_base64 = typeof pdfOrBase64 === 'string' ? pdfOrBase64 : await pdfToBase64(pdfOrBase64);
     const res = await fetch(`${SIDECAR_URL}/detect-glazing`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -140,6 +142,8 @@ export async function detectGlazing(
         pdf_base64,
         page_num: pageNum,
         sheet_type: sheetType,
+        scale_factor: scaleFactor,
+        scale_confidence: scaleConfidence,
       }),
       signal: AbortSignal.timeout(120000),
     });

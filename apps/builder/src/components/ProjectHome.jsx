@@ -1,6 +1,5 @@
 import React from 'react';
-import { FolderOpen, FileText, Building2, Wrench, LayoutGrid, ArrowLeft, Clock, Calendar, CheckCircle, Play, FileDown, ChevronRight, ChevronDown, FileSpreadsheet, HardHat } from 'lucide-react';
-import ProjectSettingsPanel from './ProjectSettingsPanel';
+import { FolderOpen, FileText, Building2, LayoutGrid, ArrowLeft, Clock, Calendar, CheckCircle, Play, FileDown, ChevronRight, ChevronDown, FileSpreadsheet } from 'lucide-react';
 
 /**
  * Project Home Page - Estimator's Dashboard
@@ -18,25 +17,6 @@ const ProjectHome = ({
   bidSettings = {},
   onBidSettingsChange,
 }) => {
-  const [hoveredNavCard, setHoveredNavCard] = React.useState(null);
-  const [hoveredWorkflowCard, setHoveredWorkflowCard] = React.useState(null);
-  const [activeSidebarSection, setActiveSidebarSection] = React.useState(null);
-
-  // ── Labor Days ──────────────────────────────────────────────────────────
-  const [laborSystems, setLaborSystems] = React.useState(() => {
-    try {
-      const raw = localStorage.getItem('glazebid:laborSystems');
-      return raw ? JSON.parse(raw) : [];
-    } catch { return []; }
-  });
-  // Re-read when the user opens the Labor Days tab
-  React.useEffect(() => {
-    if (activeSidebarSection !== 'labor') return;
-    try {
-      const raw = localStorage.getItem('glazebid:laborSystems');
-      if (raw) setLaborSystems(JSON.parse(raw));
-    } catch {}
-  }, [activeSidebarSection]);
 
   /**
    * Last takeoff result received from the Studio window via IPC.
@@ -78,31 +58,9 @@ const ProjectHome = ({
     other: categoryCounts.other || 0,
   };
 
-  const totalSheets = counts.architectural + counts.structural + counts.specifications + counts.other;
+  const totalSheets = counts.specifications;
 
   const categories = [
-    {
-      id: 'architectural',
-      name: 'Architectural',
-      icon: Building2,
-      count: counts.architectural,
-      color: '#10B981',
-      subtitle: counts.architectural > 0 ? 'Drawing Sheets' : 'No Drawings Found',
-      viewerType: 'drawing',
-      view: 'pdfViewer',
-      category: 'architectural'
-    },
-    {
-      id: 'structural',
-      name: 'Structural',
-      icon: LayoutGrid,
-      count: counts.structural,
-      color: '#F59E0B',
-      subtitle: counts.structural > 0 ? 'Drawing Sheets' : 'No Drawings Found',
-      viewerType: 'drawing',
-      view: 'pdfViewer',
-      category: 'structural'
-    },
     {
       id: 'specifications',
       name: 'Specifications',
@@ -114,17 +72,6 @@ const ProjectHome = ({
       view: 'documentViewer',
       category: 'specifications'
     },
-    {
-      id: 'other',
-      name: 'Other Documents',
-      icon: FolderOpen,
-      count: counts.other,
-      color: '#6B7280',
-      subtitle: counts.other > 0 ? 'Documents' : 'None Found',
-      viewerType: 'drawing',
-      view: 'pdfViewer',
-      category: 'other'
-    }
   ];
 
   // Studio dev server URL â€” must match C:\GlazeBid_Studio\vite.config.ts server.port
@@ -186,81 +133,6 @@ const ProjectHome = ({
   return (
     <div style={styles.container}>
 
-      {/* ── LEFT SIDEBAR ── */}
-      <div style={styles.sidebar}>
-        <div style={styles.sidebarSection}>
-          <span style={styles.sidebarSectionLabel}>Project</span>
-          <button
-            style={activeSidebarSection === null ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
-            onClick={() => setActiveSidebarSection(null)}
-          >
-            <LayoutGrid size={15} style={{ flexShrink: 0 }} />
-            <span style={styles.sidebarItemLabel}>Overview</span>
-          </button>
-          <button
-            style={activeSidebarSection === 'documents' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
-            onClick={() => setActiveSidebarSection('documents')}
-          >
-            <FolderOpen size={15} style={{ flexShrink: 0 }} />
-            <span style={styles.sidebarItemLabel}>Project Documents</span>
-            {totalSheets > 0 && <span style={styles.sidebarBadge}>{totalSheets}</span>}
-          </button>
-          <button
-            style={activeSidebarSection === 'labor' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
-            onClick={() => setActiveSidebarSection('labor')}
-          >
-            <HardHat size={15} style={{ flexShrink: 0 }} />
-            <span style={styles.sidebarItemLabel}>Labor Days</span>
-            {laborSystems.length > 0 && <span style={styles.sidebarBadge}>{laborSystems.length}</span>}
-          </button>
-        </div>
-
-        {/* ── Actions ── */}
-        <div style={{ ...styles.sidebarSection, marginTop: 12 }}>
-          <span style={styles.sidebarSectionLabel}>Actions</span>
-          <button
-            style={hoveredWorkflowCard === 'studio'
-              ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
-              : styles.sidebarItem}
-            onClick={() => openStudio()}
-            onMouseEnter={() => setHoveredWorkflowCard('studio')}
-            onMouseLeave={() => setHoveredWorkflowCard(null)}
-          >
-            <Building2 size={15} style={{ flexShrink: 0, color: '#60a5fa' }} />
-            <span style={styles.sidebarItemLabel}>Open Studio</span>
-          </button>
-          <button
-            style={hoveredWorkflowCard === 'labor'
-              ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
-              : styles.sidebarItem}
-            onClick={() => onNavigate && onNavigate('bidsheet')}
-            onMouseEnter={() => setHoveredWorkflowCard('labor')}
-            onMouseLeave={() => setHoveredWorkflowCard(null)}
-          >
-            <FileDown size={15} style={{ flexShrink: 0, color: '#34d399' }} />
-            <span style={styles.sidebarItemLabel}>Bid Builder</span>
-          </button>
-          <button
-            style={hoveredNavCard === 'bid-cart'
-              ? { ...styles.sidebarItem, ...styles.sidebarActionHover }
-              : styles.sidebarItem}
-            onClick={() => onNavigate && onNavigate('bid-cart')}
-            onMouseEnter={() => setHoveredNavCard('bid-cart')}
-            onMouseLeave={() => setHoveredNavCard(null)}
-          >
-            <span style={{ fontSize: '14px', flexShrink: 0 }}>💵</span>
-            <span style={styles.sidebarItemLabel}>Bid Cart &amp; Pricing</span>
-          </button>
-          <button
-            style={activeSidebarSection === 'settings' ? {...styles.sidebarItem, ...styles.sidebarItemActive} : styles.sidebarItem}
-            onClick={() => setActiveSidebarSection('settings')}
-          >
-            <Wrench size={15} style={{ flexShrink: 0, color: activeSidebarSection === 'settings' ? '#58a6ff' : undefined }} />
-            <span style={styles.sidebarItemLabel}>Project Settings</span>
-          </button>
-        </div>
-      </div>
-
       {/* ── MAIN SCROLL AREA ── */}
       <div style={styles.scrollArea}>
       <div style={styles.content}>
@@ -288,8 +160,7 @@ const ProjectHome = ({
           </div>
         </div>
 
-        {/* â”€â”€ BENTO GRID â”€â”€ */}
-        {activeSidebarSection === null && (
+        {/* ── BENTO GRID ── */}
         <div style={styles.bentoGrid}>
 
           {/* -- Content -- */}
@@ -308,7 +179,6 @@ const ProjectHome = ({
                 {[
                   { label: 'Labor Rate',   unit: '$/hr', key: 'laborRate',        default: 42,   icon: '⏱️',  step: 1,    min: 0 },
                   { label: 'Crew Size',    unit: 'men',  key: 'crewSize',         default: 2,    icon: '👷',  step: 1,    min: 1 },
-                  { label: 'Labor Cont.',  unit: '%',    key: 'laborContingency', default: 2.5,  icon: '🛡️', step: 0.5,  min: 0 },
                   { label: 'Markup',       unit: '%',    key: 'markupPercent',    default: 40,   icon: '📈',  step: 0.5,  min: 0 },
                   { label: 'Tax Rate',     unit: '%',    key: 'taxPercent',       default: 8.2,  icon: '🏛️', step: 0.25, min: 0 },
                 ].map((field, i) => {
@@ -316,8 +186,8 @@ const ProjectHome = ({
                   return (
                     <div key={field.label} style={{
                       ...styles.financialsCell,
-                      borderRight: (i % 3 < 2) ? '1px solid #1e2530' : 'none',
-                      borderBottom: i < 3 ? '1px solid #1e2530' : 'none',
+                      borderRight: (i % 2 === 0) ? '1px solid #1e2530' : 'none',
+                      borderBottom: i < 2 ? '1px solid #1e2530' : 'none',
                     }}>
                       <div style={styles.financialsCellLabel}>
                         <span style={{ fontSize: '0.85rem' }}>{field.icon}</span>
@@ -349,131 +219,9 @@ const ProjectHome = ({
           </div>{/* end bottom full-width */}
 
         </div>
-        )}{/* end overview/bentoGrid */}
-
-        {/* ── LABOR DAYS PANEL ── */}
-        {activeSidebarSection === 'labor' && (
-          <div style={styles.documentsFocusPanel}>
-            <div style={styles.documentsFocusHeader}>
-              <HardHat size={18} color="#6b7280" />
-              <span style={styles.documentsFocusTitle}>Labor Days</span>
-              <span style={styles.documentsFocusCount}>{laborSystems.length} system{laborSystems.length !== 1 ? 's' : ''}</span>
-            </div>
-
-            {/* Crew settings reminder */}
-            <div style={styles.laborCrewNote}>
-              Crew: <strong style={{ color: '#e6edf3' }}>{bidSettings.crewSize ?? 2} men</strong> &nbsp;·&nbsp; 8 hrs/day &nbsp;·&nbsp; 5 days/wk &nbsp;·&nbsp; 4 wks/mo
-            </div>
-
-            {laborSystems.length === 0 ? (
-              <div style={styles.laborEmptyState}>
-                <HardHat size={32} color="#30363d" />
-                <div style={{ color: '#4b5563', fontSize: '0.9rem', marginTop: 10 }}>No systems built yet</div>
-                <div style={{ color: '#374151', fontSize: '0.78rem', marginTop: 4 }}>Build system cards in Bid Builder to see labor tables here</div>
-                <button
-                  onClick={() => onNavigate && onNavigate('bidsheet')}
-                  style={styles.laborGoBtn}
-                >
-                  Open Bid Builder →
-                </button>
-              </div>
-            ) : (
-              <div style={styles.laborSystemsGrid}>
-                {laborSystems.map((sys, sysIdx) => {
-                  const crewSize = bidSettings.crewSize ?? 2;
-                  const DAYS_MO  = 20;
-                  const totals   = sys.totals ?? {};
-                  const totalMHs = +(totals.shopMHs ?? 0) + +(totals.distMHs ?? 0) + +(totals.fieldMHs ?? 0);
-                  const hrsPerMan = crewSize > 0 ? totalMHs / crewSize : 0;
-                  const days      = hrsPerMan / 8;
-                  const weeks     = days / 5;
-                  const months    = days / DAYS_MO;
-
-                  const COLORS = [
-                    { accent: '#00d4ff', headerBg: 'rgba(0,212,255,0.13)',   rowBg: 'rgba(0,212,255,0.04)'   },
-                    { accent: '#a78bfa', headerBg: 'rgba(167,139,250,0.13)', rowBg: 'rgba(167,139,250,0.04)' },
-                    { accent: '#f87171', headerBg: 'rgba(248,113,113,0.13)', rowBg: 'rgba(248,113,113,0.04)' },
-                    { accent: '#86efac', headerBg: 'rgba(134,239,172,0.13)', rowBg: 'rgba(134,239,172,0.04)' },
-                    { accent: '#fbbf24', headerBg: 'rgba(251,191,36,0.13)',  rowBg: 'rgba(251,191,36,0.04)'  },
-                    { accent: '#60a5fa', headerBg: 'rgba(96,165,250,0.13)',  rowBg: 'rgba(96,165,250,0.04)'  },
-                  ];
-                  const c   = COLORS[sysIdx % COLORS.length];
-                  const fmt = n => n > 0 ? (n % 1 === 0 ? n.toFixed(0) : n.toFixed(2)) : '0';
-
-                  const calcRows = [
-                    { label: 'Total hours / crew size = hours per man', value: fmt(hrsPerMan) },
-                    { label: 'hrs per man / 8 hrs per day = qty of days', value: fmt(days) },
-                    { label: 'days / 5 days = qty of weeks', value: fmt(weeks) },
-                    { label: 'qty of days / 20 days per month = qty of months', value: months.toFixed(2) },
-                  ];
-
-                  // Phase 3: GPM signal for this system
-                  const laborCost = totalMHs * (bidSettings.laborRate ?? 42);
-                  const matCost   = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
-                  const totalCost = laborCost + matCost;
-                  const markupAmt = totalCost * ((bidSettings.markupPercent ?? 40) / 100);
-                  const gpmPct    = (totalCost + markupAmt) > 0
-                    ? (markupAmt / (totalCost + markupAmt)) * 100 : 0;
-                  const gpmColor  = gpmPct >= 30 ? '#34d399' : gpmPct >= 25 ? '#fbbf24' : '#f87171';
-
-                  return (
-                    <div key={sys.id} style={{ ...styles.laborSystemCard, borderColor: c.accent + '55' }}>
-                      {/* Header */}
-                      <div style={{ ...styles.laborXlsHeader, background: c.headerBg, borderBottomColor: c.accent + '55' }}>
-                        <span style={{ ...styles.laborXlsHeaderName, color: c.accent }}>{sys.name}:</span>
-                        <span style={styles.laborXlsHeaderHoursLabel}>Hours</span>
-                        <span style={{ ...styles.laborXlsHeaderHoursVal, color: c.accent }}>
-                          {totalMHs > 0 ? totalMHs.toFixed(2) : '—'}
-                        </span>
-                      </div>
-
-                      {/* 4-row calculation chain */}
-                      {calcRows.map((row, i) => (
-                        <div key={i} style={{ ...styles.laborXlsRow, background: i % 2 === 0 ? c.rowBg : 'transparent' }}>
-                          <span style={styles.laborXlsRowLabel}>{row.label}</span>
-                          <span style={{ ...styles.laborXlsRowValue, color: totalMHs > 0 ? '#e6edf3' : '#4b5563' }}>
-                            {row.value}
-                          </span>
-                        </div>
-                      ))}
-
-                      {/* Phase 3: Summary row — labor cost + GPM signal */}
-                      {totalMHs > 0 && (
-                        <div style={{
-                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                          padding: '8px 14px',
-                          background: 'rgba(255,255,255,0.02)',
-                          borderTop: `1px solid ${c.accent}33`,
-                        }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                            <span style={{ fontSize: '0.7rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-                              Est. Labor Cost
-                            </span>
-                            <span style={{ fontSize: '1rem', fontWeight: 800, color: c.accent, fontVariantNumeric: 'tabular-nums' }}>
-                              ${laborCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </span>
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                            <span style={{ fontSize: '0.7rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-                              System GPM
-                            </span>
-                            <span style={{ fontSize: '1rem', fontWeight: 800, color: gpmColor, fontVariantNumeric: 'tabular-nums' }}>
-                              {gpmPct.toFixed(1)}%
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* ── DOCUMENTS FOCUSED VIEW ── */}
-        {activeSidebarSection === 'documents' && (
-          <div style={styles.documentsFocusPanel}>
+        <div style={styles.documentsFocusPanel}>
             <div style={styles.documentsFocusHeader}>
               <FolderOpen size={18} color="#6b7280" />
               <span style={styles.documentsFocusTitle}>Project Documents</span>
@@ -539,21 +287,9 @@ const ProjectHome = ({
                 );
               })}
             </div>
-          </div>
-        )}
+        </div>
 
       </div>
-
-        {/* ── PROJECT SETTINGS PANEL ── */}
-        {activeSidebarSection === 'settings' && (
-          <ProjectSettingsPanel
-            bidSettings={bidSettings}
-            onBidSettingsChange={(newSettings) => {
-              onBidSettingsChange?.(newSettings);
-            }}
-            onClose={() => setActiveSidebarSection(null)}
-          />
-        )}
 
       </div>{/* end scrollArea */}
     </div>
@@ -678,7 +414,7 @@ const styles = {
   },
   financialsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridTemplateColumns: 'repeat(2, 1fr)',
     gap: 0,
   },
   financialsCell: {
@@ -999,94 +735,6 @@ const styles = {
     boxShadow: '0 4px 12px rgba(0, 123, 255, 0.2)',
   },
 
-  // ── Labor Days Panel ─────────────────────────────────────────────────────────
-  laborCrewNote: {
-    fontSize: '0.78rem',
-    color: '#6b7280',
-    marginBottom: 20,
-    padding: '6px 12px',
-    background: '#161b22',
-    border: '1px solid #1e2530',
-    borderRadius: 8,
-    display: 'inline-block',
-  },
-  laborEmptyState: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '60px 20px',
-    background: '#0d1117',
-    border: '1px solid #1e2530',
-    borderRadius: 14,
-    textAlign: 'center',
-  },
-  laborGoBtn: {
-    marginTop: 18,
-    padding: '8px 20px',
-    borderRadius: 8,
-    background: 'rgba(52,211,153,0.1)',
-    border: '1px solid rgba(52,211,153,0.25)',
-    color: '#34d399',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  laborSystemsGrid: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 16,
-  },
-  // XLS-style card
-  laborSystemCard: {
-    border: '1px solid',
-    borderRadius: 10,
-    overflow: 'hidden',
-    background: '#0d1117',
-  },
-  laborXlsHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '8px 14px',
-    borderBottom: '1px solid',
-    gap: 8,
-  },
-  laborXlsHeaderName: {
-    flex: 1,
-    fontSize: '0.88rem',
-    fontWeight: 700,
-  },
-  laborXlsHeaderHoursLabel: {
-    fontSize: '0.72rem',
-    fontWeight: 700,
-    color: '#4b5563',
-    textTransform: 'uppercase',
-    letterSpacing: '0.07em',
-    marginRight: 8,
-  },
-  laborXlsHeaderHoursVal: {
-    fontSize: '1rem',
-    fontWeight: 800,
-    minWidth: 70,
-    textAlign: 'right',
-  },
-  laborXlsRow: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '7px 14px',
-    borderBottom: '1px solid #1e2530',
-  },
-  laborXlsRowLabel: {
-    flex: 1,
-    fontSize: '0.8rem',
-    color: '#9ca3af',
-  },
-  laborXlsRowValue: {
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    minWidth: 70,
-    textAlign: 'right',
-  },
 };
 
 export default ProjectHome;

@@ -17,19 +17,34 @@ import AiTrainingPanel from './components/AiTrainingPanel';
 import AddendumViewer from './components/AddendumViewer';
 import ProjectHome from './components/ProjectHome';
 import SpecViewer from './components/SpecViewer';
+import SpecSorterPage from './components/SpecSorterPage';
 import DoorSchedule from './components/DoorSchedule';
 import BidSheet from './components/BidSheet/BidSheet';
 import BidCart from './components/BidCart/BidCart';
-import AdminDashboard from './components/Admin/AdminDashboard';
+import EquipmentRatesAdmin from './components/Admin/EquipmentRatesAdmin';
 import AdminSettingsPanel from './components/Admin/AdminSettingsPanel';
+// AdminDashboard — placeholder stub
+const AdminDashboard = ({ onClose }) => (
+  <div style={{ padding: 32, color: '#8b949e', textAlign: 'center' }}>
+    <p>Admin Dashboard coming soon.</p>
+    {onClose && <button onClick={onClose} style={{ marginTop: 12, background: 'none', border: '1px solid #30363d', color: '#8b949e', padding: '6px 16px', borderRadius: 6, cursor: 'pointer' }}>← Back</button>}
+  </div>
+);
 import ProposalGenerator from './components/ProposalGenerator/ProposalGenerator';
 import RFQManager from './components/RFQManager';
 import StudioInbox from './components/StudioInbox';
 import ShopDrawingPanel from './components/ShopDrawings/ShopDrawingPanel';
 import SidebarNav from './components/SidebarNav';
 import ProjectSideNav from './components/ProjectSideNav';
+import SuiteHome from './components/SuiteHome';
+import FrameBuilder from './components/FrameBuilder/FrameBuilder';
+import StructuralCalculator from './components/Tools/StructuralCalculator';
+import BrakeMetalCalculator from './components/Tools/BrakeMetalCalculator';
+import CaulkingCalculator from './components/Tools/CaulkingCalculator';
+import GlassWeightCalculator from './components/Tools/GlassWeightCalculator';
 import { ProjectProvider } from './context/ProjectContext'; // Import the brain
 import useBidStore from './store/useBidStore';
+import useBidProjectStore from './store/useBidProjectStore';
 import { useEstimatorSync } from './hooks/useEstimatorSync';
 import { useInboxSync } from './hooks/useInboxSync';
 
@@ -56,6 +71,26 @@ async function safeLoadFromCloud(projectName) {
 // Stable default — defined outside component to prevent re-creation on every render
 const DEFAULT_BID_SETTINGS = { laborRate: 42, crewSize: 2, laborContingency: 2.5, markupPercent: 40, taxPercent: 8.2 };
 
+/** Read company-level financial defaults from localStorage (set in Admin → Financial Defaults).
+ *  Returns a bidSettings-shaped object, falling back to DEFAULT_BID_SETTINGS for any missing field.
+ */
+function readAdminBidDefaults() {
+  try {
+    const raw = localStorage.getItem('glazebid_adminSettings');
+    if (!raw) return DEFAULT_BID_SETTINGS;
+    const fd = JSON.parse(raw)?.financialDefaults ?? {};
+    return {
+      laborRate:        Number(fd.laborRate)       || DEFAULT_BID_SETTINGS.laborRate,
+      taxPercent:       Number(fd.taxRate)         || DEFAULT_BID_SETTINGS.taxPercent,
+      markupPercent:    Number(fd.markupPct)       || DEFAULT_BID_SETTINGS.markupPercent,
+      crewSize:         DEFAULT_BID_SETTINGS.crewSize,
+      laborContingency: Number(fd.contingencyPct)  || DEFAULT_BID_SETTINGS.laborContingency,
+    };
+  } catch {
+    return DEFAULT_BID_SETTINGS;
+  }
+}
+
 function App() {
   // BroadcastChannel receiver — listens for frames pushed from GlazeBid Studio
   useEstimatorSync();
@@ -69,7 +104,7 @@ function App() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [projectType, setProjectType] = useState('pdf'); // 'pdf' or 'tiles'
-  const [currentView, setCurrentView] = useState('home'); // Navigation state
+  const [currentView, setCurrentView] = useState('suite'); // Navigation state
   const [activeSidebarSection, setActiveSidebarSection] = useState(null);
   const [showProjectList, setShowProjectList] = useState(false); // Toggle between intake and project list
   const [pageInfo, setPageInfo] = useState({ numPages: 0, currentPage: 1 }); // Track current document's pages
@@ -81,7 +116,7 @@ function App() {
   const [documentViewerPath, setDocumentViewerPath] = useState(null); // Path to spec document
 
   // Bid-wide financial settings — lifted here so ProjectHome and BidSheet share the same values
-  const [bidSettings, setBidSettings] = useState(DEFAULT_BID_SETTINGS);
+  const [bidSettings, setBidSettings] = useState(() => readAdminBidDefaults());
 
   // Region selection state for page labeling
   const [regionSelectionMode, setRegionSelectionMode] = useState(null); // { type: 'pageNumber'|'sheetTitle', callback }
@@ -232,8 +267,41 @@ function App() {
     }
   };
   
+  // Open Studio standalone (no project context needed from suite)
+  const openStudio = () => {
+    if (window.electronAPI?.openStudio) {
+      window.electronAPI.openStudio();
+    } else if (window.electronAPI?.openStudioProject) {
+      window.electronAPI.openStudioProject({ projectId: '', filePath: '', calibrationData: null, sheetId: null });
+    } else {
+      window.open('http://localhost:5174', '_blank');
+    }
+  };
+
+  // Suite launcher — maps module card IDs to views
+  const handleSuiteLaunch = (moduleId) => {
+    if (moduleId === 'bidbuilder') setCurrentView('home');
+    else if (moduleId === 'studio')  openStudio();
+    else if (moduleId === 'framebuilder') setCurrentView('frameBuilder');
+    else if (moduleId === 'shopDrawings') setCurrentView('shopDrawings');
+    else if (moduleId === 'structuralCalc') setCurrentView('structuralCalc');
+    else if (moduleId === 'brakeMetalCalc') setCurrentView('brakeMetalCalc');
+    else if (moduleId === 'caulkingCalc') setCurrentView('caulkingCalc');
+    else if (moduleId === 'glassWeightCalc') setCurrentView('glassWeightCalc');
+  };
+
   // Safety check to reset to home screen
   const resetToHome = () => {
+    // Guard: warn if leaving bidsheet with dirty data
+    if (currentView === 'bidsheet') {
+      const { isDirty, systems } = useBidProjectStore.getState();
+      if (isDirty && systems.length > 0) {
+        const confirmed = window.confirm(
+          'Your bid has unsaved changes.\n\nLeave and close this project?'
+        );
+        if (!confirmed) return;
+      }
+    }
     setCurrentProject(null);
     setProjectData(null);
     setSelectedSheet(null);
@@ -242,7 +310,7 @@ function App() {
     localStorage.removeItem('projectData');
     localStorage.removeItem('last_project'); // Clear any saved session
     window.location.hash = '';
-    setCurrentView('home');
+    setCurrentView('suite');
   };
 
   // MenuBar handlers
@@ -334,11 +402,13 @@ function App() {
       // Load full project data
       loadProjectData(currentProject);
       // Restore per-project bid settings (labor rate, markup %, etc.)
+      // Fall back to admin financial defaults (not hardcoded values) for new/unset projects.
       try {
         const savedBS = localStorage.getItem(`glazebid:bidSettings:${currentProject}`);
-        setBidSettings(savedBS ? { ...DEFAULT_BID_SETTINGS, ...JSON.parse(savedBS) } : DEFAULT_BID_SETTINGS);
+        const adminDefaults = readAdminBidDefaults();
+        setBidSettings(savedBS ? { ...adminDefaults, ...JSON.parse(savedBS) } : adminDefaults);
       } catch {
-        setBidSettings(DEFAULT_BID_SETTINGS);
+        setBidSettings(readAdminBidDefaults());
       }
       // Restore last selected sheet for this project
       try {
@@ -472,6 +542,16 @@ function App() {
   };
 
   const handleViewChange = (view) => {
+    // Guard: warn before leaving the bid sheet if there are unsaved systems
+    if (currentView === 'bidsheet' && view !== 'bidsheet') {
+      const { isDirty, systems } = useBidProjectStore.getState();
+      if (isDirty && systems.length > 0) {
+        const confirmed = window.confirm(
+          'Your bid has unsaved changes.\n\nYour data is auto-saved locally, but click "Save Bid" on the bid sheet to make it permanent.\n\nLeave anyway?'
+        );
+        if (!confirmed) return;
+      }
+    }
     setCurrentView(view);
     if (view === 'home') {
       resetToHome();
@@ -667,7 +747,7 @@ function App() {
     const [settingsTab, setSettingsTab] = React.useState('training');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 70px)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
 
         {/* Settings header + tab nav — always visible */}
         <div style={{ padding: '16px 32px 0', background: 'var(--bg-deep)', borderBottom: '1px solid #30363d', flexShrink: 0 }}>
@@ -740,12 +820,28 @@ function App() {
             >
               📊 Rate Defaults
             </button>
+            <button
+              onClick={() => setSettingsTab('equipment-rates')}
+              style={{
+                padding: '8px 20px',
+                backgroundColor: settingsTab === 'equipment-rates' ? '#1c2128' : 'transparent',
+                border: 'none',
+                borderBottom: settingsTab === 'equipment-rates' ? '2px solid #58a6ff' : '2px solid transparent',
+                color: settingsTab === 'equipment-rates' ? '#58a6ff' : '#8b949e',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: '0.2s'
+              }}
+            >
+              🏗️ Equipment Rates
+            </button>
           </div>
         </div>
 
         {/* AI Training Tab — padded narrow container */}
         {settingsTab === 'training' && (
-          <div style={{ padding: '32px 40px', maxWidth: '900px', width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '32px 40px', maxWidth: '900px', width: '100%', boxSizing: 'border-box' }}>
             <div style={styles.settingsSection}>
               <h2 style={styles.sectionTitle}>🧠 AI Training</h2>
               <p style={styles.sectionDescription}>
@@ -776,8 +872,15 @@ function App() {
 
         {/* Admin Rate Defaults Tab — AdminSettingsPanel */}
         {settingsTab === 'admin-rates' && (
-          <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
             <AdminSettingsPanel />
+          </div>
+        )}
+
+        {/* Equipment Rental Rates Tab */}
+        {settingsTab === 'equipment-rates' && (
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+            <EquipmentRatesAdmin />
           </div>
         )}
       </div>
@@ -785,14 +888,44 @@ function App() {
   };
 
   const renderContent = () => {
+    // Suite home — must be first, before the !currentProject fallback
+    if (currentView === 'suite') {
+      return <SuiteHome onLaunch={handleSuiteLaunch} />;
+    }
+
     // Settings view - must be checked before the !currentProject guard
     if (currentView === 'settings') {
       return <SettingsView />;
     }
 
-    // Shop Drawings - standalone, works without a loaded project
+    // Shop Drawings - standalone suite module
     if (currentView === 'shopDrawings') {
-      return <ShopDrawingPanel />;
+      return <ShopDrawingPanel onBack={() => setCurrentView('suite')} />;
+    }
+
+    // Tools
+    if (currentView === 'structuralCalc') {
+      return <StructuralCalculator onBack={() => setCurrentView('suite')} />;
+    }
+    if (currentView === 'brakeMetalCalc') {
+      return <BrakeMetalCalculator onBack={() => setCurrentView('suite')} />;
+    }
+    if (currentView === 'caulkingCalc') {
+      return <CaulkingCalculator onBack={() => setCurrentView('suite')} />;
+    }
+    if (currentView === 'glassWeightCalc') {
+      return <GlassWeightCalculator onBack={() => setCurrentView('suite')} />;
+    }
+
+    // Parametric Frame Builder - standalone suite module
+    if (currentView === 'frameBuilder') {
+      return (
+        <FrameBuilder
+          onBack={() => setCurrentView('suite')}
+          project={projectData}
+          onNavigate={handleViewChange}
+        />
+      );
     }
 
     // Project Intake or Project List (Home)
@@ -817,6 +950,7 @@ function App() {
           onProjectReady={handleProjectReady}
           onShowProjects={() => setShowProjectList(true)}
           onSettings={() => setCurrentView('settings')}
+          onBack={() => setCurrentView('suite')}
         />
       );
     }
@@ -837,6 +971,17 @@ function App() {
           onBidSettingsChange={setBidSettings}
           activeSidebarSection={activeSidebarSection}
           setActiveSidebarSection={setActiveSidebarSection}
+        />
+      );
+    }
+
+    // Spec Sorter
+    if (currentView === 'spec-sorter') {
+      return (
+        <SpecSorterPage
+          project={currentProject}
+          sheets={sheets}
+          onBack={() => setCurrentView('projectHome')}
         />
       );
     }
@@ -984,18 +1129,15 @@ function App() {
           />
         )}
         
-        {/* 64px icon rail — home page + standalone views */}
-        {(currentView === 'home' || currentView === 'shopDrawings') && <SidebarNav currentView={currentView} onViewChange={handleViewChange} />}
-
-        <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0', marginLeft: (currentView === 'home' || currentView === 'shopDrawings') ? '64px' : '0'}}>
-          {/* Show global breadcrumb header whenever a project is loaded (all views except bare home/settings) */}
-          {currentView !== 'home' && currentView !== 'documentViewer' && currentView !== 'settings' && currentProject && (
+        <div style={{...styles.mainWrapper, marginTop: isElectron ? '40px' : '0'}}>
+          {/* Show global breadcrumb header whenever a project is loaded (all views except bare home/settings/suite modules) */}
+          {currentView !== 'home' && currentView !== 'documentViewer' && currentView !== 'settings' && currentView !== 'suite' && currentView !== 'frameBuilder' && currentView !== 'shopDrawings' && currentProject && (
             <>
               <Header 
                 project={currentProject} 
                 projectData={projectData}
                 onBack={resetToHome}
-                onBackToProjectHome={currentView === 'projectHome' ? resetToHome : () => setCurrentView('projectHome')}
+                onBackToProjectHome={currentView === 'projectHome' ? resetToHome : () => handleViewChange('projectHome')}
               />
               {/* Menu bar for non-Electron mode (browser) */}
               {!isElectron && (
@@ -1012,9 +1154,9 @@ function App() {
               )}
             </>
           )}
-          {/* Project-level sidebar — shown for all inner project views */}
-          {currentProject && currentView !== 'home' && currentView !== 'settings' && currentView !== 'documentViewer' ? (
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+          {/* Project-level sidebar — shown for all inner project views (not suite modules) */}
+          {currentProject && currentView !== 'home' && currentView !== 'settings' && currentView !== 'documentViewer' && currentView !== 'suite' && currentView !== 'frameBuilder' && currentView !== 'shopDrawings' ? (
+            <div style={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
               <ProjectSideNav
                 currentView={currentView}
                 onNavigate={handleViewChange}
@@ -1025,7 +1167,7 @@ function App() {
                 setActiveSidebarSection={setActiveSidebarSection}
                 totalSheets={sheets ? sheets.filter(s => ['Architectural','Structural','Other'].includes(s.category)).length : 0}
               />
-              <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 {renderContent()}
               </div>
             </div>
@@ -1039,23 +1181,26 @@ function App() {
 const styles = {
   appContainer: {
     display: 'flex',
-    flexDirection: 'column', /* sidebar is fixed; no flex row needed */
+    flexDirection: 'column',
     height: '100vh',
     width: '100vw',
     backgroundColor: 'var(--bg-main)',
     color: 'var(--text-primary)',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    border: '2px solid #30363d',
   },
   mainWrapper: {
-    flex: 1,              // Take up all remaining width
+    flex: 1,
+    minHeight: 0,          // critical: prevents flex child from overflowing parent
     display: 'flex',
     flexDirection: 'column',
-    height: '100%'
+    overflow: 'hidden',
+    boxSizing: 'border-box',
   },
   workspace: {
     display: 'flex',
     flex: 1,           // Fill remaining space under header
-    height: 'calc(100vh - 70px)', // Full screen minus header height
     overflow: 'hidden',
     backgroundColor: 'var(--bg-deep)',
     position: 'relative',
@@ -1098,7 +1243,7 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 'calc(100vh - 70px)',
+    flex: 1,
     backgroundColor: 'var(--bg-deep)',
     color: 'var(--text-primary)',
     textAlign: 'center',
@@ -1129,7 +1274,6 @@ const styles = {
     padding: '40px',
     maxWidth: '900px',
     margin: '0 auto',
-    minHeight: 'calc(100vh - 70px)',
     backgroundColor: 'var(--bg-deep)',
     overflowY: 'auto',
     width: '100%',

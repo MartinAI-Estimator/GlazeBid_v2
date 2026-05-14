@@ -1,0 +1,14 @@
+{
+  "name": "@glazebid/frame-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GlazeBid Parametric Frame Builder — shared engine, types, and BOM resolver",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

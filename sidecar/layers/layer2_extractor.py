@@ -130,13 +130,20 @@ def _parse_scale_ratio(text: str) -> Optional[float]:
 
     text = text.strip()
 
+    # Character classes for quote variants found in PDFs:
+    # Inch marks: " (U+0022), \u201C (\u201c left dq), \u201D (\u201d right dq)
+    # Foot marks: ' (U+0027), \u2018 (left sq), \u2019 (right sq)
+    INCH_MARKS = r'["\u201c\u201d]'
+    FOOT_MARKS = r'[\'\u2018\u2019]'
+    FOOT_OR_DASH = r'[\'\u2018\u2019\-]'
+
     # Replace Unicode fraction characters with decimal equivalents before parsing
     # Check for Unicode fraction followed by " = 1'-0" pattern FIRST
     for char, value in UNICODE_FRACTIONS.items():
         if char in text:
             # Pattern: ⅛" = 1'-0" → treat as fraction = 1 foot
             frac_pattern = re.compile(
-                re.escape(char) + r'\s*["\u201d]?\s*=\s*1\s*[\'-]',
+                re.escape(char) + r'\s*' + INCH_MARKS + r'?\s*=\s*1\s*' + FOOT_OR_DASH,
                 re.IGNORECASE
             )
             m = frac_pattern.search(text)
@@ -156,7 +163,7 @@ def _parse_scale_ratio(text: str) -> Optional[float]:
     # Pattern 1: "N/D" = 1'-0" style (with or without spaces around =)
     # Handles: 1/8"=1'-0"  1/8" = 1'-0"  3/32"=1'-0"
     fraction_eq_foot = re.compile(
-        r'(\d+)\s*/\s*(\d+)\s*["\u201d]?\s*=\s*1\s*[\'-]'
+        r'(\d+)\s*/\s*(\d+)\s*' + INCH_MARKS + r'?\s*=\s*1\s*' + FOOT_OR_DASH
     )
     m = fraction_eq_foot.search(text)
     if m:
@@ -168,7 +175,7 @@ def _parse_scale_ratio(text: str) -> Optional[float]:
             return pts_per_inch
 
     # Pattern 2: Integer inches = 1'-0" style (e.g. 1" = 1'-0", 2" = 1'-0")
-    int_eq_foot = re.compile(r'(\d+)\s*["\u201d]\s*=\s*1\s*[\'-]')
+    int_eq_foot = re.compile(r'(\d+)\s*' + INCH_MARKS + r'\s*=\s*1\s*' + FOOT_OR_DASH)
     m = int_eq_foot.search(text)
     if m:
         paper_inches = float(m.group(1))
@@ -211,30 +218,38 @@ def detect_scale(page: fitz.Page) -> ScaleCalibration:
     try:
         all_text_blocks = page.get_text("blocks")
 
-        # ── Method 1: Title block search (bottom 20% + right 25%) ──
+        # ── Method 1: Title block search ──
+        # Many architectural PDFs place title block text in an overflow area
+        # below or to the right of the visible page (up to ~130% of page dims).
+        # PyMuPDF clip= doesn't capture overflow content, so we filter manually.
         rect = page.rect
         w, h = rect.width, rect.height
 
-        title_regions = [
-            fitz.Rect(0, h * 0.80, w, h),           # bottom 20%
-            fitz.Rect(w * 0.75, 0, w, h),            # right 25%
-        ]
+        def _in_title_region(bx, by):
+            """Check if block origin is in a likely title-block region."""
+            # bottom 20% of page (or overflow below)
+            if by >= h * 0.80:
+                return True
+            # right 25% of page (or overflow right)
+            if bx >= w * 0.75:
+                return True
+            return False
 
-        for region in title_regions:
-            blocks = page.get_text("blocks", clip=region)
-            for block in blocks:
-                if len(block) <= 4:
-                    continue
-                text = block[4].strip()
-                # Check each line in the block
-                for line in text.split('\n'):
-                    pts = _parse_scale_ratio(line)
-                    if pts and pts > 0:
-                        return ScaleCalibration(
-                            scale_factor=pts,
-                            scale_confidence=0.90,
-                            source="title_block"
-                        )
+        for block in all_text_blocks:
+            if len(block) <= 4:
+                continue
+            bx, by = block[0], block[1]
+            if not _in_title_region(bx, by):
+                continue
+            text = block[4].strip()
+            for line in text.split('\n'):
+                pts = _parse_scale_ratio(line)
+                if pts and pts > 0:
+                    return ScaleCalibration(
+                        scale_factor=pts,
+                        scale_confidence=0.90,
+                        source="title_block"
+                    )
 
         # ── Method 2: Full page scan — collect all ratio matches ──
         ratios = []
@@ -345,23 +360,24 @@ def validate_graph(graph: GraphData) -> GraphData:
             f"Sheet may be empty or extraction failed."
         )
 
-    # Bounds check
+    # Bounds check — demoted to warnings (architectural PDFs commonly have
+    # crop marks, borders, and bleed paths that exceed the page mediabox)
     if graph.x and graph.page_width_pts > 0 and graph.page_height_pts > 0:
         xs = [n[0] for n in graph.x]
         ys = [n[1] for n in graph.x]
         if max(xs) > graph.page_width_pts + 1.0:
-            errors.append(
+            warnings.append(
                 f"Node x coordinate {max(xs):.1f} exceeds page width {graph.page_width_pts:.1f}"
             )
         if max(ys) > graph.page_height_pts + 1.0:
-            errors.append(
+            warnings.append(
                 f"Node y coordinate {max(ys):.1f} exceeds page height {graph.page_height_pts:.1f}"
             )
 
-    # NaN/Inf check on edge attributes
+    # NaN/Inf check on edge attributes (skip None values gracefully)
     if graph.edge_attr:
         for i, attr in enumerate(graph.edge_attr):
-            if any(not math.isfinite(v) for v in attr):
+            if any(v is not None and not math.isfinite(v) for v in attr):
                 errors.append(f"Edge {i} has NaN or Inf in edge_attr: {attr}")
                 break  # Report first occurrence only
 
