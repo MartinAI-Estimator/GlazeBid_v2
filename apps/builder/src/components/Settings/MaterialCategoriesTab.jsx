@@ -16,8 +16,9 @@ export default function MaterialCategoriesTab() {
 
   const stored = adminSettings?.materialCategories;
   const [categories, setCategories] = useState(
-    () => (stored?.length ? stored : []).map(c => ({ ...c }))
+    () => (stored?.length ? stored : DEFAULT_CATEGORIES).map(c => ({ ...c }))
   );
+  const [focusedId, setFocusedId] = useState(null);
   const [saved, setSaved] = useState(false);
 
   const update = useCallback((id, field, value) => {
@@ -113,16 +114,22 @@ export default function MaterialCategoriesTab() {
               type="text"
               value={cat.label}
               onChange={e => update(cat.id, 'label', e.target.value)}
+              onFocus={() => setFocusedId(cat.id)}
+              onBlur={() => setFocusedId(null)}
               placeholder="Category name…"
               style={{
                 flex: 1,
                 padding: '0.4rem 0.6rem',
                 background: 'var(--bg-deep)',
-                border: '1px solid var(--border-subtle)',
+                border: focusedId === cat.id
+                  ? '1px solid var(--accent-blue)'
+                  : '1px solid var(--border-subtle)',
                 borderRadius: 6,
                 color: 'var(--text-primary)',
                 fontSize: '0.875rem',
                 outline: 'none',
+                boxShadow: focusedId === cat.id ? '0 0 0 2px rgba(59,130,246,0.25)' : 'none',
+                transition: 'border-color 0.15s, box-shadow 0.15s',
               }}
             />
 

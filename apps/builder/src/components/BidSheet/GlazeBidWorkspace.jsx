@@ -60,6 +60,15 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
   const [selectedSystem, setSelectedSystem] = useState(null);
   const [showDropZone, setShowDropZone] = useState(true);
   const [showHomeBase, setShowHomeBase] = useState(true);
+  // Pending jump ID: read from localStorage at mount, resolved to a full system object
+  // once importedSystems is available (see useEffect below).
+  const [pendingJumpId, setPendingJumpId] = useState(() => {
+    try {
+      const id = localStorage.getItem('glazebid:jumpToSystem');
+      if (id) { localStorage.removeItem('glazebid:jumpToSystem'); return id; }
+    } catch { /* ignore */ }
+    return null;
+  });
   const [activeTool, setActiveTool] = useState(null);
   const [customTools, setCustomTools] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -79,7 +88,17 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
   });
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
 
-  // ── Reactive rate subscription — triggers re-render when rates change ──
+  // ── Jump-to-system: resolve pendingJumpId → full system object once systems are loaded ──
+  useEffect(() => {
+    if (!pendingJumpId) return;
+    const target = importedSystems.find(sys => sys.id === pendingJumpId);
+    if (target) {
+      setPendingJumpId(null);
+      setSelectedSystem(target);
+      setShowHomeBase(false);
+      setShowDropZone(false);
+    }
+  }, [importedSystems, pendingJumpId]);
   const laborRate = useProductionRatesStore(s => s.laborRate);
   const setGlobalLaborRate = useProductionRatesStore(s => s.setLaborRate);
   const beadsOfCaulk = useProductionRatesStore(s => s.beadsOfCaulk || 2);

@@ -31,6 +31,7 @@ const AdminDashboard = ({ onClose }) => (
   </div>
 );
 import ProposalGenerator from './components/ProposalGenerator/ProposalGenerator';
+import ReviewBidPage from './components/ReviewBidPage';
 import RFQManager from './components/RFQManager';
 import StudioInbox from './components/StudioInbox';
 import ShopDrawingPanel from './components/ShopDrawings/ShopDrawingPanel';
@@ -295,6 +296,7 @@ function App() {
     else if (moduleId === 'quickQuote') setCurrentView('quickQuote');
     else if (moduleId === 'specSplitter') setCurrentView('spec-sorter');
     else if (moduleId === 'proposal') setCurrentView('proposal');
+    else if (moduleId === 'reviewbid') setCurrentView('reviewbid');
     else if (moduleId === 'openProjects') { setCurrentView('glazebidHome'); }
   };
 
@@ -1035,6 +1037,17 @@ function App() {
     // Bid Cart & Labor Engine
     if (currentView === 'bid-cart') {
       return <BidCart project={currentProject} onNavigate={setCurrentView} />;
+    }
+
+    // Review Bid Page
+    if (currentView === 'reviewbid') {
+      return (
+        <ReviewBidPage
+          project={currentProject}
+          onBack={() => setCurrentView('projectHome')}
+          onNavigate={setCurrentView}
+        />
+      );
     }
 
     // Proposal Generator

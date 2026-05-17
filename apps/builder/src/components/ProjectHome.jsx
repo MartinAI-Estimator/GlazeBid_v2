@@ -235,14 +235,20 @@ const ProjectHome = ({
             <p style={styles.projectSubtitle}>Glazing Estimation Workspace</p>
           </div>
           <div style={styles.projectMeta}>
-            <div style={styles.metaItem}>
-              <Clock size={16} color="#9ca3af" />
-              <span style={styles.metaText}>Modified Today</span>
-            </div>
-            <div style={styles.metaItem}>
-              <CheckCircle size={16} color="#10b981" />
-              <span style={styles.metaText}>Ready</span>
-            </div>
+            <button
+              onClick={() => onLaunch?.('reviewbid')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
+                padding: '0.55rem 1.25rem', borderRadius: 8,
+                background: 'rgba(88,166,255,0.12)', border: '1px solid rgba(88,166,255,0.35)',
+                color: '#58a6ff', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#58a6ff'; e.currentTarget.style.color = '#0d1117'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(88,166,255,0.12)'; e.currentTarget.style.color = '#58a6ff'; }}
+            >
+              📋 Review Bid
+            </button>
           </div>
         </div>
 

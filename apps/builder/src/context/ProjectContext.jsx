@@ -283,12 +283,7 @@ export const ProjectProvider = ({ children }) => {
         // Migration: if materialCategories still contains the old hardcoded
         // defaults (identifiable by the original ids), wipe them so the
         // tab starts blank as intended.
-        const OLD_DEFAULT_IDS = ['aluminum','glass','doors','hardware','equipment','caulking','subcontractor'];
-        const cats = merged.materialCategories || [];
-        const isOldDefaults =
-          cats.length === OLD_DEFAULT_IDS.length &&
-          cats.every((c, i) => c.id === OLD_DEFAULT_IDS[i]);
-        if (isOldDefaults) merged.materialCategories = [];
+        // Migration removed — no longer wipe saved categories.
         return merged;
       }
     } catch (e) {}
