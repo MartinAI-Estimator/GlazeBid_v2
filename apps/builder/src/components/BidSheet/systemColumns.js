@@ -6,6 +6,8 @@
 export const SYSTEM_COLUMNS = {
   'ext-sf-1': [
     { key: 'frame_number', label: 'Frame Name', editable: true, type: 'text', width: '140px', tooltip: 'Frame identifier (e.g., A01-A05)', group: 'identity' },
+    { key: 'width',  label: 'W″', editable: true, type: 'number', width: '72px', tooltip: 'Frame width in inches', group: 'geometry' },
+    { key: 'height', label: 'H″', editable: true, type: 'number', width: '72px', tooltip: 'Frame height in inches', group: 'geometry' },
     { key: 'comments', label: 'Comments', editable: true, type: 'text', width: '180px', tooltip: 'Additional notes or specifications', group: 'identity' },
     { key: 'subsills', label: 'Subsills', editable: true, type: 'number', width: '90px', tooltip: 'Number of subsills to add', group: 'geometry' },
     { key: 'receptors', label: 'Receptors', editable: true, type: 'number', width: '95px', tooltip: 'Number of receptor runs', group: 'geometry' },
@@ -22,6 +24,8 @@ export const SYSTEM_COLUMNS = {
   
   'ext-sf-2': [
     { key: 'frame_number', label: 'Frame Name', editable: true, type: 'text', width: '140px', tooltip: 'Frame identifier (e.g., A01-A05)', group: 'identity' },
+    { key: 'width',  label: 'W″', editable: true, type: 'number', width: '72px', tooltip: 'Frame width in inches', group: 'geometry' },
+    { key: 'height', label: 'H″', editable: true, type: 'number', width: '72px', tooltip: 'Frame height in inches', group: 'geometry' },
     { key: 'comments', label: 'Comments', editable: true, type: 'text', width: '180px', tooltip: 'Additional notes or specifications', group: 'identity' },
     { key: 'subsills', label: 'Subsills', editable: true, type: 'number', width: '90px', tooltip: 'Number of subsills to add', group: 'geometry' },
     { key: 'receptors', label: 'Receptors', editable: true, type: 'number', width: '95px', tooltip: 'Number of receptor runs', group: 'geometry' },
@@ -38,6 +42,8 @@ export const SYSTEM_COLUMNS = {
   
   'int-sf': [
     { key: 'frame_number', label: 'Frame Name', editable: true, type: 'text', width: '140px', tooltip: 'Frame identifier (e.g., A01-A05)', group: 'identity' },
+    { key: 'width',  label: 'W″', editable: true, type: 'number', width: '72px', tooltip: 'Frame width in inches', group: 'geometry' },
+    { key: 'height', label: 'H″', editable: true, type: 'number', width: '72px', tooltip: 'Frame height in inches', group: 'geometry' },
     { key: 'comments', label: 'Comments', editable: true, type: 'text', width: '180px', tooltip: 'Additional notes or specifications', group: 'identity' },
     // Note: Column D is empty in Int SF
     { key: 'receptors', label: 'Receptors', editable: true, type: 'number', width: '95px', tooltip: 'Number of receptor runs', group: 'geometry' },
@@ -54,6 +60,8 @@ export const SYSTEM_COLUMNS = {
   
   'cap-cw': [
     { key: 'frame_number', label: 'Frame Name', editable: true, type: 'text', width: '140px', tooltip: 'Frame identifier (e.g., A01-A05)', group: 'identity' },
+    { key: 'width',  label: 'W″', editable: true, type: 'number', width: '72px', tooltip: 'Frame width in inches', group: 'geometry' },
+    { key: 'height', label: 'H″', editable: true, type: 'number', width: '72px', tooltip: 'Frame height in inches', group: 'geometry' },
     { key: 'comments', label: 'Comments', editable: true, type: 'text', width: '180px', tooltip: 'Additional notes or specifications', group: 'identity' },
     { key: 'stool_trim', label: 'Stool Trim', editable: true, type: 'number', width: '100px', tooltip: 'Stool and trim work', group: 'geometry' },
     { key: 'receptors', label: 'Receptors', editable: true, type: 'number', width: '95px', tooltip: 'Number of receptor runs', group: 'geometry' },
@@ -70,6 +78,8 @@ export const SYSTEM_COLUMNS = {
   
   'ssg-cw': [
     { key: 'frame_number', label: 'Frame Name', editable: true, type: 'text', width: '140px', tooltip: 'Frame identifier (e.g., A01-A05)', group: 'identity' },
+    { key: 'width',  label: 'W″', editable: true, type: 'number', width: '72px', tooltip: 'Frame width in inches', group: 'geometry' },
+    { key: 'height', label: 'H″', editable: true, type: 'number', width: '72px', tooltip: 'Frame height in inches', group: 'geometry' },
     { key: 'comments', label: 'Comments', editable: true, type: 'text', width: '180px', tooltip: 'Additional notes or specifications', group: 'identity' },
     { key: 'stool_trim', label: 'Stool Trim', editable: true, type: 'number', width: '100px', tooltip: 'Stool and trim work', group: 'geometry' },
     { key: 'receptors', label: 'Receptors', editable: true, type: 'number', width: '95px', tooltip: 'Number of receptor runs', group: 'geometry' },

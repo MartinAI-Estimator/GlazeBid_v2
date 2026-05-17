@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { QuoteProvider, useQuote } from './context/QuoteContext'
 import Header from './components/Header'
 import TabBar from './components/TabBar'
@@ -8,7 +7,7 @@ import ScopeTab from './components/ScopeTab'
 import GrandTotalBar from './components/GrandTotalBar'
 import './styles/globals.css'
 
-function QuickQuoteContent({ onSignOut, onVendors }) {
+function QuickQuoteContent({ onBack, onSignOut, onVendors }) {
   const { sheetNames } = useQuote()
   const [activeTab, setActiveTab] = useState('summary')
 
@@ -17,7 +16,9 @@ function QuickQuoteContent({ onSignOut, onVendors }) {
       <div className="app">
         <Header extraLeft={
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginRight: 8 }}>
-            <Link to="/" style={{ fontSize: 11, color: '#64748b', textDecoration: 'none', whiteSpace: 'nowrap' }}>← Back</Link>
+            {onBack && (
+              <button onClick={onBack} style={{ fontSize: 11, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'none', padding: 0, whiteSpace: 'nowrap' }}>← Back</button>
+            )}
             {onVendors && (
               <button onClick={onVendors} style={{ fontSize: 11, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
                 Vendors
@@ -45,10 +46,10 @@ function QuickQuoteContent({ onSignOut, onVendors }) {
   )
 }
 
-export default function QuickQuoteApp({ onSignOut, onVendors }) {
+export default function QuickQuoteApp({ onBack, onSignOut, onVendors }) {
   return (
     <QuoteProvider>
-      <QuickQuoteContent onSignOut={onSignOut} onVendors={onVendors} />
+      <QuickQuoteContent onBack={onBack} onSignOut={onSignOut} onVendors={onVendors} />
     </QuoteProvider>
   )
 }

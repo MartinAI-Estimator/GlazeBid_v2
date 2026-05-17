@@ -12,8 +12,13 @@ import CustomSystemModal from '../parametric/CustomSystemModal';
 import StructuralPanel from '../structural/StructuralPanel';
 import { DrawingIntelligencePanel } from '../panels/DrawingIntelligencePanel';
 import StudioTitleBar from './StudioTitleBar';
+import AIModelPanel from '../AIModelPanel';
+import AISessionStatus from '../AISessionStatus';
+import TrainingDataPanel from '../TrainingDataPanel';
 import { type CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useDrawingIntelligence, type CandidateWithReview } from '../../hooks/useDrawingIntelligence';
+import { useSessionLearner } from '../../hooks/useSessionLearner';
+import { useGbidAIBridge } from '../../hooks/useGbidAIBridge';
 import { useStudioStore, type PdfTab } from '../../store/useStudioStore';
 import type { RectShape, PolygonShape } from '../../types/shapes';
 import type { ScanResult } from '../../hooks/useAIAutoScan';
@@ -103,7 +108,14 @@ export default function StudioLayout() {
   // ── Drawing Intelligence panel toggle + hook ──────────────────────────────
   const [showDrawingIntelligence, setShowDrawingIntelligence] = useState(false);
   const di = useDrawingIntelligence();
+  // ── Ghost Detector session learner — lifted so useGbidAIBridge can access it ─
+  // The same learner instance is passed down to StudioCanvas → useGhostDetector
+  // so session state persists across project saves/reopens via the IPC bridge.
+  const learner = useSessionLearner();
+  useGbidAIBridge(learner);
 
+  // ── AI panel tools section toggle ───────────────────────────────────
+  const [showAITools, setShowAITools] = useState(false);
   // Auto-check sidecar health when the DI panel is opened
   useEffect(() => {
     if (showDrawingIntelligence) {
@@ -249,6 +261,7 @@ export default function StudioLayout() {
               diCandidates={di.state.candidates}
               onDIConfirm={di.confirmCandidate}
               onDIReject={di.rejectCandidate}
+              sessionLearner={learner}
             />
             {/* CalibrationModal renders inside this relative container so
                 its `absolute inset-0` covers only the canvas area, not the panels */}
@@ -283,6 +296,24 @@ export default function StudioLayout() {
               onReset={di.reset}
               hasPdf={!!pdfFileName}
             />
+
+            {/* ── AI Tools section ──────────────────────────────── */}
+            <div className="border-t border-slate-800 flex-shrink-0">
+              <button
+                onClick={() => setShowAITools(v => !v)}
+                className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+              >
+                <span>AI Tools</span>
+                <span className="text-slate-600">{showAITools ? '▲' : '▼'}</span>
+              </button>
+              {showAITools && (
+                <div className="px-2 pb-3 flex flex-col gap-2 overflow-y-auto max-h-64">
+                  <AIModelPanel />
+                  <AISessionStatus />
+                  <TrainingDataPanel />
+                </div>
+              )}
+            </div>
           </aside>
         ) : showTypeLibrary ? (
           <aside className="w-64 flex-shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col overflow-hidden">

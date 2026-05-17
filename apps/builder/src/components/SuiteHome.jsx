@@ -46,6 +46,13 @@ const TOOLS = [
     description: 'Upload a project specification book — automatically splits by CSI section, scans for glazing scope, and flags key requirements like BOD, finish, performance, and warranty.',
     tags: ['Spec Scan', 'BOD', 'Risk Check'],
   },
+  {
+    id: 'quickQuote',
+    label: 'Quick Quote',
+    icon: '💲',
+    accent: '#fbbf24',
+    description: 'Fast multi-scope estimate — build system takeoffs, apply labor and material rates, and generate a summary.',
+  },
 ];
 
 const MODULES = [

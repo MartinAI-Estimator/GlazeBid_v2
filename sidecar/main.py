@@ -515,6 +515,13 @@ async def prescan_drawing_set_endpoint(request: PrescanRequest):
         return {"status": "error", "error": str(e)}
 
 
+# ── Spec Reader Router ────────────────────────────────────────────────────────
+
+from spec_reader.router import spec_reader_router
+
+app.include_router(spec_reader_router, prefix="/spec-reader", tags=["Spec Reader"])
+
+
 # ── Entry Point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":

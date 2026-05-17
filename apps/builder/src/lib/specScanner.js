@@ -411,7 +411,7 @@ function toSafeCopy(pdfBuffer) {
   return new Uint8Array(pdfBuffer.slice(0));
 }
 
-async function extractPageTexts(pdfBuffer) {
+export async function extractPageTexts(pdfBuffer) {
   const data = toSafeCopy(pdfBuffer);
 
   const doc = await pdfjsLib.getDocument({
@@ -489,4 +489,89 @@ export async function scanAllSections(sections) {
     results.push(await scanSpecSection(section));
   }
   return results;
+}
+
+// ─── AI-Powered Enhancement ───────────────────────────────────────────────────
+
+// Maps AI-returned keys → internal findings keys (where names differ)
+const AI_KEY_MAP = {
+  noSubstitutions: 'substitutions',
+};
+
+/**
+ * Use Claude (via Electron ai:chat IPC) to extract spec findings that regex may miss.
+ * Fills gaps — only adds findings for categories the regex scanner did NOT already find.
+ *
+ * @param {Array<{page: number, text: string}>} pageTexts  — already extracted page texts
+ * @returns {Promise<{ enhanced: boolean, findings: Object, error?: string }>}
+ */
+export async function aiEnhanceSection(pageTexts) {
+  if (typeof window === 'undefined' || !window.electronAPI?.aiChat) {
+    return { enhanced: false, findings: {} };
+  }
+
+  // Build page-separated text, cap at ~4500 chars to fit in Haiku token budget
+  let combined = '';
+  for (const { page, text } of pageTexts) {
+    const chunk = `\n--- PAGE ${page} ---\n${text.slice(0, 1200)}`;
+    if (combined.length + chunk.length > 4500) break;
+    combined += chunk;
+  }
+
+  const systemPrompt =
+    'You are a commercial glazing estimator reviewing a specification section. ' +
+    'Extract key information and return ONLY a valid JSON object — no markdown fences, no explanation.';
+
+  const userMsg =
+    'Analyze this spec text. Return ONLY a JSON object where each key contains:\n' +
+    '{ "found": boolean, "excerpt": "<= 80 chars from text", "page": integer_or_null }\n\n' +
+    'Keys to extract:\n' +
+    '  basisOfDesign      — named manufacturer as basis of design\n' +
+    '  noSubstitutions    — no-substitution / sole-source / proprietary language\n' +
+    '  delegatedDesign    — engineering delegated to contractor / PE stamp required\n' +
+    '  finish             — surface finish or coating (anodized, PVDF, Kynar, paint)\n' +
+    '  aamaClass          — AAMA 2603/2604/2605 finish performance class\n' +
+    '  performance        — DP, U-value, SHGC, air/water infiltration values\n' +
+    '  warranty           — warranty period or terms\n' +
+    '  mockup             — full-size mock-up or prototype panel required\n' +
+    '  testRequirements   — field testing required (AAMA/ASTM/water test)\n' +
+    '  fireRating         — fire-rated or fire-protective glazing assembly\n' +
+    '  blastResistance    — blast-resistant glazing (GSA/UFC 4-010)\n' +
+    '  impactResistance   — hurricane/HVHZ/impact-resistant glazing\n' +
+    '  leedRequirements   — LEED certification or sustainability docs required\n' +
+    '  liquidatedDamages  — liquidated damages clause with daily rate\n' +
+    '  retainage          — retainage percentage stated\n' +
+    '  bondRequirements   — performance or payment bond required\n\n' +
+    `SPEC TEXT:\n${combined}\n\nReturn ONLY the JSON object.`;
+
+  try {
+    const result = await window.electronAPI.aiChat({
+      systemPrompt,
+      messages: [{ role: 'user', content: userMsg }],
+    });
+    if (!result.ok) return { enhanced: false, findings: {}, error: result.error };
+
+    // Extract JSON from response (Claude may wrap in prose)
+    const raw = result.text.trim();
+    const s = raw.indexOf('{');
+    const e = raw.lastIndexOf('}');
+    if (s < 0 || e < 0) return { enhanced: false, findings: {} };
+    const parsed = JSON.parse(raw.slice(s, e + 1));
+
+    // Normalize and remap keys
+    const findings = {};
+    for (const [aiKey, val] of Object.entries(parsed)) {
+      if (!val || typeof val !== 'object') continue;
+      const mappedKey = AI_KEY_MAP[aiKey] || aiKey;
+      findings[mappedKey] = {
+        found:       !!val.found,
+        excerpt:     typeof val.excerpt === 'string' ? val.excerpt.slice(0, 120) : null,
+        page:        typeof val.page === 'number' && val.page > 0 ? val.page : null,
+        aiAssisted:  true,
+      };
+    }
+    return { enhanced: true, findings };
+  } catch (err) {
+    return { enhanced: false, findings: {}, error: err?.message || String(err) };
+  }
 }

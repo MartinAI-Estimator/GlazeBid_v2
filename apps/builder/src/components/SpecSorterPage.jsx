@@ -18,7 +18,7 @@ import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { parseSpecSections, extractSections } from '../lib/specSorter';
 import { scanSection } from '../lib/specReader';
-import { scanSpecSection, SCAN_CATEGORIES } from '../lib/specScanner';
+import { scanSpecSection, SCAN_CATEGORIES, extractPageTexts, aiEnhanceSection } from '../lib/specScanner';
 import SpecChatPanel from './SpecChatPanel';
 
 // Wire pdfjs worker
@@ -1469,6 +1469,9 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   const [scanProgress, setScanProgress] = useState({ current: 0, total: 0 });
   const [scanResults, setScanResults] = useState({});      // { [sectionNumber]: result }
   const [chatOpen, setChatOpen] = useState(false);
+  const [aiEnhance, setAiEnhance] = useState(false);       // AI enhancement toggle
+  const [hasAiKey, setHasAiKey] = useState(false);         // whether Anthropic key is saved
+  const [aiScanStatus, setAiScanStatus] = useState('');    // per-section AI status text
 
   // ── Persist state
   const [saved, setSaved] = useState(false);
@@ -1483,6 +1486,13 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
     });
     ro.observe(viewerRef.current);
     return () => ro.disconnect();
+  }, []);
+
+  // ── Check for Anthropic API key on mount
+  useEffect(() => {
+    window.electronAPI?.aiKeyCheck?.().then(res => {
+      if (res?.hasKey) setHasAiKey(true);
+    }).catch(() => {});
   }, []);
 
   // ── Load saved state for this project
@@ -1710,6 +1720,29 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
         const adjustedFindings = {};
         for (const [key, f] of Object.entries(scannerResult?.findings || {})) {
           adjustedFindings[key] = f ? { ...f, page: absP(f.page) } : f;
+        }
+
+        // — AI Enhancement: fill gaps where regex found nothing —
+        if (aiEnhance && hasAiKey) {
+          try {
+            setAiScanStatus(`✨ AI scanning ${ex.sectionNumber}…`);
+            const pageTexts = await extractPageTexts(ex.pdfBuffer);
+            const aiResult = await aiEnhanceSection(pageTexts);
+            if (aiResult.enhanced) {
+              for (const [key, aiFinding] of Object.entries(aiResult.findings)) {
+                // Only fill categories the regex engine missed
+                if (!adjustedFindings[key]?.found && aiFinding.found) {
+                  adjustedFindings[key] = {
+                    ...aiFinding,
+                    page: aiFinding.page ? pgOffset + aiFinding.page : null,
+                  };
+                }
+              }
+            }
+          } catch (aiErr) {
+            console.warn('AI enhance failed for', ex.sectionNumber, aiErr);
+          }
+          setAiScanStatus('');
         }
 
         newResults[ex.sectionNumber] = {
@@ -2127,6 +2160,36 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
             )}
 
             {/* Scan button */}
+            {/* AI toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <button
+                onClick={() => {
+                  if (!hasAiKey) {
+                    alert('No Anthropic API key found.\n\nAdd your key in Settings → AI to enable AI-enhanced scanning.');
+                    return;
+                  }
+                  setAiEnhance(v => !v);
+                }}
+                title={hasAiKey ? 'AI fills findings that regex misses' : 'Add Anthropic API key in Settings → AI'}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '4px 8px', borderRadius: 5, fontSize: '0.7rem', fontWeight: 600,
+                  border: `1px solid ${aiEnhance && hasAiKey ? '#7c3aed' : '#30363d'}`,
+                  background: aiEnhance && hasAiKey ? 'rgba(124,58,237,0.15)' : 'transparent',
+                  color: aiEnhance && hasAiKey ? '#a78bfa' : hasAiKey ? '#8b949e' : '#484f58',
+                  cursor: 'pointer', transition: 'all 0.15s',
+                  opacity: hasAiKey ? 1 : 0.5,
+                }}
+              >
+                <span style={{ fontSize: '0.75rem' }}>✨</span>
+                AI Enhance {aiEnhance && hasAiKey ? 'ON' : 'OFF'}
+              </button>
+              {aiScanStatus && (
+                <span style={{ fontSize: '0.65rem', color: '#a78bfa', animation: 'pulse 1s infinite' }}>
+                  {aiScanStatus}
+                </span>
+              )}
+            </div>
             <button
               onClick={handleScan}
               disabled={scanning || !selectedCount || !pdfBuffer}

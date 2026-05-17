@@ -51,7 +51,7 @@ import {
   cosineSimilarity,
   type FeatureVector,
 }                                          from '../engine/parametric/featureExtract';
-import { useSessionLearner }               from './useSessionLearner';
+import { useSessionLearner, type SessionLearnerAPI } from './useSessionLearner';
 import type { CanvasEngineAPI }            from './useCanvasEngine';
 import type { CssPxBox }                   from './useGhostTool';
 
@@ -173,10 +173,15 @@ function isBlankRegion(
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
 export function useGhostDetector(
-  canvasRef: RefObject<HTMLCanvasElement>,
-  engine:    CanvasEngineAPI | null,
+  canvasRef:       RefObject<HTMLCanvasElement>,
+  engine:          CanvasEngineAPI | null,
+  externalLearner?: SessionLearnerAPI,
 ): UseGhostDetectorResult {
-  const learner = useSessionLearner();
+  // Use the external learner if provided (so StudioLayout can bridge it to
+  // .gbid save/load via useGbidAIBridge). Fall back to a local instance when
+  // the hook is used standalone (e.g. tests, Storybook, non-Electron contexts).
+  const _internalLearner = useSessionLearner();
+  const learner = externalLearner ?? _internalLearner;
 
   const [isDetecting, setIsDetecting]  = useState(false);
   const [detections,  setDetections]   = useState<GhostDetection[]>([]);

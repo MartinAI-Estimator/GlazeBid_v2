@@ -18,6 +18,7 @@ import { GridEditor }        from '../parametric/GridEditor';
 import type { ScanResult }   from '../../hooks/useAIAutoScan';
 import type { ContextMenuTarget } from './ShapeContextMenu';
 import type { CandidateWithReview } from '../../hooks/useDrawingIntelligence';
+import type { SessionLearnerAPI } from '../../hooks/useSessionLearner';
 
 interface StudioCanvasProps {
   /** Parent receives the engine API so the Toolbar can call fitToPage, zoomIn, zoomOut */
@@ -32,6 +33,13 @@ interface StudioCanvasProps {
   diCandidates?: CandidateWithReview[];
   onDIConfirm?:  (id: string) => void;
   onDIReject?:   (id: string) => void;
+  /**
+   * Optional external SessionLearner instance.
+   * When provided, useGhostDetector uses this learner so that Ghost Detector
+   * sessions can be persisted to .gbid via useGbidAIBridge in StudioLayout.
+   * When omitted, useGhostDetector creates its own internal learner.
+   */
+  sessionLearner?: SessionLearnerAPI;
 }
 
 /**
@@ -41,7 +49,7 @@ interface StudioCanvasProps {
  * All rendering and event handling lives in the hook; this component only
  * provides the DOM refs and lifts the stable engine API to the layout.
  */
-export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, onContextMenu, diCandidates, onDIConfirm, onDIReject }: StudioCanvasProps) {
+export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, onContextMenu, diCandidates, onDIConfirm, onDIReject, sessionLearner }: StudioCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef    = useRef<HTMLCanvasElement>(null);
 
@@ -70,7 +78,7 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
   const { runScan } = useAIAutoScan(canvasRef, engine, onScanComplete ?? (() => { /* no-op */ }));
 
   // ── Plugin: Ghost Highlighter (Phase 6.3) ───────────────────────────────
-  const ghostDetector = useGhostDetector(canvasRef, engine);
+  const ghostDetector = useGhostDetector(canvasRef, engine, sessionLearner);
   const { drawPreview: ghostDrawPreview } = useGhostTool(canvasRef, ghostDetector.runDetection);
 
   // Lift the engine API on mount

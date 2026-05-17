@@ -37,11 +37,14 @@ import ShopDrawingPanel from './components/ShopDrawings/ShopDrawingPanel';
 import SidebarNav from './components/SidebarNav';
 import ProjectSideNav from './components/ProjectSideNav';
 import SuiteHome from './components/SuiteHome';
+import GlazeBidHome from './components/GlazeBidHome';
 import FrameBuilder from './components/FrameBuilder/FrameBuilder';
 import StructuralCalculator from './components/Tools/StructuralCalculator';
 import BrakeMetalCalculator from './components/Tools/BrakeMetalCalculator';
 import CaulkingCalculator from './components/Tools/CaulkingCalculator';
 import GlassWeightCalculator from './components/Tools/GlassWeightCalculator';
+import DoorBuilder from './components/Tools/DoorBuilder';
+import QuickQuoteApp from './components/Tools/QuickQuote/QuickQuoteApp';
 import { ProjectProvider } from './context/ProjectContext'; // Import the brain
 import useBidStore from './store/useBidStore';
 import useBidProjectStore from './store/useBidProjectStore';
@@ -104,7 +107,7 @@ function App() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [projectType, setProjectType] = useState('pdf'); // 'pdf' or 'tiles'
-  const [currentView, setCurrentView] = useState('suite'); // Navigation state
+  const [currentView, setCurrentView] = useState('glazebidHome'); // Navigation state
   const [activeSidebarSection, setActiveSidebarSection] = useState(null);
   const [showProjectList, setShowProjectList] = useState(false); // Toggle between intake and project list
   const [pageInfo, setPageInfo] = useState({ numPages: 0, currentPage: 1 }); // Track current document's pages
@@ -280,7 +283,7 @@ function App() {
 
   // Suite launcher — maps module card IDs to views
   const handleSuiteLaunch = (moduleId) => {
-    if (moduleId === 'bidbuilder') setCurrentView('home');
+    if (moduleId === 'bidbuilder') setCurrentView(currentProject ? 'bidsheet' : 'home');
     else if (moduleId === 'studio')  openStudio();
     else if (moduleId === 'framebuilder') setCurrentView('frameBuilder');
     else if (moduleId === 'shopDrawings') setCurrentView('shopDrawings');
@@ -288,8 +291,11 @@ function App() {
     else if (moduleId === 'brakeMetalCalc') setCurrentView('brakeMetalCalc');
     else if (moduleId === 'caulkingCalc') setCurrentView('caulkingCalc');
     else if (moduleId === 'glassWeightCalc') setCurrentView('glassWeightCalc');
+    else if (moduleId === 'doorBuilder') setCurrentView('doorBuilder');
+    else if (moduleId === 'quickQuote') setCurrentView('quickQuote');
     else if (moduleId === 'specSplitter') setCurrentView('spec-sorter');
-    else if (moduleId === 'openProjects') { setShowProjectList(true); setCurrentView('home'); }
+    else if (moduleId === 'proposal') setCurrentView('proposal');
+    else if (moduleId === 'openProjects') { setCurrentView('glazebidHome'); }
   };
 
   // Safety check to reset to home screen
@@ -312,7 +318,7 @@ function App() {
     localStorage.removeItem('projectData');
     localStorage.removeItem('last_project'); // Clear any saved session
     window.location.hash = '';
-    setCurrentView('suite');
+    setCurrentView('glazebidHome');
   };
 
   // MenuBar handlers
@@ -754,7 +760,7 @@ function App() {
         {/* Settings header + tab nav — always visible */}
         <div style={{ padding: '16px 32px 0', background: 'var(--bg-deep)', borderBottom: '1px solid #30363d', flexShrink: 0 }}>
           <button
-            onClick={() => setCurrentView(currentProject ? 'projectHome' : 'home')}
+            onClick={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -890,7 +896,18 @@ function App() {
   };
 
   const renderContent = () => {
-    // Suite home — must be first, before the !currentProject fallback
+    // GlazeBid Home — new boot screen showing all projects
+    if (currentView === 'glazebidHome') {
+      return (
+        <GlazeBidHome
+          onProjectSelect={handleProjectSelect}
+          onNewProject={() => { setCurrentProject(null); setProjectData(null); setCurrentView('home'); }}
+          onSettings={() => setCurrentView('settings')}
+        />
+      );
+    }
+
+    // Suite home — kept for compatibility (no longer the boot screen)
     if (currentView === 'suite') {
       return <SuiteHome onLaunch={handleSuiteLaunch} />;
     }
@@ -902,28 +919,34 @@ function App() {
 
     // Shop Drawings - standalone suite module
     if (currentView === 'shopDrawings') {
-      return <ShopDrawingPanel onBack={() => setCurrentView('suite')} />;
+      return <ShopDrawingPanel onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
     }
 
     // Tools
     if (currentView === 'structuralCalc') {
-      return <StructuralCalculator onBack={() => setCurrentView('suite')} />;
+      return <StructuralCalculator onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
     }
     if (currentView === 'brakeMetalCalc') {
-      return <BrakeMetalCalculator onBack={() => setCurrentView('suite')} />;
+      return <BrakeMetalCalculator onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
     }
     if (currentView === 'caulkingCalc') {
-      return <CaulkingCalculator onBack={() => setCurrentView('suite')} />;
+      return <CaulkingCalculator onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
     }
     if (currentView === 'glassWeightCalc') {
-      return <GlassWeightCalculator onBack={() => setCurrentView('suite')} />;
+      return <GlassWeightCalculator onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
+    }
+    if (currentView === 'doorBuilder') {
+      return <DoorBuilder onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
+    }
+    if (currentView === 'quickQuote') {
+      return <QuickQuoteApp onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
     }
 
     // Parametric Frame Builder - standalone suite module
     if (currentView === 'frameBuilder') {
       return (
         <FrameBuilder
-          onBack={() => setCurrentView('suite')}
+          onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')}
           project={projectData}
           onNavigate={handleViewChange}
         />
@@ -932,7 +955,7 @@ function App() {
 
     // Spec Sorter — works with or without a loaded project
     if (currentView === 'spec-sorter') {
-      const backDest = currentProject ? 'projectHome' : 'suite';
+      const backDest = currentProject ? 'projectHome' : 'glazebidHome';
       return (
         <SpecSorterPage
           project={currentProject}
@@ -964,7 +987,7 @@ function App() {
           onProjectReady={handleProjectReady}
           onShowProjects={() => setShowProjectList(true)}
           onSettings={() => setCurrentView('settings')}
-          onBack={() => setCurrentView('suite')}
+          onBack={() => setCurrentView('glazebidHome')}
         />
       );
     }
@@ -981,6 +1004,7 @@ function App() {
           onCategorySelect={handleCategoryNavigate}
           onBack={resetToHome}
           onNavigate={handleViewChange}
+          onLaunch={handleSuiteLaunch}
           bidSettings={bidSettings}
           onBidSettingsChange={setBidSettings}
           activeSidebarSection={activeSidebarSection}
@@ -1157,24 +1181,9 @@ function App() {
               )}
             </>
           )}
-          {/* Project-level sidebar — shown for all inner project views (not suite modules) */}
-          {currentProject && currentView !== 'home' && currentView !== 'settings' && currentView !== 'documentViewer' && currentView !== 'suite' && currentView !== 'frameBuilder' && currentView !== 'shopDrawings' ? (
-            <div style={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
-              <ProjectSideNav
-                currentView={currentView}
-                onNavigate={handleViewChange}
-                project={currentProject}
-                projectData={projectData}
-                sheets={sheets}
-                activeSidebarSection={activeSidebarSection}
-                setActiveSidebarSection={setActiveSidebarSection}
-                totalSheets={sheets ? sheets.filter(s => ['Architectural','Structural','Other'].includes(s.category)).length : 0}
-              />
-              <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                {renderContent()}
-              </div>
-            </div>
-          ) : renderContent()}
+          <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            {renderContent()}
+          </div>
         </div>
       </div>
     </ProjectProvider>

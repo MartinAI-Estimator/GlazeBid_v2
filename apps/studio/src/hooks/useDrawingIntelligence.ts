@@ -15,10 +15,30 @@ import {
   type PrescanResult,
   type GlazingCandidateResult,
 } from './useSidecarClient';
-import { useStudioStore } from '../store/useStudioStore';
-import { useProjectStore } from '../store/useProjectStore';
-import { DEFAULT_PDF_PPI } from '../engine/coordinateSystem';
-import type { RectShape } from '../types/shapes';
+import { useStudioStore }   from '../store/useStudioStore';
+import { useProjectStore, defaultTypeColor } from '../store/useProjectStore';
+import { DEFAULT_PDF_PPI }  from '../engine/coordinateSystem';
+import { ARCHETYPE_CATALOG } from '../engine/parametric/archetypes';
+import { buildEvenGrid }    from '../engine/parametric/gridMath';
+import { computeFabricationBOM, type FabricationBOM } from '../engine/parametric/systemEngine';
+import type { RectShape }   from '../types/shapes';
+
+// ── DI system_hint → archetype key mapping ────────────────────────────────────
+// Maps the sidecar's system_hint strings to the closest archetype in the catalog.
+const DI_HINT_TO_ARCHETYPE: Record<string, string> = {
+  storefront:   'sf-450',
+  curtain_wall: 'cw-shallow',
+  curtainwall:  'cw-shallow',
+  window:       'sf-250',
+  window_wall:  'ww-600',
+  windowwall:   'ww-600',
+  entrance:     'sf-450',
+  door:         'sf-450',
+  unknown:      'sf-450',
+};
+
+/** Tolerance (inches) when matching a DI candidate to an existing FrameType. */
+const DIM_MATCH_TOLERANCE = 5;
 
 export type IntelligenceStatus =
   | 'idle'
@@ -209,14 +229,10 @@ export function useDrawingIntelligence() {
     const page = pages.find(p => p.pdfPageIndex === candidate.pageNum);
     if (!page) return;
 
-    // Get calibration for this page
-    const calibration = useStudioStore.getState().calibrations[page.id];
-    const ppi = calibration?.pixelsPerInch ?? DEFAULT_PDF_PPI;
-
     const bb = candidate.bounding_box;
     const shapeId = crypto.randomUUID();
 
-    // Create RectShape from candidate bounding box
+    // ── 1. Create RectShape on the canvas ─────────────────────────────────────
     const shape: RectShape = {
       id:           shapeId,
       pageId:       page.id,
@@ -229,12 +245,12 @@ export function useDrawingIntelligence() {
       label:        candidate.system_hint || 'DI Detected',
       color:        '#00C853',
     };
-
     useStudioStore.getState().addShape(shape);
 
-    // Create RawTakeoff entry (addTakeoff generates id internally)
-    useProjectStore.getState().addTakeoff({
-      shapeId:      shapeId,
+    // ── 2. Create RawTakeoff entry ────────────────────────────────────────────
+    const projectStore = useProjectStore.getState();
+    projectStore.addTakeoff({
+      shapeId,
       pageId:       page.id,
       x:            bb.x,
       y:            bb.y,
@@ -246,7 +262,68 @@ export function useDrawingIntelligence() {
       label:        candidate.system_hint || 'DI Detected',
     });
 
-    // Update local state to mark as confirmed
+    // ── 3. Find or auto-create a FrameType ───────────────────────────────────
+    const { frameTypes } = projectStore;
+
+    const matchingType = frameTypes.find(ft =>
+      Math.abs(ft.widthInches  - candidate.width_inches)  <= DIM_MATCH_TOLERANCE &&
+      Math.abs(ft.heightInches - candidate.height_inches) <= DIM_MATCH_TOLERANCE,
+    );
+
+    let frameTypeId: string;
+
+    if (matchingType) {
+      // Reuse the closest existing FrameType
+      frameTypeId = matchingType.id;
+    } else {
+      // Auto-create a FrameType from DI candidate data
+      const hint = (candidate.system_hint ?? 'storefront')
+        .toLowerCase().replace(/[\s-]/g, '_');
+      const archetypeKey = DI_HINT_TO_ARCHETYPE[hint] ?? 'sf-450';
+      const archetype = ARCHETYPE_CATALOG[archetypeKey];
+      const profile = archetype
+        ? { label: archetype.label, faceWidth: archetype.profileWidth, glassBite: archetype.glassBite }
+        : { label: 'Storefront', faceWidth: 2, glassBite: 0.375 };
+
+      const bays = Math.max(1, candidate.bay_count ?? 1);
+      const grid = buildEvenGrid(1, bays);
+
+      let bom: FabricationBOM | null = null;
+      try {
+        bom = computeFabricationBOM(
+          candidate.width_inches, candidate.height_inches, profile, grid,
+        );
+      } catch { /* non-fatal — bom remains null */ }
+
+      const wFt = Math.round(candidate.width_inches  / 12);
+      const hFt = Math.round(candidate.height_inches / 12);
+      const markNum = frameTypes.length + 1;
+
+      frameTypeId = projectStore.addFrameType({
+        mark:         `DI-${String(markNum).padStart(2, '0')}`,
+        name:         `${archetype?.label ?? 'Frame'} ${wFt}'×${hFt}'`,
+        color:        defaultTypeColor(frameTypes.length),
+        widthInches:  candidate.width_inches,
+        heightInches: candidate.height_inches,
+        bays,
+        rows:         1,
+        systemLabel:  archetype?.label ?? 'Storefront',
+        glassType:    '1" Low-E 366',
+        bom,
+      });
+    }
+
+    // ── 4. Place a TypeCountDot at the candidate's bounding-box centre ────────
+    projectStore.addTypeDot({
+      frameTypeId,
+      pageId:   page.id,
+      position: { x: bb.x + bb.width / 2, y: bb.y + bb.height / 2 },
+    });
+
+    // ── 5. Push updated type library to Builder via IPC ───────────────────────
+    projectStore.syncFrameTypesToBuilder();
+
+    // Mark candidate as confirmed in local state
     setState(prev => ({
       ...prev,
       candidates: prev.candidates.map(c =>

@@ -42,13 +42,13 @@ export const colors = {
   info: '#60a5fa',
   infoBg: 'rgba(96, 165, 250, 0.1)',
   
-  // Glazing System Colors (for markups)
-  storefront: '#FF8C00',      // Orange
-  curtainWall: '#00FF00',     // Green
-  punched: '#00BFFF',         // Sky Blue
-  allGlass: '#FF00FF',        // Magenta
-  hardware: '#FFD700',        // Gold
-  excluded: '#808080',        // Gray
+  // Glazing System Colors (canonical — matches Bluebeam toolbox & GlazierAI output)
+  storefront: '#FF8000',      // storefront
+  curtainWall: '#008000',     // curtain_wall
+  punched: '#00BFFF',         // Sky Blue (non-canonical, legacy label)
+  allGlass: '#80FFFF',        // all_glass_wall
+  hardware: '#FFD700',        // Gold (non-canonical, legacy label)
+  excluded: '#808080',        // Gray (non-canonical, not a scope type)
 };
 
 export const spacing = {

@@ -23,7 +23,7 @@ export const systemRegistry = {
     columns: 84,
     maxRows: 1018,
     icon: '🏢',
-    color: '#3b82f6',
+    color: '#FF8000', // storefront — canonical scope color
     hrFunctionTasks: [
       'joints', 'dist', 'subsills', 'bays', 'baysBig', 
       'dlos', 'dlosBig', 'pairs', 'singles', 'caulk', 
@@ -31,6 +31,8 @@ export const systemRegistry = {
     ]
   },
   
+  // TODO: EXT_SF_2 is a legacy Excel artifact (Warren Bid Sheet "Misc" tab).
+  // It has no canonical scope type mapping. Repurpose or remove in next registry pass.
   [SYSTEM_TYPES.EXT_SF_2]: {
     id: SYSTEM_TYPES.EXT_SF_2,
     name: 'Misc',
@@ -40,7 +42,7 @@ export const systemRegistry = {
     columns: 84,
     maxRows: 1018,
     icon: '📋',
-    color: '#8b5cf6',
+    color: '#FF8000', // storefront — same scope as EXT_SF_1 (canonical)
     hrFunctionTasks: [
       'joints', 'dist', 'subsills', 'bays', 'baysBig', 
       'dlos', 'dlosBig', 'pairs', 'singles', 'caulk', 
@@ -57,7 +59,7 @@ export const systemRegistry = {
     columns: 85,
     maxRows: 1018,
     icon: '🏛️',
-    color: '#10b981',
+    color: '#FF8000', // storefront — canonical scope color
     hrFunctionTasks: [
       'joints', 'dist', 'subsills', 'bays', 'baysBig', 
       'dlos', 'dlosBig', 'pairs', 'singles', 'caulk', 
@@ -74,11 +76,13 @@ export const systemRegistry = {
     columns: 88,
     maxRows: 1018,
     icon: '🏗️',
-    color: '#f59e0b',
+    color: '#008000', // curtain_wall — canonical scope color
     hrFunctionTasks: [
-      'joints', 'dist', 'subsills', 'bays', 'baysBig', 
-      'dlos', 'dlosBig', 'pairs', 'singles', 'caulk', 
-      'ssg', 'steel', 'vents', 'brakeMetal', 'open'
+      // HF: EMPTY_HF_CW fields
+      'verticals', 'horizontals', 'dlos', 'gtDlos', 'doors',
+      // IR: EMPTY_IR_CW fields
+      'joints', 'dist', 'stoolTrim', 'ft', 'caulk',
+      'ssg', 'steel', 'vents', 'brakeMetal', 'wlDl'
     ]
   },
   
@@ -91,11 +95,13 @@ export const systemRegistry = {
     columns: 88,
     maxRows: 1018,
     icon: '🌐',
-    color: '#ef4444',
+    color: '#008000', // curtain_wall — canonical scope color
     hrFunctionTasks: [
-      'joints', 'dist', 'subsills', 'bays', 'baysBig', 
-      'dlos', 'dlosBig', 'pairs', 'singles', 'caulk', 
-      'ssg', 'steel', 'vents', 'brakeMetal', 'open'
+      // HF: EMPTY_HF_CW fields
+      'verticals', 'horizontals', 'dlos', 'gtDlos', 'doors',
+      // IR: EMPTY_IR_CW fields
+      'joints', 'dist', 'stoolTrim', 'ft', 'caulk',
+      'ssg', 'steel', 'vents', 'brakeMetal', 'wlDl'
     ]
   }
 };

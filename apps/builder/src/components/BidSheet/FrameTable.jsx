@@ -278,19 +278,22 @@ export default function FrameTable({ system, setImportedSystems, frameResults = 
                 const isHoveredRow = hoveredRow === ri;
                 const rowOverlay = isActiveRow
                   ? 'rgba(59,130,246,0.22)'
-                  : (isHoveredRow ? 'rgba(255,255,255,0.06)' : null);
-                const plainRowBg = ri % 2 === 0 ? 'rgba(255,255,255,0.015)' : 'transparent';
-                const nonColumnBg = rowOverlay || plainRowBg;
+                  : (isHoveredRow ? 'rgba(255,255,255,0.08)' : null);
+                const plainRowBg = ri % 2 === 0 ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.18)';
+                // Row stripe lives on <tr> so it spans ALL columns uniformly.
+                // Column tints are semi-transparent and composite on top naturally.
+                const trBg = rowOverlay || plainRowBg;
                 return (
-                  <tr key={frame.id ?? ri} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                  <tr key={frame.id ?? ri} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: trBg }}
                     onMouseEnter={() => setHoveredRow(ri)}
                     onMouseLeave={() => setHoveredRow(null)}
                     onDoubleClick={() => { const firstEditable = editableCols[0]; if (firstEditable) beginEdit(ri, firstEditable); }}>
-                    <td style={{ ...S.rowNum, background: nonColumnBg }}>{ri + 1}</td>
+                    <td style={{ ...S.rowNum, background: 'transparent' }}>{ri + 1}</td>
                     {columns.map(col => {
                       const isEditing = editCell?.row === ri && editCell?.key === col.key;
                       const colBaseBg = getColumnTint(col, 'cell');
-                      const cellBg = rowOverlay || colBaseBg || plainRowBg;
+                      // Use column tint if present; otherwise transparent (tr bg shows through).
+                      const cellBg = colBaseBg !== 'transparent' ? colBaseBg : 'transparent';
 
                       // Computed MH columns
                       if (col.type === 'computed') {
@@ -342,7 +345,7 @@ export default function FrameTable({ system, setImportedSystems, frameResults = 
                         </td>
                       );
                     })}
-                    <td style={{ ...S.deleteCell, background: nonColumnBg }}>
+                    <td style={{ ...S.deleteCell, background: 'transparent' }}>
                       <button onClick={() => deleteFrame(ri)} style={S.deleteBtn} title="Delete frame">×</button>
                     </td>
                   </tr>
