@@ -78,12 +78,18 @@ type RawTakeoff = {
 
 ```
 
-SystemType
-
-```typescript
-type SystemType = 'ext-sf-1' | 'ext-sf-2' | 'int-sf' | 'cap-cw' | 'ssg-cw'
+SystemType — CANONICAL (owner-approved 2026-08-02)
 
 ```
+Canonical values: 'Ext SF' | 'Int SF' | 'Cap CW' | 'SSG CW'
+Source of truth:  apps/builder/src/utils/systemTypes.js (+ systemTypeConfig.js)
+```
+
+The legacy kebab-case ids ('ext-sf-1', 'ext-sf-2', 'int-sf', 'cap-cw',
+'ssg-cw') survive ONLY as column-config ids and in old stored data. ALL code
+touching labor, rates, or pricing must pass values through
+`toCanonicalSystemType()` — never switch on raw strings. 'Studio Takeoff' is
+banned as a systemType. New system types get a canonical name here first.
 
 BidFrame (useBidStore)
 
@@ -191,9 +197,20 @@ Agent Role Responsibility Constraint Project Manager Orchestrate, prioritize, as
 4. `window.electronAPI` (capital A) = Builder preload namespace
 5. `window.electron` (lowercase) = Studio preload namespace
 6. `RawTakeoff` type must stay compatible between both apps
-7. Never call `localhost:8000` — all backend calls must have local fallbacks
+7. Never call `localhost:8000` — the ONLY service is the AiQ sidecar on :8100,
+   reached via IPC. Legacy call sites go through `apiClient.apiFetch`, which
+   returns an offline response instantly (no network) unless VITE_API_URL is set.
 8. Navigation must always complete — cloud/network failures must never block UI
-9. `.gbid` format is the single source of truth for project persistence
+9. Project persistence reality (updated 2026-08-02): Builder saves a v3 payload
+   to `<ProjectsRoot>/<Project>/project.aiq` containing frames +
+   workspaceSystems + bidSettings + a localState snapshot of all project-scoped
+   localStorage. useBidStore owns the frame/system model; localStorage is a
+   legacy mirror only. Studio still writes its own `.gbid` — unifying both apps
+   onto one file is open work (Phase 1 follow-up).
+9b. Labor math lives in `utils/laborCalcEngine.js` ONLY (Excel-parity, tested
+   against Warren Bid Sheet.xlsm for Ext SF / Int SF / Cap CW). Never add
+   per-SF, per-lite, or velocity labor formulas anywhere else — aggregate the
+   engine's saved bom hours instead.
 10. The snap system (`engine/snapEngine.ts` + `engine/pdfSnapParser.ts`) is stable — do not modify
 13. DEV COMMANDS
 

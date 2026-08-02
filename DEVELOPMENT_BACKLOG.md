@@ -8,24 +8,24 @@ Sources: 🅐 = this session's audit · 🅑 = Bid Builder revamp session (VS Co
 
 ## 0. Housekeeping (do first, ~an hour)
 
-- [ ] 🅐 Commit + push the working tree — 442 uncommitted files incl. all spec-V2 and drawing-intelligence work. Nothing new is safe until this is done.
-- [ ] 🅐 Delete dead code: `BidWorkflowShell.jsx`, `SystemsSidebar.jsx` (verified orphaned) [AUDIT 8.3]
-- [ ] 🅐 Fix Studio tsc error: `TrainingDataPanel.tsx:188` missing `Upload` import
-- [ ] 🅐 Re-encode `BidSheetContext.jsx` (mojibake in user-facing alerts) [AUDIT 3.6]
-- [ ] 🅐 Update CLAUDE.md: .aiq/.gbid reality (§6/§9), systemTypeConfig.js as source of truth for system types, laborCalcEngine as the labor engine, vendor-portal repo existence
+- [x] 🅐 Commit + push the working tree — DONE 2026-08-02 (committed; push needs owner credentials)
+- [x] 🅐 Delete dead code: `BidWorkflowShell.jsx`, `SystemsSidebar.jsx` [AUDIT 8.3] — DONE
+- [x] 🅐 Fix Studio tsc error: `TrainingDataPanel.tsx:188` missing `Upload` import — DONE
+- [x] 🅐 Re-encode `BidSheetContext.jsx` (mojibake) [AUDIT 3.6] — DONE
+- [x] 🅐 Update CLAUDE.md (SystemType canonical, persistence v3 reality, laborCalcEngine) — DONE
 
 ## 1. Data integrity — the bug cluster behind "numbers don't match" (Builder)
 
-- [ ] 🅐 **Unify the 3 frame models** (useBidStore / BidSheetContext / workspaceSystems) — one owner, adapters for the rest [AUDIT 3.1]
-- [ ] 🅐 Fix `setFrames` crash in GlazeBidWorkspace (destructured but not exported by context) [AUDIT 3.2]
-- [ ] 🅐 Fix frame-sync dedupe (id vs frameId mismatch → duplicates + banner never clears) [AUDIT 3.3]
-- [ ] 🅐 **Unify systemType naming** — one enum + mapping (`ext-sf-1` ↔ `Ext SF` ↔ Studio types) [AUDIT 8.1]
-- [ ] 🅐 **Consolidate labor calc to laborCalcEngine.js** — retire computeFrameMetrics; make computeBOM/useBidMath delegate [AUDIT 8.2]
+- [x] 🅐 **Unify the 3 frame models** — useBidStore owns workspaceSystems; ReviewBidPage reads store [AUDIT 3.1] — DONE 2026-08-02
+- [x] 🅐 Fix `setFrames` crash in GlazeBidWorkspace [AUDIT 3.2] — DONE
+- [x] 🅐 Fix frame-sync dedupe (sourceFrameId) [AUDIT 3.3] — DONE
+- [x] 🅐 **Unify systemType naming** — utils/systemTypes.js canonical + shim [AUDIT 8.1] — DONE (owner-approved)
+- [x] 🅐 **Consolidate labor calc to laborCalcEngine.js** — computeFrameMetrics delegates; computeBOM + ParametricFrameBuilder + useBidMath + useBidStore.calcTotals delegate/aggregate [AUDIT 8.2] — DONE
 - [ ] 🅑 Restore a home for bid settings (labor rate, markup, tax, crew) — UI was removed with the Job Setup tab but ReviewBidPage still consumes `glazebid:bidSettings` [AUDIT 8.3]
-- [ ] 🅐 Expand .aiq payload to actually contain the project (workspace systems, spec analysis, custom cards, hr rates, doors, RFQ…) [AUDIT 1.1/1.2]
-- [ ] 🅐 Remove Supabase paths (useProjectPersistence + QuickQuote QuoteContext) [AUDIT 1.3]
-- [ ] 🅐 Shim/remove the 20 localhost:8000 callers + 5 relative `/api` fetches [AUDIT Flow 6]
-- [ ] 🅐 Quick wins: hrrates never loaded on boot [1.4] · StudioInbox lastAdded compare [2.2] · inbox per-project scoping [2.4] · pendingRehydration timing [1.5]
+- [x] 🅐 Expand .aiq payload — v3: workspaceSystems + bidSettings + localState snapshot [AUDIT 1.1/1.2] — DONE (Studio .gbid unification still open)
+- [x] 🅐 Remove Supabase paths — supabaseClient is a local no-op stub; dependency removed [AUDIT 1.3] — DONE
+- [x] 🅐 Shim/remove localhost:8000 callers + relative `/api` fetches — apiFetch shim, zero network [AUDIT Flow 6] — DONE
+- [ ] 🅐 Quick wins: hrrates boot-load [1.4] DONE · StudioInbox lastAdded [2.2] DONE · inbox per-project scoping [2.4] OPEN · pendingRehydration timing [1.5] OPEN
 
 ## 2. Labor calc engine hardening (Builder) — from the revamp session
 
