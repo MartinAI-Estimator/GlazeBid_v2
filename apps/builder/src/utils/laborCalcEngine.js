@@ -41,7 +41,12 @@ function calcFrameMH_SF(frame, hf, ir, beadsOfCaulk) {
   const doorTotal = doors + (pairs * 2) + singles; // Excel: AB4 = AB11*2
 
   const joints    = (frame.joints || 0);
-  const subsills  = qty + (frame.addSubsills || 0) * qty;
+  // Subsills: default = 1 per frame unit (+ extras). An EXPLICIT frame.subsills
+  // overrides — interior storefront has NO subsills (Warren 'Int SF' tab counts
+  // 0), and forcing qty minimum broke distCount parity there.
+  const subsills  = (frame.subsills != null)
+    ? Number(frame.subsills) * qty
+    : qty + (frame.addSubsills || 0) * qty;
   const caulkLF   = (frame.perimeter || 0) * beadsOfCaulk;
   const ssg       = (frame.ssg || 0) * qty;
   const steel     = (frame.steel || 0) * qty;

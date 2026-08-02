@@ -4,6 +4,9 @@
  */
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getSystem, SYSTEM_TYPES } from '../config/systemRegistry';
+import { calcFrameMH } from '../utils/laborCalcEngine';
+import { toCanonicalSystemType } from '../utils/systemTypes';
+import useProductionRatesStore from '../store/useProductionRatesStore';
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
 function lsKey(project, ...parts) {
@@ -16,26 +19,41 @@ function lsSet(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* quota */ }
 }
 
-// ─── Local frame-metric computation ─────────────────────────────────────────
+// ─── Frame labor via THE labor engine (AUDIT 8.2) ───────────────────────────
+// The old computeFrameMetrics used flat MHs-per-SF placeholder rates — one of
+// FOUR parallel labor implementations that produced different numbers on
+// different pages. It is gone. Classic-grid frames now run through
+// laborCalcEngine with the same Excel-parity formulas and the same rate store
+// as the visual workspace and Review Bid page.
 const DEFAULT_LABOR_RATE = 42.00;
 
 function computeFrameMetrics(frame, rates) {
-  const laborRate  = rates.laborRate  ?? DEFAULT_LABOR_RATE;
-  const sf         = frame.sf         || 0;
-  const shop_mhs   = sf * (rates.shopMHsPerSF  ?? 0.110);
-  const dist_mhs   = sf * (rates.distMHsPerSF  ?? 0.051);
-  const field_mhs  = sf * (rates.fieldMHsPerSF ?? 0.264);
-  const total_mhs  = shop_mhs + dist_mhs + field_mhs;
+  const laborRate = rates?.laborRate ?? DEFAULT_LABOR_RATE;
+  const beads     = rates?.beadsOfCaulk ?? 2;
+  const sysType   = toCanonicalSystemType(frame.system_id);
+  const { getHourlyFunctions, getItemRates } = useProductionRatesStore.getState();
+  const hf = getHourlyFunctions(sysType);
+  const ir = getItemRates(sysType);
+
+  // Derive total perimeter LF (for caulk) from inches × qty when not provided
+  const qty = frame.quantity || 1;
+  const perimeter = frame.perimeter
+    ?? ((frame.width && frame.height)
+      ? (2 * (Number(frame.width) + Number(frame.height)) / 12) * qty
+      : 0);
+
+  const r = calcFrameMH({ ...frame, perimeter }, hf, ir, beads, sysType);
+
   return {
     ...frame,
-    shop_mhs:   Math.round(shop_mhs  * 1000) / 1000,
-    dist_mhs:   Math.round(dist_mhs  * 1000) / 1000,
-    field_mhs:  Math.round(field_mhs * 1000) / 1000,
-    total_mhs:  Math.round(total_mhs * 1000) / 1000,
-    shop_cost:  Math.round(shop_mhs  * laborRate * 100) / 100,
-    dist_cost:  Math.round(dist_mhs  * laborRate * 100) / 100,
-    field_cost: Math.round(field_mhs * laborRate * 100) / 100,
-    total_cost: Math.round(total_mhs * laborRate * 100) / 100,
+    shop_mhs:   r.shopMH,
+    dist_mhs:   r.distributionMH,
+    field_mhs:  r.fieldMH,
+    total_mhs:  r.totalMH,
+    shop_cost:  Math.round(r.shopMH         * laborRate * 100) / 100,
+    dist_cost:  Math.round(r.distributionMH * laborRate * 100) / 100,
+    field_cost: Math.round(r.fieldMH        * laborRate * 100) / 100,
+    total_cost: Math.round(r.totalMH        * laborRate * 100) / 100,
   };
 }
 

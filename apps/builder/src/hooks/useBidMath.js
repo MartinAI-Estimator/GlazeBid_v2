@@ -133,6 +133,7 @@ export function useBidMath() {
           systemType:   key,
           frameCount:   0,
           shopHours:    0,
+          distHours:    0,
           fieldHours:   0,
           doorCount:    0,
           elevationTags: [],
@@ -140,7 +141,10 @@ export function useBidMath() {
       }
       const g = map[key];
       g.frameCount  += 1;
+      // Hours are produced by laborCalcEngine at frame-save time (AUDIT 8.2) —
+      // this hook only aggregates; it must not invent its own labor math.
       g.shopHours   += f.bom?.shopHours   ?? 0;
+      g.distHours   += f.bom?.distHours   ?? 0;
       g.fieldHours  += f.bom?.fieldHours  ?? 0;
       if (f.bom?.door?.type && f.bom.door.type !== 'none') {
         g.doorCount += f.bom.door.leaves ?? (f.quantity ?? 1);
@@ -150,15 +154,16 @@ export function useBidMath() {
     return Object.values(map).map((g) => ({
       ...g,
       shopHours:  +g.shopHours.toFixed(2),
+      distHours:  +g.distHours.toFixed(2),
       fieldHours: +g.fieldHours.toFixed(2),
-      totalHours: +(g.shopHours + g.fieldHours).toFixed(2),
+      totalHours: +(g.shopHours + g.distHours + g.fieldHours).toFixed(2),
     }));
   }, [frames]);
 
   // ── Executive summary — single source of truth ───────────────────────────────
   const summary = useMemo(() => {
     // Labor: aggregate raw hours from bom, apply contingency, apply rate
-    const rawLaborHours   = laborGroups.reduce((s, g) => s + g.shopHours + g.fieldHours, 0);
+    const rawLaborHours   = laborGroups.reduce((s, g) => s + g.shopHours + g.distHours + g.fieldHours, 0);
     const totalLaborHours = rawLaborHours * (1 + financials.contingencyPct / 100);
     const totalLaborCost  = totalLaborHours * financials.laborRate;
 

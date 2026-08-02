@@ -41,16 +41,13 @@ const PROFILES = {
   default:     { head: 'HD-1', sill: 'SL-1', jamb: 'JB-1', mull: 'MV-1', tran: 'MH-1' },
 };
 
-// ─── Labor rates (MH per lite) by system type ─────────────────────────────────
-const LABOR = {
-  'ext-sf-1':  { shop: 0.15, field: 0.25 },
-  'ext-sf-2':  { shop: 0.18, field: 0.30 },
-  'int-sf':    { shop: 0.12, field: 0.20 },
-  'cap-cw':    { shop: 0.25, field: 0.40 },
-  'ssg-cw':    { shop: 0.20, field: 0.35 },
-  'door-only': { shop: 0.30, field: 0.50 },
-  default:     { shop: 0.15, field: 0.25 },
-};
+// Labor: delegated to laborCalcEngine (Excel-parity) — AUDIT 8.2.
+// The old flat MH-per-lite table here was one of four parallel labor
+// implementations. laborCalcEngine + the production rates store are now the
+// single source of labor math.
+import { calcFrameMH } from '../utils/laborCalcEngine.js';
+import { toCanonicalSystemType } from '../utils/systemTypes.js';
+import useProductionRatesStore from '../store/useProductionRatesStore.js';
 
 /**
  * computeFabricationBOM(inputs, systemType)
@@ -69,7 +66,6 @@ export function computeFabricationBOM(inputs, systemType) {
   const type    = systemType || 'ext-sf-1';
   const deducts = DEDUCTS[type]  || DEDUCTS.default;
   const marks   = PROFILES[type] || PROFILES.default;
-  const labor   = LABOR[type]    || LABOR.default;
 
   // ── Glass list ──────────────────────────────────────────────────────────────
   const bayW = width  / bays;
@@ -139,11 +135,26 @@ export function computeFabricationBOM(inputs, systemType) {
     });
   }
 
-  // ── Hardware / Labor ────────────────────────────────────────────────────────
-  const liteCount = glassList.length;
+  // ── Hardware / Labor — via laborCalcEngine (Excel parity) ────────────────────
+  const canonicalType = toCanonicalSystemType(type);
+  const { getHourlyFunctions, getItemRates, beadsOfCaulk } = useProductionRatesStore.getState();
+  const mh = calcFrameMH(
+    {
+      quantity:  1,
+      bays,
+      rows,
+      panels:    bays * rows,            // per-frame glass count → DLOs
+      perimeter: (2 * (width + height)) / 12, // LF, for caulk
+    },
+    getHourlyFunctions(canonicalType),
+    getItemRates(canonicalType),
+    beadsOfCaulk ?? 2,
+    canonicalType,
+  );
   const hardware = {
-    shopLaborMhs:  parseFloat((liteCount * labor.shop).toFixed(2)),
-    fieldLaborMhs: parseFloat((liteCount * labor.field).toFixed(2)),
+    shopLaborMhs:  mh.shopMH,
+    // Distribution rides with field for this two-bucket consumer
+    fieldLaborMhs: parseFloat((mh.fieldMH + mh.distributionMH).toFixed(2)),
   };
 
   return { glassList, cutList, hardware };

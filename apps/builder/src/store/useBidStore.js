@@ -50,19 +50,35 @@ function calcTotals(frames, rates) {
       acc.totalAluminumLF += f.bom.totalAluminumLF ?? 0;
       acc.totalGlassSqFt  += f.bom.totalGlassSqFt  ?? 0;
       acc.totalLites      += f.bom.glassLitesCount  ?? 0;
+      // Engine-produced hours (laborCalcEngine, written into bom at save time)
+      acc._shopHours  += f.bom.shopHours  ?? 0;
+      acc._distHours  += f.bom.distHours  ?? 0;
+      acc._fieldHours += f.bom.fieldHours ?? 0;
+      acc._framesWithHours += (f.bom.shopHours != null || f.bom.fieldHours != null) ? 1 : 0;
       return acc;
     },
-    { totalFrames: 0, totalAluminumLF: 0, totalGlassSqFt: 0, totalLites: 0 },
+    { totalFrames: 0, totalAluminumLF: 0, totalGlassSqFt: 0, totalLites: 0,
+      _shopHours: 0, _distHours: 0, _fieldHours: 0, _framesWithHours: 0 },
   );
 
-  // ── Labor Engine ──────────────────────────────────────────────────────────
-  const shopFabHours   = raw.totalAluminumLF / rates.shopFabVelocity;
-  const fieldInstHours = raw.totalGlassSqFt  / rates.fieldInstVelocity;
+  // ── Labor totals ──────────────────────────────────────────────────────────
+  // AUDIT 8.2: this store used to run its own velocity model (LF/hr ÷ SqFt/hr)
+  // — a parallel labor engine. It now AGGREGATES laborCalcEngine hours stored
+  // in each frame's bom. The velocity fallback only covers legacy frames saved
+  // before engine hours existed.
+  const hasEngineHours = raw._framesWithHours > 0;
+  const shopFabHours   = hasEngineHours
+    ? raw._shopHours + raw._distHours
+    : raw.totalAluminumLF / rates.shopFabVelocity;
+  const fieldInstHours = hasEngineHours
+    ? raw._fieldHours
+    : raw.totalGlassSqFt / rates.fieldInstVelocity;
   const totalLaborHours = shopFabHours + fieldInstHours;
   const estimatedLaborCost = totalLaborHours * rates.burdenedRatePerHour;
 
+  const { _shopHours, _distHours, _fieldHours, _framesWithHours, ...publicRaw } = raw;
   return {
-    ...raw,
+    ...publicRaw,
     labor: {
       shopFabHours:        +shopFabHours.toFixed(2),
       fieldInstHours:      +fieldInstHours.toFixed(2),

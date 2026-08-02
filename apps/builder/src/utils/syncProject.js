@@ -87,6 +87,7 @@ export async function saveProjectToCloud({
         // Calculated BOM
         bom: {
           shopHours:       f.bom?.shopHours        ?? 0,
+          distHours:       f.bom?.distHours        ?? 0,
           fieldHours:      f.bom?.fieldHours        ?? 0,
           totalAluminumLF: f.bom?.totalAluminumLF   ?? 0,
           totalGlassSqFt:  f.bom?.totalGlassSqFt    ?? 0,

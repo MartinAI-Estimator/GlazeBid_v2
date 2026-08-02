@@ -2,6 +2,9 @@
 import useBidStore from '../../store/useBidStore';
 import { SYSTEM_PACKAGES, DEFAULT_SYSTEM_ID, SYSTEM_GEOMETRY_CATALOG } from '../../data/systemPackages';
 import { parseArchitecturalString, formatArchitecturalInches } from '../../utils/parseArchitecturalDim';
+import { calcFrameMH } from '../../utils/laborCalcEngine';
+import { toCanonicalSystemType } from '../../utils/systemTypes';
+import useProductionRatesStore from '../../store/useProductionRatesStore';
 
 // ─── Constants (non-system-specific) ──────────────────────────────────────────────────
 const DOOR_HEIGHT       = 84;      // inches — standard door leaf height (Single & Pair)
@@ -1279,11 +1282,30 @@ export default function ParametricFrameBuilder({
     const doorSillRemovedLF = hasDoor ? dloWidth / 12 : 0; // DLO width, not cut width
     const doorHeaderLF      = hasDoor ? dloWidth / 12 : 0;
 
-    // ── Labor hours (from active system package) ──────────────────────────
-    const fabRate     = systemProfile?.labor?.fabLFPerHour       ?? 12;
-    const installRate = systemProfile?.labor?.installSqFtPerHour ?? 25;
-    const shopHours   = totalAluminumLF / fabRate;
-    const fieldHours  = adjustedTotalGlassSqFt / installRate;
+    // ── Labor hours — via THE labor engine (Excel parity, AUDIT 8.2) ──────
+    // The old velocity model (LF/hr, ft²/hr) was a fifth parallel labor
+    // implementation. Frame hours now come from laborCalcEngine with the
+    // same rates the workspace / Review Bid / classic grid use.
+    const laborSysType = toCanonicalSystemType(systemProfile?.systemType ?? systemProfile?.id);
+    const { getHourlyFunctions, getItemRates, beadsOfCaulk } = useProductionRatesStore.getState();
+    const engineMH = calcFrameMH(
+      {
+        quantity:  1,
+        bays,
+        rows,
+        panels:    adjustedTotalLites,
+        pairs:     hasDoor && doorLeavesQty === 2 ? 1 : 0,
+        singles:   hasDoor && doorLeavesQty === 1 ? 1 : 0,
+        perimeter: (2 * (overallWidth + overallHeight)) / 12,
+      },
+      getHourlyFunctions(laborSysType),
+      getItemRates(laborSysType),
+      beadsOfCaulk ?? 2,
+      laborSysType,
+    );
+    const shopHours  = engineMH.shopMH;
+    const distHours  = engineMH.distributionMH;
+    const fieldHours = engineMH.fieldMH;
 
     return {
       // Grid
@@ -1318,9 +1340,11 @@ export default function ParametricFrameBuilder({
       // Aliases used by BOM/save
       totalLites:     adjustedTotalLites,
       totalGlassSqFt: adjustedTotalGlassSqFt,
-      // Labor
+      // Labor (per single frame — laborCalcEngine output)
       shopHours,
+      distHours,
       fieldHours,
+      laborSysType,
     };
   }, [overallWidth, overallHeight, bays, rows, headSightline, sillSightline,
       doorType, doorBay, sysSL, sysBite, systemProfile, activeGeometry, bayHorizontals]);
@@ -1403,8 +1427,10 @@ export default function ParametricFrameBuilder({
         totalGlassSqFt:   +(calc.adjustedTotalGlassSqFt * quantity).toFixed(2),
         glassLitesCount:  calc.adjustedTotalLites * quantity,
         shopHours:        +(calc.shopHours * quantity).toFixed(2),
+        distHours:        +(calc.distHours * quantity).toFixed(2),
         fieldHours:       +(calc.fieldHours * quantity).toFixed(2),
-        totalLaborHours:  +((calc.shopHours + calc.fieldHours) * quantity).toFixed(2),
+        totalLaborHours:  +((calc.shopHours + calc.distHours + calc.fieldHours) * quantity).toFixed(2),
+        laborEngine:      'laborCalcEngine', // marks Excel-parity hours (vs legacy velocity model)
         cutList:          cutList.map(item => ({
           ...item,
           // Multiply qty for positive items (sill removal stays -1 per frame, × quantity)
@@ -2266,16 +2292,20 @@ export default function ParametricFrameBuilder({
                     Labor Hours — {systemProfile?.name ?? 'Storefront'}
                   </div>
                   <BomRow
-                    label={`Shop Fab (${systemProfile?.labor?.fabLFPerHour ?? 12} LF/hr)`}
+                    label={`Shop MH (${calc.laborSysType})`}
                     value={`${(calc.shopHours * quantity).toFixed(2)} hrs${quantity > 1 ? ` (${calc.shopHours.toFixed(2)} ea)` : ''}`}
                   />
                   <BomRow
-                    label={`Field Install (${systemProfile?.labor?.installSqFtPerHour ?? 25} ft²/hr)`}
+                    label="Distribution MH"
+                    value={`${(calc.distHours * quantity).toFixed(2)} hrs${quantity > 1 ? ` (${calc.distHours.toFixed(2)} ea)` : ''}`}
+                  />
+                  <BomRow
+                    label="Field MH"
                     value={`${(calc.fieldHours * quantity).toFixed(2)} hrs${quantity > 1 ? ` (${calc.fieldHours.toFixed(2)} ea)` : ''}`}
                   />
                   <BomRow
                     label={quantity > 1 ? `Total Labor (×${quantity})` : 'Total Labor'}
-                    value={`${((calc.shopHours + calc.fieldHours) * quantity).toFixed(2)} hrs`}
+                    value={`${((calc.shopHours + calc.distHours + calc.fieldHours) * quantity).toFixed(2)} hrs`}
                     accent highlight
                   />
                 </div>
