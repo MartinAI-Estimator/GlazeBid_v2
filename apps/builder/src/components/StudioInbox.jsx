@@ -10,6 +10,7 @@
 import React, { useMemo, useCallback, useState } from 'react';
 import { useInboxStore } from '../store/useInboxStore';
 import useBidStore from '../store/useBidStore';
+import { toCanonicalSystemType, tryCanonicalSystemType } from '../utils/systemTypes';
 
 const TYPE_ICONS = {
   Area:  '⬜',
@@ -32,7 +33,12 @@ export default function StudioInbox({ className = '', onNavigate = null }) {
     addFrame({
       frameId,
       elevationTag: g.label !== '—' ? g.label : `${g.widthInches.toFixed(0)}"x${g.heightInches.toFixed(0)}"`,
-      systemType: 'Studio Takeoff',
+      // Canonical SystemType only — 'Studio Takeoff' violated the frozen contract
+      // and fell through every downstream systemType switch (AUDIT 2.1).
+      // Resolve from the label if it names a real type; otherwise default Ext SF.
+      systemType: tryCanonicalSystemType(g.label) || toCanonicalSystemType(null),
+      source: 'studio',
+      sourceSystemId: g.systemId ?? null, // Studio FrameType link — preserved (AUDIT 2.3)
       inputs: { width: g.widthInches, height: g.heightInches, bays: 1, rows: 1, glassBite: 0.75, sightline: 2 },
       bom: {
         totalAluminumLF: (2 * (g.widthInches + g.heightInches) / 12) * g.qty,
@@ -47,11 +53,12 @@ export default function StudioInbox({ className = '', onNavigate = null }) {
     setTimeout(() => setLastAdded(null), 4000);
   }, [addFrame]);
 
-  // Group by (widthInches × heightInches × type × label) for concise display
+  // Group by (widthInches × heightInches × type × label × systemId) for concise display.
+  // systemId is part of the key so the Studio FrameType link survives grouping (AUDIT 2.3).
   const groups = useMemo(() => {
     const map = {};
     for (const t of inbox) {
-      const key = `${t.type}::${(t.widthInches ?? 0).toFixed(2)}x${(t.heightInches ?? 0).toFixed(2)}::${t.label ?? ''}`;
+      const key = `${t.type}::${(t.widthInches ?? 0).toFixed(2)}x${(t.heightInches ?? 0).toFixed(2)}::${t.label ?? ''}::${t.systemId ?? ''}`;
       if (!map[key]) {
         map[key] = {
           key,
@@ -59,6 +66,7 @@ export default function StudioInbox({ className = '', onNavigate = null }) {
           widthInches:  t.widthInches  ?? 0,
           heightInches: t.heightInches ?? 0,
           label:        t.label ?? '—',
+          systemId:     t.systemId ?? null,
           qty:          0,
         };
       }
@@ -74,7 +82,9 @@ export default function StudioInbox({ className = '', onNavigate = null }) {
       addFrame({
         frameId,
         elevationTag: g.label !== '—' ? g.label : `${g.widthInches.toFixed(0)}"x${g.heightInches.toFixed(0)}"`,
-        systemType: 'Studio Takeoff',
+        systemType: tryCanonicalSystemType(g.label) || toCanonicalSystemType(null),
+        source: 'studio',
+        sourceSystemId: g.systemId ?? null,
         inputs: { width: g.widthInches, height: g.heightInches, bays: 1, rows: 1, glassBite: 0.75, sightline: 2 },
         bom: {
           totalAluminumLF: (2 * (g.widthInches + g.heightInches) / 12) * g.qty,

@@ -22,6 +22,7 @@ import {
   getSystemTypeConfig,
   getSystemCategory,
 } from '../utils/systemTypeConfig.js';
+import { toCanonicalSystemType } from '../utils/systemTypes.js';
 
 // Keep backward-compat exports — these are the SF defaults
 const EMPTY_HOURLY_FUNCTIONS = EMPTY_HF_SF;
@@ -53,7 +54,10 @@ const useProductionRatesStore = create(
       getHourlyFunctions: (systemType) => {
         const key = systemType || 'default';
         // 1. Explicitly saved for this type (Settings Save / setAllRatesForType)
-        const existing = get().hourlyFunctionsByType[key];
+        //    Check the raw key first, then its canonical spelling so frames stored
+        //    under legacy ids ('cap-cw', 'ext-sf-1:2') still find Admin-saved rates.
+        const byType = get().hourlyFunctionsByType;
+        const existing = byType[key] || byType[toCanonicalSystemType(key)];
         if (existing) return existing;
         // 2. Company HF sub-rate defaults (from the Settings breakdown table)
         const cat = getSystemCategory(key);
@@ -68,8 +72,9 @@ const useProductionRatesStore = create(
        */
       getItemRates: (systemType) => {
         const key = systemType || 'default';
-        // 1. Explicitly saved for this type
-        const existing = get().itemRatesByType[key];
+        // 1. Explicitly saved for this type (raw key, then canonical spelling)
+        const byType = get().itemRatesByType;
+        const existing = byType[key] || byType[toCanonicalSystemType(key)];
         if (existing) return existing;
         // 2. Company IR defaults — coerce blank strings to 0
         const cat = getSystemCategory(key);

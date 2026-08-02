@@ -309,19 +309,24 @@ export const SYSTEM_TYPES = {
 
 export const SYSTEM_TYPE_NAMES = Object.keys(SYSTEM_TYPES);
 
-/** Get formula category ('storefront' | 'curtainwall') for a system type name */
+import { toCanonicalSystemType } from './systemTypes.js';
+
+/** Get formula category ('storefront' | 'curtainwall') for a system type name.
+ * Accepts legacy spellings ('cap-cw', 'ext-sf-1:2', …) via the canonical shim —
+ * a curtain wall frame stored under a legacy id must NEVER fall through to
+ * storefront formulas. */
 export function getSystemCategory(systemType) {
-  return SYSTEM_TYPES[systemType]?.category || 'storefront';
+  return SYSTEM_TYPES[toCanonicalSystemType(systemType)]?.category || 'storefront';
 }
 
 /** Get the column config ID for systemColumns.js */
 export function getColumnConfigId(systemType) {
-  return SYSTEM_TYPES[systemType]?.columnId || 'ext-sf-1';
+  return SYSTEM_TYPES[toCanonicalSystemType(systemType)]?.columnId || 'ext-sf-1';
 }
 
 /** Get the full config for a system type, defaulting to Ext SF */
 export function getSystemTypeConfig(systemType) {
-  return SYSTEM_TYPES[systemType] || SYSTEM_TYPES['Ext SF'];
+  return SYSTEM_TYPES[toCanonicalSystemType(systemType)] || SYSTEM_TYPES['Ext SF'];
 }
 
 /** Get total hourly-function rate for a given column across all functions */
