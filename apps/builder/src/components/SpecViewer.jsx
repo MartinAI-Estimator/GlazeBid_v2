@@ -1,3 +1,4 @@
+import { API_BASE, apiFetch } from '../apiClient';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Search, 
@@ -952,7 +953,7 @@ const SpecViewer = ({
       if (documentPath.startsWith('http')) {
         pdfUrl = documentPath;
       } else {
-        pdfUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/pdf/${encodeURIComponent(project)}/${encodeURIComponent(documentPath)}`;
+        pdfUrl = `${API_BASE || ''}/pdf/${encodeURIComponent(project)}/${encodeURIComponent(documentPath)}`;
       }
       
       const response = await fetch(pdfUrl);
@@ -963,7 +964,7 @@ const SpecViewer = ({
       formData.append('file', blob, documentName || 'spec.pdf');
       formData.append('sections', JSON.stringify(inScopeSections));
       
-      const extractResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/spec/extract-requirements`, {
+      const extractResponse = await apiFetch(`/api/spec/extract-requirements`, {
         method: 'POST',
         body: formData
       });
@@ -982,7 +983,7 @@ const SpecViewer = ({
       
       // Save to project data
       const projectName = encodeURIComponent(project);
-      const saveResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/projects/${projectName}/spec-requirements`, {
+      const saveResponse = await apiFetch(`/api/projects/${projectName}/spec-requirements`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

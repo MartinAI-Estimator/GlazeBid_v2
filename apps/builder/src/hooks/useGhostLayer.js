@@ -1,3 +1,4 @@
+import { apiFetch } from '../apiClient';
 /**
  * useGhostLayer.js
  * 
@@ -30,7 +31,6 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
-import { apiFetch } from '../apiClient';
 
 const useGhostLayer = ({
   project,

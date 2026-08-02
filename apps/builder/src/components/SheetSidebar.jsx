@@ -1,3 +1,4 @@
+import { apiFetch } from '../apiClient';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, RotateCw, Trash2, Copy, ClipboardPaste, Edit3, SendHorizontal, Tag } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -63,7 +64,7 @@ const SheetSidebar = ({
       
       // Fallback: try backend if available
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/projects/${encodeURIComponent(projectName)}/markups/${encodeURIComponent(sheetId)}`);
+        const response = await apiFetch(`/projects/${encodeURIComponent(projectName)}/markups/${encodeURIComponent(sheetId)}`);
         if (response.status === 404) {
           setPagesWithMarkups(new Set());
           return;
@@ -148,7 +149,7 @@ const SheetSidebar = ({
         // Priority 3: Fallback to backend
         if (!pdfSource) {
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/pdf/${encodeURIComponent(projectName)}/${encodeURIComponent(sheetId)}`);
+            const response = await apiFetch(`/pdf/${encodeURIComponent(projectName)}/${encodeURIComponent(sheetId)}`);
             if (response.ok) {
               const arrayBuffer = await response.arrayBuffer();
               pdfSource = { data: arrayBuffer };
@@ -387,7 +388,7 @@ const SheetSidebar = ({
       formData.append('target_sheet_id', targetSheetId);
       formData.append('page_numbers', JSON.stringify(pagesToMove));
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/move-pages`, {
+      const response = await apiFetch(`/move-pages`, {
         method: 'POST',
         body: formData,
       });
@@ -449,7 +450,7 @@ const SheetSidebar = ({
     formData.append('sheet_id', sheetId);
     formData.append('regions', JSON.stringify(regions));
     
-    fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/extract-labels-from-regions`, {
+    apiFetch(`/extract-labels-from-regions`, {
       method: 'POST',
       body: formData,
     })
@@ -468,7 +469,7 @@ const SheetSidebar = ({
         saveFormData.append('sheet_id', sheetId);
         saveFormData.append('labels', JSON.stringify(data.labels));
         
-        return fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/save-page-labels`, {
+        return apiFetch(`/save-page-labels`, {
           method: 'POST',
           body: saveFormData,
         }).then(saveResponse => {

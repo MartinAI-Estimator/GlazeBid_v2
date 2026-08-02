@@ -1,3 +1,4 @@
+import { apiFetch } from '../apiClient';
 import React, { useState, useCallback, useRef } from 'react';
 import { 
   X, 
@@ -79,7 +80,7 @@ const AddendumViewer = ({ isOpen, onClose, project }) => {
       // Call comparison endpoint
       let compareResult = null;
       try {
-        const compareResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/compare`, {
+        const compareResponse = await apiFetch(`/api/visual-diff/compare`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -106,7 +107,7 @@ const AddendumViewer = ({ isOpen, onClose, project }) => {
 
       // Get impact report
       try {
-        const impactResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/visual-diff/impact-report`, {
+        const impactResponse = await apiFetch(`/api/visual-diff/impact-report`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

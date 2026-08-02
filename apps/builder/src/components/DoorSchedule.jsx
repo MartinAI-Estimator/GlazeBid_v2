@@ -1,3 +1,4 @@
+import { API_BASE, apiFetch } from '../apiClient';
 import React, { useState, useEffect } from 'react';
 import { Download, FileText, AlertCircle, Package, Wrench, Layers } from 'lucide-react';
 
@@ -23,8 +24,8 @@ const DoorSchedule = ({ project, projectData }) => {
     try {
       // Classify doors
       try {
-        const classifyResponse = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/classify`,
+        const classifyResponse = await apiFetch(
+          `/api/door-schedule/projects/${encodeURIComponent(project)}/classify`,
           { method: 'POST', signal: AbortSignal.timeout(2000) }
         );
         if (classifyResponse.ok) {
@@ -37,8 +38,8 @@ const DoorSchedule = ({ project, projectData }) => {
 
       // Get aluminum schedule
       try {
-        const aluminumResponse = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/aluminum-schedule`,
+        const aluminumResponse = await apiFetch(
+          `/api/door-schedule/projects/${encodeURIComponent(project)}/aluminum-schedule`,
           { signal: AbortSignal.timeout(2000) }
         );
         if (aluminumResponse.ok) {
@@ -51,8 +52,8 @@ const DoorSchedule = ({ project, projectData }) => {
 
       // Get glazing schedule
       try {
-        const glazingResponse = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/glazing-schedule`,
+        const glazingResponse = await apiFetch(
+          `/api/door-schedule/projects/${encodeURIComponent(project)}/glazing-schedule`,
           { signal: AbortSignal.timeout(2000) }
         );
         if (glazingResponse.ok) {
@@ -72,8 +73,8 @@ const DoorSchedule = ({ project, projectData }) => {
   const exportToCSV = async () => {
     try {
       const endpoint = activeTab === 'aluminum' ? 'aluminum' : 'glazing';
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/door-schedule/projects/${encodeURIComponent(project)}/export/${endpoint}`,
+      const response = await apiFetch(
+        `/api/door-schedule/projects/${encodeURIComponent(project)}/export/${endpoint}`,
         { signal: AbortSignal.timeout(2000) }
       );
       if (response.ok) {

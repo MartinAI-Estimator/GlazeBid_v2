@@ -1,3 +1,4 @@
+import { apiFetch } from '../apiClient';
 import { useState, useEffect } from 'react';
 
 /**
@@ -15,7 +16,7 @@ export const useMarkups = (sheetId) => {
     const loadMarkups = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/sheets/${sheetId}/markups`);
+        const response = await apiFetch(`/api/sheets/${sheetId}/markups`);
         if (response.ok) {
           const data = await response.json();
           setMarkups(data.markups || []);
@@ -33,7 +34,7 @@ export const useMarkups = (sheetId) => {
   // Add new markup
   const addMarkup = async (markupData) => {
     try {
-      const response = await fetch(`/api/sheets/${sheetId}/markups`, {
+      const response = await apiFetch(`/api/sheets/${sheetId}/markups`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(markupData)
@@ -52,7 +53,7 @@ export const useMarkups = (sheetId) => {
   // Update existing markup
   const updateMarkup = async (markupId, updates) => {
     try {
-      const response = await fetch(`/api/markups/${markupId}`, {
+      const response = await apiFetch(`/api/markups/${markupId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates)
@@ -73,7 +74,7 @@ export const useMarkups = (sheetId) => {
   // Delete markup
   const deleteMarkup = async (markupId) => {
     try {
-      const response = await fetch(`/api/markups/${markupId}`, {
+      const response = await apiFetch(`/api/markups/${markupId}`, {
         method: 'DELETE'
       });
 

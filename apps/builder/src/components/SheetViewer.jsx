@@ -1,3 +1,4 @@
+import { API_BASE, apiFetch } from '../apiClient';
 import React, { useState, useEffect, useRef } from 'react';
 import OpenSeadragon from 'openseadragon';
 import ToolPalette from './ToolPalette';
@@ -40,7 +41,7 @@ const SheetViewer = ({ project, sheetId }) => {
     }
     // Best-effort backend sync
     try {
-      await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/save-markup`, {
+      await apiFetch(`/save-markup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ project, sheet: sheetKey, markup })
@@ -59,7 +60,7 @@ const SheetViewer = ({ project, sheetId }) => {
     }
     // Best-effort backend sync
     try {
-      await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/save-scale`, {
+      await apiFetch(`/save-scale`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ project, sheet: sheetKey, scale: scaleValue })
@@ -216,7 +217,7 @@ const SheetViewer = ({ project, sheetId }) => {
     const sheetIdSafe = typeof sheetId === 'object' ? sheetId.id : sheetId;
     const encodedProject = encodeURIComponent(project);
     const encodedSheetId = encodeURIComponent(sheetIdSafe);
-    const tileUrl = `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/tiles/${encodedProject}/${encodedSheetId}/map.dzi`;
+    const tileUrl = `${API_BASE || ''}/tiles/${encodedProject}/${encodedSheetId}/map.dzi`;
     
     // To debug: See what the app is TRYING to load
     console.log("Current Tile URL:", tileUrl);

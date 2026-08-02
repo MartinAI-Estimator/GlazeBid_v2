@@ -1,3 +1,4 @@
+import { API_BASE as ROOT_API_BASE, apiFetch } from '../apiClient';
 /**
  * Learning Loop API Client
  * 
@@ -9,7 +10,7 @@
  * This data builds the foundation for autonomous takeoff.
  */
 
-const API_BASE = `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/learning`;
+const API_BASE = `${ROOT_API_BASE || ''}/api/learning`;
 
 /**
  * Generate unique session ID for tracking user behavior patterns
@@ -33,7 +34,7 @@ const getSessionId = () => {
  */
 export const logCorrection = async (projectName, sheetId, aiPrediction, userCorrection, correctionType = 'coordinate_adjustment') => {
   try {
-    const response = await fetch(`${API_BASE}/log-correction`, {
+    const response = await apiFetch(`${API_BASE}/log-correction`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -73,7 +74,7 @@ export const logCorrection = async (projectName, sheetId, aiPrediction, userCorr
  */
 export const logValidation = async (projectName, sheetId, aiPrediction) => {
   try {
-    const response = await fetch(`${API_BASE}/log-validation`, {
+    const response = await apiFetch(`${API_BASE}/log-validation`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -109,7 +110,7 @@ export const logValidation = async (projectName, sheetId, aiPrediction) => {
  */
 export const logRejection = async (projectName, sheetId, aiPrediction, reason = 'user_rejected', correctClass = null) => {
   try {
-    const response = await fetch(`${API_BASE}/log-rejection`, {
+    const response = await apiFetch(`${API_BASE}/log-rejection`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -144,7 +145,7 @@ export const logRejection = async (projectName, sheetId, aiPrediction, reason = 
  */
 export const getStatistics = async (projectName) => {
   try {
-    const response = await fetch(`${API_BASE}/statistics/${encodeURIComponent(projectName)}`);
+    const response = await apiFetch(`${API_BASE}/statistics/${encodeURIComponent(projectName)}`);
     
     if (!response.ok) {
       throw new Error(`Learning API error: ${response.statusText}`);
@@ -166,7 +167,7 @@ export const getStatistics = async (projectName) => {
  */
 export const exportTrainingData = async (projectName) => {
   try {
-    const response = await fetch(`${API_BASE}/export-training-data/${encodeURIComponent(projectName)}`, {
+    const response = await apiFetch(`${API_BASE}/export-training-data/${encodeURIComponent(projectName)}`, {
       method: 'POST',
     });
     

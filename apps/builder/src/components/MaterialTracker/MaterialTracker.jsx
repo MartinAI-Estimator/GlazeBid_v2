@@ -1,3 +1,4 @@
+import { apiFetch } from '../../apiClient';
 /**
  * Material Tracker Component
  * Tracks materials from SOW (Statement of Work) tab
@@ -30,7 +31,7 @@ const MaterialTracker = ({ project }) => {
   const loadMaterials = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/materials/projects/${encodeURIComponent(project)}`);
+      const response = await apiFetch(`/api/materials/projects/${encodeURIComponent(project)}`);
       const data = await response.json();
       
       if (data.success && data.materials) {
@@ -47,7 +48,7 @@ const MaterialTracker = ({ project }) => {
     if (!newMaterial.description) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/materials/projects/${encodeURIComponent(project)}`, {
+      const response = await apiFetch(`/api/materials/projects/${encodeURIComponent(project)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMaterial)
@@ -72,7 +73,7 @@ const MaterialTracker = ({ project }) => {
 
   const deleteMaterial = async (materialId) => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/materials/${materialId}?project_name=${encodeURIComponent(project)}`, {
+      await apiFetch(`/api/materials/${materialId}?project_name=${encodeURIComponent(project)}`, {
         method: 'DELETE'
       });
       await loadMaterials();
@@ -83,7 +84,7 @@ const MaterialTracker = ({ project }) => {
 
   const updateMaterial = async (materialId, updates) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/materials/${materialId}?project_name=${encodeURIComponent(project)}`, {
+      const response = await apiFetch(`/api/materials/${materialId}?project_name=${encodeURIComponent(project)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates)

@@ -1,35 +1,46 @@
-import { createClient } from '@supabase/supabase-js';
-
 /**
- * Supabase Client
- * Connects GlazeBid to the backend database
- * 
- * Environment variables required:
- * - VITE_SUPABASE_URL: Your Supabase project URL
- * - VITE_SUPABASE_ANON_KEY: Your Supabase public anonymous key
+ * supabaseClient.js — LOCAL-ONLY STUB (Supabase removed, AUDIT 1.3)
+ *
+ * GlazeBid is local-first: the project file on disk is the single source of
+ * truth and no cloud backend exists. This stub keeps the legacy import surface
+ * (`supabase`, `isSupabaseConfigured`) alive so old call sites degrade
+ * gracefully instead of crashing, without shipping the @supabase/supabase-js
+ * dependency or making any network calls.
+ *
+ * Every query resolves to { data: null, error: { message: 'local mode' } } —
+ * the same shape callers already handle for "not configured".
  */
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const LOCAL_ERROR = { message: 'GlazeBid is local-first — cloud persistence is disabled.' };
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('⚠️ Supabase credentials not found. Save/Load features will be disabled.');
-  console.warn('Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file');
+// Chainable no-op query builder: supabase.from(...).select(...).eq(...) etc.
+// Awaiting any point in the chain resolves to { data: null, error }.
+function makeChain() {
+  const result = Promise.resolve({ data: null, error: LOCAL_ERROR });
+  const chain = new Proxy(function () {}, {
+    get(_t, prop) {
+      if (prop === 'then')  return result.then.bind(result);
+      if (prop === 'catch') return result.catch.bind(result);
+      if (prop === 'finally') return result.finally.bind(result);
+      return () => chain;
+    },
+    apply() { return chain; },
+  });
+  return chain;
 }
 
-// Create the Supabase client
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true
-      }
-    })
-  : null;
+export const supabase = new Proxy({}, {
+  get(_t, prop) {
+    if (prop === 'auth') {
+      return {
+        getSession: async () => ({ data: { session: null }, error: null }),
+        signOut:    async () => ({ error: null }),
+      };
+    }
+    return () => makeChain();
+  },
+});
 
-// Helper function to check if Supabase is configured
-export const isSupabaseConfigured = () => {
-  return supabase !== null;
-};
+export const isSupabaseConfigured = () => false;
 
 export default supabase;

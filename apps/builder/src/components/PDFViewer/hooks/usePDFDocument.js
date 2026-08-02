@@ -1,3 +1,4 @@
+import { API_BASE, apiFetch } from '../../../apiClient';
 import { useState, useEffect, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 
@@ -50,8 +51,8 @@ export function usePDFDocument({
   const extractPageLabel = async (projectId, sheetId, pageNumber) => {
     try {
       setIsExtractingLabel(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/extract-label?project=${projectId}&sheet=${sheetId}&page=${pageNumber}`
+      const response = await apiFetch(
+        `/api/extract-label?project=${projectId}&sheet=${sheetId}&page=${pageNumber}`
       );
       
       if (!response.ok) {
@@ -101,7 +102,7 @@ export function usePDFDocument({
         setLoadProgress(10);
         
         // Construct PDF URL - backend will serve raw PDF
-        const pdfUrl = `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/pdf/${project}/${sheetId}`;
+        const pdfUrl = `${API_BASE || ''}/pdf/${project}/${sheetId}`;
         
         setLoadProgress(30);
         
@@ -187,7 +188,7 @@ export function usePDFDocument({
           message: error.message,
           name: error.name,
           stack: error.stack,
-          pdfUrl: `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/pdf/${project}/${sheetId}`
+          pdfUrl: `${API_BASE || ''}/pdf/${project}/${sheetId}`
         });
         setIsLoading(false);
         

@@ -1,3 +1,4 @@
+import { API_BASE as ROOT_API_BASE, apiFetch } from '../apiClient';
 import React, { useState, useCallback } from 'react';
 import { Brain, Sparkles, Zap, CheckCircle, XCircle, Loader2, Info, PlusCircle } from 'lucide-react';
 import { GLAZING_CLASSES } from './constants';
@@ -46,7 +47,7 @@ const AIAutomationButton = ({
   const [messageType, setMessageType] = useState('info'); // info, success, error
   const [hasRunDetection, setHasRunDetection] = useState(false); // Only allow detection once per project
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+  const API_BASE = ROOT_API_BASE || '';
 
   // Fetch learning stats on mount
   React.useEffect(() => {
@@ -55,7 +56,7 @@ const AIAutomationButton = ({
 
   const fetchLearningStats = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/ai/learning-stats`);
+      const response = await apiFetch(`${API_BASE}/api/ai/learning-stats`);
       if (response.ok) {
         const data = await response.json();
         setLearningStats(data.stats);
@@ -75,7 +76,7 @@ const AIAutomationButton = ({
     console.log('🤖 Starting AI ghost detection (single page)...', { projectName, currentSheet, currentPageNum });
     
     try {
-      const response = await fetch(`${API_BASE}/api/ai/ghost-detection`, {
+      const response = await apiFetch(`${API_BASE}/api/ai/ghost-detection`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -135,7 +136,7 @@ const AIAutomationButton = ({
     console.log('🔬 Starting BATCH AI ghost detection...', { projectName, currentSheet });
     
     try {
-      const response = await fetch(`${API_BASE}/api/ai/batch-ghost-detection`, {
+      const response = await apiFetch(`${API_BASE}/api/ai/batch-ghost-detection`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -216,7 +217,7 @@ const AIAutomationButton = ({
     }
     
     try {
-      const response = await fetch(`${API_BASE}/api/ai/autonomous-takeoff`, {
+      const response = await apiFetch(`${API_BASE}/api/ai/autonomous-takeoff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -333,7 +334,7 @@ const AIAutomationButton = ({
       }
       
       // Notify backend for learning
-      const response = await fetch(`${API_BASE}/api/ai/promote-ghost`, {
+      const response = await apiFetch(`${API_BASE}/api/ai/promote-ghost`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ghost_id: ghostId })
@@ -401,7 +402,7 @@ const AIAutomationButton = ({
     // Record learning for each
     for (const ghost of pendingGhosts) {
       try {
-        await fetch(`${API_BASE}/api/ai/promote-ghost`, {
+        await apiFetch(`${API_BASE}/api/ai/promote-ghost`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ghost_id: ghost.id })
@@ -421,7 +422,7 @@ const AIAutomationButton = ({
    */
   const rejectGhost = async (ghostId, reason = 'incorrect') => {
     try {
-      const response = await fetch(`${API_BASE}/api/ai/reject-ghost`, {
+      const response = await apiFetch(`${API_BASE}/api/ai/reject-ghost`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

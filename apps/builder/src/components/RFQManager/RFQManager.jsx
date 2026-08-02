@@ -1,3 +1,4 @@
+import { API_BASE, apiFetch } from '../../apiClient';
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Plus, 
@@ -48,8 +49,8 @@ const RFQManager = ({ project, onOpenDrawing }) => {
   const loadRfqs = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/projects/${encodeURIComponent(project)}`
+      const response = await apiFetch(
+        `/api/rfq/projects/${encodeURIComponent(project)}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -70,8 +71,8 @@ const RFQManager = ({ project, onOpenDrawing }) => {
     }
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/projects/${encodeURIComponent(project)}`,
+      const response = await apiFetch(
+        `/api/rfq/projects/${encodeURIComponent(project)}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -109,8 +110,8 @@ const RFQManager = ({ project, onOpenDrawing }) => {
     if (!window.confirm('Are you sure you want to delete this RFQ?')) return;
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
+      const response = await apiFetch(
+        `/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
         { method: 'DELETE' }
       );
 
@@ -128,8 +129,8 @@ const RFQManager = ({ project, onOpenDrawing }) => {
 
   const updateRfq = async (rfqId, updates) => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
+      const response = await apiFetch(
+        `/api/rfq/${rfqId}?project=${encodeURIComponent(project)}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -151,8 +152,8 @@ const RFQManager = ({ project, onOpenDrawing }) => {
 
   const exportRfq = async (rfq) => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/rfq/${rfq.id}/export?project=${encodeURIComponent(project)}`
+      const response = await apiFetch(
+        `/api/rfq/${rfq.id}/export?project=${encodeURIComponent(project)}`
       );
       if (response.ok) {
         const blob = await response.blob();

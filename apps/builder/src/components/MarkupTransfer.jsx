@@ -1,3 +1,4 @@
+import { API_BASE, apiFetch } from '../apiClient';
 import React, { useState, useCallback, useEffect } from 'react';
 import { 
   X, 
@@ -51,8 +52,8 @@ const MarkupTransfer = ({
       try {
         let data = null;
         try {
-          const response = await fetch(
-            `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/load-markups?project=${encodeURIComponent(project)}&sheet=${encodeURIComponent(sourceSheet)}`,
+          const response = await apiFetch(
+            `/load-markups?project=${encodeURIComponent(project)}&sheet=${encodeURIComponent(sourceSheet)}`,
             { signal: AbortSignal.timeout(2000) }
           );
           if (response.ok) {
@@ -157,7 +158,7 @@ const MarkupTransfer = ({
       successCount = 0;
       for (const markup of transferredMarkups) {
         try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/save-markup`, {
+          const response = await apiFetch(`/save-markup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

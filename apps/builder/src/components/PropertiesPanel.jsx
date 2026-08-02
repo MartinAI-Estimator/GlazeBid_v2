@@ -1,3 +1,4 @@
+import { API_BASE, apiFetch } from '../apiClient';
 import React, { useState, useEffect } from 'react';
 import { calculateDeflection } from '../utils/physics';
 
@@ -18,8 +19,8 @@ const PropertiesPanel = ({ selectedMarkup, systemLibrary, projectName }) => {
                 let data = null;
                 try {
                     const encodedProjectName = encodeURIComponent(projectName);
-                    const response = await fetch(
-                        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/projects/${encodedProjectName}/verify-entity/${selectedMarkup.id}`,
+                    const response = await apiFetch(
+                        `/api/projects/${encodedProjectName}/verify-entity/${selectedMarkup.id}`,
                         { signal: AbortSignal.timeout(2000) }
                     );
                     if (response.ok) {
