@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, type FC } from 'react';
-import { Download, Trash2, Info } from 'lucide-react';
+import { Download, Trash2, Info, Upload } from 'lucide-react';
 import { useTrainingDataCollector } from '../hooks/useTrainingDataCollector';
 
 const TrainingDataPanel: FC = () => {

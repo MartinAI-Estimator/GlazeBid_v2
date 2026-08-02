@@ -1,11 +1,11 @@
-﻿/**
+/**
  * BidSheet Context - Multi-System State Management (Local / Electron mode)
- * All state is persisted in localStorage â€” no backend required.
+ * All state is persisted in localStorage — no backend required.
  */
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getSystem, SYSTEM_TYPES } from '../config/systemRegistry';
 
-// â”€â”€â”€ localStorage helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── localStorage helpers ─────────────────────────────────────────────────────
 function lsKey(project, ...parts) {
   return `glazebid:bidsheet:${project}:${parts.join(':')}`;
 }
@@ -16,7 +16,7 @@ function lsSet(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* quota */ }
 }
 
-// â”€â”€â”€ Local frame-metric computation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Local frame-metric computation ─────────────────────────────────────────
 const DEFAULT_LABOR_RATE = 42.00;
 
 function computeFrameMetrics(frame, rates) {
@@ -87,9 +87,12 @@ export function BidSheetProvider({ children, projectName }) {
     mhsPerDLO: 0, avgSFPerDLO: 0, avgSFPerFrame: 0,
   });
 
-  // â”€â”€ Boot: load persisted systems â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Boot: load persisted systems ─────────────────────────────────────────
   useEffect(() => {
     if (!projectName) return;
+    // Restore custom HR function rates (AUDIT 1.4: written by updateHrRate, was never read back)
+    const savedHrRates = lsGet(lsKey(projectName, 'hrrates'), null);
+    if (savedHrRates) setHrFunctionRates(prev => ({ ...prev, ...savedHrRates }));
     const saved = lsGet(lsKey(projectName, 'systems'), []);
     if (saved.length > 0) {
       setActiveSystems(saved);
@@ -112,7 +115,7 @@ export function BidSheetProvider({ children, projectName }) {
     lsSet(lsKey(projectName, 'selectedSystem'), selectedSystem);
   }, [projectName, selectedSystem]);
 
-  // â”€â”€ Load frames + rates when selection changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Load frames + rates when selection changes ────────────────────────────
   useEffect(() => {
     if (!projectName || !selectedSystem) return;
     const saved = lsGet(lsKey(projectName, 'frames', selectedSystem), []);
@@ -122,7 +125,7 @@ export function BidSheetProvider({ children, projectName }) {
     if (savedR) setProductionRates(prev => ({ ...prev, ...savedR }));
   }, [projectName, selectedSystem]);
 
-  // â”€â”€ Recalculate totals on frame changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Recalculate totals on frame changes ───────────────────────────────────
   useEffect(() => { calculateTotals(frames); }, [frames]);
 
   const calculateTotals = useCallback((list) => {
@@ -148,7 +151,7 @@ export function BidSheetProvider({ children, projectName }) {
     });
   }, []);
 
-  // â”€â”€ CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── CRUD ──────────────────────────────────────────────────────────────────
   const addFrame = useCallback((frameData) => {
     const newFrame = computeFrameMetrics(
       { id: generateId(), ...frameData, system_id: selectedSystem },
@@ -192,13 +195,13 @@ export function BidSheetProvider({ children, projectName }) {
   const clearAllFrames = useCallback(() => {
     if (frames.length === 0) return;
     if (!window.confirm(
-      `âš ï¸ WARNING: This will permanently delete ALL ${frames.length} frame(s) from ${selectedSystem}.\n\nAre you sure?`
+      `⚠️ WARNING: This will permanently delete ALL ${frames.length} frame(s) from ${selectedSystem}.\n\nAre you sure?`
     )) return;
     setFrames([]);
     lsSet(lsKey(projectName, 'frames', selectedSystem), []);
   }, [projectName, selectedSystem, frames]);
 
-  // â”€â”€ System tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── System tabs ───────────────────────────────────────────────────────────
   const addSystem = useCallback((systemId) => {
     const count       = systemInstances[systemId] || 0;
     const newId       = `${systemId}:${count + 1}`;
@@ -227,7 +230,7 @@ export function BidSheetProvider({ children, projectName }) {
     }
   }, [activeSystems, selectedSystem, projectName]);
 
-  // â”€â”€ Rates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Rates ─────────────────────────────────────────────────────────────────
   const updateProductionRate = useCallback((key, value) => {
     setProductionRates(prev => {
       const updated = { ...prev, [key]: value };
@@ -249,7 +252,7 @@ export function BidSheetProvider({ children, projectName }) {
     });
   }, [projectName]);
 
-  // â”€â”€ Import (local file reader â€” tab-delimited CSV) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Import (local file reader — tab-delimited CSV) ────────────────────────
   const importPartnerPak = useCallback((file) => {
     if (!file) return;
     setLoading(true);
@@ -280,18 +283,18 @@ export function BidSheetProvider({ children, projectName }) {
           lsSet(lsKey(projectName, 'frames', selectedSystem), updated);
           return updated;
         });
-        alert(`âœ… Successfully imported ${imported.length} frame(s)`);
+        alert(`✅ Successfully imported ${imported.length} frame(s)`);
       } catch (err) {
-        alert(`âŒ Import failed: ${err.message}`);
+        alert(`❌ Import failed: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
-    reader.onerror = () => { alert('âŒ Could not read file'); setLoading(false); };
+    reader.onerror = () => { alert('❌ Could not read file'); setLoading(false); };
     reader.readAsText(file);
   }, [projectName, selectedSystem, productionRates]);
 
-  // â”€â”€ Export (CSV download) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Export (CSV download) ─────────────────────────────────────────────────
   const exportToExcel = useCallback(() => {
     const headers = ['Mark','Width','Height','Quantity','SF','DLOs','Shop MHs','Dist MHs','Field MHs','Total MHs','Total Cost'];
     const rows    = frames.map(f => [

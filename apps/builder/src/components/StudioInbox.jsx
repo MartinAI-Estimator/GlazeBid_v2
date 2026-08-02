@@ -42,7 +42,8 @@ export default function StudioInbox({ className = '', onNavigate = null }) {
         glassSizes: { widthInches: g.widthInches, heightInches: g.heightInches, qty: g.qty },
       },
     });
-    setLastAdded(frameId);
+    // AUDIT 2.2: track by group key (what the row button compares against), not frameId
+    setLastAdded(g.key);
     setTimeout(() => setLastAdded(null), 4000);
   }, [addFrame]);
 
