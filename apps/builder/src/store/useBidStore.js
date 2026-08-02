@@ -169,6 +169,43 @@ const useBidStore = create(
   // ── 1. The Cart ─────────────────────────────────────────────────────────────
   frames: [],
 
+  // ── 1b. Workspace systems (THE canonical system/frame model — AUDIT 3.1) ────
+  // Owned here so BidSheet workspace, ReviewBidPage, proposal, and the project
+  // file all read the SAME data. GlazeBidWorkspace renders this; ReviewBidPage
+  // prices it; the .gbid/.aiq payload serializes it. localStorage keys
+  // ('glazebid:workspaceSystems:<proj>') are a legacy mirror only.
+  workspaceSystems: [],
+
+  /** Replace or functionally update the workspace systems array. */
+  setWorkspaceSystems: (updater) => {
+    set((state) => ({
+      workspaceSystems: typeof updater === 'function'
+        ? updater(state.workspaceSystems)
+        : (Array.isArray(updater) ? updater : []),
+    }));
+  },
+
+  addWorkspaceSystem: (system) => {
+    set((state) => ({ workspaceSystems: [...state.workspaceSystems, system] }));
+  },
+
+  /** Patch one system by id. `patch` may be an object or fn(sys) => sys. */
+  updateWorkspaceSystem: (systemId, patch) => {
+    set((state) => ({
+      workspaceSystems: state.workspaceSystems.map((sys) =>
+        sys.id === systemId
+          ? (typeof patch === 'function' ? patch(sys) : { ...sys, ...patch })
+          : sys
+      ),
+    }));
+  },
+
+  removeWorkspaceSystem: (systemId) => {
+    set((state) => ({
+      workspaceSystems: state.workspaceSystems.filter((sys) => sys.id !== systemId),
+    }));
+  },
+
   // ── 2. Labor rate configuration (estimator-tunable per project) ─────────────
   laborRates: { ...DEFAULT_LABOR_RATES },
 
@@ -233,8 +270,9 @@ const useBidStore = create(
 
   // ── 10. Wipe the entire bid ──────────────────────────────────────────────────
   clearBid: () => set({
-    frames:        [],
-    projectTotals: calcTotals([], DEFAULT_LABOR_RATES),
+    frames:           [],
+    workspaceSystems: [],
+    projectTotals:    calcTotals([], DEFAULT_LABOR_RATES),
   }),
 
   // ── 11. Hydrate from saved JSON blob (load bid from file / backend) ──────────
@@ -319,9 +357,10 @@ const useBidStore = create(
   //                         on next mount, then clears the slot automatically.
   pendingRehydration: null, // { financials, vendorQuotes } | null
 
-  rehydrateBid: ({ frames = [], financials = null, vendorQuotes = null }) => {
+  rehydrateBid: ({ frames = [], financials = null, vendorQuotes = null, workspaceSystems = null }) => {
     set((state) => ({
       frames:             frames,
+      ...(Array.isArray(workspaceSystems) ? { workspaceSystems } : {}),
       projectTotals:      calcTotals(frames, state.laborRates),
       pendingRehydration: (financials || vendorQuotes)
         ? { financials, vendorQuotes }
@@ -333,9 +372,10 @@ const useBidStore = create(
     }),
     {
       name: 'glazebid-bid-store',
-      // Only persist frames + labor rates; projectTotals are derived (recalculated on load)
+      // Persist frames + workspace systems + labor rates; projectTotals are derived
       partialize: (state) => ({
         frames: state.frames,
+        workspaceSystems: state.workspaceSystems,
         laborRates: state.laborRates,
       }),
     }

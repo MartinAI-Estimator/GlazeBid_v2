@@ -107,10 +107,14 @@ function BidSheetContent({ projectName, onNavigate, bidSettings, onBidSettingsCh
   // Subscribe to frames from useBidStore (Frame Builder + StudioInbox)
   const bidStoreFrames = useBidStore((s) => s.frames);
 
-  // Detect frames in useBidStore that aren't in BidSheetContext yet
+  // Detect frames in useBidStore that aren't in BidSheetContext yet.
+  // AUDIT 3.3: context frames self-generate ids ('f-...') that can never match
+  // bidStore frameIds ('studio-...'), so the old comparison always failed —
+  // the banner never cleared and double-clicking imported duplicates. Context
+  // frames now carry sourceFrameId (set below) so the comparison is real.
   const syncableFrames = useMemo(() => {
-    const contextFrameIds = new Set(frames.map(f => f.id));
-    return bidStoreFrames.filter(f => !contextFrameIds.has(f.frameId));
+    const knownIds = new Set(frames.map(f => f.sourceFrameId ?? f.id));
+    return bidStoreFrames.filter(f => !knownIds.has(f.frameId));
   }, [bidStoreFrames, frames]);
 
   // Sync: convert useBidStore frame format to BidSheetContext format
@@ -122,6 +126,7 @@ function BidSheetContent({ projectName, onNavigate, bidSettings, onBidSettingsCh
         sqFtPerFrame(bidFrame.inputs?.width ?? 0, bidFrame.inputs?.height ?? 0);
 
       addFrame({
+        sourceFrameId: bidFrame.frameId, // dedupe key against useBidStore (AUDIT 3.3)
         mark:        bidFrame.elevationTag || 'Imported',
         width:       bidFrame.inputs?.width      ?? 0,
         height:      bidFrame.inputs?.height     ?? 0,

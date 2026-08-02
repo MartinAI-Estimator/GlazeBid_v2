@@ -4,6 +4,7 @@ import { calculatePricing } from '../utils/PricingEngine';
 import { calcSystemAncillary, DEFAULT_ANCILLARY_CONFIG } from '../utils/ancillaryPricing';
 import { calcSystemMH, mhToCost } from '../utils/laborCalcEngine';
 import useProductionRatesStore from '../store/useProductionRatesStore';
+import useBidStore from '../store/useBidStore';
 
 // ─── Human-readable system type labels ───────────────────────────────────────
 const SYSTEM_TYPE_LABELS = {
@@ -205,12 +206,18 @@ const usd = (n) => {
 const ReviewBidPage = ({ project, onBack, onNavigate }) => {
   const projectKey = project || '_default';
 
+  // Canonical model: useBidStore.workspaceSystems (AUDIT 3.5 — this page used to
+  // read only localStorage, making its numbers invisible to save/load and the
+  // proposal). Falls back to the legacy localStorage mirror for projects that
+  // haven't been opened in the workspace since the migration.
+  const storeSystems = useBidStore((s) => s.workspaceSystems);
   const systems = useMemo(() => {
+    if (storeSystems.length > 0) return storeSystems;
     try {
       const raw = localStorage.getItem(`glazebid:workspaceSystems:${projectKey}`);
       return raw ? JSON.parse(raw) : [];
     } catch { return []; }
-  }, [projectKey]);
+  }, [storeSystems, projectKey]);
 
   const bidSettings = useMemo(() => readBidSettings(projectKey), [projectKey]);
 

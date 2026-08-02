@@ -17,7 +17,7 @@ import FrameTable from './FrameTable';
 
 import ParametricFrameBuilder from './ParametricFrameBuilder';
 import TakeoffWorkspace from './TakeoffWorkspace';
-import { useBidSheet } from '../../context/BidSheetContext';
+import useBidStore from '../../store/useBidStore';
 import useProductionRatesStore from '../../store/useProductionRatesStore';
 import useEquipmentRatesStore from '../../store/useEquipmentRatesStore';
 import useBidProjectStore from '../../store/useBidProjectStore';
@@ -27,33 +27,34 @@ import { getSystemCategory } from '../../utils/systemTypeConfig';
 import { calcSystemAncillary, DEFAULT_ANCILLARY_CONFIG, normalizeAncillaryConfig } from '../../utils/ancillaryPricing';
 
 const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {}, onBidSettingsChange }, ref) => {
-  const { frames, setFrames } = useBidSheet();
+  // AUDIT 3.2: this component previously destructured a setFrames that
+  // BidSheetContext never exported — the modifier-update path crashed at
+  // runtime. Canonical frame data now lives in useBidStore.workspaceSystems;
+  // the BidSheetContext is no longer consumed here at all.
 
-  // ── Persistence key — scoped to project ──
+  // ── Persistence key — legacy localStorage mirror, scoped to project ──
   const LS_KEY = `glazebid:workspaceSystems:${projectName || '_default'}`;
 
-  const [importedSystems, setImportedSystems] = useState(() => {
-    try {
-      const saved = localStorage.getItem(`glazebid:workspaceSystems:${projectName || '_default'}`);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed : [];
-      }
-    } catch { /* ignore */ }
-    return [];
-  });
+  // ── Canonical model: useBidStore.workspaceSystems (AUDIT 3.1) ──
+  const importedSystems    = useBidStore((s) => s.workspaceSystems);
+  const setImportedSystems = useBidStore((s) => s.setWorkspaceSystems);
 
-  // isDirty = systems exist but haven't been confirmed-saved to a .gbid file
-  const [isDirty, setIsDirty] = useState(() => {
+  // One-time migration: old per-project localStorage → store (runs only when
+  // the store has nothing for this session).
+  useEffect(() => {
+    if (useBidStore.getState().workspaceSystems.length > 0) return;
     try {
-      const saved = localStorage.getItem(`glazebid:workspaceSystems:${projectName || '_default'}`);
+      const saved = localStorage.getItem(LS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) && parsed.length > 0;
+        if (Array.isArray(parsed) && parsed.length > 0) setImportedSystems(parsed);
       }
     } catch { /* ignore */ }
-    return false;
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [LS_KEY]);
+
+  // isDirty = systems exist but haven't been confirmed-saved to a project file
+  const [isDirty, setIsDirty] = useState(() => useBidStore.getState().workspaceSystems.length > 0);
   const [saveStatus, setSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved'
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [pendingNavDest, setPendingNavDest] = useState(null);
@@ -807,26 +808,11 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
         };
       }));
 
-      // 3. Update global context
-      setFrames(prev => {
-        const cloned = JSON.parse(JSON.stringify(prev || []));
-        const idx = cloned.findIndex(f => String(f.id) === String(targetFrameId));
-        if (idx >= 0) {
-          cloned[idx].modifiers = newMods;
-          if (mappedField) {
-            const current = Math.max(0, Number(cloned[idx][mappedField]) || 0);
-            cloned[idx][mappedField] = current + 1;
-          }
-        }
-        return cloned;
-      });
-
-      // 4. Backend sync
-      fetch(`/api/bidsheet/projects/${encodeURIComponent(projectName)}/frames/${frameExists.id || targetFrameId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ modifiers: newMods })
-      }).catch(err => console.error('[GlazeBid] Backend sync failed:', err));
+      // Steps 1+2 above updated the canonical model (useBidStore.workspaceSystems)
+      // and the local selection. The old step 3 called a setFrames that
+      // BidSheetContext never exported (runtime crash — AUDIT 3.2), and the old
+      // step 4 PUT to a /api backend that doesn't exist in Electron (AUDIT 3.4).
+      // Persistence is now handled by the store + project file save.
 
     } catch (error) {
       console.error('🔴 CRITICAL ERROR applying modifier:', error);
