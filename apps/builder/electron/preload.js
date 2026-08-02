@@ -109,6 +109,21 @@ contextBridge.exposeInMainWorld('electronAPI', {
   /** CORS-safe HTTP GET via main process (use instead of fetch() for external APIs). */
   httpGet: (url) => ipcRenderer.invoke('glazebid:http-get', url),
 
+  // ── AI (Anthropic via main process — key never touches the renderer) ───────
+  /** Check whether an API key is configured. Returns { hasKey }. */
+  aiKeyCheck: () => ipcRenderer.invoke('ai:key-check'),
+  /** Encrypt + persist the Anthropic API key. */
+  aiKeySave: (key) => ipcRenderer.invoke('ai:key-save', key),
+  /** Remove the stored API key. */
+  aiKeyClear: () => ipcRenderer.invoke('ai:key-clear'),
+  /**
+   * Single assistant turn. payload = { systemPrompt, messages, model?, maxTokens? }.
+   * messages[].content may be a string OR an Anthropic content-block array
+   * (text + base64 image blocks) — used by the elevation vision import.
+   * model: 'haiku' (default) | 'sonnet'. Returns { ok, text, error }.
+   */
+  aiChat: (payload) => ipcRenderer.invoke('ai:chat', payload),
+
   // ── Citation Store ──────────────────────────────────────────────────────
   /** Save extracted spec section PDFs to a folder on disk (main-process fs). */
   saveSections: (sections, folderPath) => ipcRenderer.invoke('spec:saveSections', sections, folderPath),
@@ -124,4 +139,74 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getImplications:      (params) => ipcRenderer.invoke('citation:getImplications', params),
   /** Record usage of an implication (for usage-based ranking). */
   recordImplicationUsage: (implId) => ipcRenderer.invoke('citation:recordUsage', implId),
+
+  // ── Drawing Intelligence ───────────────────────────────────────────────────
+  /**
+   * Open a native file-open dialog filtered to PDFs and return the chosen path.
+   * Returns null if the user cancels.
+   */
+  openPdfDialog: () => ipcRenderer.invoke('dialog:openPdf'),
+
+  /**
+   * Run the full Drawing Intelligence pipeline on a PDF.
+   * Returns { ok: true, data: TakeoffResult } or { ok: false, error: string }.
+   */
+  runTakeoff: (payload) => ipcRenderer.invoke('glazierai:runTakeoff', payload),
+
+  // ── Project filesystem ─────────────────────────────────────────────────────
+  /**
+   * Get the configured projects root path (e.g. "Z:\\GlazeBid Projects").
+   * Returns null if the user has not chosen one yet.
+   */
+  getProjectsRoot: () => ipcRenderer.invoke('project:getRoot'),
+
+  /**
+   * Open a folder-picker dialog and save the chosen path as the projects root.
+   * Returns the chosen path, or null if cancelled.
+   */
+  setProjectsRoot: () => ipcRenderer.invoke('project:setRoot'),
+
+  /**
+   * Save the full project payload to <root>/<projectName>/project.aiq.
+   * Creates the folder + standard subfolders automatically.
+   * Returns { ok, aiqPath } or { ok: false, error }.
+   *   error === 'NO_ROOT' means the user hasn't set a projects root yet.
+   */
+  saveProject: (projectName, payload) =>
+    ipcRenderer.invoke('project:save', { projectName, payload }),
+
+  /**
+   * Load a project by name from the projects root, or by explicit aiqPath.
+   * Returns { ok, payload } or { ok: false, error }.
+   *   error === 'NOT_FOUND' | 'NO_ROOT'
+   */
+  loadProject: (projectName, aiqPath) =>
+    ipcRenderer.invoke('project:load', { projectName, aiqPath }),
+
+  /**
+   * Show a native Open dialog filtered to .aiq files.
+   * Returns { ok, aiqPath, payload } or null if cancelled.
+   */
+  openProjectDialog: () => ipcRenderer.invoke('project:openDialog'),
+
+  /**
+   * List all projects found in the projects root.
+   * Returns { ok, projects: [{ name, folderName, aiqPath, modified }], root }.
+   * If the drive is unmounted, rootMissing=true is set and cached registry is returned.
+   */
+  listProjects: () => ipcRenderer.invoke('project:list'),
+
+  /**
+   * Permanently delete a project folder from disk.
+   * Pass { folderName } or { aiqPath } — at least one is required.
+   * Returns { ok } or { ok: false, error }.
+   */
+  deleteProject: (opts) => ipcRenderer.invoke('project:delete', opts),
+
+  /**
+   * Export a standalone copy of the project payload to a user-chosen location.
+   * Returns { ok, savedTo } or { ok: false }.
+   */
+  exportProjectCopy: (projectName, payload) =>
+    ipcRenderer.invoke('project:exportCopy', { projectName, payload }),
 });

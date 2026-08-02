@@ -1,19 +1,20 @@
-import { parseSpecSections } from '../lib/specSorter';
+import { parseSpecSectionsV2 } from '../lib/specSorterV2';
 
 /**
  * Compatibility wrapper used by the existing intake UI.
- * Keeps current return shape while delegating parsing to specSorter.
+ * Keeps current return shape while delegating parsing to specSorterV2.
  */
 export async function extractSpecSections(source) {
   const data = await toArrayBuffer(source);
-  const parsed = await parseSpecSections(data);
+  const parsed = await parseSpecSectionsV2(data);
 
   if (!Array.isArray(parsed)) {
-    console.warn('[specSectionExtractor] parseSpecSections failed:', parsed?.error || 'Unknown error');
+    console.warn('[specSectionExtractor] parseSpecSectionsV2 failed:', parsed?.error || 'Unknown error');
     return {
       sections_found: 0,
       sections: [],
       division8: [],
+      needsOcr: parsed?.needsOcr || false,
       error: parsed?.error || 'Unable to parse specification sections.',
     };
   }
@@ -28,6 +29,10 @@ export async function extractSpecSections(source) {
     division: s.sectionNumber.slice(0, 2),
     isDiv8: s.sectionNumber.startsWith('08'),
     isGlazingRelevant: s.isGlazingRelevant,
+    isScopeRelevant:   s.isScopeRelevant,
+    isReviewRelevant:  s.isReviewRelevant,
+    confidence: s.confidence,
+    detectionMethod: s.detectionMethod,
   }));
 
   return {
@@ -42,7 +47,7 @@ export async function extractSpecSections(source) {
  */
 export async function hasDiv8Content(file) {
   const data = await toArrayBuffer(file);
-  const parsed = await parseSpecSections(data);
+  const parsed = await parseSpecSectionsV2(data);
   if (!Array.isArray(parsed)) return false;
   return parsed.some((s) => s.sectionNumber.startsWith('08'));
 }

@@ -12,50 +12,12 @@
  *   onClose       — () => void
  */
 import React, { useState, useEffect, useRef } from 'react';
+import { buildSystemPrompt as buildIntelligencePrompt } from '../ai/specIntelligence';
 
 // ── Build the system prompt from scan results ─────────────────────────────────
 function buildSystemPrompt(scanResults, sections) {
   const lines = [
-    'You are a commercial glazing estimator assistant with 15 years of field and office experience.',
-    'You specialize in Division 08 (Openings) — storefront, curtain wall, entrances, windows, and specialty glazing systems.',
-    'Answer questions about the specification concisely and cite page numbers when known.',
-    'When you reference specific language, quote it briefly and note the page number.',
-    '',
-    '## Your Glazing Estimating Playbook',
-    'When reviewing specs, always look for and flag these items:',
-    '',
-    '### HIGH RISK — Verify before bidding',
-    '- NO SUBSTITUTIONS / Sole Source / Proprietary: Must quote named system exactly.',
-    '- Delegated Design: PE-stamped engineering required from contractor. Budget $2,000–$8,000.',
-    '- Fire-Rated Glazing (45/60/90-min): Only UL-listed assemblies qualify. Cost 3–8x standard.',
-    '- Blast Resistance (GSA / UFC 4-010): Specialty laminated glass + structural anchors.',
-    '- HVHZ / Impact Glazing (Miami-Dade NOA): Certified hardware + interlayer glass required.',
-    '',
-    '### WATCH — Price these accurately',
-    '- AAMA 2605 (Kynar 500 / PVDF): 20–25% cost premium over AAMA 2604. Confirm finish class.',
-    '- Warranty > 15 years: May require premium-tier framing system.',
-    '- Mock-Up required: Full-size prototype before production. Budget 80–160 MH + material.',
-    '- Field Testing (AAMA 501.2 / ASTM E1105): Owner-witnessed water test. Budget $3,000–$10,000.',
-    '- Acoustic / STC requirements: STC 35+ needs laminated glass — verify glass makeup.',
-    '- Installer Qualifications: Manufacturer-certified crew required.',
-    '',
-    '### KEY NUMBERS TO EXTRACT',
-    '- Design Pressure (DP rating): Required for framing selection',
-    '- U-value and SHGC: Thermal + solar performance targets',
-    '- Glass makeup: Monolithic / insulating / laminated / triple-pane',
-    '- AAMA finish class: 2603 / 2604 / 2605',
-    '- Warranty duration: years covered',
-    '',
-    '### CONTRACT & GENERAL CONDITIONS — Flag these immediately',
-    '- Liquidated damages: Extract $/day amount. $2,000+/day is HIGH RISK for glazing timeline — glass lead times and shop drawing delays are common LD triggers.',
-    '- Retainage: 10% retainage on a $500K glazing contract = $50K held until closeout. Affects cash flow — note the percentage.',
-    '- Performance/payment bond: Add 1–3% of contract value to bid price. Confirm whether bond is required for the sub-contract or just the prime.',
-    '- Pay-if-paid: GC can withhold payment indefinitely if owner defaults. Higher risk than pay-when-paid. Flag clearly.',
-    '- Working hours restrictions: Occupied buildings, downtown cores, noise ordinances — may require night/weekend glazing installs at premium labor rates.',
-    '- LEED/Sustainability: Requires recycled content tracking, regional material documentation, and EPD/HPD submittals for each glazing product.',
-    '- Owner-furnished items: Owner-supplied glass, hardware, or allowances change your scope boundary — clarify delivery, storage, and damage responsibility.',
-    '- Phasing: Occupied building = protection barriers, sequencing constraints, restricted staging. Add to your cost and schedule.',
-    '- Close-out: O&M manuals, as-built drawings, owner training — these must be submitted before final payment. Budget PM time.',
+    buildIntelligencePrompt({ mode: 'chat' }),
     '',
     '## Scanned Spec Sections',
   ];
@@ -95,7 +57,7 @@ function buildSystemPrompt(scanResults, sections) {
   });
 
   lines.push('');
-  lines.push('Answer based on the extracted text and your glazing expertise. If something is not in the spec, say so and note the estimator should verify manually.');
+  lines.push('Answer based ONLY on the extracted text above. If something is not in the provided spec text, say so — do not fill gaps with assumptions.');
   return lines.join('\n');
 }
 
@@ -135,6 +97,7 @@ function Bubble({ msg, onJumpToPage }) {
   const pages  = isUser ? [] : extractPageCitations(msg.content);
 
   // Render assistant text with inline page-jump links
+  // Phase 5: Page numbers in AI responses are AI-suggested — label them as such.
   function renderContent(text) {
     const parts = text.split(/(\bp\.?\s*\d{1,4}\b)/gi);
     return parts.map((part, i) => {
@@ -145,10 +108,12 @@ function Bubble({ msg, onJumpToPage }) {
           <button
             key={i}
             onClick={() => onJumpToPage(page)}
+            title="AI-suggested page — verify in the PDF"
             style={{
-              color: '#58a6ff', background: 'none', border: 'none',
+              color: '#79c0ff', background: 'none', border: 'none',
               cursor: 'pointer', padding: 0, fontSize: 'inherit',
               textDecoration: 'underline', fontFamily: 'inherit',
+              opacity: 0.85,
             }}
           >
             {part}

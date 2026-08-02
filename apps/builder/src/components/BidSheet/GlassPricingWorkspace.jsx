@@ -176,9 +176,9 @@ export default function GlassPricingWorkspace({
             />
           ) : (
             <h2 onClick={() => setEditingName(true)} title="Click to rename"
-              style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)', cursor: 'text', borderBottom: '1px dashed transparent' }}
+              style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)', cursor: 'text', borderBottom: '1px dashed rgba(255,255,255,0.18)' }}
               onMouseEnter={e => e.currentTarget.style.borderBottomColor = 'var(--text-secondary)'}
-              onMouseLeave={e => e.currentTarget.style.borderBottomColor = 'transparent'}
+              onMouseLeave={e => e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.18)'}
             >{nameValue}</h2>
           )}
           <span style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa', padding: '2px 8px', borderRadius: 12, fontSize: '0.72rem', fontWeight: 700 }}>

@@ -16,9 +16,10 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
-import { parseSpecSections, extractSections } from '../lib/specSorter';
+import { parseSpecSectionsV2 } from '../lib/specSorterV2';
+import { extractSections } from '../lib/specSorter';
 import { scanSection } from '../lib/specReader';
-import { scanSpecSection, SCAN_CATEGORIES, extractPageTexts, aiEnhanceSection } from '../lib/specScanner';
+import { scanSpecSection, SCAN_CATEGORIES, extractPageTexts, aiEnhanceSection, detectCrossReferences } from '../lib/specScanner';
 import SpecChatPanel from './SpecChatPanel';
 
 // Wire pdfjs worker
@@ -95,7 +96,7 @@ const CHECKLIST_GROUPS = [
           const hit = Object.values(results).find(r => r.categories?.basisOfDesign?.status === 'found');
           if (!hit) return { status: 'missing', text: 'No manufacturer found in scanned sections', page: null, section: null };
           const item = hit.categories.basisOfDesign.items?.[0];
-          return { status: 'ok', text: item?.manufacturer || 'Manufacturer detected', page: item?.page, section: hit.sectionNumber };
+          return { status: 'ok', text: item?.manufacturer || 'Manufacturer detected', page: item?.page, section: hit.sectionNumber, highlight: item?.excerpt };
         },
       },
       {
@@ -116,7 +117,7 @@ const CHECKLIST_GROUPS = [
           const hit = Object.values(results).find(r => r.findings?.finish?.found || r.categories?.finish?.status === 'found');
           if (!hit) return { status: 'warn', text: 'Finish not detected — verify in spec', page: null };
           const page = hit.findings?.finish?.page || hit.categories?.finish?.items?.[0]?.page;
-          return { status: 'ok', text: hit.findings?.finish?.excerpt?.slice(0,80) || 'Finish language found', page, section: hit.sectionNumber };
+          return { status: 'ok', text: hit.findings?.finish?.excerpt?.slice(0,80) || 'Finish language found', page, section: hit.sectionNumber, highlight: hit.findings?.finish?.excerpt || hit.categories?.finish?.items?.[0]?.excerpt };
         },
       },
       {
@@ -127,7 +128,7 @@ const CHECKLIST_GROUPS = [
           const hit = Object.values(results).find(r => r.findings?.performance?.found || r.categories?.performance?.status === 'found');
           if (!hit) return { status: 'warn', text: 'No performance criteria found — may be in structural/civil sections', page: null };
           const page = hit.findings?.performance?.page || hit.categories?.performance?.items?.[0]?.page;
-          return { status: 'ok', text: hit.findings?.performance?.excerpt?.slice(0,80) || 'Performance values found', page, section: hit.sectionNumber };
+          return { status: 'ok', text: hit.findings?.performance?.excerpt?.slice(0,80) || 'Performance values found', page, section: hit.sectionNumber, highlight: hit.findings?.performance?.excerpt || hit.categories?.performance?.items?.[0]?.excerpt };
         },
       },
     ],
@@ -152,7 +153,8 @@ const CHECKLIST_GROUPS = [
           );
           if (isSoleSource || hit?.findings?.substitutions?.found) {
             const page = hit?.findings?.substitutions?.page || hit?.categories?.substitution?.items?.[0]?.page;
-            return { status: 'risk', text: 'No substitution language detected — must quote named system', page, section: hit?.sectionNumber };
+            const noSubExcerpt = (hit?.categories?.substitution?.items || []).find(i => /no\s+substitut|sole\s+source|proprietary|no\s+equal/i.test(i.excerpt || ''))?.excerpt || hit?.findings?.substitutions?.excerpt;
+            return { status: 'risk', text: 'No substitution language detected — must quote named system', page, section: hit?.sectionNumber, highlight: noSubExcerpt };
           }
           return { status: 'clear', text: 'No blanket substitution restriction found', page: null };
         },
@@ -164,7 +166,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.delegatedDesign?.found);
           if (!hit) return { status: 'clear', text: 'No delegated design requirement found', page: null };
-          return { status: 'warn', text: hit.findings.delegatedDesign.excerpt?.slice(0,100) || 'Delegated design language found', page: hit.findings.delegatedDesign.page, section: hit.sectionNumber };
+          return { status: 'warn', text: hit.findings.delegatedDesign.excerpt?.slice(0,100) || 'Delegated design language found', page: hit.findings.delegatedDesign.page, section: hit.sectionNumber, highlight: hit.findings.delegatedDesign.excerpt };
         },
       },
     ],
@@ -180,7 +182,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.mockup?.found);
           if (!hit) return { status: 'clear', text: 'No mock-up requirement found', page: null };
-          return { status: 'warn', text: hit.findings.mockup.excerpt?.slice(0,100) || 'Mock-up language found', page: hit.findings.mockup.page, section: hit.sectionNumber };
+          return { status: 'warn', text: hit.findings.mockup.excerpt?.slice(0,100) || 'Mock-up language found', page: hit.findings.mockup.page, section: hit.sectionNumber, highlight: hit.findings.mockup.excerpt };
         },
       },
       {
@@ -190,7 +192,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.testRequirements?.found);
           if (!hit) return { status: 'clear', text: 'No field testing requirement found', page: null };
-          return { status: 'warn', text: hit.findings.testRequirements.excerpt?.slice(0,100) || 'Testing requirement found', page: hit.findings.testRequirements.page, section: hit.sectionNumber };
+          return { status: 'warn', text: hit.findings.testRequirements.excerpt?.slice(0,100) || 'Testing requirement found', page: hit.findings.testRequirements.page, section: hit.sectionNumber, highlight: hit.findings.testRequirements.excerpt };
         },
       },
       {
@@ -200,7 +202,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.qualifications?.found);
           if (!hit) return { status: 'clear', text: 'No installer qualification requirement found', page: null };
-          return { status: 'warn', text: hit.findings.qualifications.excerpt?.slice(0,100) || 'Qualification language found', page: hit.findings.qualifications.page, section: hit.sectionNumber };
+          return { status: 'warn', text: hit.findings.qualifications.excerpt?.slice(0,100) || 'Qualification language found', page: hit.findings.qualifications.page, section: hit.sectionNumber, highlight: hit.findings.qualifications.excerpt };
         },
       },
       {
@@ -214,8 +216,8 @@ const CHECKLIST_GROUPS = [
             ) || /approved\s+equal/i.test(r.findings?.substitutions?.excerpt || '')
           );
           if (!hit) return { status: 'clear', text: 'No approved-equal language found', page: null };
-          const item = hit.categories?.substitution?.items?.[0];
-          return { status: 'info', text: 'Approved equal language found — alternates may be submittal-eligible', page: item?.page || hit.findings?.substitutions?.page, section: hit.sectionNumber };
+          const item = hit.categories?.substitution?.items?.find(i => /approved\s+equal|or\s+equal|alternate/i.test(i.excerpt || '')) || hit.categories?.substitution?.items?.[0];
+          return { status: 'info', text: 'Approved equal language found — alternates may be submittal-eligible', page: item?.page || hit.findings?.substitutions?.page, section: hit.sectionNumber, highlight: item?.excerpt || hit.findings?.substitutions?.excerpt };
         },
       },
     ],
@@ -232,7 +234,7 @@ const CHECKLIST_GROUPS = [
           const hit = Object.values(results).find(r => r.findings?.submittals?.found || r.categories?.submittals?.status === 'found');
           if (!hit) return { status: 'info', text: 'No explicit submittal schedule found', page: null };
           const page = hit.findings?.submittals?.page || hit.categories?.submittals?.items?.[0]?.page;
-          return { status: 'ok', text: 'Submittal requirements found', page, section: hit.sectionNumber };
+          return { status: 'ok', text: 'Submittal requirements found', page, section: hit.sectionNumber, highlight: hit.findings?.submittals?.excerpt || hit.categories?.submittals?.items?.[0]?.excerpt };
         },
       },
       {
@@ -244,7 +246,7 @@ const CHECKLIST_GROUPS = [
           if (!hit) return { status: 'info', text: 'No warranty requirement found', page: null };
           const page = hit.findings?.warranty?.page || hit.categories?.warranty?.items?.[0]?.page;
           const excerpt = hit.findings?.warranty?.excerpt || hit.categories?.warranty?.items?.[0]?.excerpt;
-          return { status: 'ok', text: excerpt?.slice(0,100) || 'Warranty language found', page, section: hit.sectionNumber };
+          return { status: 'ok', text: excerpt?.slice(0,100) || 'Warranty language found', page, section: hit.sectionNumber, highlight: excerpt };
         },
       },
       {
@@ -262,6 +264,7 @@ const CHECKLIST_GROUPS = [
             text: `${years}${isLong ? ' — may require premium system selection' : ''}`,
             page: hit.findings.warrantyDuration.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.warrantyDuration.excerpt,
           };
         },
       },
@@ -278,6 +281,7 @@ const CHECKLIST_GROUPS = [
             text: `${hit.findings.aamaClass.excerpt?.slice(0, 80) || 'AAMA class found'}${is2605 ? ' — premium finish (2605)' : ''}`,
             page: hit.findings.aamaClass.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.aamaClass.excerpt,
           };
         },
       },
@@ -288,7 +292,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.preInstallMeeting?.found);
           if (!hit) return { status: 'clear', text: 'No pre-installation conference requirement found', page: null };
-          return { status: 'info', text: 'Pre-installation meeting required', page: hit.findings.preInstallMeeting.page, section: hit.sectionNumber };
+          return { status: 'info', text: 'Pre-installation meeting required', page: hit.findings.preInstallMeeting.page, section: hit.sectionNumber, highlight: hit.findings.preInstallMeeting.excerpt };
         },
       },
     ],
@@ -304,7 +308,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.fireRating?.found);
           if (!hit) return { status: 'clear', text: 'No fire-rated glazing requirement detected', page: null };
-          return { status: 'risk', text: hit.findings.fireRating.excerpt?.slice(0, 100) || 'Fire-rated glazing required', page: hit.findings.fireRating.page, section: hit.sectionNumber };
+          return { status: 'risk', text: hit.findings.fireRating.excerpt?.slice(0, 100) || 'Fire-rated glazing required', page: hit.findings.fireRating.page, section: hit.sectionNumber, highlight: hit.findings.fireRating.excerpt };
         },
       },
       {
@@ -314,7 +318,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.impactResistance?.found);
           if (!hit) return { status: 'clear', text: 'No hurricane/impact requirement detected', page: null };
-          return { status: 'risk', text: hit.findings.impactResistance.excerpt?.slice(0, 100) || 'Impact glazing required', page: hit.findings.impactResistance.page, section: hit.sectionNumber };
+          return { status: 'risk', text: hit.findings.impactResistance.excerpt?.slice(0, 100) || 'Impact glazing required', page: hit.findings.impactResistance.page, section: hit.sectionNumber, highlight: hit.findings.impactResistance.excerpt };
         },
       },
       {
@@ -324,7 +328,7 @@ const CHECKLIST_GROUPS = [
         evaluate: (results) => {
           const hit = Object.values(results).find(r => r.findings?.blastResistance?.found);
           if (!hit) return { status: 'clear', text: 'No blast resistance requirement detected', page: null };
-          return { status: 'risk', text: hit.findings.blastResistance.excerpt?.slice(0, 100) || 'Blast resistance required', page: hit.findings.blastResistance.page, section: hit.sectionNumber };
+          return { status: 'risk', text: hit.findings.blastResistance.excerpt?.slice(0, 100) || 'Blast resistance required', page: hit.findings.blastResistance.page, section: hit.sectionNumber, highlight: hit.findings.blastResistance.excerpt };
         },
       },
       {
@@ -342,6 +346,7 @@ const CHECKLIST_GROUPS = [
             text: `${rating} — ${isHigh ? 'high acoustic spec, verify glass makeup' : 'acoustic glazing required'}`,
             page: hit.findings.acousticRequirements.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.acousticRequirements.excerpt,
           };
         },
       },
@@ -349,6 +354,7 @@ const CHECKLIST_GROUPS = [
   },
   {
     label: '📄 Contract & General Conditions',
+    color: '#94a3b8',
     items: [
       {
         id: 'liquidated_damages',
@@ -366,6 +372,7 @@ const CHECKLIST_GROUPS = [
             text: `${amount} — review schedule risk and glass lead times`,
             page: hit.findings.liquidatedDamages.page,
             section: hit.sectionNumber,
+            highlight: exc || undefined,
           };
         },
       },
@@ -379,12 +386,13 @@ const CHECKLIST_GROUPS = [
           const exc = hit.findings.retainage.excerpt || '';
           const m = exc.match(/\b(\d+)\s*%/);
           const pct = m ? parseInt(m[1], 10) : null;
-          if (pct === null) return { status: 'warn', text: 'Retainage clause found — verify percentage', page: hit.findings.retainage.page, section: hit.sectionNumber };
+          if (pct === null) return { status: 'warn', text: 'Retainage clause found — verify percentage', page: hit.findings.retainage.page, section: hit.sectionNumber, highlight: exc || undefined };
           return {
             status: pct >= 10 ? 'warn' : 'ok',
             text: `${pct}% retainage${pct >= 10 ? ' — impacts cash flow on large contracts' : ' — standard'}`,
             page: hit.findings.retainage.page,
             section: hit.sectionNumber,
+            highlight: exc || undefined,
           };
         },
       },
@@ -400,6 +408,7 @@ const CHECKLIST_GROUPS = [
             text: 'Bond required — add 1–3% bond premium to your bid price',
             page: hit.findings.bondRequirements.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.bondRequirements.excerpt,
           };
         },
       },
@@ -419,6 +428,7 @@ const CHECKLIST_GROUPS = [
             text: `${limit} — verify your policy covers this`,
             page: hit.findings.insuranceRequirements.page,
             section: hit.sectionNumber,
+            highlight: exc || undefined,
           };
         },
       },
@@ -438,6 +448,7 @@ const CHECKLIST_GROUPS = [
               : 'Pay-when-paid — payment delayed until GC receives from owner',
             page: hit.findings.payWhenPaid.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.payWhenPaid.excerpt,
           };
         },
       },
@@ -453,6 +464,7 @@ const CHECKLIST_GROUPS = [
             text: 'Working hour restrictions — verify if premium labor rates apply',
             page: hit.findings.workingHours.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.workingHours.excerpt,
           };
         },
       },
@@ -468,6 +480,7 @@ const CHECKLIST_GROUPS = [
             text: 'LEED/sustainability requirements — recycled content tracking and EPD submittals likely required',
             page: hit.findings.leedRequirements.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.leedRequirements.excerpt,
           };
         },
       },
@@ -483,6 +496,7 @@ const CHECKLIST_GROUPS = [
             text: 'Owner-furnished items or cash allowances — verify scope boundary and coordinate delivery',
             page: hit.findings.ownerFurnished.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.ownerFurnished.excerpt,
           };
         },
       },
@@ -498,6 +512,7 @@ const CHECKLIST_GROUPS = [
             text: 'Phased work / occupied building — protection, sequencing, and access restrictions likely',
             page: hit.findings.phasing.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.phasing.excerpt,
           };
         },
       },
@@ -513,7 +528,288 @@ const CHECKLIST_GROUPS = [
             text: 'Close-out deliverables required — O&M manuals, as-built drawings, and/or training',
             page: hit.findings.closeout.page,
             section: hit.sectionNumber,
+            highlight: hit.findings.closeout.excerpt,
           };
+        },
+      },
+    ],
+  },
+  // ─── Labor & Materials ────────────────────────────────────────────────────
+  {
+    label: '🏗️ Labor & Materials',
+    color: '#a78bfa',
+    items: [
+      {
+        id: 'prevailing_wage',
+        label: 'Prevailing wage / Davis-Bacon',
+        impact: 'Prevailing wage or Davis-Bacon requirements mandate higher labor rates set by the government. Your standard crew rates will not suffice — re-price labor using the published wage determination for each trade.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.prevailingWage?.found);
+          if (!hit) return { status: 'clear', text: 'No prevailing wage or Davis-Bacon requirement detected', page: null };
+          return {
+            status: 'risk',
+            text: 'Prevailing wage / Davis-Bacon applies — re-price all labor at government-mandated rates',
+            page: hit.findings.prevailingWage.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.prevailingWage.excerpt,
+          };
+        },
+      },
+      {
+        id: 'buy_america',
+        label: 'Buy America / domestic content restriction',
+        impact: 'Buy America (BABA) requires all iron, steel, and manufactured goods to be produced in the U.S. Foreign-made aluminum extrusions (most off-the-shelf systems) may be disqualified — verify your manufacturer\'s compliance before bidding.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.buyAmerica?.found);
+          if (!hit) return { status: 'clear', text: 'No Buy America or domestic content restriction detected', page: null };
+          return {
+            status: 'risk',
+            text: 'Buy America / BABA restriction — verify aluminum system and glass domestic-origin compliance',
+            page: hit.findings.buyAmerica.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.buyAmerica.excerpt,
+          };
+        },
+      },
+      {
+        id: 'ocip_ccip',
+        label: 'OCIP / CCIP wrap-up insurance program',
+        impact: 'If the project is enrolled in a wrap-up (OCIP/CCIP), you may be required to deduct your standard GL and workers\' comp premiums from your bid price. Failure to deduct = you\'re carrying duplicate insurance. Verify enrollment form and premium credit amount.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.ocip?.found);
+          if (!hit) return { status: 'clear', text: 'No OCIP/CCIP wrap-up insurance program detected', page: null };
+          return {
+            status: 'warn',
+            text: 'OCIP/CCIP detected — deduct your standard insurance premiums from bid price',
+            page: hit.findings.ocip.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.ocip.excerpt,
+          };
+        },
+      },
+    ],
+  },
+  // ─── Scope & Execution Gotchas ─────────────────────────────────────────────
+  {
+    label: '🔧 Scope Gotchas',
+    color: '#34d399',
+    items: [
+      {
+        id: 'perimeter_sealants',
+        label: 'Perimeter sealants in glazing scope',
+        impact: 'Perimeter sealant is sometimes in Div 07 (sealant contractor) and sometimes assigned to the glazier. If the spec explicitly lists sealant by glazier, add material + 0.5–1.0 MH/LF labor. If unclear, include an exclusion in your bid.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.perimeterSealants?.found);
+          if (!hit) return { status: 'clear', text: 'No perimeter sealant scope language detected', page: null };
+          return {
+            status: 'warn',
+            text: 'Perimeter sealant language found — verify whether glazier or Div 07 contractor installs',
+            page: hit.findings.perimeterSealants.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.perimeterSealants.excerpt,
+          };
+        },
+      },
+      {
+        id: 'brake_metal',
+        label: 'Brake metal / sill flashing in scope',
+        impact: 'Custom brake-formed sill flashings, caps, and trim are often assigned to the glazing contractor but priced separately. Identify profile gauge, finish, and length — add material + shop fabrication time.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.brakeMetalFlashing?.found);
+          if (!hit) return { status: 'clear', text: 'No brake metal or custom flashing language detected', page: null };
+          return {
+            status: 'warn',
+            text: 'Brake metal or sill flashing language found — verify scope and include fabrication cost',
+            page: hit.findings.brakeMetalFlashing.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.brakeMetalFlashing.excerpt,
+          };
+        },
+      },
+      {
+        id: 'electrified_hardware',
+        label: 'Electrified hardware / auto-operators',
+        impact: 'Automatic door operators, card readers, electric strikes, and access control interfaces can add $2,000–$15,000+ per opening. Clarify whether you furnish hardware, rough-in conduit only, or furnish-and-install complete. Coordinate with Div 26/28.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.electrifiedHardware?.found);
+          if (!hit) return { status: 'clear', text: 'No electrified hardware or auto-operator requirement detected', page: null };
+          return {
+            status: 'risk',
+            text: 'Electrified hardware / auto-operators detected — clarify furnish vs install scope and conduit responsibility',
+            page: hit.findings.electrifiedHardware.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.electrifiedHardware.excerpt,
+          };
+        },
+      },
+      {
+        id: 'glass_upgrades',
+        label: 'Specialty / upgraded glass (frit, dynamic, spandrel)',
+        impact: 'Bird-friendly frit, electrochromic, and oversized glass can be 2–10× the cost of standard IGU. Verify manufacturer availability, lead times (often 12–20 weeks), and that your system can accept the specified unit.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.glassUpgrades?.found);
+          if (!hit) return { status: 'clear', text: 'No specialty glass upgrades detected', page: null };
+          const exc = hit.findings.glassUpgrades.excerpt || '';
+          const isDynamic = /electrochromic|dynamic\s+glazing|SageGlass|View\s+Glass/i.test(exc);
+          return {
+            status: isDynamic ? 'risk' : 'warn',
+            text: `Specialty glass: ${exc.slice(0, 80)} — verify availability, lead time, and system compatibility`,
+            page: hit.findings.glassUpgrades.page,
+            section: hit.sectionNumber,
+            highlight: exc,
+          };
+        },
+      },
+      {
+        id: 'hoisting_access',
+        label: 'Hoisting / crane / scaffold by glazier',
+        impact: 'If the spec assigns crane or scaffold to the glazing contractor, add $5,000–$40,000+ depending on building height and duration. Verify who provides the crane and whether GC will share access.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.hoisting?.found);
+          if (!hit) return { status: 'clear', text: 'No hoisting or scaffold responsibility assigned to glazier', page: null };
+          return {
+            status: 'risk',
+            text: 'Crane/scaffold responsibility language found — verify if assigned to glazing contractor',
+            page: hit.findings.hoisting.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.hoisting.excerpt,
+          };
+        },
+      },
+      {
+        id: 'protection_cleaning',
+        label: 'Protection & final cleaning by glazier',
+        impact: 'Protecting installed glazing from subsequent trades and performing final cleaning are often under-priced. Hard water, silicone overspray, and razor-blade cleaning can cost $5–$15/SF. Include labor in your estimate.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r => r.findings?.protectionCleaning?.found);
+          if (!hit) return { status: 'clear', text: 'No protection or final cleaning requirement assigned to glazier', page: null };
+          return {
+            status: 'warn',
+            text: 'Protection and/or final cleaning assigned to glazier — add 0.05–0.15 MH/SF for cleaning labor',
+            page: hit.findings.protectionCleaning.page,
+            section: hit.sectionNumber,
+            highlight: hit.findings.protectionCleaning.excerpt,
+          };
+        },
+      },
+    ],
+  },
+  // ─── Cross-References ────────────────────────────────────────────────────
+  {
+    label: '🔀 Cross-References',
+    color: '#60a5fa',
+    items: [
+      {
+        id: 'div05_ref',
+        label: 'Division 05 – Structural metals cross-referenced',
+        impact: 'Division 05 cross-references often mean you must furnish tube-steel subframes, embed plates, or structural angles. This scope is easy to miss and can add $10,000–$60,000+ to your cost. Clarify with GC who provides steel.',
+        evaluate: (results) => {
+          const hits = Object.values(results).flatMap(r => (r.crossRefs || []).filter(ref => ref.division === '05'));
+          if (!hits.length) return { status: 'clear', text: 'No Division 05 structural metals references detected', page: null };
+          const hit = hits[0];
+          return { status: 'risk', text: `Div 05 reference — verify steel subframe scope: "${hit.context?.slice(0, 80)}"`, page: hit.page, highlight: hit.context };
+        },
+      },
+      {
+        id: 'div07_ref',
+        label: 'Division 07 – Thermal & moisture cross-referenced',
+        impact: 'Division 07 cross-references indicate perimeter sealants, waterproofing, or flashings that may have product specifications you must comply with. Often requires premium sealant brands (Dow, Tremco) at 2–3× commodity prices.',
+        evaluate: (results) => {
+          const hits = Object.values(results).flatMap(r => (r.crossRefs || []).filter(ref => ref.division === '07'));
+          if (!hits.length) return { status: 'clear', text: 'No Division 07 thermal/moisture cross-references detected', page: null };
+          const hit = hits[0];
+          return { status: 'risk', text: `Div 07 reference — check sealant/flashing scope and approved products: "${hit.context?.slice(0, 80)}"`, page: hit.page, highlight: hit.context };
+        },
+      },
+      {
+        id: 'div26_28_ref',
+        label: 'Division 26/28 – Electrical/security cross-referenced',
+        impact: 'References to Div 26 (Electrical) or Div 28 (Electronic Safety) suggest powered hardware, wiring conduit, or access control in your door/opening scope. Clarify whether you furnish rough-in only, or supply and program the complete system.',
+        evaluate: (results) => {
+          const hits = Object.values(results).flatMap(r => (r.crossRefs || []).filter(ref => ref.division === '26' || ref.division === '28'));
+          if (!hits.length) return { status: 'clear', text: 'No Division 26/28 electrical or security cross-references detected', page: null };
+          const hit = hits[0];
+          return { status: 'risk', text: `Div ${hit.division} reference — clarify electrical/access control scope boundary: "${hit.context?.slice(0, 80)}"`, page: hit.page, highlight: hit.context };
+        },
+      },
+      {
+        id: 'div01_testing_ref',
+        label: 'Division 01 – General requirements cross-referenced',
+        impact: 'Division 01 governs testing, mock-ups, and QC. Cross-references may mean you must pay for 3rd-party AAMA 501.2 water tests or provide additional field samples. Add $2,000–$8,000 if testing agency costs are your responsibility.',
+        evaluate: (results) => {
+          const hits = Object.values(results).flatMap(r => (r.crossRefs || []).filter(ref => ref.division === '01'));
+          if (!hits.length) return { status: 'clear', text: 'No Division 01 general requirements cross-references detected', page: null };
+          const hit = hits[0];
+          return { status: 'warn', text: `Div 01 reference — verify testing and QC cost responsibility: "${hit.context?.slice(0, 80)}"`, page: hit.page, highlight: hit.context };
+        },
+      },
+    ],
+  },
+  // ─── Bid Day Paperwork (Div 00/01) ────────────────────────────────────────
+  {
+    label: '📋 Bid Day Paperwork',
+    color: '#818cf8',
+    items: [
+      {
+        id: 'bid_forms',
+        label: 'Bid form / proposal form required',
+        impact: 'Submit the specified bid form — not a letter of proposal. Wrong form = disqualified bid. Download from the bid portal and use as-is.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r =>
+            (r.categories?.bidForms?.items || []).length > 0
+          );
+          if (!hit) return { status: 'info', text: 'No explicit bid form section detected — confirm with GC', page: null };
+          const item = hit.categories.bidForms.items[0];
+          return { status: 'warn', text: "Bid form required \u2014 use the owner\u2019s form, not a letter of proposal", page: item?.page, section: hit.sectionNumber, highlight: item?.excerpt };
+        },
+      },
+      {
+        id: 'sub_form_deadline',
+        label: 'Substitution request deadline',
+        impact: 'Most specs require alternates to be pre-approved in writing before bid day. Miss the deadline = no alternates allowed. Note the cutoff date and build your submittal schedule accordingly.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r =>
+            (r.categories?.substitutionForms?.items || []).length > 0
+          );
+          if (!hit) return { status: 'clear', text: 'No substitution request form or deadline detected', page: null };
+          const item = hit.categories.substitutionForms.items[0];
+          return { status: 'warn', text: 'Substitution request form / deadline found — submit alternates before the cutoff', page: item?.page, section: hit.sectionNumber, highlight: item?.excerpt };
+        },
+      },
+      {
+        id: 'tax_treatment',
+        label: 'Tax treatment specified',
+        impact: 'Sales/use tax can add 5–10% to material costs. "Owner is tax-exempt" means you must obtain exemption certificates for each purchase order — missing them = you pay the tax.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r =>
+            (r.categories?.taxes?.items || []).length > 0
+          );
+          if (!hit) return { status: 'info', text: 'No explicit tax treatment language found — assume standard applicable taxes', page: null };
+          const item = hit.categories.taxes.items[0];
+          const exc = item?.excerpt || '';
+          const isExempt = /tax[\s\-]?exempt/i.test(exc);
+          return {
+            status: 'warn',
+            text: isExempt
+              ? 'Owner is tax-exempt \u2014 obtain exemption certificates for all material purchases'
+              : 'Tax treatment language found \u2014 verify who is responsible for sales/use tax',
+            page: item?.page,
+            section: hit.sectionNumber,
+            highlight: exc,
+          };
+        },
+      },
+      {
+        id: 'contract_form',
+        label: 'Contract form identified (AIA / ConsensusDocs)',
+        impact: 'AIA A201 and ConsensusDocs have different default dispute resolution, indemnification, and change order provisions. Know which form governs before you sign the subcontract.',
+        evaluate: (results) => {
+          const hit = Object.values(results).find(r =>
+            (r.categories?.contractTerms?.items || []).length > 0
+          );
+          if (!hit) return { status: 'info', text: 'Contract form not detected — verify governing document with GC', page: null };
+          const item = hit.categories.contractTerms.items[0];
+          return { status: 'info', text: 'Contract form identified — review dispute resolution, indemnification, and change order terms', page: item?.page, section: hit.sectionNumber, highlight: item?.excerpt };
         },
       },
     ],
@@ -567,7 +863,7 @@ function applyMatrix([x, y], [a, b, c, d, e, f]) {
 // ── Single page canvas with double-buffer rendering (from legacy PDFViewer) ───
 // Borrowed from: GlazeBid AIQ Suite/_LEGACY_ARCHIVE/GlazeBid_AIQ/PDFViewer_FULL_CODE.jsx
 // Double-buffer: render to off-screen canvas, then blit to visible → no white flash.
-function PageCanvas({ pdfDoc, pageNum, containerWidth, shouldRender, highlight }) {
+function PageCanvas({ pdfDoc, pageNum, containerWidth, shouldRender, highlight, storedRects }) {
   const canvasRef    = useRef(null);
   const overlayRef   = useRef(null);           // semi-transparent highlight overlay
   const renderTask   = useRef(null);
@@ -656,9 +952,30 @@ function PageCanvas({ pdfDoc, pageNum, containerWidth, shouldRender, highlight }
     if (!overlay) return;
     const ctx = overlay.getContext('2d');
     ctx.clearRect(0, 0, overlay.width, overlay.height);
-    if (!highlight || !highlight.trim() || !cssSize || !renderInfo.current) return;
+    if (!cssSize || !renderInfo.current) return;
 
-    const { page, vp, dpr } = renderInfo.current;
+    const { vp, dpr } = renderInfo.current;
+
+    // Phase 4 fast path: draw stored rects directly without re-searching
+    if (storedRects && storedRects.length > 0) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(250, 210, 0, 0.45)';
+      for (const rect of storedRects) {
+        const [x1, y1] = applyMatrix([rect.x, rect.y + rect.height], vp.transform);
+        const [x2, y2] = applyMatrix([rect.x + rect.width, rect.y], vp.transform);
+        const rx = Math.min(x1, x2) * dpr;
+        const ry = Math.min(y1, y2) * dpr - 2;
+        const rw = Math.abs(x2 - x1) * dpr;
+        const rh = Math.abs(y2 - y1) * dpr + 4;
+        if (rw > 2 && rh > 2) ctx.fillRect(rx, ry, rw, rh);
+      }
+      ctx.restore();
+      return;
+    }
+
+    if (!highlight || !highlight.trim()) return;
+
+    const { page, vp: vp2, dpr: dpr2 } = renderInfo.current;
 
     page.getTextContent().then(tc => {
       // ── Shared normalizer (identical to what both scanners use) ──────────
@@ -737,17 +1054,17 @@ function PageCanvas({ pdfDoc, pageNum, containerWidth, shouldRender, highlight }
 
         const [, , , , e, f] = item.transform;
         const fontH = item.height || Math.abs(item.transform[3]) || Math.abs(item.transform[0]) || 10;
-        const [x1, y1] = applyMatrix([e, f + fontH], vp.transform);
-        const [x2, y2] = applyMatrix([e + item.width, f], vp.transform);
-        const rx = Math.min(x1, x2) * dpr;
-        const ry = Math.min(y1, y2) * dpr - 2;
-        const rw = Math.abs(x2 - x1) * dpr;
-        const rh = Math.abs(y2 - y1) * dpr + 4;
+        const [x1, y1] = applyMatrix([e, f + fontH], vp2.transform);
+        const [x2, y2] = applyMatrix([e + item.width, f], vp2.transform);
+        const rx = Math.min(x1, x2) * dpr2;
+        const ry = Math.min(y1, y2) * dpr2 - 2;
+        const rw = Math.abs(x2 - x1) * dpr2;
+        const rh = Math.abs(y2 - y1) * dpr2 + 4;
         if (rw > 2 && rh > 2) ctx.fillRect(rx, ry, rw, rh);
       }
       ctx.restore();
     }).catch(() => {});
-  }, [highlight, cssSize]);
+  }, [highlight, storedRects, cssSize]);
 
   // Placeholder dimensions: estimate based on US Letter ratio (1:1.294)
   const estimatedH = containerWidth ? Math.round((containerWidth - 32) * 1.294) : 900;
@@ -798,7 +1115,7 @@ function PageCanvas({ pdfDoc, pageNum, containerWidth, shouldRender, highlight }
 // ── Continuous scroll PDF viewer ───────────────────────────────────────────────
 // All pages rendered in a vertical list. IntersectionObserver tracks the current
 // visible page and triggers lazy rendering of nearby pages.
-function PdfScrollViewer({ pdfDoc, currentPage, onPageChange, containerWidth, highlightPage, highlightText }) {
+function PdfScrollViewer({ pdfDoc, currentPage, onPageChange, containerWidth, highlightPage, highlightText, highlightRects }) {
   const numPages = pdfDoc?.numPages || 0;
   const scrollRef = useRef(null);
   // Lazily expand this set as pages come into view
@@ -896,6 +1213,7 @@ function PdfScrollViewer({ pdfDoc, currentPage, onPageChange, containerWidth, hi
             containerWidth={containerWidth}
             shouldRender={renderedSet.has(pageNum)}
             highlight={pageNum === highlightPage ? highlightText : null}
+            storedRects={pageNum === highlightPage ? highlightRects : null}
           />
           <span style={{ fontSize: '0.62rem', color: '#333', userSelect: 'none' }}>{pageNum}</span>
         </div>
@@ -1104,6 +1422,33 @@ function ScanResultCard({ result, onJumpToPage }) {
 }
 
 // ── ChecklistTab ──────────────────────────────────────────────────────────────
+// ── Grade helpers for verdict header (Task 3) ─────────────────────────────────
+function computeGrade(riskScore, checklistResults) {
+  if (!riskScore || !checklistResults.length) return null;
+  const riskItems  = checklistResults.reduce((n, g) => n + g.items.filter(i => i.result?.status === 'risk').length, 0);
+  const warnItems  = checklistResults.reduce((n, g) => n + g.items.filter(i => i.result?.status === 'warn' || i.result?.status === 'missing').length, 0);
+  if (riskItems >= 4) return { grade: 'D', color: '#ef4444', bg: 'rgba(239,68,68,0.15)' };
+  if (riskItems >= 2) return { grade: 'C', color: '#f97316', bg: 'rgba(249,115,22,0.15)' };
+  if (riskItems >= 1 || warnItems >= 3) return { grade: 'B', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' };
+  return { grade: 'A', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' };
+}
+
+function buildVerdictSentence(riskScore, checklistResults) {
+  if (!riskScore) return '';
+  const risks  = checklistResults.reduce((n, g) => n + g.items.filter(i => i.result?.status === 'risk').length, 0);
+  const warns  = checklistResults.reduce((n, g) => n + g.items.filter(i => i.result?.status === 'warn').length, 0);
+  const gcQ    = checklistResults.reduce((n, g) => n + g.items.filter(i =>
+    i.result?.status === 'risk' && (i.id === 'delegated_design' || i.id === 'no_subs' || i.id === 'field_testing')
+  ).length, 0);
+  if (riskScore.level === 'Low') return 'Spec looks clean — proceed with standard bid assumptions.';
+  const parts = [];
+  if (risks > 0) parts.push(`${risks} thing${risks !== 1 ? 's' : ''} could cost you money`);
+  if (warns > 0) parts.push(`${warns} ${warns !== 1 ? 'items' : 'item'} to verify`);
+  const tail = gcQ > 0 ? ` ${gcQ} need a question to the GC before bid day.` : '';
+  return `Bid with caution — ${parts.join(', ')}.${tail}`;
+}
+
+// ── ChecklistTab ──────────────────────────────────────────────────────────────
 function ChecklistTab({ checklistResults, riskScore, onJumpToPage }) {
   if (!checklistResults.length) {
     return (
@@ -1116,36 +1461,40 @@ function ChecklistTab({ checklistResults, riskScore, onJumpToPage }) {
     );
   }
 
-  const riskBg    = riskScore?.level === 'High'   ? '#7f1d1d'
-                  : riskScore?.level === 'Medium'  ? '#78350f'
-                  : '#14532d';
-  const riskColor = riskScore?.level === 'High'   ? '#fca5a5'
-                  : riskScore?.level === 'Medium'  ? '#fcd34d'
-                  : '#86efac';
+  const gradeInfo = computeGrade(riskScore, checklistResults);
+  const verdict   = buildVerdictSentence(riskScore, checklistResults);
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-      {/* Risk score banner */}
-      {riskScore && (
+      {/* ── Verdict header (Task 3) ── */}
+      {gradeInfo && (
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: '10px 14px', background: riskBg, flexShrink: 0,
+          flexShrink: 0, padding: '12px 16px',
+          background: gradeInfo.bg,
+          borderBottom: `1px solid ${gradeInfo.color}33`,
+          display: 'flex', alignItems: 'flex-start', gap: 12,
         }}>
-          <span style={{ fontSize: '1.1rem' }}>
-            {riskScore.level === 'High' ? '🔴' : riskScore.level === 'Medium' ? '⚠️' : '✅'}
-          </span>
-          <div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: riskColor }}>
-              {riskScore.level} Risk — {riskScore.score} flag{riskScore.score !== 1 ? 's' : ''}
+          <div style={{
+            width: 44, height: 44, borderRadius: 8, flexShrink: 0,
+            background: gradeInfo.color + '22', border: `2px solid ${gradeInfo.color}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1.4rem', fontWeight: 900, color: gradeInfo.color, lineHeight: 1,
+          }}>
+            {gradeInfo.grade}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: gradeInfo.color, lineHeight: 1.3 }}>
+              {riskScore?.level} Risk
             </div>
-            <div style={{ fontSize: '0.7rem', color: riskColor + 'cc' }}>
-              {riskScore.level === 'High'   ? 'Multiple high-risk items require attention before bidding.' :
-               riskScore.level === 'Medium' ? 'Some items need review — verify before submitting bid.' :
-               'Spec looks clean. Proceed with standard bid assumptions.'}
+            <div style={{ fontSize: '0.73rem', color: '#c9d1d9', marginTop: 3, lineHeight: 1.5 }}>
+              {verdict}
             </div>
           </div>
         </div>
       )}
+      <div style={{ fontSize: '0.62rem', color: '#484f58', padding: '4px 16px', borderBottom: '1px solid #21262d', flexShrink: 0 }}>
+        Every page link is verified — no link, no claim.
+      </div>
 
       {/* Groups */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
@@ -1179,8 +1528,18 @@ function ChecklistTab({ checklistResults, riskScore, onJumpToPage }) {
                       <div style={{ fontSize: '0.78rem', fontWeight: 600, color, lineHeight: 1.3 }}>
                         {item.label}
                       </div>
+                      {/* Meaning-first: impact before text/excerpt (Task 3) */}
+                      {['risk', 'warn'].includes(r.status) && item.impact && (
+                        <div style={{
+                          marginTop: 4, fontSize: '0.72rem', fontWeight: 500,
+                          color: r.status === 'risk' ? '#fca5a5' : '#fcd34d',
+                          lineHeight: 1.45,
+                        }}>
+                          {item.impact}
+                        </div>
+                      )}
                       {r.text && (
-                        <div style={{ fontSize: '0.7rem', color: '#8b949e', marginTop: 2, lineHeight: 1.4 }}>
+                        <div style={{ fontSize: '0.7rem', color: '#8b949e', marginTop: 3, lineHeight: 1.4 }}>
                           {r.text}
                         </div>
                       )}
@@ -1197,7 +1556,7 @@ function ChecklistTab({ checklistResults, riskScore, onJumpToPage }) {
                           )}
                           {r.page && (
                             <button
-                              onClick={() => canJump && onJumpToPage(r.page)}
+                              onClick={() => canJump && onJumpToPage(r.page, r.highlight)}
                               style={{
                                 fontSize: '0.62rem', color: '#388bfd', background: 'none',
                                 border: 'none', cursor: canJump ? 'pointer' : 'default',
@@ -1211,17 +1570,6 @@ function ChecklistTab({ checklistResults, riskScore, onJumpToPage }) {
                       )}
                     </div>
                   </div>
-                  {/* Impact note for risk/warn items */}
-                  {['risk', 'warn'].includes(r.status) && item.impact && (
-                    <div style={{
-                      marginTop: 6, padding: '5px 8px',
-                      background: r.status === 'risk' ? 'rgba(239,68,68,0.08)' : 'rgba(245,158,11,0.08)',
-                      borderLeft: `3px solid ${r.status === 'risk' ? '#ef4444' : '#f59e0b'}`,
-                      borderRadius: '0 4px 4px 0', fontSize: '0.68rem', color: '#8b949e', lineHeight: 1.45,
-                    }}>
-                      💡 {item.impact}
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -1448,7 +1796,7 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   const [pdfFileName, setPdfFileName] = useState('');
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeHighlight, setActiveHighlight] = useState(null); // { page, text }
+  const [activeHighlight, setActiveHighlight] = useState(null); // { page, text, rects? }
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pdfError, setPdfError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -1456,13 +1804,16 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   const [viewerWidth, setViewerWidth] = useState(600);
 
   // ── Sort state
+  const [stage, setStage] = useState('sections'); // 'upload' | 'sections' | 'report'
   const [activeTab, setActiveTab] = useState('checklist'); // 'checklist' | 'summary' | 'readings'
   const [parsing, setParsing] = useState(false);
+  const [parseProgress, setParseProgress] = useState(null); // { page, total, sectionsFound }
   const [parseError, setParseError] = useState(null);
-  const [sections, setSections] = useState([]);            // from parseSpecSections
+  const [parseNeedsOcr, setParseNeedsOcr] = useState(false);
+  const [sections, setSections] = useState([]);            // from parseSpecSectionsV2
   const [sectionScope, setSectionScope] = useState({});    // { [sectionNumber]: true|false }
   const [selected, setSelected] = useState({});            // checkboxes for scanning
-  const [filter, setFilter] = useState('all');             // 'all' | 'div08' | 'in' | 'out'
+  const [filter, setFilter] = useState('scope');           // 'scope'|'review'|'all'
 
   // ── Scan state
   const [scanning, setScanning] = useState(false);
@@ -1579,31 +1930,45 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
     await runParse(buf);
   }
 
-  // ── Run parseSpecSections
+  // ── Run parseSpecSectionsV2
   async function runParse(buf) {
     const source = buf || pdfBuffer;
     if (!source) return;
     setParsing(true);
     setParseError(null);
+    setParseNeedsOcr(false);
+    setParseProgress(null);
     try {
-      const result = await parseSpecSections(new Uint8Array(source));
+      const result = await parseSpecSectionsV2(new Uint8Array(source));
       if (!Array.isArray(result)) {
-        setParseError(result?.error || 'Could not detect sections in this PDF.');
+        if (result?.needsOcr) {
+          setParseNeedsOcr(true);
+          setParseError('This PDF is a scanned document with no text layer — OCR is required before sections can be detected.');
+        } else {
+          setParseError(result?.error || 'Could not detect sections in this PDF.');
+        }
         setSections([]);
       } else {
         setSections(result);
-        // Default: glazing-relevant sections in scope, rest out of scope
+        // Default scope: glazing-relevant sections in scope, rest out
         const scope = {};
         result.forEach(s => {
           scope[s.sectionNumber] = s.isGlazingRelevant !== false;
         });
         setSectionScope(scope);
-        setSelected({});
+        // Default-check Div 08 (scope) + Div 00/01/02 (review) for scanning
+        const preCheck = {};
+        result.forEach(s => {
+          preCheck[s.sectionNumber] = !!(s.isScopeRelevant || s.isReviewRelevant);
+        });
+        setSelected(preCheck);
+        if (result.length > 0) setStage('sections');
       }
     } catch (err) {
       setParseError(err.message);
     } finally {
       setParsing(false);
+      setParseProgress(null);
     }
   }
 
@@ -1650,7 +2015,8 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   // ── Filter sections
   function getFiltered() {
     return sections.filter(s => {
-      if (filter === 'div08') return s.sectionNumber.replace(/[\s.\-]/g, '').startsWith('08');
+      if (filter === 'scope')  return s.isScopeRelevant;
+      if (filter === 'review') return s.isReviewRelevant;
       if (filter === 'in')    return sectionScope[s.sectionNumber] !== false;
       if (filter === 'out')   return sectionScope[s.sectionNumber] === false;
       return true;
@@ -1722,11 +2088,19 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
           adjustedFindings[key] = f ? { ...f, page: absP(f.page) } : f;
         }
 
+        // Extract page texts — needed for both cross-reference detection and AI enhancement
+        const pageTexts = await extractPageTexts(ex.pdfBuffer);
+
+        // Cross-reference detection (always runs — adjust page offsets to full-PDF coordinates)
+        const crossRefs = detectCrossReferences(pageTexts).map(ref => ({
+          ...ref,
+          page: ref.page ? pgOffset + ref.page : null,
+        }));
+
         // — AI Enhancement: fill gaps where regex found nothing —
         if (aiEnhance && hasAiKey) {
           try {
             setAiScanStatus(`✨ AI scanning ${ex.sectionNumber}…`);
-            const pageTexts = await extractPageTexts(ex.pdfBuffer);
             const aiResult = await aiEnhanceSection(pageTexts);
             if (aiResult.enhanced) {
               for (const [key, aiFinding] of Object.entries(aiResult.findings)) {
@@ -1750,6 +2124,7 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
           categories: adjustedCategories,
           startPage:  sectionStartPages[ex.sectionNumber],
           findings:   adjustedFindings,
+          crossRefs,
           scannerOk:  scannerResult?.ok ?? false,
         };
       } catch (err) {
@@ -1794,10 +2169,33 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   const prevPage = () => setCurrentPage(p => Math.max(1, p - 1));
   const nextPage = () => setCurrentPage(p => Math.min(numPages, p + 1));
 
-  // Jump to a page and optionally highlight an excerpt
-  function handleJump(page, text = null) {
+  // Jump to a page and optionally highlight an excerpt.
+  // Phase 4: also look up stored pdfjs rects from scanResults so the overlay
+  // can draw directly without re-searching the page text.
+  function findStoredRects(page, text) {
+    if (!text || !scanResults) return null;
+    const clean = (s) => (s || '').replace(/^[\u2026.]+/, '').replace(/[\u2026.]+$/, '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const normText = clean(text).slice(0, 40);
+    if (normText.length < 8) return null;
+    for (const result of Object.values(scanResults)) {
+      for (const finding of Object.values(result.findings || {})) {
+        if (!finding?.rects?.length || finding.page !== page) continue;
+        const normExcerpt = clean(finding.excerpt || '').slice(0, 40);
+        if (normExcerpt.startsWith(normText.slice(0, 20)) || normText.startsWith(normExcerpt.slice(0, 20))) {
+          return finding.rects;
+        }
+      }
+    }
+    return null;
+  }
+
+  function handleJump(page, highlight = null) {
     setCurrentPage(page);
-    setActiveHighlight(text ? { page, text } : null);
+    if (!highlight) { setActiveHighlight(null); return; }
+    const text = typeof highlight === 'string' ? highlight : null;
+    if (!text) { setActiveHighlight(null); return; }
+    const rects = findStoredRects(page, text);
+    setActiveHighlight({ page, text, rects });
   }
 
   // ── Save selected sections as individual PDFs ─────────────────────────────
@@ -1842,10 +2240,12 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
 
   // ── Derived
   const filteredSections = getFiltered();
+  const scopeCount    = sections.filter(s => s.isScopeRelevant).length;
+  const reviewCount   = sections.filter(s => s.isReviewRelevant).length;
   const inScopeCount  = sections.filter(s => sectionScope[s.sectionNumber] !== false).length;
   const outScopeCount = sections.length - inScopeCount;
   const selectedCount = Object.values(selected).filter(Boolean).length;
-  const div08Count    = sections.filter(s => s.sectionNumber.replace(/[\s.\-]/g, '').startsWith('08')).length;
+  const div08Count    = scopeCount;
   const scannedCount  = Object.keys(scanResults).length;
 
   // ── Checklist + risk score (evaluated lazily once scan results exist)
@@ -1906,8 +2306,8 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
         {sections.length > 0 && (
           <div style={{ display: 'flex', gap: 6, marginLeft: 4 }}>
             <span style={pillStyle('#21262d', '#8b949e')}>{sections.length} sections</span>
-            <span style={pillStyle('rgba(63,185,80,0.12)', '#3fb950')}>{inScopeCount} in scope</span>
-            {div08Count > 0 && <span style={pillStyle('rgba(56,139,253,0.12)', '#58a6ff')}>Div 08: {div08Count}</span>}
+            <span style={pillStyle('rgba(63,185,80,0.12)', '#3fb950')}>{scopeCount} Div 08</span>
+            {reviewCount > 0 && <span style={pillStyle('rgba(245,158,11,0.1)', '#f59e0b')}>review: {reviewCount}</span>}
             {scannedCount > 0 && <span style={pillStyle('rgba(63,185,80,0.12)', '#3fb950')}>✓ {scannedCount} scanned</span>}
           </div>
         )}
@@ -1984,9 +2384,11 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
               </div>
             )}
             {!parsing && parseError && (
-              <div style={{ fontSize: '0.73rem', color: '#f85149', padding: '4px 0' }}>
-                ⚠ {parseError}
-                <button onClick={() => runParse()} style={{ marginLeft: 6, ...btnStyle('#21262d'), fontSize: '0.68rem', color: '#8b949e', padding: '2px 6px' }}>Retry</button>
+              <div style={{ fontSize: '0.73rem', color: parseNeedsOcr ? '#f59e0b' : '#f85149', padding: '4px 0' }}>
+                {parseNeedsOcr ? '🔍' : '⚠'} {parseError}
+                {!parseNeedsOcr && (
+                  <button onClick={() => runParse()} style={{ marginLeft: 6, ...btnStyle('#21262d'), fontSize: '0.68rem', color: '#8b949e', padding: '2px 6px' }}>Retry</button>
+                )}
               </div>
             )}
             {!parsing && !parseError && sections.length === 0 && pdfDoc && (
@@ -2001,29 +2403,42 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
               </div>
             )}
 
-            {/* Filter chips */}
+            {/* Scope summary cards — Task 3 */}
             {sections.length > 0 && (
-              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4 }}>
-                {[
-                  { key: 'all',   label: 'All',    count: sections.length },
-                  { key: 'div08', label: 'Div 08', count: div08Count },
-                  { key: 'in',    label: 'In Scope', count: inScopeCount },
-                  { key: 'out',   label: 'Out',    count: outScopeCount },
-                ].map(f => (
-                  <button
-                    key={f.key}
-                    onClick={() => setFilter(f.key)}
-                    style={{
-                      padding: '3px 8px', fontSize: '0.68rem', fontWeight: 600, borderRadius: 10,
-                      border: `1px solid ${filter === f.key ? '#388bfd' : '#30363d'}`,
-                      background: filter === f.key ? 'rgba(56,139,253,0.15)' : 'transparent',
-                      color: filter === f.key ? '#58a6ff' : '#8b949e',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {f.label} <span style={{ opacity: 0.75 }}>{f.count}</span>
-                  </button>
-                ))}
+              <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setFilter('scope')}
+                  style={{
+                    flex: 1, minWidth: 70, padding: '6px 8px', borderRadius: 6, textAlign: 'left',
+                    background: filter === 'scope' ? 'rgba(56,139,253,0.15)' : '#0d1117',
+                    border: `1px solid ${filter === 'scope' ? '#388bfd' : '#21262d'}`,
+                    cursor: 'pointer', color: filter === 'scope' ? '#58a6ff' : '#c9d1d9',
+                  }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, lineHeight: 1 }}>{scopeCount}</div>
+                  <div style={{ fontSize: '0.6rem', color: '#8b949e', marginTop: 2 }}>My scope · Div 08</div>
+                </button>
+                <button
+                  onClick={() => setFilter('review')}
+                  style={{
+                    flex: 1, minWidth: 70, padding: '6px 8px', borderRadius: 6, textAlign: 'left',
+                    background: filter === 'review' ? 'rgba(245,158,11,0.1)' : '#0d1117',
+                    border: `1px solid ${filter === 'review' ? '#f59e0b' : '#21262d'}`,
+                    cursor: 'pointer', color: filter === 'review' ? '#f59e0b' : '#c9d1d9',
+                  }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, lineHeight: 1 }}>{reviewCount}</div>
+                  <div style={{ fontSize: '0.6rem', color: '#8b949e', marginTop: 2 }}>Worth reviewing</div>
+                </button>
+                <button
+                  onClick={() => setFilter('all')}
+                  style={{
+                    flex: 1, minWidth: 55, padding: '6px 8px', borderRadius: 6, textAlign: 'left',
+                    background: filter === 'all' ? 'rgba(139,148,158,0.1)' : '#0d1117',
+                    border: `1px solid ${filter === 'all' ? '#8b949e' : '#21262d'}`,
+                    cursor: 'pointer', color: '#8b949e',
+                  }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, lineHeight: 1 }}>{sections.length}</div>
+                  <div style={{ fontSize: '0.6rem', color: '#484f58', marginTop: 2 }}>All</div>
+                </button>
               </div>
             )}
           </div>
@@ -2039,7 +2454,8 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
               const inScope = sectionScope[s.sectionNumber] !== false;
               const isSelected = !!selected[s.sectionNumber];
               const hasResult = !!scanResults[s.sectionNumber];
-              const isDiv08 = s.sectionNumber.replace(/[\s.\-]/g, '').startsWith('08');
+              const isDiv08 = s.isScopeRelevant;
+              const isReview = s.isReviewRelevant;
 
               return (
                 <div
@@ -2078,7 +2494,10 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
                         {s.sectionNumber}
                       </span>
                       {isDiv08 && <span style={{ fontSize: '0.6rem', color: '#58a6ff', fontWeight: 700 }}>DIV 08</span>}
+                      {isReview && !isDiv08 && <span style={{ fontSize: '0.6rem', color: '#f59e0b', fontWeight: 600 }}>REVIEW</span>}
                       {hasResult && <span style={{ fontSize: '0.6rem', color: '#3fb950', fontWeight: 600 }}>✓ scanned</span>}
+                      {s.confidence === 'medium' && <span title="Medium confidence — verify boundary" style={{ fontSize: '0.58rem', color: '#f59e0b', fontWeight: 600, padding: '0 3px', borderRadius: 2, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)' }}>~</span>}
+                      {s.confidence === 'low' && <span title="Low confidence — manually verify boundary" style={{ fontSize: '0.58rem', color: '#ef4444', fontWeight: 600, padding: '0 3px', borderRadius: 2, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>?</span>}
                     </div>
                     <div style={{ fontSize: '0.77rem', color: '#c9d1d9', lineHeight: 1.35, wordBreak: 'break-word' }}>
                       {s.sectionTitle}
@@ -2270,6 +2689,7 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
                 containerWidth={viewerWidth}
                 highlightPage={activeHighlight?.page}
                 highlightText={activeHighlight?.text}
+                highlightRects={activeHighlight?.rects || null}
               />
               {/* Page indicator / jump bar */}
               <div style={{

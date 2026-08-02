@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import MaterialDrawer from './MaterialDrawer';
+import SOWMaterialTracker from './SOWMaterialTracker';
 
 const CustomSystemWorkspace = ({ system, importedSystems, setImportedSystems, onComplete, onBack, crewSize = 2, laborContingency = 2.5 }) => {
   const [tasks, setTasks] = useState([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('labor');
+  const [lines, setLines] = useState(system?.materials || []);
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(system.name);
 
   useEffect(() => {
     setTasks(system?.laborTasks || []);
+    setLines(system?.materials || []);
   }, [system.id]);
 
   const saveToMaster = (updatedTasks) => {
@@ -52,6 +54,13 @@ const CustomSystemWorkspace = ({ system, importedSystems, setImportedSystems, on
     ));
   };
 
+  const handleLinesChange = (newLines) => {
+    setLines(newLines);
+    setImportedSystems(prev => prev.map(sys =>
+      sys.id === system.id ? { ...sys, materials: newLines } : sys
+    ));
+  };
+
   const laborMHs     = tasks.reduce((sum, t) => sum + (Number(t.qty) || 0) * (Number(t.hrsPer) || 0), 0);
   const laborRate    = system.productionRates?.laborRate || 42;
   // Padded labor hours
@@ -60,7 +69,7 @@ const CustomSystemWorkspace = ({ system, importedSystems, setImportedSystems, on
   const cleaningMHs  = daysOnsite * 1;
   const paddedLaborMHs = laborMHs + contMHs + cleaningMHs;
   const laborCost    = paddedLaborMHs * laborRate;
-  const materialCost = (system?.materials || []).reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
+  const materialCost = lines.filter(l => !l.isAuto).reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
   const totalCost    = laborCost + materialCost;
 
   return (
@@ -102,9 +111,9 @@ const CustomSystemWorkspace = ({ system, importedSystems, setImportedSystems, on
               <h2
                 onClick={() => setEditingName(true)}
                 title="Click to rename"
-                style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)', cursor: 'text', borderBottom: '1px dashed transparent' }}
+                style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)', cursor: 'text', borderBottom: '1px dashed rgba(255,255,255,0.18)' }}
                 onMouseEnter={e => e.currentTarget.style.borderBottomColor = 'var(--text-secondary)'}
-                onMouseLeave={e => e.currentTarget.style.borderBottomColor = 'transparent'}
+                onMouseLeave={e => e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.18)'}
               >{nameValue}</h2>
             )}
             <span style={{
@@ -120,33 +129,6 @@ const CustomSystemWorkspace = ({ system, importedSystems, setImportedSystems, on
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <button
-              onClick={() => setIsDrawerOpen(true)}
-              style={{
-                padding: '6px 14px',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 6,
-                color: 'var(--text-primary)',
-                fontWeight: 600,
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              📋 Materials
-              <span style={{
-                background: 'var(--bg-deep)',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                fontSize: '0.7rem',
-              }}>
-                {system?.materials?.length || 0}
-              </span>
-            </button>
-
             <div style={{
               display: 'flex',
               alignItems: 'baseline',
@@ -167,12 +149,36 @@ const CustomSystemWorkspace = ({ system, importedSystems, setImportedSystems, on
           </div>
         </div>
 
+        {/* Tab bar */}
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-panel)', flexShrink: 0 }}>
+          {['labor', 'materials'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: '0.65rem 1.5rem',
+                background: 'none',
+                border: 'none',
+                borderBottom: activeTab === tab ? '2px solid var(--accent-blue)' : '2px solid transparent',
+                color: activeTab === tab ? 'var(--accent-blue)' : 'var(--text-secondary)',
+                fontWeight: activeTab === tab ? 700 : 500,
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+              }}
+            >
+              {tab === 'labor' ? '👷 Labor Tasks' : '🔩 Materials'}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'labor' && (
+        <>
         {/* Content (Labor Tasks) */}
         <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', width: '100%', overflowY: 'auto', boxSizing: 'border-box' }}>
           <div style={{ marginBottom: '1.5rem' }}>
             <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Labor Tasks</h3>
             <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              Build your manual labor scope below. Use the "Materials" button in the top right to add hardware, glass, and metal.
+              Build your manual labor scope below. Switch to the Materials tab to add hardware, glass, and metal.
             </p>
           </div>
 
@@ -303,28 +309,18 @@ const CustomSystemWorkspace = ({ system, importedSystems, setImportedSystems, on
             <span style={{ fontSize: '1rem', fontWeight: 700, color: '#34d399', marginTop: '0.35rem' }}>${laborCost.toFixed(2)} labor</span>
           </div>
         </div>
+        </>
+        )}
+        {activeTab === 'materials' && (
+          <SOWMaterialTracker
+            lines={lines}
+            onChange={handleLinesChange}
+            markupPct={system?.materialConfig?.markupPct ?? 40}
+            taxPct={system?.materialConfig?.taxPct ?? 8.2}
+            isTaxExempt={system?.materialConfig?.isTaxExempt ?? false}
+          />
+        )}
       </div>
-
-      {/* Slide-out Drawer & Backdrop */}
-      <MaterialDrawer
-        isDrawerOpen={isDrawerOpen}
-        toggleDrawer={() => setIsDrawerOpen(prev => !prev)}
-        activeSystemId={system.id}
-        systemName={system.name}
-        importedSystems={importedSystems}
-        setImportedSystems={setImportedSystems}
-      />
-      {isDrawerOpen && (
-        <div
-          onClick={() => setIsDrawerOpen(false)}
-          style={{
-            position: 'fixed', inset: 0,
-            background: 'rgba(0,0,0,0.55)',
-            backdropFilter: 'blur(2px)',
-            zIndex: 49,
-          }}
-        />
-      )}
     </>
   );
 };

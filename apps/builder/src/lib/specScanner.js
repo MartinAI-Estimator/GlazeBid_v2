@@ -6,6 +6,7 @@
 
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
+import { buildSystemPrompt as buildIntelligencePrompt } from '../ai/specIntelligence';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
 
@@ -398,6 +399,204 @@ export const SCAN_CATEGORIES = [
       /maintenance\s+(instruction|data)\s+for\s+(glazing|window|curtain)/i,
     ],
   },
+  // ─── Labor & Materials ──────────────────────────────────────────────────────
+  {
+    key: 'prevailingWage',
+    label: 'Prevailing Wage / Davis-Bacon',
+    short: 'PW',
+    description: 'Prevailing wage, Davis-Bacon Act, union labor, or certified payroll requirements',
+    patterns: [
+      /prevailing\s+wage/i,
+      /davis[\s\-]bacon/i,
+      /certified\s+payroll/i,
+      /\bunion\s+(labor|contractor|agreement|rate)\b/i,
+      /collective\s+bargaining\s+agreement/i,
+      /wage\s+(determination|rate|schedule).{0,30}(federal|state|county|city)/i,
+      /department\s+of\s+labor.{0,30}wage/i,
+    ],
+  },
+  {
+    key: 'buyAmerica',
+    label: 'Buy America / Domestic Content',
+    short: 'BA',
+    description: 'Buy America, BABA, or domestic-content material sourcing restrictions',
+    patterns: [
+      /buy\s+america/i,
+      /\bBABA\b/,
+      /build\s+america.{0,10}buy\s+america/i,
+      /domestic\s+(end\s+)?product/i,
+      /domestic\s+content\s+(requirement|provision)/i,
+      /iron\s+and\s+steel.{0,30}(produced|melted|manufactured).{0,20}united\s+states/i,
+      /\bmanufactured\s+in\s+the\s+u\.?s\.?a?\.?\b/i,
+      /country\s+of\s+origin.{0,30}(certif|provid|document)/i,
+    ],
+  },
+  {
+    key: 'ocip',
+    label: 'OCIP / CCIP / Wrap-Up Insurance',
+    short: 'OCIP',
+    description: 'Owner-controlled or contractor-controlled insurance program — may require deducting your own insurance cost from bid',
+    patterns: [
+      /\bOCIP\b/,
+      /\bCCIP\b/,
+      /wrap[\s\-]up\s+(insurance|program)/i,
+      /owner[\s\-]controlled\s+insurance\s+program/i,
+      /contractor[\s\-]controlled\s+insurance\s+program/i,
+      /consolidated\s+insurance\s+program/i,
+      /enrolled.{0,20}insurance\s+program/i,
+      /\bCIP\b.{0,30}(insurance|program)/i,
+    ],
+  },
+  // ─── Scope & Execution Gotchas ──────────────────────────────────────────────
+  {
+    key: 'perimeterSealants',
+    label: 'Perimeter Sealants',
+    short: 'SEAL',
+    description: 'Perimeter caulk, weather seals, Division 07 joint sealants — scope boundary between glazier and others',
+    patterns: [
+      /perimeter\s+(sealant|caulk(?:ing)?)/i,
+      /weather[\s\-]seal(?:ant)?\b/i,
+      /\bSection\s+07[\s.\-]?9[12]/i,
+      /joint\s+sealant.{0,50}(glazing|curtain[\s\-]?wall|storefront|window)/i,
+      /silicone\s+(sealant|caulk).{0,50}(perimeter|around\s+(window|frame|opening))/i,
+      /sealant.{0,30}(by|furnished|installed\s+by)\s+(glazier|glazing\s+contractor)/i,
+      /backer\s+rod.{0,30}(perimeter|window|glazing|frame)/i,
+    ],
+  },
+  {
+    key: 'brakeMetalFlashing',
+    label: 'Brake Metal / Flashing',
+    short: 'FLASH',
+    description: 'Brake-formed metal, sill flashings, or custom trim profiles in glazing scope',
+    patterns: [
+      /brake[\s\-]?metal/i,
+      /break[\s\-]?metal/i,
+      /\bsill\s+(flashing|pan|liner)\b/i,
+      /custom[\s\-]?profile.{0,30}(aluminum|alum|metal|extrusion)/i,
+      /formed\s+(metal|aluminum|sheet\s+metal)\s+(flashing|trim|sill)/i,
+      /sheet\s+metal\s+(flashing|trim|sill).{0,30}(by|furnished|provided).{0,20}(glazier|glazing)/i,
+      /field[\s\-]?formed\s+(flashing|sill|cap|trim)/i,
+      /\b\d{1,2}[\s\-]?gauge\s+(aluminum|galvaniz|steel).{0,20}(flashing|trim|sill)/i,
+    ],
+  },
+  {
+    key: 'electrifiedHardware',
+    label: 'Electrified Hardware / Auto-Operators',
+    short: 'ELEC',
+    description: 'Access control, auto operators, card readers, or electrified hardware in glazing scope',
+    patterns: [
+      /access\s+control.{0,50}(door|opening|glass|glazing|hardware)/i,
+      /power\s+transfer\s+(device|hinge|loop)/i,
+      /auto(?:matic)?\s+(door\s+)?operator/i,
+      /automatic\s+(sliding|swing|revolving)\s+door/i,
+      /\bcard\s+reader\b/i,
+      /electrified\s+(hardware|lockset|strike|panic|exit\s+device)/i,
+      /electric\s+(strike|latch|lock|release|bolt|magnet(?:ic\s+lock)?)/i,
+      /conduit.{0,40}(glazier|glazing\s+contractor|by\s+others)/i,
+      /\b(LCN|Dorma|ASSA\s+Abloy|Nabco|Stanley\s+Access|Besam)\b/i,
+    ],
+  },
+  {
+    key: 'glassUpgrades',
+    label: 'Specialty / Upgraded Glass',
+    short: 'SPEC',
+    description: 'Bird-friendly frit, dynamic glazing, electrochromic, spandrel, or oversized lites',
+    patterns: [
+      /bird[\s\-]?(?:friendly|safe|deterrent|strike)/i,
+      /\bfrit(?:ted)?\s+(glass|pattern|dot|ceramic)/i,
+      /ceramic[\s\-]frit/i,
+      /dynamic\s+glazing/i,
+      /electrochromic/i,
+      /thermochromic/i,
+      /\bSageGlass\b|\bView\s+(?:Smart\s+)?Glass\b/i,
+      /spandrel\s+(glass|panel|unit).{0,30}(painted|ceramic|opacified|opaque)/i,
+      /oversized\s+(lite|glass\s+panel|vision\s+glass)/i,
+    ],
+  },
+  {
+    key: 'hoisting',
+    label: 'Hoisting / Crane / Scaffolding',
+    short: 'HOIST',
+    description: 'Glazing contractor responsible for crane, scaffolding, or material hoisting',
+    patterns: [
+      /\bcrane\b.{0,60}(glazier|glazing\s+contractor|furnish|provide|by\s+sub)/i,
+      /glazier.{0,60}\bcrane\b/i,
+      /\bscaffold(?:ing)?\b.{0,60}(glazier|glazing\s+contractor|furnish|provide)/i,
+      /glazier.{0,60}\bscaffold/i,
+      /\bhoisting\b.{0,60}(glazier|glazing\s+contractor|furnish|provide)/i,
+      /material\s+handling.{0,50}(glazier|glazing\s+contractor)/i,
+      /\bmanlift\b|\bscissor\s+lift\b|\baerial\s+(lift|work\s+platform)\b/i,
+      /tower\s+crane.{0,50}(furnish|provide|required\s+by)/i,
+    ],
+  },
+  {
+    key: 'protectionCleaning',
+    label: 'Protection & Final Cleaning',
+    short: 'CLEAN',
+    description: 'Glazing contractor responsible for protection from subsequent trades and/or final glass cleaning',
+    patterns: [
+      /protect(?:ion)?\s+(from|against)\s+(subsequent|other|follow[\s\-]on)\s+trades?/i,
+      /protect(?:ion)?.{0,40}(glass|glazing|window|frame).{0,40}(subsequent|during\s+construction)/i,
+      /final\s+clean(?:ing)?.{0,40}(glazing|glass|window)/i,
+      /clean(?:ing)?\s+at\s+(substantial\s+completion|closeout)/i,
+      /glazing\s+contractor.{0,50}clean(?:ing)?/i,
+      /remove.{0,30}(label|protective\s+(film|coating|tape)).{0,30}(glass|glazing|window)/i,
+      /\bHF\s+clean|\bhydrofluoric|\bacid\s+(wash|clean)/i,
+    ],
+  },
+
+  // ─── Division 00 / 01 / 02 — Contract & Bid Day ────────────────────────────
+  {
+    key: 'taxes',
+    label: 'Tax Treatment',
+    short: 'TAX',
+    description: 'Sales/use tax status, tax-exempt owner, or contractor-pays-tax language',
+    patterns: [
+      /sales\s+tax/i,
+      /use\s+tax/i,
+      /tax[\s\-]?exempt/i,
+      /taxes?\s+(included|excluded|paid\s+by)/i,
+      /contractor.{0,30}responsible.{0,30}tax/i,
+    ],
+  },
+  {
+    key: 'bidForms',
+    label: 'Bid / Proposal Forms',
+    short: 'BID-FM',
+    description: 'Bid form, bid bond form, or proposal form identification',
+    patterns: [
+      /bid\s+form/i,
+      /form\s+of\s+proposal/i,
+      /bid\s+bond\s+form/i,
+      /proposal\s+form/i,
+      /\bSection\s+00\s+41/i,
+    ],
+  },
+  {
+    key: 'substitutionForms',
+    label: 'Substitution Request Form / Deadline',
+    short: 'SUB-FM',
+    description: 'Substitution request form required; pre-bid substitution deadline',
+    patterns: [
+      /substitution\s+request\s+form/i,
+      /substitutions?.{0,40}(days?|deadline|prior\s+to\s+bid)/i,
+      /\bSection\s+00\s+43/i,
+      /substitution\s+approval\s+(request|form)/i,
+    ],
+  },
+  {
+    key: 'contractTerms',
+    label: 'Contract Form',
+    short: 'CONTRACT',
+    description: 'Governing contract form (AIA A201, ConsensusDocs, custom)',
+    patterns: [
+      /AIA\s+(Document\s+)?A\d{3}/i,
+      /ConsensusDocs/i,
+      /general\s+conditions\s+of\s+the\s+contract/i,
+      /\bA201\b/i,
+      /standard\s+form\s+of\s+(agreement|subcontract)/i,
+    ],
+  },
 ];
 
 // ─── Text Extraction ──────────────────────────────────────────────────────────
@@ -412,6 +611,15 @@ function toSafeCopy(pdfBuffer) {
 }
 
 export async function extractPageTexts(pdfBuffer) {
+  const pages = await extractPageTextsWithItems(pdfBuffer);
+  return pages.map(({ page, text }) => ({ page, text }));
+}
+
+/**
+ * Phase 4: extract page texts AND pdfjs item position data.
+ * Returns [{page, text, items}] where items carry .str, .transform, .width, .height.
+ */
+export async function extractPageTextsWithItems(pdfBuffer) {
   const data = toSafeCopy(pdfBuffer);
 
   const doc = await pdfjsLib.getDocument({
@@ -421,23 +629,42 @@ export async function extractPageTexts(pdfBuffer) {
     useSystemFonts: true,
   }).promise;
 
-  const pageTexts = [];
+  const pageRecords = [];
   for (let p = 1; p <= doc.numPages; p++) {
     const page = await doc.getPage(p);
     const tc = await page.getTextContent();
-    const text = tc.items
-      .filter((item) => typeof item.str === 'string')
-      .map((item) => item.str)
-      .join(' ');
-    pageTexts.push({ page: p, text });
+    const items = tc.items.filter((item) => typeof item.str === 'string' && item.str);
+    const text = items.map((item) => item.str).join(' ');
+    pageRecords.push({ page: p, text, items });
   }
-  return pageTexts;
+  return pageRecords;
 }
 
 // ─── Category Scanning ────────────────────────────────────────────────────────
 
+/**
+ * Phase 4: map a character range in the joined item text back to pdfjs item rects.
+ * items are in natural order (joined with single spaces), matching the text string.
+ */
+function findItemRects(items, charStart, charEnd) {
+  const rects = [];
+  let pos = 0;
+  for (const item of items) {
+    const len = item.str.length;
+    const itemStart = pos;
+    const itemEnd = pos + len;
+    pos += len + 1; // +1 for the space separator
+    if (itemEnd > charStart && itemStart < charEnd && item.transform && item.width) {
+      const [, , , , x, y] = item.transform;
+      const h = item.height || Math.abs(item.transform[3]) || Math.abs(item.transform[0]) || 10;
+      rects.push({ x, y, width: item.width, height: h });
+    }
+  }
+  return rects;
+}
+
 function scanCategory(category, pageTexts) {
-  for (const { page, text } of pageTexts) {
+  for (const { page, text, items } of pageTexts) {
     for (const pattern of category.patterns) {
       const match = pattern.exec(text);
       if (match) {
@@ -445,11 +672,13 @@ function scanCategory(category, pageTexts) {
         const end = Math.min(text.length, match.index + match[0].length + 160);
         const raw = text.slice(start, end).replace(/\s+/g, ' ').trim();
         const excerpt = (start > 0 ? '…' : '') + raw + (end < text.length ? '…' : '');
-        return { found: true, excerpt: excerpt.slice(0, 300), page };
+        // Phase 4: capture item rects for the matched span
+        const rects = items ? findItemRects(items, match.index, match.index + match[0].length) : null;
+        return { found: true, excerpt: excerpt.slice(0, 300), page, rects };
       }
     }
   }
-  return { found: false, excerpt: null, page: null };
+  return { found: false, excerpt: null, page: null, rects: null };
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -461,7 +690,7 @@ function scanCategory(category, pageTexts) {
  */
 export async function scanSpecSection(section) {
   try {
-    const pageTexts = await extractPageTexts(section.pdfBuffer);
+    const pageTexts = await extractPageTextsWithItems(section.pdfBuffer);
     const findings = {};
     for (const cat of SCAN_CATEGORIES) {
       findings[cat.key] = scanCategory(cat, pageTexts);
@@ -491,6 +720,75 @@ export async function scanAllSections(sections) {
   return results;
 }
 
+// ─── Cross-Reference Detection ────────────────────────────────────────────────
+
+/** Risk metadata keyed by two-digit MasterFormat division number. */
+const XREF_DIVISION_RISK = {
+  '00': { level: 'info', label: 'Division 00 – Procurement & Contracting', note: 'Contract documents and bidding requirements' },
+  '01': { level: 'warn', label: 'Division 01 – General Requirements',      note: 'May govern who pays for 3rd-party testing, mock-ups, or field QC' },
+  '02': { level: 'info', label: 'Division 02 – Existing Conditions',        note: 'Substrate or existing condition requirements' },
+  '03': { level: 'info', label: 'Division 03 – Concrete',                   note: 'Embeds, blockouts, or slab tolerances affecting glazing' },
+  '04': { level: 'info', label: 'Division 04 – Masonry',                    note: 'Masonry openings or substrate attachment' },
+  '05': { level: 'risk', label: 'Division 05 – Metals',                     note: 'Structural steel subframes or tube-steel reinforcement — verify who furnishes and installs' },
+  '06': { level: 'info', label: 'Division 06 – Wood, Plastics & Composites', note: '' },
+  '07': { level: 'risk', label: 'Division 07 – Thermal & Moisture Protection', note: 'Perimeter sealants, flashings, waterproofing — common scope gap between glazier and others' },
+  '08': { level: 'info', label: 'Division 08 – Openings',                   note: 'Cross-reference within glazing sections' },
+  '09': { level: 'info', label: 'Division 09 – Finishes',                   note: '' },
+  '10': { level: 'info', label: 'Division 10 – Specialties',                note: '' },
+  '26': { level: 'risk', label: 'Division 26 – Electrical',                 note: 'Wiring for auto-operators, powered hardware, or exit devices — verify scope boundary' },
+  '27': { level: 'warn', label: 'Division 27 – Communications',             note: 'Low-voltage wiring that may interface with glazing hardware' },
+  '28': { level: 'risk', label: 'Division 28 – Electronic Safety & Security', note: 'Access control, card readers, security hardware — who furnishes, installs, and programs?' },
+};
+
+/**
+ * Scan page texts for MasterFormat cross-references (e.g. "Section 07 92 00", "Division 05").
+ * Returns one entry per unique division/section encountered, sorted risk-first.
+ *
+ * @param {Array<{page: number, text: string}>} pageTexts
+ * @returns {Array<{ raw, division, key, label, note, riskLevel, context, page }>}
+ */
+export function detectCrossReferences(pageTexts) {
+  // Matches "Section 07 92 00", "Div. 05", "Division 07", optionally preceded by "See / Refer to / per"
+  const XREF_RE = /\b(?:(?:see|refer(?:ring)?\s+to|per|as\s+specified\s+in|in\s+accordance\s+with|per\s+requirements\s+of)\s+)?(?:Section|Div(?:ision)?\.?)\s*(\d{2}(?:[\s.\-]\d{2}(?:[\s.\-]\d{2})?)?)\b/gi;
+
+  const dedupMap = new Map(); // key → entry (keep first occurrence, but upgrade risk level)
+
+  for (const { page, text } of pageTexts) {
+    let match;
+    XREF_RE.lastIndex = 0;
+    while ((match = XREF_RE.exec(text)) !== null) {
+      const rawNum = match[1].trim();                      // "07 92 00", "07", etc.
+      const normalized = rawNum.replace(/[\s.\-]/g, '');   // "079200", "07"
+      const division = normalized.slice(0, 2);
+
+      const start = Math.max(0, match.index - 60);
+      const end   = Math.min(text.length, match.index + match[0].length + 100);
+      const ctx   = ((start > 0 ? '…' : '') + text.slice(start, end).replace(/\s+/g, ' ').trim() + (end < text.length ? '…' : '')).slice(0, 220);
+
+      const risk = XREF_DIVISION_RISK[division] || { level: 'info', label: `Division ${division}`, note: '' };
+
+      if (!dedupMap.has(normalized)) {
+        dedupMap.set(normalized, {
+          raw:       rawNum,
+          division,
+          key:       normalized,
+          label:     risk.label,
+          note:      risk.note,
+          riskLevel: risk.level,
+          context:   ctx,
+          page,
+        });
+      } else if (risk.level === 'risk' && dedupMap.get(normalized).riskLevel !== 'risk') {
+        // Upgrade risk level and freshen context if a riskier occurrence is found
+        dedupMap.set(normalized, { ...dedupMap.get(normalized), riskLevel: 'risk', context: ctx, page });
+      }
+    }
+  }
+
+  const ORDER = { risk: 0, warn: 1, info: 2 };
+  return [...dedupMap.values()].sort((a, b) => (ORDER[a.riskLevel] ?? 3) - (ORDER[b.riskLevel] ?? 3));
+}
+
 // ─── AI-Powered Enhancement ───────────────────────────────────────────────────
 
 // Maps AI-returned keys → internal findings keys (where names differ)
@@ -502,6 +800,10 @@ const AI_KEY_MAP = {
  * Use Claude (via Electron ai:chat IPC) to extract spec findings that regex may miss.
  * Fills gaps — only adds findings for categories the regex scanner did NOT already find.
  *
+ * Phase 5: Every AI-returned excerpt is verified verbatim in the page texts before
+ * accepting. Unverified excerpts are discarded (not displayed). Page numbers are
+ * derived from where verification found the text, never from the model.
+ *
  * @param {Array<{page: number, text: string}>} pageTexts  — already extracted page texts
  * @returns {Promise<{ enhanced: boolean, findings: Object, error?: string }>}
  */
@@ -510,21 +812,21 @@ export async function aiEnhanceSection(pageTexts) {
     return { enhanced: false, findings: {} };
   }
 
-  // Build page-separated text, cap at ~4500 chars to fit in Haiku token budget
+  // Build page-separated text. Send full pages (not truncated) — model needs
+  // to see complete context for accurate verbatim quotes.
   let combined = '';
   for (const { page, text } of pageTexts) {
-    const chunk = `\n--- PAGE ${page} ---\n${text.slice(0, 1200)}`;
-    if (combined.length + chunk.length > 4500) break;
+    const chunk = `\n--- PAGE ${page} ---\n${text}`;
+    if (combined.length + chunk.length > 12000) break;
     combined += chunk;
   }
 
-  const systemPrompt =
-    'You are a commercial glazing estimator reviewing a specification section. ' +
-    'Extract key information and return ONLY a valid JSON object — no markdown fences, no explanation.';
+  const systemPrompt = buildIntelligencePrompt({ mode: 'scan' });
 
   const userMsg =
     'Analyze this spec text. Return ONLY a JSON object where each key contains:\n' +
-    '{ "found": boolean, "excerpt": "<= 80 chars from text", "page": integer_or_null }\n\n' +
+    '{ "found": boolean, "excerpt": "EXACT verbatim characters from the spec text, <= 120 chars", "page": integer_page_number_or_null }\n\n' +
+    'IMPORTANT: excerpt must be copied character-for-character from the text above. Do NOT paraphrase.\n\n' +
     'Keys to extract:\n' +
     '  basisOfDesign      — named manufacturer as basis of design\n' +
     '  noSubstitutions    — no-substitution / sole-source / proprietary language\n' +
@@ -558,16 +860,40 @@ export async function aiEnhanceSection(pageTexts) {
     if (s < 0 || e < 0) return { enhanced: false, findings: {} };
     const parsed = JSON.parse(raw.slice(s, e + 1));
 
+    // Phase 5: Normalize helper — strip punctuation, collapse whitespace
+    const normalizeExcerpt = (str) =>
+      (str || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+
+    // Phase 5: Verify each AI excerpt exists verbatim in the actual page texts.
+    // Page number comes from where we found it, not from the model.
+    const verifyExcerpt = (excerpt) => {
+      if (!excerpt || typeof excerpt !== 'string' || excerpt.length < 8) return null;
+      const normExcerpt = normalizeExcerpt(excerpt).slice(0, 80);
+      for (const { page: pg, text } of pageTexts) {
+        if (normalizeExcerpt(text).includes(normExcerpt)) {
+          return pg; // verified — return the page where we found it
+        }
+      }
+      return null; // not found verbatim — discard
+    };
+
     // Normalize and remap keys
     const findings = {};
     for (const [aiKey, val] of Object.entries(parsed)) {
-      if (!val || typeof val !== 'object') continue;
+      if (!val || typeof val !== 'object' || !val.found) continue;
       const mappedKey = AI_KEY_MAP[aiKey] || aiKey;
+      const excerpt = typeof val.excerpt === 'string' ? val.excerpt.slice(0, 120) : null;
+
+      // Phase 5: Verify the excerpt. Discarded if not found verbatim.
+      const verifiedPage = excerpt ? verifyExcerpt(excerpt) : null;
+      if (!verifiedPage) continue; // reject hallucinated or paraphrased findings
+
       findings[mappedKey] = {
-        found:       !!val.found,
-        excerpt:     typeof val.excerpt === 'string' ? val.excerpt.slice(0, 120) : null,
-        page:        typeof val.page === 'number' && val.page > 0 ? val.page : null,
+        found:       true,
+        excerpt,
+        page:        verifiedPage,
         aiAssisted:  true,
+        aiVerified:  true,
       };
     }
     return { enhanced: true, findings };

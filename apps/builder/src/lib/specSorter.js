@@ -2,9 +2,16 @@ import { PDFDocument } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 
-// Wire the worker once at module load — Vite resolves ?url correctly in
-// both dev and production, avoiding any version mismatch.
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
+// In Vitest/Node, Vite's ?url transform produces a /@fs/C:/... dev-server path.
+// pdfjs fake-worker mode resolves that via import() which Node.js can't handle.
+// Re-map to a proper file:// URL so the worker loads in any environment.
+// In production/Electron, the URL passes through unchanged.
+function resolveWorkerSrc(url) {
+  if (typeof url !== 'string') return url;
+  if (url.startsWith('/@fs/')) return 'file://' + url.slice(4);
+  return url;
+}
+pdfjsLib.GlobalWorkerOptions.workerSrc = resolveWorkerSrc(pdfjsWorkerUrl);
 
 // Electron 29 / Chrome 122 does not implement ReadableStream[Symbol.asyncIterator].
 // pdfjs-dist legacy 5.5.x uses it internally; polyfill before the first getDocument call.

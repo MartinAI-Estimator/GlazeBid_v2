@@ -221,3 +221,8 @@ At the start of every Cowork session, tell Claude:
 For agent-specific sessions:
 "You are the Builder Agent. Read CLAUDE_CONTEXT.md — specifically sections 5, 8, 9, and 12. Your constraint is JSX only in apps/builder/src/. Today's task is [task]."
 This file is the single source of truth for project context. Update it whenever major decisions are made or phases are completed.
+
+15. FRAME BUILDER SCOPE (OWNER DECISION 2026-07-24)
+The Parametric Frame Builder is a TAKEOFF tool: build frames, get glass sizes and metal takeoffs (labor derived later). It is NOT a pricing tool — pricing lives in Bid Builder, which consumes Frame Builder takeoffs. Takeoffs must EXPORT as .dat files compatible with PartnerPak Studio / Glazier Studio (same program, same format). Multi-vendor from day one — never box into Kawneer. Priority: (1) frames build correctly end-to-end, (2) vendor-neutral metal groups/parts catalogs, (3) .dat export writer, (4) labor.
+Key docs: PARAMETRIC_FRAME_BUILDER_SPEC.md (engine spec + scope), PARTNERPAK_DAT_FORMAT.md (.dat reverse engineering, import parser done, export = Phase 3.2), PARTNERPAK_FRAME_BUILD_MODEL.md (workbook UX model), WINDOW_SCHEDULE_IMPORT.md (schedule drop feature).
+Engine code: packages/frame-engine/src/takeoff/TakeoffEngine.ts (validated vs workbook + real bid), packages/frame-engine/src/partnerpak/PartnerPakParser.ts (.dat import, validated 18/18 vs real project reports).

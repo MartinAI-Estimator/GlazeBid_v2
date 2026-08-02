@@ -111,92 +111,30 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings, onBack }) =
 
   const fetchRecentProjects = async () => {
     try {
-      const projectMap = new Map();
-
-      const addProject = (name, modified = null, status = 'in_progress') => {
-        if (!name || typeof name !== 'string') return;
-        const cleanName = name.trim();
-        if (!cleanName) return;
-        const date = modified ? new Date(modified) : new Date();
-        const normalizedModified = Number.isNaN(date.getTime())
-          ? new Date().toISOString()
-          : date.toISOString();
-        const existing = projectMap.get(cleanName);
-        if (!existing) {
-          projectMap.set(cleanName, { name: cleanName, status, modified: normalizedModified });
+      // ── Electron: read directly from the projects drive ──────────────────
+      if (typeof window !== 'undefined' && window.electronAPI?.listProjects) {
+        const result = await window.electronAPI.listProjects();
+        if (result?.ok) {
+          setRecentProjects(
+            (result.projects || []).map(p => ({
+              name:     p.name,
+              modified: p.modified,
+              aiqPath:  p.aiqPath,
+              status:   'in_progress',
+            }))
+          );
           return;
         }
-        if (new Date(normalizedModified).getTime() > new Date(existing.modified).getTime()) {
-          existing.modified = normalizedModified;
-        }
-      };
-
-      for (let i = 0; i < localStorage.length; i += 1) {
-        const key = localStorage.key(i);
-        if (!key) continue;
-        let match = key.match(/^glazebid:sheets:(.+)$/);
-        if (match) { addProject(match[1]); continue; }
-        match = key.match(/^glazebid:bidSettings:(.+)$/);
-        if (match) { addProject(match[1]); continue; }
-        match = key.match(/^glazebid:selectedSheet:(.+)$/);
-        if (match) { addProject(match[1]); continue; }
       }
-
-      addProject(localStorage.getItem('currentProject'));
-
-      try {
-        const pdRaw = localStorage.getItem('projectData');
-        if (pdRaw) {
-          const pd = JSON.parse(pdRaw);
-          addProject(pd?.projectName || pd?.name, pd?.updatedAt || pd?.modified);
-        }
-      } catch { /* ignore */ }
-
-      for (const listKey of ['glazebid:projects', 'recentProjects', 'projects']) {
-        try {
-          const raw = localStorage.getItem(listKey);
-          if (!raw) continue;
-          const arr = JSON.parse(raw);
-          if (!Array.isArray(arr)) continue;
-          arr.forEach(p => {
-            if (typeof p === 'string') addProject(p);
-            else addProject(
-              p?.projectName || p?.name || p?.title,
-              p?.updatedAt || p?.modified || p?.lastOpened,
-              p?.status || 'in_progress'
-            );
-          });
-        } catch { /* ignore */ }
-      }
-
-      // Project registry — updated every time a project is opened
-      try {
-        const regRaw = localStorage.getItem('glazebid:projectRegistry');
-        if (regRaw) {
-          const reg = JSON.parse(regRaw);
-          if (Array.isArray(reg)) reg.forEach(p => addProject(p.name, p.modified));
-        }
-      } catch { /* ignore */ }
-
-      // Scan glazebid:bid: and glazebid:filePath: keys added by current version
-      for (let j = 0; j < localStorage.length; j += 1) {
-        const key = localStorage.key(j);
-        if (!key) continue;
-        const m = key.match(/^glazebid:(?:bid|filePath|bidSummary):(.+)$/);
-        if (m) { addProject(m[1]); }
-      }
-
-      const recovered = [...projectMap.values()].sort(
-        (a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime()
-      );
-      setRecentProjects(recovered);
+      // ── Fallback (browser dev mode): empty list ───────────────────────────
+      setRecentProjects([]);
     } catch {
       setRecentProjects([]);
     }
   };
 
   const fetchProjectStats = async () => {
-    // No backend — stats derive from local .gbid files
+    // Stats derive from disk files — no backend needed
   };
 
   // Determine project status based on available data
@@ -392,10 +330,11 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings, onBack }) =
             if (fp) filePaths[f.name] = fp;
           } catch { /* path capture is best-effort */ }
         }
-        // Keep backward-compat key for Studio PDF auto-load
+        // Store the first drawing path on localData so the app can auto-load it in Studio.
+        // No longer written to localStorage — the .aiq file on disk is the source of truth.
         const firstDrawingPath = filePaths[localData.architectural[0]];
         if (firstDrawingPath) {
-          localStorage.setItem(`glazebid:filePath:${projectNameInput}`, firstDrawingPath);
+          localData.primaryDrawingPath = firstDrawingPath;
         }
       }
       localData.filePaths = filePaths;

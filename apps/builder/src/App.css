@@ -136,6 +136,22 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* ── Input / Select / Textarea focus — active-cell indicator ──────────────── */
+/* Replaces browser default outline with a CAD-theme cyan ring + subtle glow.  */
+/* !important overrides inline-style border set by inputBase / inputSt objects. */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--brand-cyan) !important;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.18) !important;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+textarea:focus {
+  background-color: rgba(14, 165, 233, 0.04) !important;
+}
+
 /* Loading Spinner Animation */
 @keyframes spin {
   0% { transform: rotate(0deg); }

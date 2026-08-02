@@ -1,0 +1,393 @@
+{
+ "job": "Hope Aquatic & Rec Center - Bid Drawings",
+ "pdf": "/sessions/amazing-vibrant-knuth/mnt/Arch Drawing Markups/New Drawings Sets/Hope Aquatic & Rec Center - Bid Drawings - Non Marked.pdf",
+ "pages": [
+  {
+   "page": 0,
+   "sheet_type": "floor_plan",
+   "relevant": false,
+   "marks": [],
+   "scale_in_per_ft": 0.125,
+   "gt_count": 18
+  },
+  {
+   "page": 1,
+   "sheet_type": "floor_plan",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.125,
+   "gt_count": 19,
+   "candidates": 438,
+   "verified": 411,
+   "raw": {
+    "matched": 2,
+    "proposed": 438,
+    "gt_found": 2
+   },
+   "verified_stage": {
+    "matched": 2,
+    "proposed": 411,
+    "gt_found": 2
+   }
+  },
+  {
+   "page": 2,
+   "sheet_type": "floor_plan",
+   "relevant": false,
+   "marks": [],
+   "scale_in_per_ft": 0.125,
+   "gt_count": 12
+  },
+  {
+   "page": 3,
+   "sheet_type": "floor_plan",
+   "relevant": false,
+   "marks": [],
+   "scale_in_per_ft": 0.125,
+   "gt_count": 29
+  },
+  {
+   "page": 4,
+   "sheet_type": "floor_plan",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.0,
+   "gt_count": 2,
+   "candidates": 180,
+   "verified": 12,
+   "raw": {
+    "matched": 1,
+    "proposed": 180,
+    "gt_found": 1
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 12,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 5,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 12.0,
+   "gt_count": 36,
+   "candidates": 191,
+   "verified": 0,
+   "raw": {
+    "matched": 2,
+    "proposed": 191,
+    "gt_found": 2
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 6,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": null,
+   "gt_count": 10,
+   "candidates": 90,
+   "verified": 0,
+   "raw": {
+    "matched": 0,
+    "proposed": 90,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 7,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": null,
+   "gt_count": 7,
+   "candidates": 79,
+   "verified": 0,
+   "raw": {
+    "matched": 0,
+    "proposed": 79,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 8,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": null,
+   "gt_count": 8,
+   "candidates": 76,
+   "verified": 0,
+   "raw": {
+    "matched": 0,
+    "proposed": 76,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 9,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": null,
+   "gt_count": 2,
+   "candidates": 91,
+   "verified": 0,
+   "raw": {
+    "matched": 2,
+    "proposed": 91,
+    "gt_found": 2
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 10,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 6,
+   "candidates": 433,
+   "verified": 18,
+   "raw": {
+    "matched": 0,
+    "proposed": 433,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 18,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 11,
+   "sheet_type": "detail",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 12,
+   "candidates": 201,
+   "verified": 0,
+   "raw": {
+    "matched": 1,
+    "proposed": 201,
+    "gt_found": 1
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 12,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 16,
+   "candidates": 220,
+   "verified": 0,
+   "raw": {
+    "matched": 3,
+    "proposed": 220,
+    "gt_found": 3
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 13,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 11,
+   "candidates": 203,
+   "verified": 0,
+   "raw": {
+    "matched": 0,
+    "proposed": 203,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 14,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 8,
+   "candidates": 107,
+   "verified": 0,
+   "raw": {
+    "matched": 0,
+    "proposed": 107,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 15,
+   "sheet_type": "schedule",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.09375,
+   "gt_count": 62,
+   "candidates": 337,
+   "verified": 317,
+   "raw": {
+    "matched": 11,
+    "proposed": 337,
+    "gt_found": 11
+   },
+   "verified_stage": {
+    "matched": 6,
+    "proposed": 317,
+    "gt_found": 6
+   }
+  },
+  {
+   "page": 16,
+   "sheet_type": "schedule",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.09375,
+   "gt_count": 43,
+   "candidates": 278,
+   "verified": 256,
+   "raw": {
+    "matched": 8,
+    "proposed": 278,
+    "gt_found": 8
+   },
+   "verified_stage": {
+    "matched": 1,
+    "proposed": 256,
+    "gt_found": 1
+   }
+  },
+  {
+   "page": 17,
+   "sheet_type": "other",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 1,
+   "candidates": 102,
+   "verified": 66,
+   "raw": {
+    "matched": 1,
+    "proposed": 102,
+    "gt_found": 1
+   },
+   "verified_stage": {
+    "matched": 1,
+    "proposed": 66,
+    "gt_found": 1
+   }
+  },
+  {
+   "page": 18,
+   "sheet_type": "detail",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.0,
+   "gt_count": 0,
+   "candidates": 447,
+   "verified": 11
+  }
+ ],
+ "triage": {
+  "gt_pages": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   21
+  ],
+  "flagged_pages": [
+   1,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18
+  ],
+  "recall": 0.789,
+  "pages_excluded": 3
+ },
+ "marks_found": [],
+ "dim_pool_size": 297,
+ "geometry_raw": {
+  "precision": 0.01,
+  "recall": 0.128
+ },
+ "after_dim_verify": {
+  "precision": 0.009,
+  "recall": 0.041
+ }
+}

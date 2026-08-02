@@ -18,7 +18,7 @@ export default defineConfig(({ command }) => ({
     },
   },
   server: {
-    port: 5173,  // Default Vite port
+    port: 5175,
     strictPort: true,
     host: '127.0.0.1',
     open: false,

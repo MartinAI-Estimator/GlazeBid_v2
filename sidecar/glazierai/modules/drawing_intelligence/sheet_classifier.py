@@ -110,6 +110,20 @@ PROCESS STEP ROUTING:
 - step_7_detail:       Detail or section with glazing-relevant conditions
 - skip:                Not glazing-relevant — do not process further
 
+ROUTING EDGE CASES — read carefully before routing:
+1. FINISH SCHEDULE vs. SYSTEM LEGEND: A "Room Finish Schedule" is a tabular list of surface
+   finishes (paint, tile, floor, ceiling) keyed to individual room names or numbers — it is
+   NOT a glazing system legend. Key visual tell: many rows (10+) listing named rooms with
+   finish material codes for walls/floors/ceiling; route to "skip".
+   A true glazing system legend has a small number of entries (2–15), each with a glazing
+   system code (CW-1, SF-2, etc.), manufacturer name, glass spec, and finish description.
+2. ALL-GLASS / FRAMELESS ELEVATIONS: A sheet showing DRAWN ELEVATION VIEWS (pictorial side
+   views) of frameless glass partitions, all-glass walls, butt-glazed systems, or interior
+   storefront — route to "step_3_elevation", even if the views are grid-arranged or the
+   sheet also contains a schedule table alongside the drawings.
+3. MIXED SHEETS: When a sheet contains both schedule tables and elevation drawings, route by
+   the dominant glazing-relevant content. Elevation drawings take priority over schedule rows.
+
 TITLE BLOCK: The sheet number and title are typically in the bottom-right corner of the sheet.
 Look there first. The sheet number format is usually letter + digits (e.g., A2.0, A3.2, G1.0).
 
@@ -151,14 +165,20 @@ class SheetClassifier:
     def __init__(self, api_key: str | None = None):
         self.client = anthropic.Anthropic(api_key=api_key)
 
-    def classify(self, pdf_path: str, batch_size: int = 12) -> ClassificationResult:
+    def classify(
+        self,
+        pdf_path: str,
+        batch_size: int = 12,
+        routing_overrides: dict[str, ProcessStep] | None = None,
+    ) -> ClassificationResult:
         """
         Classify all pages in a PDF drawing set.
 
         Args:
-            pdf_path:   Path to the architectural drawing PDF
-            batch_size: Max pages per API call. 12 is safe for token budget.
-                        Increase if sets are larger and you want fewer calls.
+            pdf_path:          Path to the architectural drawing PDF
+            batch_size:        Max pages per API call (12 is safe).
+            routing_overrides: {sheet_number: ProcessStep} map applied after LLM
+                               classification. Use for project-specific corrections.
 
         Returns:
             ClassificationResult with every page classified and routed.
@@ -249,6 +269,22 @@ class SheetClassifier:
 
         # Sort by page index, populate result
         all_sheets.sort(key=lambda s: s.page_index)
+
+        # Apply project-specific routing overrides (post-LLM correction layer)
+        if routing_overrides:
+            for sheet in all_sheets:
+                if sheet.sheet_number in routing_overrides:
+                    new_step = routing_overrides[sheet.sheet_number]
+                    if new_step != sheet.process_in_step:
+                        logger.info(
+                            f"  Override: {sheet.sheet_number} "
+                            f"{sheet.process_in_step} → {new_step}"
+                        )
+                        sheet.process_in_step = new_step
+                        # Mark glazing-relevant if routed to an active step
+                        if new_step != "skip":
+                            sheet.is_glazing_relevant = True
+
         result.sheets = all_sheets
         result.glazing_relevant_count = sum(
             1 for s in all_sheets if s.is_glazing_relevant
@@ -363,7 +399,25 @@ if __name__ == "__main__":
         sys.exit(1)
 
     classifier = SheetClassifier(api_key=api_key)
-    result = classifier.classify(sys.argv[1])
+
+    # Project-specific routing corrections (LLM post-processing overrides).
+    # Add entries here when the classifier consistently misroutes a sheet type.
+    # Key = sheet_number as read from title block; value = correct ProcessStep.
+    overrides: dict[str, ProcessStep] = {
+        # McLarty Mazda corrections:
+        # A3.0  Interior floor plan — classifier sometimes skips it
+        "A3.0": "step_6_floor_plan",
+        # A3.1  Room Finish Schedule + informational glazing callouts only
+        #       → not a system legend; skip
+        "A3.1": "skip",
+        # A3.2  Exterior door & frame schedule → classifier sometimes calls it elevation
+        "A3.2": "step_4_ext_schedule",
+        # A3.3  All-glass elevations + interior storefront drawings
+        #       → elevation content dominates, use Step 3
+        "A3.3": "step_3_elevation",
+    }
+
+    result = classifier.classify(sys.argv[1], routing_overrides=overrides)
 
     if result.error:
         print(f"Error: {result.error}")

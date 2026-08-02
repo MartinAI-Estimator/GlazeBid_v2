@@ -124,6 +124,63 @@ export {
   computeAllGlassBOM,
 } from './panelLayout/index';
 
+// ── Takeoff Engine (PARAMETRIC_FRAME_BUILDER_SPEC.md — Phase 1) ──────────────
+export type {
+  MetalProfile,
+  MetalGroup,
+  DoorConfig,
+  FrameBay,
+  FrameRow,
+  GlassType,
+  GlassLite,
+  MemberType,
+  CutListItem,
+  ElevationFrame,
+  ShimSet,
+  JoineryModel,
+  BaySpec,
+  RowSpec,
+  TakeoffInput,
+  TakeoffWarning,
+  TakeoffResult,
+  StockYield,
+} from './takeoff/TakeoffEngine';
+
+export {
+  computeElevation,
+  roughOpeningToFrame,
+  computeBayBoundaries,
+  computeBayClearWidth,
+  computeRowBands,
+  formatFraction,
+  formatFeetInches,
+  roundToFraction,
+  estimateStockYield,
+  scaleCutList,
+  SAW_KERF,
+  FRAMING_TOLERANCE_DEFAULT,
+  GLAZING_TOLERANCE_DEFAULT,
+  STOCK_LENGTH_24FT,
+  STOCK_LENGTH_21FT,
+} from './takeoff/TakeoffEngine';
+
+// ── PartnerPak .dat Legacy Parser (Phase 3) ──────────────────────────────────
+export type {
+  PPGlazingLine,
+  PPStickLine,
+  PPStructural,
+  PPFrame,
+  PPProject,
+  ParseDatOptions,
+} from './partnerpak/PartnerPakParser';
+
+export {
+  parsePartnerPakDat,
+  parsePartnerPakSdf,
+  unwrapDatContainer,
+  projectNameFromEntry,
+} from './partnerpak/PartnerPakParser';
+
 // ── Structural Analysis ───────────────────────────────────────────────────
 export type {
   ExposureCategory,

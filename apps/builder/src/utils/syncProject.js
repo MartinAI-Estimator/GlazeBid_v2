@@ -1,8 +1,12 @@
 /**
- * syncProject.js — Master Database Save Utility
+ * syncProject.js — Project File-System Save / Load Utility
  *
- * Serializes the full GlazeBid AIQ project state into a structured payload
- * and POST-s it to the FastAPI backend at POST /api/project/save.
+ * Serialises the full GlazeBid project state into a structured payload and
+ * writes it to disk as  <ProjectsRoot>/<ProjectName>/project.aiq  via the
+ * Electron main-process IPC.  No data is stored in localStorage.
+ *
+ * When running outside Electron (browser dev mode), a graceful in-memory
+ * fallback is used so the UI still functions during development.
  *
  * Payload sections
  *   metadata   — project name / ID + snapshot of admin settings in use
@@ -11,19 +15,27 @@
  *   summary    — executive numbers (grand total, gross profit, margins)
  */
 
+// ── Dev-mode in-memory fallback (browser only, not shipped to production) ─────
+const _devStore = new Map();
+
+function isElectron() {
+  return typeof window !== 'undefined' && Boolean(window.electronAPI?.saveProject);
+}
+
 /**
  * saveProjectToCloud
+ * (name kept for backward compatibility — actually saves to disk via Electron IPC)
  *
  * @param {object}  opts
- * @param {string}  opts.projectName    — active project folder / display name
- * @param {string}  [opts.projectId]   — optional UUID if the backend assigns one
+ * @param {string}  opts.projectName    — active project name / display name
+ * @param {string}  [opts.projectId]   — optional UUID
  * @param {object}  opts.adminSettings — full adminSettings from ProjectContext
  * @param {array}   opts.frames        — saved frames array from useBidStore
  * @param {array}   opts.vendorQuotes  — lump-sum vendor quote rows from useBidMath
  * @param {object}  opts.financials    — live financial settings from useBidMath state
  * @param {object}  opts.summary       — computed summary object from useBidMath
  *
- * @returns {Promise<{ success: boolean, message: string, savedAt: string }>}
+ * @returns {Promise<{ success: boolean, message: string, savedAt: string, aiqPath?: string }>}
  */
 export async function saveProjectToCloud({
   projectName,
@@ -121,29 +133,42 @@ export async function saveProjectToCloud({
   };
 
   try {
-    localStorage.setItem(`glazebid:bid:${projectName.trim()}`, JSON.stringify(payload));
+    if (isElectron()) {
+      const result = await window.electronAPI.saveProject(projectName, payload);
+      if (!result.ok) {
+        if (result.error === 'NO_ROOT') {
+          throw new Error('NO_ROOT');
+        }
+        throw new Error(`Save failed: ${result.error}`);
+      }
+      return { success: true, message: 'Saved to disk', savedAt: payload.savedAt, aiqPath: result.aiqPath };
+    }
+    // Dev-mode fallback — in-memory only
+    _devStore.set(projectName.trim(), payload);
+    return { success: true, message: 'Saved (dev mode)', savedAt: payload.savedAt };
   } catch (err) {
-    throw new Error(`Save failed: ${err instanceof Error ? err.message : String(err)}`);
+    throw err instanceof Error ? err : new Error(String(err));
   }
-  return { success: true, message: 'Saved locally', savedAt: payload.savedAt };
 }
 
 /**
  * loadProjectFromCloud
+ * (name kept for backward compatibility — actually loads from disk via Electron IPC)
  *
- * Fetches the most recent saved bid payload for a project from the backend.
- * Returns the full payload object on success, or null if no save exists yet
- * (HTTP 404 is treated as a normal "new project" condition, not an error).
- *
- * @param {string} projectName — the active project folder / display name
- * @returns {Promise<object|null>}  Full v2.0 payload, or null if no record.
+ * @param {string}   projectName — the active project name
+ * @param {string}  [aiqPath]   — optional explicit path to a .aiq file
+ * @returns {Promise<object|null>}  Full v2.0 payload, or null if no file exists yet.
  */
-export async function loadProjectFromCloud(projectName) {
-  if (!projectName?.trim()) return null;
+export async function loadProjectFromCloud(projectName, aiqPath) {
+  if (!projectName?.trim() && !aiqPath) return null;
   try {
-    const raw = localStorage.getItem(`glazebid:bid:${projectName.trim()}`);
-    if (!raw) return null;
-    return JSON.parse(raw);
+    if (isElectron()) {
+      const result = await window.electronAPI.loadProject(projectName?.trim(), aiqPath);
+      if (!result.ok) return null;
+      return result.payload;
+    }
+    // Dev-mode fallback
+    return _devStore.get(projectName?.trim()) ?? null;
   } catch {
     return null;
   }

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Plus, ChevronDown, ChevronRight, Upload } from 'lucide-react';
+import ScheduleImport, { ScheduleDropOverlay } from './ScheduleImport';
 import useFrameBuilderStore from '../../store/useFrameBuilderStore';
 import { useInboxStore } from '../../store/useInboxStore';
 import Tab7BOM from './tabs/Tab7BOM';
@@ -233,6 +234,9 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
   const [rightTab,        setRightTab]        = useState('frame');
   const [selectedEl,      setSelectedEl]      = useState(null);
   const [wizardGroupId,   setWizardGroupId]   = useState(null);  // null = closed
+  const [importFiles,     setImportFiles]     = useState(null);  // File[] | null — schedule import modal
+  const [dragDepth,       setDragDepth]       = useState(0);     // >0 = file drag in progress
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!showAdvancedMenu) return;
@@ -374,8 +378,57 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
   const confirmGroup   = () => { const n = newGroupName.trim(); if (n) addGroup(n); setShowGroupInput(false); setNewGroupName(''); };
   const cancelGroup    = () => { setShowGroupInput(false); setNewGroupName(''); };
 
+  // ── Window Schedule drag-and-drop import (Path C) ──────────────────────────
+  const SCHEDULE_EXT_RE = /\.(pdf|xlsx|xlsm|xls|csv|tsv)$/i;
+  const filterScheduleFiles = (fileList) =>
+    Array.from(fileList || []).filter(f => SCHEDULE_EXT_RE.test(f.name));
+
+  const hasFileDrag = (e) => Array.from(e.dataTransfer?.types || []).includes('Files');
+
+  const handleDragEnter = (e) => {
+    if (!hasFileDrag(e) || importFiles) return;
+    e.preventDefault();
+    setDragDepth(d => d + 1);
+  };
+  const handleDragOver = (e) => {
+    if (!hasFileDrag(e) || importFiles) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  };
+  const handleDragLeave = (e) => {
+    if (!hasFileDrag(e) || importFiles) return;
+    e.preventDefault();
+    setDragDepth(d => Math.max(0, d - 1));
+  };
+  const handleDrop = (e) => {
+    if (!hasFileDrag(e) || importFiles) return;
+    e.preventDefault();
+    setDragDepth(0);
+    const files = filterScheduleFiles(e.dataTransfer.files);
+    if (files.length > 0) setImportFiles(files);
+  };
+  const handleBrowseImport = () => fileInputRef.current?.click();
+  const handleFileInput = (e) => {
+    const files = filterScheduleFiles(e.target.files);
+    e.target.value = ''; // allow re-selecting the same file
+    if (files.length > 0) setImportFiles(files);
+  };
+  const closeImport = () => {
+    setImportFiles(null);
+    // Expand the group of whatever frame import selected
+    const stNow = useFrameBuilderStore.getState();
+    const af = stNow.frames.find(f => f.frameId === stNow.activeFrameId);
+    if (af) setExpandedGroupId(af.groupId);
+  };
+
   return (
-    <div style={st.root}>
+    <div
+      style={st.root}
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
 
       {/* Breadcrumb */}
       <div style={st.breadcrumb}>
@@ -442,11 +495,16 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
           <div style={st.left}>
             <div style={st.leftHdr}>
               <span style={st.leftTitle}>FRAMES</span>
-              {groups.length > 0 && activeGroup && (
-                <button style={st.addBtn} onClick={() => openWizard(activeGroup.groupId)} title="Add frame">
-                  <Plus size={12} />
+              <div style={{ display: 'flex', gap: 4 }}>
+                <button style={st.importBtn} onClick={handleBrowseImport} title="Import window schedule (PDF / Excel / CSV) — or drag & drop anywhere">
+                  <Upload size={12} />
                 </button>
-              )}
+                {groups.length > 0 && activeGroup && (
+                  <button style={st.addBtn} onClick={() => openWizard(activeGroup.groupId)} title="Add frame">
+                    <Plus size={12} />
+                  </button>
+                )}
+              </div>
             </div>
             <div style={st.frameListOuter}>
               {groups.length === 0 ? (
@@ -460,6 +518,11 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
                     </div>
                   )}
                   <p style={st.emptyTxt}>No frames yet.</p>
+                  <button style={st.importEmptyBtn} onClick={handleBrowseImport}>
+                    <Upload size={11} style={{ marginRight: 5, verticalAlign: -2 }} />
+                    Import Schedule
+                  </button>
+                  <p style={{ ...st.emptyTxt, fontSize: 9 }}>or drop a PDF / Excel schedule anywhere</p>
                   {showGroupInput
                     ? <GroupNameInput value={newGroupName} onChange={setNewGroupName} onConfirm={confirmGroup} onCancel={cancelGroup} />
                     : <button style={st.addGroupBtn} onClick={handleAddGroup}>+ Add Group</button>
@@ -581,7 +644,7 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
                     {(activeFrame.bays ?? 1) > 1 && (() => {
                       const B = activeFrame.bays;
                       const profileW = 1.75;
-                      const target = activeFrame.widthInches - (B - 1) * profileW;
+                      const target = Math.max(0, activeFrame.widthInches - (B - 1) * profileW);
                       const cfgs = activeFrame.bayConfigs || [];
                       const hasX = cfgs.length === B && cfgs.every(c => typeof c.widthOverride === 'number');
                       const eqW  = B > 0 ? Math.round((target / B) * 100) / 100 : 0;
@@ -613,7 +676,7 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
                     {(activeFrame.rows ?? 1) > 1 && (() => {
                       const R = activeFrame.rows;
                       const profileW = 1.75;
-                      const target = activeFrame.heightInches - (R - 1) * profileW;
+                      const target = Math.max(0, activeFrame.heightInches - (R - 1) * profileW);
                       const cfgs = activeFrame.rowConfigs || [];
                       const hasX = cfgs.length === R && cfgs.every(c => typeof c.heightOverride === 'number');
                       const eqH  = R > 0 ? Math.round((target / R) * 100) / 100 : 0;
@@ -966,6 +1029,18 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
       {showADA        && <Slideout title="ADA Compliance"           onClose={() => setShowADA(false)}><ADAComplianceChecker /></Slideout>}
       {showUnitPrice  && <Slideout title="Bid Unit Price Calculator" onClose={() => setShowUnitPrice(false)}><BidUnitPriceCalc /></Slideout>}
 
+      {/* Schedule import: hidden file input, drag overlay, review modal */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept=".pdf,.xlsx,.xlsm,.xls,.csv,.tsv"
+        onChange={handleFileInput}
+        style={{ display: 'none' }}
+      />
+      {dragDepth > 0 && !importFiles && <ScheduleDropOverlay />}
+      {importFiles && <ScheduleImport files={importFiles} onClose={closeImport} />}
+
       {/* New Frame Wizard */}
       {wizardGroupId && (
         <WizardNewFrame
@@ -1014,6 +1089,8 @@ const st = {
   leftHdr:    { display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 34, padding: '0 10px', background: '#1a1a1f', borderBottom: '1px solid #27272a', flexShrink: 0 },
   leftTitle:  { fontSize: 9, fontWeight: 700, color: '#71717a', textTransform: 'uppercase', letterSpacing: 0.8 },
   addBtn:     { display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 4, border: 'none', background: '#0ea5e9', color: '#fff', cursor: 'pointer' },
+  importBtn:  { display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 4, border: '1px solid #3f3f46', background: '#27272a', color: '#a1a1aa', cursor: 'pointer' },
+  importEmptyBtn: { background: '#27272a', border: '1px solid #3f3f46', color: '#e4e4e7', fontSize: 11, fontWeight: 500, padding: '5px 12px', borderRadius: 4, cursor: 'pointer' },
   frameListOuter: { flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' },
   empty:      { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: 10, padding: 14 },
   emptyTxt:   { fontSize: 11, color: '#52525b', textAlign: 'center' },

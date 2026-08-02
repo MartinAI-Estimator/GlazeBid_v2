@@ -54,18 +54,20 @@ import { useInboxSync } from './hooks/useInboxSync';
 
 // Safe dynamic import — if syncProject is broken/missing the app still boots
 let _loadProjectFromCloud = null;
+let _saveProjectToCloud   = null;
 try {
   const mod = await import('./utils/syncProject');
   _loadProjectFromCloud = mod.loadProjectFromCloud;
+  _saveProjectToCloud   = mod.saveProjectToCloud;
 } catch (e) {
   console.warn('⚠️ syncProject unavailable — running local-only:', e.message);
 }
 
 /** Guaranteed-safe cloud rehydration — never throws, never blocks navigation. */
-async function safeLoadFromCloud(projectName) {
+async function safeLoadFromCloud(projectName, aiqPath = undefined) {
   if (!_loadProjectFromCloud) return null;
   try {
-    return await _loadProjectFromCloud(projectName);
+    return await _loadProjectFromCloud(projectName, aiqPath);
   } catch (err) {
     console.warn('⚠️ safeLoadFromCloud failed (non-fatal):', err.message);
     return null;
@@ -324,10 +326,59 @@ function App() {
   };
 
   // MenuBar handlers
-  const handleSaveProject = () => {
-    // Trigger save via PDFViewer or backend
+  const [aiqSaveStatus, setAiqSaveStatus] = useState('idle'); // 'idle'|'saving'|'saved'|'error'
+
+  const handleSaveProject = async () => {
+    // Always save PDF markups if viewer is active
     if (pdfViewerRef.current?.saveMarkups) {
       pdfViewerRef.current.saveMarkups();
+    }
+
+    // Skip .aiq save when no project is open or sync module unavailable
+    if (!currentProject || !_saveProjectToCloud) return;
+
+    setAiqSaveStatus('saving');
+    try {
+      const { frames, projectTotals } = useBidStore.getState();
+      let adminSettings = null;
+      try { adminSettings = JSON.parse(localStorage.getItem('glazebid_adminSettings') || 'null'); } catch { /* ignore */ }
+
+      await _saveProjectToCloud({
+        projectName:  currentProject,
+        adminSettings,
+        frames,
+        vendorQuotes: [],
+        financials: {
+          laborRate:      bidSettings.laborRate,
+          contingencyPct: bidSettings.laborContingency,
+          taxPct:         bidSettings.taxPercent,
+          gpmMode:        'manual',
+          marginPct:      bidSettings.markupPercent,
+        },
+        summary: {
+          rawLaborHours:   projectTotals.labor?.totalLaborHours   ?? 0,
+          totalLaborHours: projectTotals.labor?.totalLaborHours   ?? 0,
+          totalLaborCost:  projectTotals.labor?.estimatedLaborCost ?? 0,
+          totalAluminumLF: projectTotals.totalAluminumLF          ?? 0,
+          totalGlassSqFt:  projectTotals.totalGlassSqFt           ?? 0,
+        },
+      });
+      setAiqSaveStatus('saved');
+      setTimeout(() => setAiqSaveStatus('idle'), 3000);
+    } catch (err) {
+      if (err.message === 'NO_ROOT') {
+        setAiqSaveStatus('idle');
+        const goToSettings = window.confirm(
+          '⚠ No projects drive configured.\n\n' +
+          'GlazeBid cannot save your project until you set a projects folder.\n\n' +
+          'Click OK to open Admin Settings → 💾 Projects Drive, or Cancel to dismiss.'
+        );
+        if (goToSettings) setCurrentView('settings');
+      } else {
+        setAiqSaveStatus('error');
+        setTimeout(() => setAiqSaveStatus('idle'), 4000);
+        console.error('Save project (.aiq) failed:', err);
+      }
     }
   };
 
@@ -715,7 +766,9 @@ function App() {
     }
 
     // ── Rehydration Engine ───────────────────────────────────────────────────
-    const payload = await safeLoadFromCloud(project.name);
+    // Use the payload already loaded by ProjectList (avoids a second disk read),
+    // or fall back to loading by name + explicit aiqPath.
+    const payload = project.payload ?? await safeLoadFromCloud(project.name, project.aiqPath);
     if (payload) {
       useBidStore.getState().rehydrateBid({
         frames:       payload.takeoff?.frames       ?? [],
@@ -1178,6 +1231,8 @@ function App() {
                 projectData={projectData}
                 onBack={resetToHome}
                 onBackToProjectHome={currentView === 'projectHome' ? resetToHome : () => handleViewChange('projectHome')}
+                onSave={handleSaveProject}
+                saveState={aiqSaveStatus}
               />
               {/* Menu bar for non-Electron mode (browser) */}
               {!isElectron && (

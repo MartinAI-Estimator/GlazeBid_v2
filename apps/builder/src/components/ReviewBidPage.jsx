@@ -38,7 +38,7 @@ const TYPE_COLORS = {
   'misc-labor':    '#f472b6',
 };
 
-const DEFAULT_BID_SETTINGS = { laborRate: 42, markupPercent: 40, taxPercent: 8.2 };
+const DEFAULT_BID_SETTINGS = { laborRate: 42, markupPercent: 40, taxPercent: 8.2, crewSize: 2 };
 
 function readBidSettings(projectKey) {
   try {
@@ -48,6 +48,8 @@ function readBidSettings(projectKey) {
       laborRate:     Number(saved.laborRate)     || DEFAULT_BID_SETTINGS.laborRate,
       markupPercent: Number(saved.markupPercent) || DEFAULT_BID_SETTINGS.markupPercent,
       taxPercent:    Number(saved.taxPercent)    || DEFAULT_BID_SETTINGS.taxPercent,
+      crewSize:      Number(saved.crewSize)      || DEFAULT_BID_SETTINGS.crewSize,
+      isTaxExempt:   !!saved.isTaxExempt,
     };
   } catch { return { ...DEFAULT_BID_SETTINGS }; }
 }
@@ -87,14 +89,14 @@ function getSystemMH(sys, getHourlyFunctions, getItemRates, beadsOfCaulk) {
 
 function computeSystemCosts(sys, bidSettings, rateStore) {
   const { markupPercent, taxPercent } = bidSettings;
-  // Per-system rate takes priority over global bid setting
   const laborRate = Number(sys.productionRates?.laborRate) || bidSettings.laborRate;
+  const crewSize  = bidSettings.crewSize || 2;
 
   const { getHourlyFunctions, getItemRates, beadsOfCaulk } = rateStore;
 
-  // Material cost: line-item materials + per-frame manual material + ancillary
-  const lineMat  = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
-  const frameMat = (sys.frames   || []).reduce((s, f) => s + (Number(f.manualMaterialCost) || 0), 0);
+  // ── Material cost ────────────────────────────────────────────────────────
+  const lineMat   = (sys.materials || []).reduce((s, m) => s + (Number(m.cost) || 0), 0);
+  const frameMat  = (sys.frames   || []).reduce((s, f) => s + (Number(f.manualMaterialCost) || 0), 0);
   const ancillary = calcSystemAncillary(
     sys.frames || [],
     sys.ancillaryConfig || DEFAULT_ANCILLARY_CONFIG,
@@ -102,9 +104,42 @@ function computeSystemCosts(sys, bidSettings, rateStore) {
   ).totalCost;
   const materialCost = lineMat + frameMat + ancillary;
 
-  // Labor cost: live-computed MHs × rate
-  const totalMH   = getSystemMH(sys, getHourlyFunctions, getItemRates, beadsOfCaulk || 2);
-  const laborCost = mhToCost(totalMH, laborRate);
+  // ── Base labor MHs ───────────────────────────────────────────────────────
+  const taskMH = (sys.laborTasks || []).reduce(
+    (s, t) => s + (Number(t.qty) || 0) * (Number(t.hrsPer) || 0), 0
+  );
+  let baseMH = 0, fieldMH = 0;
+  if (sys.frames?.length) {
+    const sysType = sys.systemType || sys.name;
+    const hf = sys.rateOverrides?.hourlyFunctions || getHourlyFunctions(sysType);
+    const ir = sys.rateOverrides?.itemRates       || getItemRates(sysType);
+    const mh = calcSystemMH(sys.frames, hf, ir, beadsOfCaulk || 2, sysType);
+    baseMH  = mh.totalMH + taskMH;
+    fieldMH = mh.fieldMH;
+  } else {
+    baseMH  = (Number(sys.totals?.shopMHs)  || 0)
+            + (Number(sys.totals?.distMHs)  || 0)
+            + (Number(sys.totals?.fieldMHs) || 0)
+            + taskMH;
+    fieldMH = Number(sys.totals?.fieldMHs) || 0;
+  }
+
+  // ── Extra labor: daily cleaning + contingency ────────────────────────────
+  const laborExtras   = sys.laborExtras || {};
+  const crew          = Math.max(crewSize, 1);
+  const daysQty       = (fieldMH / crew) / 8;
+  const cleaningMH    = daysQty * (laborExtras.cleaningHrsPerDay ?? 1);
+  const contingencyMH = baseMH  * ((laborExtras.contingencyPct  ?? 2.5) / 100);
+
+  // ── Equipment rental ─────────────────────────────────────────────────────
+  const equipCost = (laborExtras.equipment || []).reduce((s, e) =>
+    s + (e.weeks        || 0) * (Number(e.weekRate)  || 0)
+      + (e.months       || 0) * (Number(e.monthRate) || 0)
+      + (e.pickupDropoff || 0) * (Number(e.pdRate)   || 310),
+    0);
+
+  const totalMH   = baseMH + cleaningMH + contingencyMH;
+  const laborCost = mhToCost(totalMH, laborRate) + equipCost;
 
   const pricing = calculatePricing({
     materialCost,
@@ -112,7 +147,7 @@ function computeSystemCosts(sys, bidSettings, rateStore) {
     taxPercent,
     pricingPercent: markupPercent,
     pricingMode: 'margin',
-    isTaxExempt: false,
+    isTaxExempt: !!bidSettings.isTaxExempt,
   });
 
   return { materialCost, laborCost, totalMH, pricing };
@@ -303,13 +338,13 @@ const ReviewBidPage = ({ project, onBack, onNavigate }) => {
 
         {/* ── Summary stat cards ── */}
         <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          <StatCard label="System Cards" value={systems.length} />
+          <StatCard label="System Cards" value={displayed.length} />
           <StatCard label="Total SF"     value={totals.sf > 0 ? totals.sf.toFixed(0) : '—'} sub="Square Feet" />
           <StatCard label="Total MHs"    value={totals.totalMH > 0 ? totals.totalMH.toFixed(1) : '—'} sub="Man-Hours" />
-          <StatCard label="Labor Cost"   value={usd(totals.laborCost)}    accent="#58a6ff" />
+          <StatCard label="Labor Cost"   value={usd(totals.laborCost)}    accent="#58a6ff"  sub={`$${bidSettings.laborRate}/hr`} />
           <StatCard label="Material Cost" value={usd(totals.materialCost)} accent="#79c0ff" />
-          <StatCard label="Markup"        value={usd(totals.markup)}       accent="#fbbf24" />
-          <StatCard label="Tax"           value={usd(totals.tax)}          accent="#f97316" />
+          <StatCard label="Markup"        value={usd(totals.markup)}       accent="#fbbf24"  sub={`${bidSettings.markupPercent}% margin`} />
+          <StatCard label="Tax"           value={usd(totals.tax)}          accent="#f97316"  sub={bidSettings.isTaxExempt ? 'EXEMPT' : `${bidSettings.taxPercent}% on materials`} />
           <StatCard label="Total Bid"     value={usd(totals.totalCost)}    accent="#34d399" />
         </div>
 

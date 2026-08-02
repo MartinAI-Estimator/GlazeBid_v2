@@ -99,6 +99,16 @@ let sidecarProcess: ChildProcess | null = null;
 const SIDECAR_PORT = 8100;
 const SIDECAR_HEALTH_URL = `http://localhost:${SIDECAR_PORT}/health`;
 
+/** Read ANTHROPIC_API_KEY from ~/.env_glazierai (dev fallback). */
+function readEnvGlazierai(): string | null {
+  try {
+    const envPath = path.join(process.env.USERPROFILE || process.env.HOME || '', '.env_glazierai');
+    if (!fs.existsSync(envPath)) return null;
+    const content = fs.readFileSync(envPath, 'utf-8');
+    const match = content.match(/^ANTHROPIC_API_KEY=(.+)$/m);
+    return match ? match[1].trim() : null;
+  } catch { return null; }
+}
 function getSidecarPythonPath(): string {
   const candidates = [
     path.join(__dirname, '../.venv/Scripts/python.exe'),
@@ -150,6 +160,7 @@ async function startSidecar(): Promise<void> {
 
   console.log('[AiQ] Starting sidecar:', pythonPath, 'in', sidecarDir);
 
+  const envKey = readEnvGlazierai();
   sidecarProcess = spawn(
     pythonPath,
     ['-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', String(SIDECAR_PORT), '--log-level', 'warning'],
@@ -157,6 +168,7 @@ async function startSidecar(): Promise<void> {
       cwd: sidecarDir,
       stdio: ['ignore', 'pipe', 'pipe'],
       detached: false,
+      env: { ...process.env, ...(envKey ? { ANTHROPIC_API_KEY: envKey } : {}) },
     }
   );
 
@@ -205,6 +217,45 @@ function stopSidecar(): void {
     }, 3000);
     sidecarProcess = null;
   }
+}
+
+// ── Project filesystem helpers ──────────────────────────────────────────────────
+const PROJECT_FILE_NAME = 'project.aiq';
+const PROJECT_SUBDIRS   = ['01_Drawings', '02_Specifications', '03_Takeoffs',
+                           '04_Estimates', '05_Proposals', '06_Reports'];
+
+function getPrefsPath(): string {
+  return path.join(app.getPath('userData'), 'glazebid-prefs.json');
+}
+
+function readPrefs(): Record<string, unknown> {
+  try {
+    const raw = fs.readFileSync(getPrefsPath(), 'utf8');
+    return JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+function writePrefs(data: Record<string, unknown>): void {
+  fs.writeFileSync(getPrefsPath(), JSON.stringify(data, null, 2), 'utf8');
+}
+
+function safeFolderName(name: string): string {
+  return name.trim().replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').replace(/\s+/g, ' ');
+}
+
+function projectAiqPath(root: string, projectName: string): string {
+  return path.join(root, safeFolderName(projectName), PROJECT_FILE_NAME);
+}
+
+function ensureProjectFolder(root: string, projectName: string): string {
+  const dir = path.join(root, safeFolderName(projectName));
+  fs.mkdirSync(dir, { recursive: true });
+  for (const sub of PROJECT_SUBDIRS) {
+    fs.mkdirSync(path.join(dir, sub), { recursive: true });
+  }
+  return dir;
 }
 
 // ── Window references ──────────────────────────────────────────────────────────
@@ -701,6 +752,16 @@ app.whenReady().then(async () => {
     return result.filePaths[0];
   });
 
+  // ── dialog:openPdf — PDF file picker for Drawing Intelligence ────────────
+  ipcMain.handle('dialog:openPdf', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+    });
+    if (result.canceled) return null;
+    return result.filePaths[0];
+  });
+
   // ── AiQ sidecar IPC ─────────────────────────────────────────────────────────
   ipcMain.handle('aiq:health', async () => {
     const healthy = await checkSidecarHealth();
@@ -713,6 +774,38 @@ app.whenReady().then(async () => {
     await startSidecar();
     const healthy = await checkSidecarHealth();
     return { healthy };
+  });
+
+  // ── Drawing Intelligence: run full takeoff pipeline ───────────────────────
+  ipcMain.handle('glazierai:runTakeoff', async (_event, payload: {
+    pdfPath: string;
+    projectName: string;
+    routingOverrides?: Record<string, string>;
+    sheetModes?: Record<string, string>;
+  }) => {
+    const apiKey = loadAiKey();
+    const body = {
+      pdf_path: payload.pdfPath,
+      project_name: payload.projectName,
+      routing_overrides: payload.routingOverrides ?? null,
+      sheet_modes: payload.sheetModes ?? null,
+      anthropic_api_key: apiKey ?? null,
+    };
+    try {
+      const res = await fetch(`http://localhost:${SIDECAR_PORT}/drawing-intelligence/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        return { ok: false, error: `Sidecar returned ${res.status}: ${text}` };
+      }
+      const data = await res.json();
+      return { ok: true, data };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
   });
 
   // ── AI Chat (Anthropic Haiku) ─────────────────────────────────────────────
@@ -758,8 +851,14 @@ app.whenReady().then(async () => {
   });
 
   ipcMain.handle('ai:chat', async (_event, payload: {
-    messages: Array<{ role: 'user' | 'assistant'; content: string }>;
+    // content: plain string OR Anthropic content-block array (text/image blocks)
+    // — image blocks power the elevation vision import.
+    messages: Array<{ role: 'user' | 'assistant'; content: string | Array<Record<string, unknown>> }>;
     systemPrompt: string;
+    /** 'haiku' (default, extraction) | 'sonnet' (vision/reasoning) — routed here, never a raw model string from the renderer */
+    model?: 'haiku' | 'sonnet';
+    /** clamped 256–8192; default 4096 (1024 truncated multi-frame JSON) */
+    maxTokens?: number;
   }) => {
     const apiKey = loadAiKey();
     if (!apiKey) return { ok: false, error: 'No API key configured. Add your Anthropic key in Settings → AI.' };
@@ -767,16 +866,39 @@ app.whenReady().then(async () => {
       // Dynamic require keeps the cold-start fast when AI is not used
       const Anthropic = require('@anthropic-ai/sdk');
       const client = new Anthropic.default({ apiKey });
+      // NOTE: 'claude-haiku-3-5-20241022' (the old hardcoded string) is not a
+      // valid Anthropic model ID and 404s. Current IDs:
+      const isSonnet = payload.model === 'sonnet';
+      const model = isSonnet
+        ? 'claude-sonnet-5'              // vision / reasoning (elevation import)
+        : 'claude-haiku-4-5-20251001';   // fast extraction (schedule text)
+      // Sonnet 5 thinks by default and can burn the whole budget reasoning
+      // (observed: stop_reason max_tokens with only thinking blocks). This
+      // model family controls thinking via adaptive mode + output effort —
+      // fixed budget_tokens is rejected with a 400.
+      const maxTokens = Math.max(256, Math.min(32768, payload.maxTokens ?? (isSonnet ? 16384 : 4096)));
       const response = await client.messages.create({
-        model:      'claude-haiku-3-5-20241022',
-        max_tokens: 1024,
+        model,
+        max_tokens: maxTokens,
         system:     payload.systemPrompt,
         messages:   payload.messages,
-      });
+        ...(isSonnet
+          ? { thinking: { type: 'adaptive' }, output_config: { effort: 'medium' } }
+          : {}),
+      } as Parameters<typeof client.messages.create>[0]);
       const text = response.content
         .filter((b: { type: string }) => b.type === 'text')
         .map((b: { text: string }) => b.text)
         .join('');
+      if (!text) {
+        // Surface WHY instead of returning silent emptiness (e.g. token budget
+        // exhausted before any text, or non-text-only content blocks).
+        const blockTypes = response.content.map((b: { type: string }) => b.type).join(',') || 'none';
+        return {
+          ok: false,
+          error: `Model returned no text (stop_reason: ${response.stop_reason ?? 'unknown'}; blocks: ${blockTypes}). Try fewer pages per drop.`,
+        };
+      }
       return { ok: true, text };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -787,6 +909,177 @@ app.whenReady().then(async () => {
   // ── updater:install-now — quit and install pending update ───────────────────
   ipcMain.handle('updater:install-now', () => {
     autoUpdater.quitAndInstall();
+  });
+
+  // ── glazebid:http-get — CORS-safe HTTP GET for renderer ─────────────────────
+  ipcMain.handle('glazebid:http-get', async (_event, url: string) => {
+    try {
+      const { net } = require('electron') as { net: { fetch(url: string): Promise<{ ok: boolean; status: number; text(): Promise<string> }> } };
+      const res = await net.fetch(url);
+      const text = await res.text();
+      return { ok: res.ok, status: res.status, body: text };
+    } catch (err) {
+      return { ok: false, status: 0, error: String(err) };
+    }
+  });
+
+  // ── project:getRoot ────────────────────────────────────────────────────────────
+  ipcMain.handle('project:getRoot', () => {
+    return (readPrefs().projectsRoot as string) || null;
+  });
+
+  // ── project:setRoot ────────────────────────────────────────────────────────────
+  ipcMain.handle('project:setRoot', async () => {
+    const result = await dialog.showOpenDialog({
+      title:       'Choose GlazeBid Projects Folder',
+      buttonLabel: 'Set as Projects Folder',
+      properties:  ['openDirectory', 'createDirectory'],
+    });
+    if (result.canceled) return null;
+    const chosen = result.filePaths[0];
+    const prefs  = readPrefs();
+    prefs.projectsRoot = chosen;
+    writePrefs(prefs);
+    return chosen;
+  });
+
+  // ── project:save ───────────────────────────────────────────────────────────────
+  ipcMain.handle('project:save', async (_event, { projectName, payload }: { projectName: string; payload: unknown }) => {
+    const root = readPrefs().projectsRoot as string | undefined;
+    if (!root) return { ok: false, error: 'NO_ROOT' };
+    try {
+      ensureProjectFolder(root, projectName);
+      const aiqPath = projectAiqPath(root, projectName);
+      fs.writeFileSync(aiqPath, JSON.stringify(payload, null, 2), 'utf8');
+      const prefs    = readPrefs();
+      const registry = (prefs.projectRegistry as Array<Record<string, string>>) ?? [];
+      const existing = registry.find(r => r.name === projectName);
+      if (existing) {
+        existing.modified = new Date().toISOString();
+        existing.aiqPath  = aiqPath;
+      } else {
+        registry.unshift({ name: projectName, modified: new Date().toISOString(), aiqPath });
+      }
+      prefs.projectRegistry = registry;
+      writePrefs(prefs);
+      return { ok: true, aiqPath };
+    } catch (err) {
+      console.error('[Builder] project:save error:', err);
+      return { ok: false, error: String(err) };
+    }
+  });
+
+  // ── project:load ───────────────────────────────────────────────────────────────
+  ipcMain.handle('project:load', async (_event, { projectName, aiqPath: explicitPath }: { projectName?: string; aiqPath?: string }) => {
+    try {
+      let filePath = explicitPath;
+      if (!filePath) {
+        const root = readPrefs().projectsRoot as string | undefined;
+        if (!root) return { ok: false, error: 'NO_ROOT' };
+        filePath = projectAiqPath(root, projectName!);
+      }
+      if (!fs.existsSync(filePath)) return { ok: false, error: 'NOT_FOUND' };
+      const raw = fs.readFileSync(filePath, 'utf8');
+      return { ok: true, payload: JSON.parse(raw) };
+    } catch (err) {
+      console.error('[Builder] project:load error:', err);
+      return { ok: false, error: String(err) };
+    }
+  });
+
+  // ── project:openDialog ─────────────────────────────────────────────────────────
+  ipcMain.handle('project:openDialog', async () => {
+    const root   = readPrefs().projectsRoot as string | undefined;
+    const result = await dialog.showOpenDialog({
+      title:       'Open GlazeBid Project',
+      defaultPath: root || app.getPath('documents'),
+      filters:     [{ name: 'GlazeBid Project', extensions: ['aiq'] }],
+      properties:  ['openFile'],
+    });
+    if (result.canceled) return null;
+    const filePath = result.filePaths[0];
+    try {
+      const raw = fs.readFileSync(filePath, 'utf8');
+      return { ok: true, aiqPath: filePath, payload: JSON.parse(raw) };
+    } catch (err) {
+      return { ok: false, error: String(err) };
+    }
+  });
+
+  // ── project:list ───────────────────────────────────────────────────────────────
+  ipcMain.handle('project:list', () => {
+    const prefs = readPrefs();
+    const root  = prefs.projectsRoot as string | undefined;
+    if (!root || !fs.existsSync(root)) {
+      return { ok: true, projects: prefs.projectRegistry ?? [], rootMissing: true };
+    }
+    try {
+      const entries = fs.readdirSync(root, { withFileTypes: true });
+      const projects: Array<Record<string, string>> = [];
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const aiqPath = path.join(root, entry.name, PROJECT_FILE_NAME);
+        if (!fs.existsSync(aiqPath)) continue;
+        const stat     = fs.statSync(aiqPath);
+        const modified = stat.mtime.toISOString();
+        let name = entry.name;
+        try {
+          const raw  = fs.readFileSync(aiqPath, 'utf8');
+          const data = JSON.parse(raw) as Record<string, unknown>;
+          const meta = data?.metadata as Record<string, string> | undefined;
+          name = meta?.projectName || name;
+        } catch { /* use folder name */ }
+        projects.push({ name, folderName: entry.name, aiqPath, modified });
+      }
+      projects.sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime());
+      return { ok: true, projects, root };
+    } catch (err) {
+      console.error('[Builder] project:list error:', err);
+      return { ok: false, error: String(err) };
+    }
+  });
+
+  // ── project:delete ─────────────────────────────────────────────────────────────
+  ipcMain.handle('project:delete', async (_event, { folderName, aiqPath: explicitPath }: { folderName?: string; aiqPath?: string }) => {
+    const root = readPrefs().projectsRoot as string | undefined;
+    if (!root) return { ok: false, error: 'NO_ROOT' };
+    try {
+      let targetDir: string;
+      if (explicitPath) {
+        targetDir = path.dirname(explicitPath);
+      } else {
+        targetDir = path.join(root, safeFolderName(folderName!));
+      }
+      const rel = path.relative(root, targetDir);
+      if (rel.startsWith('..') || path.isAbsolute(rel)) {
+        return { ok: false, error: 'PATH_TRAVERSAL' };
+      }
+      fs.rmSync(targetDir, { recursive: true, force: true });
+      const prefs = readPrefs();
+      prefs.projectRegistry = ((prefs.projectRegistry as Array<Record<string, string>>) ?? [])
+        .filter(r => r.aiqPath !== (explicitPath || path.join(targetDir, PROJECT_FILE_NAME)));
+      writePrefs(prefs);
+      return { ok: true };
+    } catch (err) {
+      console.error('[Builder] project:delete error:', err);
+      return { ok: false, error: String(err) };
+    }
+  });
+
+  // ── project:exportCopy ─────────────────────────────────────────────────────────
+  ipcMain.handle('project:exportCopy', async (_event, { projectName, payload }: { projectName: string; payload: unknown }) => {
+    const result = await dialog.showSaveDialog({
+      title:       'Export Project Copy',
+      defaultPath: path.join(app.getPath('documents'), `${safeFolderName(projectName)}.aiq`),
+      filters:     [{ name: 'GlazeBid Project', extensions: ['aiq'] }],
+    });
+    if (result.canceled) return { ok: false };
+    try {
+      fs.writeFileSync(result.filePath!, JSON.stringify(payload, null, 2), 'utf8');
+      return { ok: true, savedTo: result.filePath };
+    } catch (err) {
+      return { ok: false, error: String(err) };
+    }
   });
 
   app.on('activate', () => {

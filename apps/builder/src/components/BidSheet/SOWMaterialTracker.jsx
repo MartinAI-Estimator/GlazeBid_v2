@@ -114,6 +114,15 @@ export default function SOWMaterialTracker({
   const SUPPLIES_PCT_EFF    = adminSettings?.suppliesPct    ?? SUPPLIES_PCT;
   const CONTINGENCY_PCT_EFF = adminSettings?.contingencyPct ?? CONTINGENCY_PCT;
 
+  // Effective category list — reads from admin Material Groups, falls back to hardcoded COST_CODES
+  const effectiveCodes = useMemo(
+    () =>
+      adminSettings?.materialCategories?.length
+        ? adminSettings.materialCategories.map(c => ({ code: c.id, label: c.label, icon: '' }))
+        : COST_CODES.filter(c => c.group === 'material'),
+    [adminSettings?.materialCategories]
+  );
+
   const [collapsed, setCollapsed] = useState({}); // breakout → bool
 
   // ── Manual lines only (auto lines are derived, never stored) ────────────────
@@ -168,7 +177,7 @@ export default function SOWMaterialTracker({
   const addLine = useCallback((breakout = '', alternate = '') => {
     const newLine = {
       id:        `ml-${Date.now()}`,
-      costCode:  '02-METL',
+      costCode:  effectiveCodes[0]?.code || '02-METL',
       desc1:     '',
       desc2:     '',
       desc3:     '',
@@ -213,7 +222,7 @@ export default function SOWMaterialTracker({
 
   // ── Render a single line row ────────────────────────────────────────────────
   const renderLine = (line) => {
-    const cc = COST_CODES.find(c => c.code === line.costCode);
+    const cc = effectiveCodes.find(c => c.code === line.costCode) || COST_CODES.find(c => c.code === line.costCode);
     const isAuto = line.isAuto;
 
     return (
@@ -249,9 +258,9 @@ export default function SOWMaterialTracker({
                 fontFamily: 'monospace',
               }}
             >
-              {COST_CODES.filter(c => c.group === 'material').map(c => (
+              {effectiveCodes.map(c => (
                 <option key={c.code} value={c.code}>
-                  {c.icon} {c.code} — {c.label.replace(/^\d{2}-/, '')}
+                  {c.icon ? `${c.icon} ` : ''}{c.label}
                 </option>
               ))}
             </select>
@@ -292,9 +301,20 @@ export default function SOWMaterialTracker({
 
         {/* Notes */}
         <td style={{ padding: '0.45rem 0.5rem' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontStyle: isAuto ? 'italic' : 'normal' }}>
-            {line.notes}
-          </span>
+          {isAuto ? (
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
+              {line.notes}
+            </span>
+          ) : (
+            <input
+              type="text"
+              value={line.notes || ''}
+              onChange={e => updateLine(line.id, 'notes', e.target.value)}
+              placeholder="Notes…"
+              disabled={readOnly}
+              style={{ ...inputBase, width: '100%', fontSize: '0.75rem' }}
+            />
+          )}
         </td>
 
         {/* Alternate */}
@@ -584,13 +604,13 @@ export default function SOWMaterialTracker({
               Cost Code Summary (Base Scope)
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              {COST_CODES.map(cc => {
+              {effectiveCodes.map(cc => {
                 const val = costCodeSummary[cc.code] || 0;
                 if (val === 0) return null;
                 return (
                   <div key={cc.code} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
                     <span style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-                      {cc.icon} {cc.code}
+                      {cc.icon ? `${cc.icon} ` : ''}{cc.code}
                     </span>
                     <span style={{ color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
                       ${fmt(val)}

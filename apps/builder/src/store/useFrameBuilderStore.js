@@ -121,6 +121,74 @@ function updateFramesFromGroup(frames, groupId, groupUpdates) {
   });
 }
 
+// ─── Schedule Import / Hydration Helpers ─────────────────────────────────────
+
+/**
+ * Maps AI/schedule payload systemType → frame-engine archetype, systemClass,
+ * default group name, and labor type (LaborType is frame-level, per PartnerPak model).
+ */
+const SYSTEM_TYPE_MAP = {
+  storefront: {
+    archetypeId: 'sf-450',
+    systemClass: 'ext-storefront',
+    groupName: 'Ext Storefront',
+    laborType: 'STANDARD',
+  },
+  curtainwall: {
+    archetypeId: 'cw-medium',
+    systemClass: 'cap-curtainwall',
+    groupName: 'Ext Curtainwall',
+    laborType: 'COMBINATION',
+  },
+  hollow_metal: {
+    archetypeId: 'sf-450', // no HM archetype in catalog yet — closest geometry
+    systemClass: 'hollow-metal',
+    groupName: 'Hollow Metal',
+    laborType: 'STANDARD',
+  },
+  hollow_metal_fire_rated: {
+    archetypeId: 'sf-450',
+    systemClass: 'hollow-metal',
+    groupName: 'HM Fire-Rated',
+    laborType: 'STANDARD',
+  },
+};
+
+const SHAPE_MAP = {
+  rectangle: 'rectangular',
+  rectangular: 'rectangular',
+  trapezoid: 'trapezoid',
+  arc: 'arched',
+  arched: 'arched',
+  sloped: 'sloped',
+  custom: 'rectangular',
+};
+
+/** Map a free-text finish string to a known finishType key. */
+function mapFinishType(finish) {
+  if (!finish || typeof finish !== 'string') return null;
+  const f = finish.toLowerCase();
+  if (f.includes('bronze')) return 'dark-bronze';
+  if (f.includes('black')) return 'black-anod';
+  if (f.includes('clear') || f.includes('mill')) return 'clear-anod';
+  if (f.includes('kynar') || f.includes('pvdf') || f.includes('2605')) return 'three-coat-kynar';
+  if (f.includes('paint') || f.includes('2604') || f.includes('2603')) return 'two-coat-paint';
+  return 'custom';
+}
+
+const normGlass = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+/** Find an existing glass spec whose name loosely matches the payload string. */
+function matchGlassSpec(glassSpecs, glassStr) {
+  if (!glassStr) return null;
+  const n = normGlass(glassStr);
+  return (
+    glassSpecs.find((g) => normGlass(g.name) === n) ||
+    glassSpecs.find((g) => n.includes(normGlass(g.name)) || normGlass(g.name).includes(n)) ||
+    null
+  );
+}
+
 // ─── Store ───────────────────────────────────────────────────────────────────
 
 const useFrameBuilderStore = create(
@@ -332,6 +400,241 @@ const useFrameBuilderStore = create(
           frames: state.frames.filter((f) => f.frameId !== frameId),
           activeFrameId: state.activeFrameId === frameId ? null : state.activeFrameId,
         }));
+      },
+
+      // ══════════════════════════════════════════════════════════════════════
+      // SCHEDULE IMPORT — hydrateFrame / hydrateFrames
+      // ══════════════════════════════════════════════════════════════════════
+
+      /**
+       * Hydrate a single frame from an AI/schedule-import JSON payload
+       * (see Frame Payload schema — window schedule import, Path C).
+       *
+       * - Auto-creates or reuses a group per systemType / location.
+       * - Missing fields are reported in `needsInput`, never silently skipped.
+       * - EQ bays: when bayWidths is null, bayConfigs stays empty and the UI
+       *   renders equal widths (matches existing bay-entry behavior).
+       *
+       * @param {object} payload
+       * @param {object} [opts]  { select: boolean } — make this the active frame
+       * @returns {{ ok: boolean, frameId?: string, mark?: string,
+       *            fieldsSet: string[], needsInput: string[], warnings: string[] }}
+       */
+      hydrateFrame: (payload, opts = {}) => {
+        const fieldsSet = [];
+        const needsInput = [];
+        const warnings = [];
+
+        if (!payload || typeof payload !== 'object') {
+          return { ok: false, fieldsSet, needsInput, warnings: ['Empty payload'] };
+        }
+
+        const sysKey = (payload.systemType || 'storefront').toLowerCase().replace(/[\s-]+/g, '_');
+        const sysMap = SYSTEM_TYPE_MAP[sysKey] || SYSTEM_TYPE_MAP.storefront;
+        if (!SYSTEM_TYPE_MAP[sysKey]) {
+          warnings.push(`Unknown systemType "${payload.systemType}" — defaulted to storefront`);
+        }
+
+        const state = get();
+
+        // ── Resolve group (reuse by name, else create) ──
+        const groupName = (payload.location || payload.frameSet || '').trim() || sysMap.groupName;
+        let group = state.groups.find(
+          (g) => g.name.toLowerCase() === groupName.toLowerCase()
+        );
+        let groupsPatch = null;
+        if (!group) {
+          const finishType = mapFinishType(payload.finish) || 'clear-anod';
+          group = {
+            groupId: crypto.randomUUID(),
+            name: groupName,
+            archetypeId: sysMap.archetypeId,
+            vendorSystemId: '',
+            altVendor1Id: '',
+            altVendor2Id: '',
+            finishType,
+            finishMultiplier: FINISH_MULTIPLIERS[finishType] ?? 1.0,
+            connectionType: 'screw-spline',
+            glassSpecId: '',
+          };
+          groupsPatch = [...state.groups, group];
+          fieldsSet.push('group (created)', 'finish');
+        }
+
+        // ── Glass spec: match existing or create from payload string ──
+        let glassSpecId = '';
+        let glassSpecsPatch = null;
+        if (payload.primaryGlass) {
+          const match = matchGlassSpec(state.glassSpecs, payload.primaryGlass);
+          if (match) {
+            glassSpecId = match.specId;
+          } else {
+            glassSpecId = crypto.randomUUID();
+            glassSpecsPatch = [
+              ...state.glassSpecs,
+              {
+                specId: glassSpecId,
+                name: payload.primaryGlass,
+                makeup: payload.primaryGlass,
+                thickness: /1\s*["”]/.test(payload.primaryGlass) ? 1.0 : 0.25,
+                isTempered: /temp/i.test(payload.primaryGlass),
+                hasLaminate: /lam/i.test(payload.primaryGlass),
+              },
+            ];
+            warnings.push(`New glass spec created: "${payload.primaryGlass}"`);
+          }
+          fieldsSet.push('primaryGlass');
+        } else {
+          needsInput.push('primaryGlass');
+        }
+
+        // ── Geometry ──
+        const widthInches = Number(payload.overallWidth) || 0;
+        const heightInches = Number(payload.overallHeight) || 0;
+        if (widthInches > 0) fieldsSet.push('overallWidth'); else needsInput.push('overallWidth');
+        if (heightInches > 0) fieldsSet.push('overallHeight'); else needsInput.push('overallHeight');
+
+        const bays = Math.max(1, Number(payload.panelCount) || 1);
+        const rows = Math.max(1, Number(payload.rowCount) || 1);
+        if (payload.panelCount) fieldsSet.push('panelCount');
+        if (payload.rowCount) fieldsSet.push('rowCount');
+
+        // Bay configs: explicit widths → overrides; door bays → type 'door'
+        const doorBays = Array.isArray(payload.doorBays) ? payload.doorBays : [];
+        let bayConfigs = [];
+        const hasBayWidths =
+          Array.isArray(payload.bayWidths) &&
+          payload.bayWidths.length === bays &&
+          payload.bayWidths.every((w) => typeof w === 'number' && w > 0);
+        if (hasBayWidths || doorBays.length > 0) {
+          bayConfigs = Array.from({ length: bays }, (_, i) => ({
+            index: i,
+            type: doorBays.includes(i) ? 'door' : 'glazing',
+            ...(hasBayWidths ? { widthOverride: payload.bayWidths[i] } : {}),
+          }));
+        }
+        if (hasBayWidths) {
+          fieldsSet.push('bayWidths');
+        } else if (bays > 1) {
+          warnings.push('Bay widths not provided — defaulted to equal (EQ)');
+        }
+        if (Array.isArray(payload.bayWidths) && payload.bayWidths.length !== bays && payload.bayWidths.length > 0) {
+          warnings.push(`bayWidths length (${payload.bayWidths.length}) ≠ panelCount (${bays}) — ignored`);
+        }
+
+        // Row configs: rowHeights is the known extraction gap — flag when missing
+        let rowConfigs = [];
+        const hasRowHeights =
+          Array.isArray(payload.rowHeights) &&
+          payload.rowHeights.length === rows &&
+          payload.rowHeights.every((h) => typeof h === 'number' && h > 0);
+        if (hasRowHeights) {
+          rowConfigs = payload.rowHeights.map((h, i) => ({ index: i, heightOverride: h }));
+          fieldsSet.push('rowHeights');
+        } else if (rows > 1) {
+          needsInput.push('rowHeights');
+        }
+
+        // ── Sill AFF: entered at bid time — flag when absent ──
+        const sillAFF = payload.sillAFF == null ? 0 : Number(payload.sillAFF) || 0;
+        if (payload.sillAFF == null) needsInput.push('sillAFF'); else fieldsSet.push('sillAFF');
+
+        // ── Notes: fold import flags the frame model has no field for yet ──
+        const noteBits = [];
+        if (payload.notes) noteBits.push(payload.notes);
+        if (payload.safetyFilm) noteBits.push('⚑ Safety film (SF) required');
+        if (payload.brakemetal) noteBits.push('⚑ Brake metal');
+        if (payload.squareCornerMullion) noteBits.push('⚑ Square corner mullion');
+        if (payload.expansionMullion) noteBits.push('⚑ Expansion mullion');
+        if (Array.isArray(payload.specialtyGlass) && payload.specialtyGlass.length) {
+          noteBits.push(`⚑ Specialty glass: ${payload.specialtyGlass.map((s) => (typeof s === 'string' ? s : s?.designation || JSON.stringify(s))).join(', ')}`);
+        }
+        if (sysKey === 'hollow_metal_fire_rated') noteBits.push('⚑ FIRE-RATED hollow metal');
+        if (payload.frameSeries) noteBits.push(`Series: ${payload.frameSeries}`);
+        if (payload.manufacturer && payload.manufacturer !== 'Generic') noteBits.push(`Mfr: ${payload.manufacturer}`);
+
+        // Flagged fields from the AI extraction layer → needsInput
+        if (Array.isArray(payload.flaggedFields)) {
+          for (const ff of payload.flaggedFields) {
+            if (ff && !needsInput.includes(ff)) needsInput.push(ff);
+          }
+        }
+
+        const frameId = crypto.randomUUID();
+        const mark = payload.mark || getNextMark(state.frames);
+        if (payload.mark) fieldsSet.push('mark'); else warnings.push('No mark — auto-assigned');
+
+        const newFrame = {
+          frameId,
+          groupId: group.groupId,
+          mark,
+          scopeTag: 'BASE_BID',
+          quantity: Math.max(1, Number(payload.quantity) || 1),
+          sillAFF,
+          isMockup: false,
+          estimatorNotes: noteBits.join('\n'),
+          systemClass: sysMap.systemClass,
+          laborType: sysMap.laborType,
+          shape: SHAPE_MAP[(payload.shape || 'rectangle').toLowerCase()] || 'rectangular',
+          widthInches,
+          heightInches,
+          jointWidthInches: 0.25,
+          glassBiteOverride: null,
+          bays,
+          rows,
+          bayConfigs,
+          rowConfigs,
+          hasDoor: !!payload.hasDoor || doorBays.length > 0,
+          doorBays,
+          vendorSystemId: '',
+          finishType: mapFinishType(payload.finish) || '',
+          finishMultiplier: null,
+          glassSpecId,
+          wallSubstrate: 'CMU',
+          headCondition: 'soffit',
+          windSpeedMph: 90,
+          exposureCategory: 'C',
+          buildingHeightFt: 30,
+          lastBOM: null,
+          cutLengthOverrides: {},
+          memberOverrides: {},
+          importMeta: {
+            source: 'schedule-import',
+            confidence: payload.confidence ?? null,
+            needsInput,
+            importedAt: new Date().toISOString(),
+          },
+        };
+        if (payload.quantity) fieldsSet.push('quantity');
+        if (payload.systemType) fieldsSet.push('systemType');
+        if (payload.finish) fieldsSet.push('finish');
+
+        set((s) => ({
+          ...(groupsPatch ? { groups: groupsPatch } : {}),
+          ...(glassSpecsPatch ? { glassSpecs: glassSpecsPatch } : {}),
+          frames: [...s.frames, newFrame],
+          ...(opts.select ? { activeFrameId: frameId } : {}),
+        }));
+
+        // Resolve BOM once dimensions are usable
+        if (widthInches >= 12 && heightInches >= 12) {
+          setTimeout(() => get().resolveBOM(frameId), 0);
+        }
+
+        return { ok: true, frameId, mark, groupName: group.name, fieldsSet, needsInput, warnings };
+      },
+
+      /**
+       * Hydrate many frames from an array of payloads (window schedule drop).
+       * Selects the first successfully created frame.
+       * @returns {Array} per-payload validation results
+       */
+      hydrateFrames: (payloads) => {
+        if (!Array.isArray(payloads)) return [];
+        const results = payloads.map((p, i) =>
+          get().hydrateFrame(p, { select: i === 0 })
+        );
+        return results;
       },
 
       // ══════════════════════════════════════════════════════════════════════

@@ -79,6 +79,11 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
   const [frameView, setFrameView] = useState('table'); // 'table' | 'cards'
   const [showMhBreakdown, setShowMhBreakdown] = useState(false);
 
+  // ── AI Takeoff state ──
+  const [aiTakeoffRunning, setAiTakeoffRunning] = useState(false);
+  const [aiTakeoffResult, setAiTakeoffResult] = useState(null);
+  const [showAiReviewPanel, setShowAiReviewPanel] = useState(false);
+
   const [isRecapCollapsed, setIsRecapCollapsed] = useState(() => {
     try {
       return localStorage.getItem('glazebid:liveRecapCollapsed') === '1';
@@ -116,6 +121,26 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
   const laborMap = useMemo(() => {
     const map = {};
     const { getHourlyFunctions, getItemRates } = useProductionRatesStore.getState();
+    const _crewSize = bidSettings?.crewSize ?? 2;
+    const crew = Math.max(_crewSize > 0 ? _crewSize : 1, 1);
+
+    // Compute the dollar cost of daily cleaning + labor contingency + equipment rental
+    // for a system, given its base MH and fieldMH.
+    // NOTE: totalMH on the map entry stays frame-only so the Labor tab display
+    //       can show cleaning/contingency as separate line items without double-counting.
+    const extrasLaborCost = (sys, baseMH, fieldMH) => {
+      const extras = sys.laborExtras || {};
+      const daysQty       = (fieldMH / crew) / 8;
+      const cleaningMH    = daysQty * (extras.cleaningHrsPerDay ?? 1);
+      const contingencyMH = baseMH  * ((extras.contingencyPct  ?? 2.5) / 100);
+      const equipCost     = (extras.equipment || []).reduce((s, e) =>
+        s + (e.weeks        || 0) * (Number(e.weekRate)  || 0)
+          + (e.months       || 0) * (Number(e.monthRate) || 0)
+          + (e.pickupDropoff || 0) * (Number(e.pdRate)   || 310),
+        0);
+      return (cleaningMH + contingencyMH) * bidLaborRateEff + equipCost;
+    };
+
     importedSystems.forEach(sys => {
       if (!sys?.frames?.length) {
         // type-library-frame systems from Studio carry pre-computed MH in sys.totals
@@ -125,7 +150,7 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
         const totalMH = shopMH + distMH + fieldMH;
         map[sys.id] = {
           totalMH,
-          totalCost:      mhToCost(totalMH, bidLaborRateEff),
+          totalCost:      mhToCost(totalMH, bidLaborRateEff) + extrasLaborCost(sys, totalMH, fieldMH),
           shopMH,
           distributionMH: distMH,
           fieldMH,
@@ -138,10 +163,10 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
       const hf = sys.rateOverrides?.hourlyFunctions || getHourlyFunctions(sysType);
       const ir = sys.rateOverrides?.itemRates || getItemRates(sysType);
       const mh = calcSystemMH(sys.frames, hf, ir, beadsOfCaulk, sysType);
-      map[sys.id] = { ...mh, totalCost: mhToCost(mh.totalMH, bidLaborRateEff) };
+      map[sys.id] = { ...mh, totalCost: mhToCost(mh.totalMH, bidLaborRateEff) + extrasLaborCost(sys, mh.totalMH, mh.fieldMH) };
     });
     return map;
-  }, [importedSystems, bidLaborRateEff, beadsOfCaulk, hourlyFunctionsByType, itemRatesByType]);
+  }, [importedSystems, bidLaborRateEff, beadsOfCaulk, hourlyFunctionsByType, itemRatesByType, bidSettings]);
 
   // Quick accessor
   const getSystemLabor = (sys) => laborMap[sys?.id] || { totalMH: 0, totalCost: 0, shopMH: 0, distributionMH: 0, fieldMH: 0, frameResults: [] };
@@ -559,6 +584,100 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
     e.target.value = '';
   }, [handleImportComplete]);
 
+  // ── AI Takeoff: map assembler scope_type → Builder systemType ───────────
+  // Rules:
+  //   curtain_wall               → 'Cap CW'
+  //   storefront + system_code   → 'Ext SF'  (linked to exterior schedule)
+  //   storefront + no system_code→ 'Int SF'  (unlinked interior marks)
+  //   glass_door                 → 'Ext SF'  (part of exterior package)
+  //   all_glass_wall             → 'Int SF'  (frameless interior walls)
+  //   glass_film / unknown       → 'Ext SF'  (safe fallback; estimator reassigns)
+  const getSystemTypeForGroup = (group) => {
+    switch (group.scope_type) {
+      case 'curtain_wall':   return 'Cap CW';
+      case 'storefront':     return group.system_code ? 'Ext SF' : 'Int SF';
+      case 'glass_door':     return 'Ext SF';
+      case 'all_glass_wall': return 'Int SF';
+      default:               return 'Ext SF';
+    }
+  };
+
+  const handleRunTakeoff = useCallback(async () => {
+    if (!window.electronAPI?.openPdfDialog || !window.electronAPI?.runTakeoff) {
+      alert('AI Takeoff is only available in the desktop app.');
+      return;
+    }
+    const pdfPath = await window.electronAPI.openPdfDialog();
+    if (!pdfPath) return;
+
+    setAiTakeoffRunning(true);
+    try {
+      const response = await window.electronAPI.runTakeoff({
+        pdfPath,
+        projectName: projectName || 'Untitled Project',
+      });
+      if (!response.ok) {
+        alert(`AI Takeoff failed: ${response.error}`);
+        return;
+      }
+      const takeoff = response.data;
+      setAiTakeoffResult(takeoff);
+      setShowAiReviewPanel(true);
+
+      // Build system cards from groups
+      const ts = Date.now();
+      const newCards = (takeoff.systems || []).map((group, idx) => {
+        const systemType = getSystemTypeForGroup(group);
+        const systemCode = group.system_code || group.scope_type || 'Unknown';
+        const mfr = [group.manufacturer, group.series].filter(Boolean).join(' ');
+        const sfLabel = group.total_sf > 0 ? ` — ${group.total_sf.toFixed(0)} SF` : '';
+
+        // Each mark → one frame row. Use mark_entries for dims; fall back to
+        // bare mark id strings if the sidecar is an older version.
+        const rawEntries = group.mark_entries?.length
+          ? group.mark_entries
+          : (group.marks || []).map(m => ({ mark_id: m, width_in: null, height_in: null, opening_type: null, sf: null }));
+        const frames = rawEntries.map((me, fi) => ({
+          id: `ai-frame-${ts}-${idx}-${fi}`,
+          mark: me.mark_id,
+          width: me.width_in ?? 0,
+          height: me.height_in ?? 0,
+          quantity: 1,
+        }));
+
+        return {
+          id: `ai-takeoff-${ts}-${idx}`,
+          type: 'ai-takeoff',
+          name: `${systemCode}${sfLabel}`,
+          shortName: systemCode.length > 10 ? systemCode.slice(0, 10) + '…' : systemCode,
+          description: mfr || `AI takeoff: ${group.scope_type}`,
+          systemType,
+          frames,
+          materials: [],
+          laborTasks: [],
+          status: group.flags?.length > 0 ? 'needs-review' : 'imported',
+          totals: {
+            totalFrames: frames.length,
+            totalQuantity: frames.length,
+            totalSF: group.total_sf || 0,
+            shopMHs: 0, distMHs: 0, fieldMHs: 0, totalCost: 0,
+          },
+          lastModified: new Date().toISOString(),
+          aiTakeoffGroup: group,
+        };
+      });
+
+      if (newCards.length > 0) {
+        setImportedSystems(prev => [...newCards, ...prev]);
+        setShowDropZone(false);
+        setShowHomeBase(true);
+        setHomeTab('scope');
+      }
+    } finally {
+      setAiTakeoffRunning(false);
+    }
+  }, [projectName]);
+
   // ── Frame Builder launcher (per system type) ──
   // Handle system selection from dashboard
   const handleSelectSystem = useCallback((systemId) => {
@@ -763,6 +882,23 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
     }
   };
 
+  // Duplicate a system — inserts a copy immediately after the original
+  const handleDuplicateSystem = (systemId) => {
+    setImportedSystems(prev => {
+      const idx = prev.findIndex(s => s.id === systemId);
+      if (idx === -1) return prev;
+      const orig = prev[idx];
+      const copy = {
+        ...orig,
+        id: `${orig.type || 'sys'}-${Date.now()}`,
+        name: `${orig.name} (Copy)`,
+      };
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+  };
+
   // Update a system's properties (e.g. systemType)
   const handleUpdateSystem = (systemId, updates) => {
     setImportedSystems(prev => prev.map(sys =>
@@ -922,17 +1058,34 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
                       <div style={{ padding: '0.85rem 1.1rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'var(--bg-panel)' }}>
                         <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '2px 8px', borderRadius: 6, background: 'rgba(0,123,255,0.1)', color: 'var(--accent-blue)', textTransform: 'uppercase' }}>{sys.shortName || sys.type}</span>
                         <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)' }}>{sys.name}</span>
-                        <button
-                          onClick={() => { setShowHomeBase(false); setSelectedSystem(sys); }}
-                          style={{ marginLeft: 'auto', padding: '4px 12px', borderRadius: 6, border: '1px solid rgba(59,130,246,0.35)', background: 'rgba(59,130,246,0.08)', color: '#60a5fa', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
-                        >
-                          ✏️ Edit
-                        </button>
-                        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'baseline', gap: '0.75rem' }}>
-                          <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{sysLabor.totalMH.toFixed(1)} MH</span>
-                          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#34d399', fontVariantNumeric: 'tabular-nums' }}>
-                            ${sysLabor.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </span>
+                        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <button
+                            onClick={() => handleDuplicateSystem(sys.id)}
+                            title="Duplicate this system"
+                            style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(251,191,36,0.35)', background: 'rgba(251,191,36,0.08)', color: '#fbbf24', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
+                          >
+                            ⧉ Duplicate
+                          </button>
+                          <button
+                            onClick={() => handleDeleteSystem(sys.id)}
+                            title="Delete this system"
+                            style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(239,68,68,0.35)', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
+                          >
+                            🗑 Delete
+                          </button>
+                          <button
+                            onClick={() => { setShowHomeBase(false); setSelectedSystem(sys); }}
+                            title="Edit this system"
+                            style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid rgba(59,130,246,0.35)', background: 'rgba(59,130,246,0.08)', color: '#60a5fa', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
+                          >
+                            ✏️ Edit
+                          </button>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', paddingLeft: '0.5rem', borderLeft: '1px solid var(--border-subtle)', marginLeft: '0.25rem' }}>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{sysLabor.totalMH.toFixed(1)} MH</span>
+                            <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#34d399', fontVariantNumeric: 'tabular-nums' }}>
+                              ${sysLabor.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -1107,6 +1260,102 @@ const GlazeBidWorkspace = forwardRef(({ projectName, onNavigate, bidSettings = {
                 Import, build, or create a scope to begin estimating
               </span>
             </div>
+
+            {/* ── AI Takeoff ── */}
+            {window.electronAPI?.runTakeoff && (
+              <div style={{
+                marginBottom: '1rem', padding: '0.85rem 1rem', borderRadius: 10,
+                border: '1px solid rgba(139,92,246,0.35)', background: 'rgba(139,92,246,0.07)',
+                display: 'flex', alignItems: 'center', gap: '0.85rem',
+              }}>
+                <div style={{ fontSize: '1.4rem', flexShrink: 0 }}>🤖</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    AI Drawing Takeoff
+                  </p>
+                  <p style={{ margin: '0.15rem 0 0', fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
+                    Extract glazing systems and quantities directly from a PDF drawing set
+                  </p>
+                </div>
+                <button
+                  onClick={handleRunTakeoff}
+                  disabled={aiTakeoffRunning}
+                  style={{
+                    flexShrink: 0, padding: '0.5rem 1.1rem', borderRadius: 7, fontSize: '0.8rem',
+                    fontWeight: 700, cursor: aiTakeoffRunning ? 'not-allowed' : 'pointer',
+                    border: '1px solid rgba(139,92,246,0.5)',
+                    background: aiTakeoffRunning ? 'rgba(139,92,246,0.05)' : 'rgba(139,92,246,0.18)',
+                    color: aiTakeoffRunning ? 'rgba(139,92,246,0.5)' : '#a78bfa',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {aiTakeoffRunning ? '⏳ Running…' : '▶ Run Takeoff'}
+                </button>
+                {aiTakeoffResult && (
+                  <button
+                    onClick={() => setShowAiReviewPanel(true)}
+                    style={{
+                      flexShrink: 0, padding: '0.5rem 0.85rem', borderRadius: 7, fontSize: '0.75rem',
+                      fontWeight: 600, cursor: 'pointer',
+                      border: '1px solid rgba(251,191,36,0.4)',
+                      background: 'rgba(251,191,36,0.1)', color: '#fbbf24',
+                    }}
+                  >
+                    Review
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* ── AI Takeoff Review Panel ── */}
+            {showAiReviewPanel && aiTakeoffResult && (
+              <div style={{
+                borderRadius: 10, border: '1px solid rgba(139,92,246,0.35)',
+                background: 'rgba(139,92,246,0.05)', overflow: 'hidden',
+              }}>
+                <div style={{ padding: '0.7rem 1rem', borderBottom: '1px solid rgba(139,92,246,0.2)', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(139,92,246,0.1)' }}>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#a78bfa' }}>AI Takeoff Summary — {aiTakeoffResult.project}</span>
+                  <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                    {(aiTakeoffResult.total_tokens || 0).toLocaleString()} tokens
+                  </span>
+                  <button
+                    onClick={() => setShowAiReviewPanel(false)}
+                    style={{ padding: '2px 8px', borderRadius: 5, border: '1px solid var(--border-subtle)', background: 'transparent', color: 'var(--text-secondary)', fontSize: '0.72rem', cursor: 'pointer' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Groups */}
+                <div style={{ padding: '0.6rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {(aiTakeoffResult.systems || []).map((group, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.78rem', padding: '0.25rem 0', borderBottom: '1px solid rgba(139,92,246,0.1)' }}>
+                      <span style={{ fontWeight: 700, color: '#a78bfa', minWidth: 50 }}>{group.system_code || '—'}</span>
+                      <span style={{ color: 'var(--text-secondary)', minWidth: 90 }}>{group.scope_type}</span>
+                      <span style={{ color: 'var(--text-primary)' }}>{group.marks?.length || 0} marks</span>
+                      {group.total_sf > 0 && <span style={{ color: '#34d399' }}>{group.total_sf.toFixed(0)} SF</span>}
+                      {group.flags?.map((f, fi) => (
+                        <span key={fi} style={{ fontSize: '0.67rem', padding: '1px 6px', borderRadius: 4, background: 'rgba(251,191,36,0.15)', color: '#fbbf24' }}>{f}</span>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Manual review items */}
+                {(aiTakeoffResult.manual_review_items || []).length > 0 && (
+                  <div style={{ padding: '0.5rem 1rem 0.7rem', borderTop: '1px solid rgba(251,191,36,0.2)' }}>
+                    <p style={{ margin: '0 0 0.35rem', fontSize: '0.72rem', fontWeight: 700, color: '#fbbf24' }}>
+                      ⚠ Needs Manual Review ({aiTakeoffResult.manual_review_items.length})
+                    </p>
+                    {aiTakeoffResult.manual_review_items.map((item, i) => (
+                      <div key={i} style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '0.2rem', paddingLeft: '0.5rem', borderLeft: '2px solid rgba(251,191,36,0.4)' }}>
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Hidden file input for typed imports */}
             <input ref={fileInputRef} type="file" accept=".csv,.xls,.xlsx" style={{ display: 'none' }} onChange={handleFileInputChange} />

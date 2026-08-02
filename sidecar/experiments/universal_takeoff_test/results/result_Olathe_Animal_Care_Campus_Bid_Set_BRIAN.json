@@ -1,0 +1,459 @@
+{
+ "job": "Olathe Animal Care Campus - Bid Set BRIAN",
+ "pdf": "/sessions/amazing-vibrant-knuth/mnt/Arch Drawing Markups/New Drawings Sets/Olathe Animal Care Campus - Bid Set BRIAN - Non-Marked.pdf",
+ "pages": [
+  {
+   "page": 0,
+   "sheet_type": "floor_plan",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.125,
+   "gt_count": 54,
+   "candidates": 285,
+   "verified": 222,
+   "raw": {
+    "matched": 1,
+    "proposed": 285,
+    "gt_found": 1
+   },
+   "verified_stage": {
+    "matched": 1,
+    "proposed": 222,
+    "gt_found": 1
+   }
+  },
+  {
+   "page": 1,
+   "sheet_type": "floor_plan",
+   "relevant": true,
+   "marks": [
+    "SF-1"
+   ],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 56,
+   "candidates": 332,
+   "verified": 183,
+   "raw": {
+    "matched": 6,
+    "proposed": 332,
+    "gt_found": 6
+   },
+   "verified_stage": {
+    "matched": 6,
+    "proposed": 183,
+    "gt_found": 6
+   }
+  },
+  {
+   "page": 2,
+   "sheet_type": "floor_plan",
+   "relevant": true,
+   "marks": [
+    "GL-1",
+    "GL-2"
+   ],
+   "scale_in_per_ft": null,
+   "gt_count": 13,
+   "candidates": 600,
+   "verified": 0,
+   "raw": {
+    "matched": 7,
+    "proposed": 600,
+    "gt_found": 7
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 0,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 3,
+   "sheet_type": "floor_plan",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 26,
+   "candidates": 485,
+   "verified": 201,
+   "raw": {
+    "matched": 20,
+    "proposed": 485,
+    "gt_found": 20
+   },
+   "verified_stage": {
+    "matched": 19,
+    "proposed": 201,
+    "gt_found": 19
+   }
+  },
+  {
+   "page": 4,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.125,
+   "gt_count": 0,
+   "candidates": 885,
+   "verified": 863
+  },
+  {
+   "page": 5,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [
+    "CW-1",
+    "SF-1"
+   ],
+   "scale_in_per_ft": 0.125,
+   "gt_count": 114,
+   "candidates": 151,
+   "verified": 148,
+   "raw": {
+    "matched": 2,
+    "proposed": 151,
+    "gt_found": 2
+   },
+   "verified_stage": {
+    "matched": 2,
+    "proposed": 148,
+    "gt_found": 2
+   }
+  },
+  {
+   "page": 6,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 2,
+   "candidates": 193,
+   "verified": 192,
+   "raw": {
+    "matched": 1,
+    "proposed": 193,
+    "gt_found": 1
+   },
+   "verified_stage": {
+    "matched": 1,
+    "proposed": 192,
+    "gt_found": 1
+   }
+  },
+  {
+   "page": 7,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [
+    "GL-3"
+   ],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 16,
+   "candidates": 266,
+   "verified": 256,
+   "raw": {
+    "matched": 3,
+    "proposed": 266,
+    "gt_found": 3
+   },
+   "verified_stage": {
+    "matched": 3,
+    "proposed": 256,
+    "gt_found": 3
+   }
+  },
+  {
+   "page": 8,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [
+    "GL-3"
+   ],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 18,
+   "candidates": 417,
+   "verified": 347,
+   "raw": {
+    "matched": 10,
+    "proposed": 417,
+    "gt_found": 10
+   },
+   "verified_stage": {
+    "matched": 10,
+    "proposed": 347,
+    "gt_found": 10
+   }
+  },
+  {
+   "page": 9,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 19,
+   "candidates": 309,
+   "verified": 291,
+   "raw": {
+    "matched": 2,
+    "proposed": 309,
+    "gt_found": 2
+   },
+   "verified_stage": {
+    "matched": 2,
+    "proposed": 291,
+    "gt_found": 2
+   }
+  },
+  {
+   "page": 10,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 5,
+   "candidates": 131,
+   "verified": 130,
+   "raw": {
+    "matched": 0,
+    "proposed": 131,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 130,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 11,
+   "sheet_type": "elevation",
+   "relevant": false,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 33
+  },
+  {
+   "page": 12,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [
+    "GL-3"
+   ],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 14,
+   "candidates": 219,
+   "verified": 213,
+   "raw": {
+    "matched": 1,
+    "proposed": 219,
+    "gt_found": 1
+   },
+   "verified_stage": {
+    "matched": 1,
+    "proposed": 213,
+    "gt_found": 1
+   }
+  },
+  {
+   "page": 13,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 5,
+   "candidates": 243,
+   "verified": 229,
+   "raw": {
+    "matched": 0,
+    "proposed": 243,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 229,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 14,
+   "sheet_type": "elevation",
+   "relevant": false,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 2
+  },
+  {
+   "page": 15,
+   "sheet_type": "elevation",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.25,
+   "gt_count": 11,
+   "candidates": 515,
+   "verified": 502,
+   "raw": {
+    "matched": 3,
+    "proposed": 515,
+    "gt_found": 3
+   },
+   "verified_stage": {
+    "matched": 3,
+    "proposed": 502,
+    "gt_found": 3
+   }
+  },
+  {
+   "page": 16,
+   "sheet_type": "detail",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 0.75,
+   "gt_count": 7,
+   "candidates": 465,
+   "verified": 39,
+   "raw": {
+    "matched": 2,
+    "proposed": 465,
+    "gt_found": 2
+   },
+   "verified_stage": {
+    "matched": 1,
+    "proposed": 39,
+    "gt_found": 1
+   }
+  },
+  {
+   "page": 17,
+   "sheet_type": "detail",
+   "relevant": false,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 5
+  },
+  {
+   "page": 18,
+   "sheet_type": "detail",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 3,
+   "candidates": 231,
+   "verified": 23,
+   "raw": {
+    "matched": 0,
+    "proposed": 231,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 23,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 19,
+   "sheet_type": "detail",
+   "relevant": true,
+   "marks": [],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 3,
+   "candidates": 237,
+   "verified": 15,
+   "raw": {
+    "matched": 1,
+    "proposed": 237,
+    "gt_found": 1
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 15,
+    "gt_found": 0
+   }
+  },
+  {
+   "page": 20,
+   "sheet_type": "schedule",
+   "relevant": true,
+   "marks": [
+    "GL-1"
+   ],
+   "scale_in_per_ft": 1.5,
+   "gt_count": 7,
+   "candidates": 84,
+   "verified": 2,
+   "raw": {
+    "matched": 0,
+    "proposed": 84,
+    "gt_found": 0
+   },
+   "verified_stage": {
+    "matched": 0,
+    "proposed": 2,
+    "gt_found": 0
+   }
+  }
+ ],
+ "triage": {
+  "gt_pages": [
+   0,
+   1,
+   2,
+   3,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21
+  ],
+  "flagged_pages": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   12,
+   13,
+   15,
+   16,
+   18,
+   19,
+   20
+  ],
+  "recall": 0.81,
+  "pages_excluded": 3
+ },
+ "marks_found": [
+  "CW-1",
+  "GL-1",
+  "GL-2",
+  "GL-3",
+  "SF-1"
+ ],
+ "dim_pool_size": 98,
+ "geometry_raw": {
+  "precision": 0.011,
+  "recall": 0.158
+ },
+ "after_dim_verify": {
+  "precision": 0.016,
+  "recall": 0.131
+ }
+}

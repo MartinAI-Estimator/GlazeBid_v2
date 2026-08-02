@@ -387,6 +387,207 @@ function AiSettingsTab() {
   );
 }
 
+// ─── Projects Drive Tab ─────────────────────────────────────────────────────
+
+function ProjectsDriveTab() {
+  const isElectron = typeof window !== 'undefined' && Boolean(window.electronAPI?.getProjectsRoot);
+  const [root, setRoot]         = React.useState(null);
+  const [loading, setLoading]   = React.useState(true);
+  const [status, setStatus]     = React.useState(null); // { ok, msg }
+  const [migrating, setMigrating] = React.useState(false);
+  const [migrateResults, setMigrateResults] = React.useState(null); // { migrated, skipped, errors[] }
+
+  React.useEffect(() => {
+    if (!isElectron) { setLoading(false); return; }
+    window.electronAPI.getProjectsRoot().then(r => { setRoot(r); setLoading(false); });
+  }, [isElectron]);
+
+  const handleChange = async () => {
+    const chosen = await window.electronAPI.setProjectsRoot();
+    if (chosen) { setRoot(chosen); setStatus({ ok: true, msg: `Projects folder set to: ${chosen}` }); }
+  };
+
+  // ── Migrate localStorage projects → .aiq files on the configured drive ──────
+  const handleMigrate = async () => {
+    if (!root) {
+      setStatus({ ok: false, msg: 'Set a projects folder first before migrating.' });
+      return;
+    }
+    setMigrating(true);
+    setMigrateResults(null);
+
+    let registry = [];
+    try {
+      const raw = localStorage.getItem('glazebid:projectRegistry');
+      if (raw) registry = JSON.parse(raw);
+    } catch { /* ignore */ }
+
+    // Also check GlazeBidHome-discovered projects stored in other keys
+    if (registry.length === 0) {
+      const discovered = new Set();
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        const m = k && k.match(/^glazebid:(?:sheets|bidSettings|workspaceSystems|selectedSheet):(.+)$/);
+        if (m) discovered.add(m[1]);
+      }
+      const cur = localStorage.getItem('currentProject');
+      if (cur) discovered.add(cur);
+      registry = [...discovered].map(name => ({ name }));
+    }
+
+    const results = { migrated: 0, skipped: 0, errors: [] };
+
+    for (const entry of registry) {
+      const name = entry?.name?.trim();
+      if (!name) continue;
+
+      try {
+        // Check if a .aiq already exists for this project
+        const existing = await window.electronAPI.loadProject(name, null);
+        if (existing?.ok) { results.skipped++; continue; }
+
+        // Build minimal v2.0 payload from whatever localStorage has
+        let bidSettings = {};
+        try { bidSettings = JSON.parse(localStorage.getItem(`glazebid:bidSettings:${name}`) || '{}'); } catch { /* ignore */ }
+
+        const payload = {
+          savedAt: new Date().toISOString(),
+          version: '2.0',
+          metadata: {
+            projectName: name,
+            projectId: null,
+            migratedFromLocalStorage: true,
+            adminSnapshot: {
+              laborRate:      bidSettings.laborRate      ?? 45,
+              taxRate:        bidSettings.taxPercent     ?? 7.25,
+              contingencyPct: bidSettings.laborContingency ?? 10,
+              gpmTiers:       [],
+            },
+          },
+          takeoff:   { frameCount: 0, frames: [] },
+          financials: {
+            laborRate:      bidSettings.laborRate    ?? 45,
+            contingencyPct: bidSettings.laborContingency ?? 10,
+            taxPct:         bidSettings.taxPercent   ?? 7.25,
+            vendorQuotes:   [],
+          },
+          summary: {},
+        };
+
+        const result = await window.electronAPI.saveProject(name, payload);
+        if (result?.ok) {
+          results.migrated++;
+        } else {
+          results.errors.push(`${name}: ${result?.error ?? 'unknown error'}`);
+        }
+      } catch (err) {
+        results.errors.push(`${name}: ${err.message}`);
+      }
+    }
+
+    setMigrating(false);
+    setMigrateResults(results);
+  };
+
+  const rowStyle = { display: 'flex', alignItems: 'center', gap: 12, padding: '14px 0', borderBottom: '1px solid rgba(48,54,61,0.45)' };
+  const labelStyle = { fontSize: '0.83rem', color: '#c9d1d9', flex: 1 };
+  const pathStyle  = { fontSize: '0.82rem', color: '#58a6ff', fontFamily: 'monospace', wordBreak: 'break-all', flex: 2, textAlign: 'right' };
+  const btnStyle   = { padding: '6px 14px', background: '#238636', border: 'none', borderRadius: 6, color: '#fff', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' };
+
+  if (!isElectron) {
+    return (
+      <div style={{ padding: 24, color: '#8b949e', fontSize: '0.85rem' }}>
+        Projects Drive settings are only available in the desktop app.
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: '20px 28px' }}>
+      <div style={{ marginBottom: 20 }}>
+        <h3 style={{ margin: '0 0 6px', fontSize: '0.95rem', color: '#e6edf3' }}>Projects Storage Location</h3>
+        <p style={{ margin: 0, fontSize: '0.82rem', color: '#8b949e', lineHeight: 1.6 }}>
+          All GlazeBid projects are saved as <code style={{ color: '#79c0ff' }}>.aiq</code> files on your
+          company's shared drive. Set the root folder once and every user pointing to the same
+          drive will see all projects automatically. Typical paths:
+          <br /><code style={{ color: '#79c0ff' }}>Z:\GlazeBid Projects</code> &nbsp;·&nbsp;
+          <code style={{ color: '#79c0ff' }}>\\SERVER\Estimating\GlazeBid</code>
+        </p>
+      </div>
+
+      {loading ? (
+        <div style={{ color: '#8b949e', fontSize: '0.83rem' }}>Loading…</div>
+      ) : (
+        <>
+          <div style={rowStyle}>
+            <span style={labelStyle}>Current projects folder</span>
+            <span style={{ ...pathStyle, color: root ? '#58a6ff' : '#f85149' }}>
+              {root || '— not set —'}
+            </span>
+            <button style={btnStyle} onClick={handleChange}>
+              {root ? 'Change…' : 'Set Folder…'}
+            </button>
+          </div>
+
+          {!root && (
+            <div style={{ marginTop: 16, padding: '10px 14px', background: 'rgba(248,81,73,0.08)', border: '1px solid rgba(248,81,73,0.3)', borderRadius: 6, fontSize: '0.82rem', color: '#ffa198' }}>
+              ⚠ No projects folder configured. GlazeBid cannot save or load projects until you set one.
+            </div>
+          )}
+
+          {status && (
+            <div style={{ marginTop: 12, padding: '8px 14px', background: status.ok ? 'rgba(35,134,54,0.12)' : 'rgba(248,81,73,0.08)', border: `1px solid ${status.ok ? 'rgba(35,134,54,0.4)' : 'rgba(248,81,73,0.3)'}`, borderRadius: 6, fontSize: '0.82rem', color: status.ok ? '#56d364' : '#ffa198' }}>
+              {status.msg}
+            </div>
+          )}
+
+          <div style={{ marginTop: 28, padding: '14px 16px', background: 'rgba(88,166,255,0.06)', border: '1px solid rgba(88,166,255,0.18)', borderRadius: 8, fontSize: '0.8rem', color: '#8b949e', lineHeight: 1.7 }}>
+            <strong style={{ color: '#c9d1d9' }}>How it works</strong><br />
+            Each project gets its own subfolder: <code style={{ color: '#79c0ff' }}>&lt;root&gt;/&lt;Project Name&gt;/project.aiq</code><br />
+            Standard asset subfolders (Drawings, Specs, Estimates, Proposals…) are created automatically.<br />
+            The folder you choose is stored on <em>this machine only</em> — each team member maps
+            their own drive letter to the same network share.
+          </div>
+
+          {/* ── Migrate from localStorage ─────────────────────────────────── */}
+          <div style={{ marginTop: 28, padding: '16px', background: 'rgba(187,128,9,0.07)', border: '1px solid rgba(187,128,9,0.28)', borderRadius: 8 }}>
+            <h4 style={{ margin: '0 0 6px', fontSize: '0.88rem', color: '#e3b341' }}>⬆ Migrate Projects from Local Storage</h4>
+            <p style={{ margin: '0 0 12px', fontSize: '0.8rem', color: '#8b949e', lineHeight: 1.6 }}>
+              Previous GlazeBid sessions stored project metadata in the browser's local storage.
+              Click below to create a <code style={{ color: '#79c0ff' }}>project.aiq</code> skeleton on your
+              configured drive for each discovered project. Projects already on disk are skipped.
+            </p>
+            <button
+              onClick={handleMigrate}
+              disabled={migrating || !root}
+              style={{
+                padding: '7px 16px', fontSize: '0.82rem', fontWeight: 700,
+                background: (migrating || !root) ? '#21262d' : '#9e6a03',
+                border: 'none', borderRadius: 6, color: '#fff',
+                cursor: (migrating || !root) ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {migrating ? 'Migrating…' : 'Migrate Now'}
+            </button>
+
+            {migrateResults && (
+              <div style={{ marginTop: 12, fontSize: '0.8rem' }}>
+                <span style={{ color: '#56d364' }}>✓ {migrateResults.migrated} migrated</span>
+                {migrateResults.skipped > 0 && <span style={{ color: '#8b949e', marginLeft: 12 }}>• {migrateResults.skipped} already on disk (skipped)</span>}
+                {migrateResults.errors.length > 0 && (
+                  <div style={{ marginTop: 6, color: '#ffa198' }}>
+                    ⚠ Errors: {migrateResults.errors.join(' | ')}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── main component ───────────────────────────────────────────────────────────
 
 const TABS = [
@@ -396,6 +597,7 @@ const TABS = [
   { key: 'materials', label: '📦 Material Groups' },
   { key: 'formula',   label: '📐 Formula Reference' },
   { key: 'ai',        label: '🤖 AI Settings' },
+  { key: 'drive',     label: '💾 Projects Drive' },
 ];
 
 export default function AdminSettingsPanel() {
@@ -448,6 +650,9 @@ export default function AdminSettingsPanel() {
         )}
         {activeTab === 'ai' && (
           <AiSettingsTab />
+        )}
+        {activeTab === 'drive' && (
+          <ProjectsDriveTab />
         )}
       </div>
     </div>

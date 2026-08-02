@@ -1,88 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Folder, Clock, CheckCircle, AlertCircle, Archive } from 'lucide-react';
+import { Folder, Clock, CheckCircle, AlertCircle, Archive, HardDrive, Trash2 } from 'lucide-react';
+
+const isElectron = () => typeof window !== 'undefined' && Boolean(window.electronAPI?.listProjects);
 
 const ProjectList = ({ onProjectSelect, onNewProject, onSettings }) => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [projects, setProjects]   = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
+  const [rootPath, setRootPath]   = useState(null);
+  const [rootMissing, setRootMissing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null); // { name, folderName, aiqPath }
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
-  const fetchProjects = () => {
+  const fetchProjects = async () => {
     try {
       setLoading(true);
-
-      // --- Step 1: Read the registry (sole source of truth). ---
-      let registry = [];
-      try {
-        const regRaw = localStorage.getItem('glazebid:projectRegistry');
-        if (regRaw) {
-          const parsed = JSON.parse(regRaw);
-          if (Array.isArray(parsed)) registry = parsed;
-        }
-      } catch {
-        // Ignore malformed registry.
-      }
-
-      // --- Step 2: One-time migration — only scan localStorage keys when the
-      //             registry is empty so we pick up any pre-registry projects.
-      //             After the first run the registry is saved and this is skipped. ---
-      if (registry.length === 0) {
-        const discovered = new Map(); // name → modified ISO string
-
-        const tryAdd = (name, modified) => {
-          if (!name || typeof name !== 'string' || !name.trim()) return;
-          const key = name.trim();
-          if (discovered.has(key)) return;
-          const ts = modified ? new Date(modified) : null;
-          discovered.set(key, (ts && !Number.isNaN(ts.getTime())) ? ts.toISOString() : new Date().toISOString());
-        };
-
-        // Scan namespaced keys — collect all keys first so order doesn't matter.
-        const allKeys = [];
-        for (let i = 0; i < localStorage.length; i += 1) {
-          const k = localStorage.key(i);
-          if (k) allKeys.push(k);
-        }
-        allKeys.sort(); // Stable alphabetical order — removes any index-order randomness.
-
-        for (const k of allKeys) {
-          const m = k.match(/^glazebid:(?:sheets|bidSettings|selectedSheet|specFolder|specSections|specScanResults|specReaderResults|filePath):(.+)$/);
-          if (m) tryAdd(m[1], null);
-        }
-
-        // Legacy singletons.
-        tryAdd(localStorage.getItem('currentProject'), null);
-        try {
-          const pd = JSON.parse(localStorage.getItem('projectData') || 'null');
-          if (pd) tryAdd(pd?.projectName || pd?.name, pd?.updatedAt || pd?.modified);
-        } catch { /* ignore */ }
-
-        registry = [...discovered.entries()].map(([name, modified]) => ({
-          name,
-          modified,
-          status: 'in_progress',
-        }));
-
-        // Persist so next render skips this scan entirely.
-        try {
-          localStorage.setItem('glazebid:projectRegistry', JSON.stringify(registry));
-        } catch { /* ignore */ }
-      }
-
-      // --- Step 3: Sort by modified descending, then name for a stable tie-break. ---
-      const sorted = [...registry]
-        .filter(e => e?.name)
-        .sort((a, b) => {
-          const diff = new Date(b.modified).getTime() - new Date(a.modified).getTime();
-          if (diff !== 0) return diff;
-          return (a.name || '').localeCompare(b.name || '');
-        });
-
-      setProjects(sorted);
       setError(null);
+
+      if (isElectron()) {
+        const result = await window.electronAPI.listProjects();
+        if (!result.ok) throw new Error(result.error);
+        setProjects(result.projects || []);
+        setRootPath(result.root || null);
+        setRootMissing(Boolean(result.rootMissing));
+      } else {
+        // Dev-mode fallback — empty list
+        setProjects([]);
+        setRootPath(null);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -90,37 +38,50 @@ const ProjectList = ({ onProjectSelect, onNewProject, onSettings }) => {
     }
   };
 
+  const handleSetRoot = async () => {
+    if (!isElectron()) return;
+    const chosen = await window.electronAPI.setProjectsRoot();
+    if (chosen) fetchProjects();
+  };
+
+  const handleDelete = async (project) => {
+    if (!isElectron()) return;
+    const result = await window.electronAPI.deleteProject({
+      folderName: project.folderName,
+      aiqPath:    project.aiqPath,
+    });
+    if (result.ok) {
+      setDeleteTarget(null);
+      fetchProjects();
+    } else {
+      alert(`Delete failed: ${result.error}`);
+    }
+  };
+
+  const handleOpenFile = async () => {
+    if (!isElectron()) return;
+    const result = await window.electronAPI.openProjectDialog();
+    if (result?.ok) onProjectSelect({ name: result.payload?.metadata?.projectName, aiqPath: result.aiqPath, payload: result.payload });
+  };
+
   const getStatusIcon = (status) => {
     const iconProps = { size: 16 };
     switch (status) {
-      case 'complete':
-        return <CheckCircle {...iconProps} color="#4ade80" />;
-      case 'in_progress':
-        return <Clock {...iconProps} color="#60a5fa" />;
-      case 'under_review':
-        return <AlertCircle {...iconProps} color="#fbbf24" />;
-      case 'archived':
-        return <Archive {...iconProps} color="#6b7280" />;
-      default:
-        return <Folder {...iconProps} color="#9ca3af" />;
+      case 'complete':    return <CheckCircle {...iconProps} color="#4ade80" />;
+      case 'in_progress': return <Clock      {...iconProps} color="#60a5fa" />;
+      case 'under_review':return <AlertCircle {...iconProps} color="#fbbf24" />;
+      case 'archived':    return <Archive    {...iconProps} color="#6b7280" />;
+      default:            return <Folder     {...iconProps} color="#9ca3af" />;
     }
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
-    });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   if (loading) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.loading}>Loading projects...</div>
-      </div>
-    );
+    return <div style={styles.container}><div style={styles.loading}>Loading projects…</div></div>;
   }
 
   if (error) {
@@ -136,44 +97,82 @@ const ProjectList = ({ onProjectSelect, onNewProject, onSettings }) => {
 
   return (
     <div style={styles.container}>
+      {/* ── Delete confirmation modal ── */}
+      {deleteTarget && (
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <p style={{ color: '#e6edf3', marginBottom: 16 }}>
+              Permanently delete <strong>{deleteTarget.name}</strong> and all its files from disk?
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button onClick={() => setDeleteTarget(null)} style={styles.cancelBtn}>Cancel</button>
+              <button onClick={() => handleDelete(deleteTarget)} style={styles.deleteBtn}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={styles.header}>
         <h1 style={styles.title}>Your Projects</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button onClick={onSettings} style={styles.settingsButton} title="Admin Settings">
-            ⚙️ Settings
-          </button>
-          <button onClick={onNewProject} style={styles.newProjectButton}>
-            + New Project
-          </button>
+          {isElectron() && (
+            <>
+              <button onClick={handleOpenFile} style={styles.settingsButton} title="Open a .aiq file">
+                Open File…
+              </button>
+              <button onClick={handleSetRoot} style={styles.settingsButton} title="Change projects folder">
+                <HardDrive size={14} style={{ marginRight: 4 }} />
+                {rootPath ? 'Change Drive…' : 'Set Projects Folder…'}
+              </button>
+            </>
+          )}
+          <button onClick={onSettings} style={styles.settingsButton} title="Admin Settings">⚙️ Settings</button>
+          <button onClick={onNewProject} style={styles.newProjectButton}>+ New Project</button>
         </div>
       </div>
+
+      {/* Drive not configured warning */}
+      {isElectron() && !rootPath && (
+        <div style={styles.noRootBanner}>
+          <HardDrive size={18} style={{ marginRight: 8, flexShrink: 0 }} />
+          No projects folder configured. Click <strong style={{ margin: '0 4px' }}>Set Projects Folder…</strong>
+          to point GlazeBid at your company's server drive (e.g. Z:\GlazeBid Projects).
+        </div>
+      )}
+
+      {/* Drive temporarily unreachable warning */}
+      {rootMissing && rootPath && (
+        <div style={{ ...styles.noRootBanner, borderColor: '#f59e0b', color: '#fbbf24' }}>
+          <AlertCircle size={18} style={{ marginRight: 8 }} />
+          Projects drive is currently unreachable ({rootPath}). Showing cached list.
+        </div>
+      )}
 
       {projects.length === 0 ? (
         <div style={styles.emptyState}>
           <Folder size={64} color="#6b7280" />
           <h2 style={styles.emptyTitle}>No projects yet</h2>
           <p style={styles.emptyText}>Create your first project by uploading drawings and specifications</p>
-          <button onClick={onNewProject} style={styles.startButton}>
-            Start New Project
-          </button>
+          <button onClick={onNewProject} style={styles.startButton}>Start New Project</button>
         </div>
       ) : (
         <div style={styles.projectGrid}>
           {projects.map((project, index) => (
-            <div 
-              key={index} 
-              style={styles.projectCard}
-              onClick={() => onProjectSelect(project)}
-            >
+            <div key={index} style={styles.projectCard} onClick={() => onProjectSelect(project)}>
               <div style={styles.cardHeader}>
-                <div style={styles.statusIcon}>
-                  {getStatusIcon(project.status)}
-                </div>
-                <span style={styles.statusText}>{project.status}</span>
+                <div style={styles.statusIcon}>{getStatusIcon(project.status)}</div>
+                <span style={styles.statusText}>{project.status || 'in_progress'}</span>
+                {isElectron() && (
+                  <button
+                    style={styles.deleteIcon}
+                    title="Delete project"
+                    onClick={(e) => { e.stopPropagation(); setDeleteTarget(project); }}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                )}
               </div>
-              
               <h3 style={styles.projectName}>{project.name}</h3>
-              
               <div style={styles.cardFooter}>
                 <div style={styles.dateInfo}>
                   <span style={styles.dateLabel}>Modified:</span>
@@ -350,6 +349,63 @@ const styles = {
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
+  },
+  noRootBanner: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '12px 16px',
+    marginBottom: 24,
+    background: 'rgba(59,130,246,0.08)',
+    border: '1px solid rgba(59,130,246,0.35)',
+    borderRadius: 8,
+    color: '#93c5fd',
+    fontSize: 13,
+  },
+  deleteIcon: {
+    marginLeft: 'auto',
+    background: 'none',
+    border: 'none',
+    color: '#6b7280',
+    cursor: 'pointer',
+    padding: '2px 4px',
+    borderRadius: 4,
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: 1,
+  },
+  overlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.6)',
+    zIndex: 1000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modal: {
+    background: '#1c2333',
+    border: '1px solid #30363d',
+    borderRadius: 10,
+    padding: '24px 28px',
+    minWidth: 340,
+    maxWidth: 480,
+  },
+  cancelBtn: {
+    padding: '8px 18px',
+    background: 'transparent',
+    border: '1px solid #30363d',
+    borderRadius: 6,
+    color: '#e6edf3',
+    cursor: 'pointer',
+  },
+  deleteBtn: {
+    padding: '8px 18px',
+    background: '#ef4444',
+    border: 'none',
+    borderRadius: 6,
+    color: '#fff',
+    cursor: 'pointer',
+    fontWeight: 600,
   },
 };
 

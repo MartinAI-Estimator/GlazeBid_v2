@@ -522,6 +522,13 @@ from spec_reader.router import spec_reader_router
 app.include_router(spec_reader_router, prefix="/spec-reader", tags=["Spec Reader"])
 
 
+# ── Drawing Intelligence Router ───────────────────────────────────────────────
+
+from glazierai.modules.drawing_intelligence.drawing_intelligence_router import router as drawing_intelligence_router
+
+app.include_router(drawing_intelligence_router, prefix="/drawing-intelligence", tags=["Drawing Intelligence"])
+
+
 # ── Entry Point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":

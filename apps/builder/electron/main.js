@@ -15,6 +15,51 @@ const { app, BrowserWindow, shell, session, ipcMain, nativeImage, dialog, net } 
 const fs   = require('fs');
 const path = require('path');
 
+// ── Project filesystem helpers ────────────────────────────────────────────────
+// User preferences (projects root path) live in Electron's userData folder,
+// completely separate from any project drive — so they survive drive remaps.
+
+const PROJECT_FILE_NAME = 'project.aiq';
+const PROJECT_SUBDIRS   = ['01_Drawings', '02_Specifications', '03_Takeoffs',
+                           '04_Estimates', '05_Proposals', '06_Reports'];
+
+function getPrefsPath() {
+  return path.join(app.getPath('userData'), 'glazebid-prefs.json');
+}
+
+function readPrefs() {
+  try {
+    const raw = fs.readFileSync(getPrefsPath(), 'utf8');
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+function writePrefs(data) {
+  fs.writeFileSync(getPrefsPath(), JSON.stringify(data, null, 2), 'utf8');
+}
+
+/** Sanitise a project name into a safe folder name. */
+function safeFolderName(name) {
+  return name.trim().replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').replace(/\s+/g, ' ');
+}
+
+/** Return the full path to a project's .aiq file. */
+function projectAiqPath(root, projectName) {
+  return path.join(root, safeFolderName(projectName), PROJECT_FILE_NAME);
+}
+
+/** Create the project folder + standard subfolders if they don't exist. */
+function ensureProjectFolder(root, projectName) {
+  const dir = path.join(root, safeFolderName(projectName));
+  fs.mkdirSync(dir, { recursive: true });
+  for (const sub of PROJECT_SUBDIRS) {
+    fs.mkdirSync(path.join(dir, sub), { recursive: true });
+  }
+  return dir;
+}
+
 const isDev = !app.isPackaged;
 
 // ── Resolve app icon ─────────────────────────────────────────────────────────
@@ -78,6 +123,169 @@ ipcMain.handle('dialog:selectFolder', async () => {
   });
   if (result.canceled) return null;
   return result.filePaths[0];
+});
+
+// ── IPC: Project filesystem — get/set projects root ───────────────────────────
+ipcMain.handle('project:getRoot', () => {
+  return readPrefs().projectsRoot || null;
+});
+
+ipcMain.handle('project:setRoot', async () => {
+  const result = await dialog.showOpenDialog({
+    title:       'Choose GlazeBid Projects Folder',
+    buttonLabel: 'Set as Projects Folder',
+    properties:  ['openDirectory', 'createDirectory'],
+  });
+  if (result.canceled) return null;
+  const chosen = result.filePaths[0];
+  const prefs  = readPrefs();
+  prefs.projectsRoot = chosen;
+  writePrefs(prefs);
+  return chosen;
+});
+
+// ── IPC: Project filesystem — save ───────────────────────────────────────────
+ipcMain.handle('project:save', async (_event, { projectName, payload }) => {
+  const root = readPrefs().projectsRoot;
+  if (!root) return { ok: false, error: 'NO_ROOT' };
+  try {
+    ensureProjectFolder(root, projectName);
+    const aiqPath = projectAiqPath(root, projectName);
+    fs.writeFileSync(aiqPath, JSON.stringify(payload, null, 2), 'utf8');
+    // Update the recent-projects registry stored in prefs
+    const prefs = readPrefs();
+    const registry = prefs.projectRegistry || [];
+    const existing = registry.find(r => r.name === projectName);
+    if (existing) {
+      existing.modified = new Date().toISOString();
+      existing.aiqPath  = aiqPath;
+    } else {
+      registry.unshift({ name: projectName, modified: new Date().toISOString(), aiqPath });
+    }
+    prefs.projectRegistry = registry;
+    writePrefs(prefs);
+    return { ok: true, aiqPath };
+  } catch (err) {
+    console.error('[Builder] project:save error:', err);
+    return { ok: false, error: String(err) };
+  }
+});
+
+// ── IPC: Project filesystem — load by name ────────────────────────────────────
+ipcMain.handle('project:load', async (_event, { projectName, aiqPath: explicitPath }) => {
+  try {
+    let filePath = explicitPath;
+    if (!filePath) {
+      const root = readPrefs().projectsRoot;
+      if (!root) return { ok: false, error: 'NO_ROOT' };
+      filePath = projectAiqPath(root, projectName);
+    }
+    if (!fs.existsSync(filePath)) return { ok: false, error: 'NOT_FOUND' };
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return { ok: true, payload: JSON.parse(raw) };
+  } catch (err) {
+    console.error('[Builder] project:load error:', err);
+    return { ok: false, error: String(err) };
+  }
+});
+
+// ── IPC: Project filesystem — open file dialog (.aiq picker) ─────────────────
+ipcMain.handle('project:openDialog', async () => {
+  const root   = readPrefs().projectsRoot;
+  const result = await dialog.showOpenDialog({
+    title:       'Open GlazeBid Project',
+    defaultPath: root || app.getPath('documents'),
+    filters:     [{ name: 'GlazeBid Project', extensions: ['aiq'] }],
+    properties:  ['openFile'],
+  });
+  if (result.canceled) return null;
+  const filePath = result.filePaths[0];
+  try {
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return { ok: true, aiqPath: filePath, payload: JSON.parse(raw) };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
+});
+
+// ── IPC: Project filesystem — list all projects in root ──────────────────────
+ipcMain.handle('project:list', () => {
+  const prefs = readPrefs();
+  const root  = prefs.projectsRoot;
+  if (!root || !fs.existsSync(root)) {
+    // Return the registry cached in prefs even if root is unmounted
+    return { ok: true, projects: prefs.projectRegistry || [], rootMissing: true };
+  }
+  try {
+    const entries = fs.readdirSync(root, { withFileTypes: true });
+    const projects = [];
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const aiqPath = path.join(root, entry.name, PROJECT_FILE_NAME);
+      if (!fs.existsSync(aiqPath)) continue;
+      const stat     = fs.statSync(aiqPath);
+      const modified = stat.mtime.toISOString();
+      // Try to read projectName from the file itself (may differ from folder)
+      let name = entry.name;
+      try {
+        const raw  = fs.readFileSync(aiqPath, 'utf8');
+        const data = JSON.parse(raw);
+        name = data?.metadata?.projectName || name;
+      } catch { /* use folder name */ }
+      projects.push({ name, folderName: entry.name, aiqPath, modified });
+    }
+    projects.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+    return { ok: true, projects, root };
+  } catch (err) {
+    console.error('[Builder] project:list error:', err);
+    return { ok: false, error: String(err) };
+  }
+});
+
+// ── IPC: Project filesystem — delete a project folder ────────────────────────
+ipcMain.handle('project:delete', async (_event, { folderName, aiqPath: explicitPath }) => {
+  const root = readPrefs().projectsRoot;
+  if (!root) return { ok: false, error: 'NO_ROOT' };
+  try {
+    // Determine folder path safely — never allow traversal outside root
+    let targetDir;
+    if (explicitPath) {
+      targetDir = path.dirname(explicitPath);
+    } else {
+      targetDir = path.join(root, safeFolderName(folderName));
+    }
+    // Security: ensure the target is actually inside the configured root
+    const rel = path.relative(root, targetDir);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
+      return { ok: false, error: 'PATH_TRAVERSAL' };
+    }
+    fs.rmSync(targetDir, { recursive: true, force: true });
+    // Remove from registry
+    const prefs    = readPrefs();
+    prefs.projectRegistry = (prefs.projectRegistry || [])
+      .filter(r => r.aiqPath !== (explicitPath || path.join(targetDir, PROJECT_FILE_NAME)));
+    writePrefs(prefs);
+    return { ok: true };
+  } catch (err) {
+    console.error('[Builder] project:delete error:', err);
+    return { ok: false, error: String(err) };
+  }
+});
+
+// ── IPC: Project filesystem — export copy to user-chosen location ─────────────
+ipcMain.handle('project:exportCopy', async (_event, { projectName, payload }) => {
+  const result = await dialog.showSaveDialog({
+    title:       'Export Project Copy',
+    defaultPath: path.join(app.getPath('documents'), `${safeFolderName(projectName)}.aiq`),
+    filters:     [{ name: 'GlazeBid Project', extensions: ['aiq'] }],
+  });
+  if (result.canceled) return { ok: false };
+  try {
+    fs.writeFileSync(result.filePath, JSON.stringify(payload, null, 2), 'utf8');
+    return { ok: true, savedTo: result.filePath };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
 });
 
 // ── IPC: Studio renderer signals it is fully initialised ──────────────────────
