@@ -55,12 +55,25 @@ import { useInboxSync } from './hooks/useInboxSync';
 // Safe dynamic import — if syncProject is broken/missing the app still boots
 let _loadProjectFromCloud = null;
 let _saveProjectToCloud   = null;
+let _applyLocalState      = null;
 try {
   const mod = await import('./utils/syncProject');
   _loadProjectFromCloud = mod.loadProjectFromCloud;
   _saveProjectToCloud   = mod.saveProjectToCloud;
+  _applyLocalState      = mod.applyLocalState;
 } catch (e) {
   console.warn('⚠️ syncProject unavailable — running local-only:', e.message);
+}
+
+/** Restore a v3 payload's localStorage snapshot (no-op for v2 payloads). */
+function safeApplyLocalState(payload) {
+  if (!_applyLocalState || !payload?.localState) return;
+  try {
+    const n = _applyLocalState(payload.localState);
+    if (n > 0) console.log(`✅ Restored ${n} local-state entries from project file`);
+  } catch (err) {
+    console.warn('⚠️ localState restore failed (non-fatal):', err.message);
+  }
 }
 
 /** Guaranteed-safe cloud rehydration — never throws, never blocks navigation. */
@@ -339,7 +352,7 @@ function App() {
 
     setAiqSaveStatus('saving');
     try {
-      const { frames, projectTotals } = useBidStore.getState();
+      const { frames, workspaceSystems, projectTotals } = useBidStore.getState();
       let adminSettings = null;
       try { adminSettings = JSON.parse(localStorage.getItem('glazebid_adminSettings') || 'null'); } catch { /* ignore */ }
 
@@ -347,6 +360,8 @@ function App() {
         projectName:  currentProject,
         adminSettings,
         frames,
+        workspaceSystems,
+        bidSettings,
         vendorQuotes: [],
         financials: {
           laborRate:      bidSettings.laborRate,
@@ -736,11 +751,14 @@ function App() {
     // ── Rehydration Engine (project intake / re-open) ──────────────────────
     const payload = await safeLoadFromCloud(projectName);
     if (payload) {
+      safeApplyLocalState(payload); // v3: restore localStorage snapshot FIRST
       useBidStore.getState().rehydrateBid({
-        frames:       payload.takeoff?.frames          ?? [],
-        financials:   payload.financials               ?? null,
-        vendorQuotes: payload.financials?.vendorQuotes ?? null,
+        frames:           payload.takeoff?.frames          ?? [],
+        workspaceSystems: payload.workspaceSystems         ?? null,
+        financials:       payload.financials               ?? null,
+        vendorQuotes:     payload.financials?.vendorQuotes ?? null,
       });
+      if (payload.bidSettings) setBidSettings(prev => ({ ...prev, ...payload.bidSettings }));
       console.log('✅ Bid rehydrated for:', projectName);
     } else {
       useBidStore.getState().clearBid();
@@ -770,11 +788,14 @@ function App() {
     // or fall back to loading by name + explicit aiqPath.
     const payload = project.payload ?? await safeLoadFromCloud(project.name, project.aiqPath);
     if (payload) {
+      safeApplyLocalState(payload); // v3: restore localStorage snapshot FIRST
       useBidStore.getState().rehydrateBid({
-        frames:       payload.takeoff?.frames       ?? [],
-        financials:   payload.financials            ?? null,
-        vendorQuotes: payload.financials?.vendorQuotes ?? null,
+        frames:           payload.takeoff?.frames       ?? [],
+        workspaceSystems: payload.workspaceSystems      ?? null,
+        financials:       payload.financials            ?? null,
+        vendorQuotes:     payload.financials?.vendorQuotes ?? null,
       });
+      if (payload.bidSettings) setBidSettings(prev => ({ ...prev, ...payload.bidSettings }));
       console.log('✅ Bid rehydrated for:', project.name);
     } else {
       useBidStore.getState().clearBid();
