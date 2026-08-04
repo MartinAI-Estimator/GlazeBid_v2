@@ -780,7 +780,7 @@ function scanCategory(category, pageTexts) {
  * @param {{ sectionNumber: string, sectionTitle: string, pdfBuffer: Uint8Array }} section
  * @returns {Promise<{ sectionNumber, sectionTitle, ok, findings, error? }>}
  */
-export async function scanSpecSection(section) {
+export async function scanSpecSection(section, extraCategories = []) {
   try {
     const pageTexts = await extractPageTextsWithItems(section.pdfBuffer);
     // Division 00/01 are procurement and general requirements. A warranty or
@@ -791,11 +791,20 @@ export async function scanSpecSection(section) {
     const isContractLevel = division === '00' || division === '01';
 
     const findings = {};
-    for (const cat of SCAN_CATEGORIES) {
+    // Baseline categories + any compiled company-playbook rules. Playbook rules
+    // run through the SAME engine so they inherit precision tiering and the
+    // verified-citation contract — a company rule gets no special trust.
+    for (const cat of [...SCAN_CATEGORIES, ...extraCategories]) {
       const finding = scanCategory(cat, pageTexts);
       if (finding.found && isContractLevel) {
         finding.contractLevel = true;
         finding.scopeNote = `Found in Division ${division} — contract-level requirement, not a glazing product spec`;
+      }
+      if (finding.found && cat.isPlaybook) {
+        finding.isPlaybook = true;
+        finding.playbookLabel = cat.label;
+        finding.severity = cat.playbookSeverity;
+        finding.meaning = cat.playbookMeaning;
       }
       findings[cat.key] = finding;
     }

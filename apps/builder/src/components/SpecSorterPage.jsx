@@ -18,6 +18,7 @@ import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { parseSpecSectionsV2 } from '../lib/specSorterV2';
 import { classifySection } from '../lib/glazingScope';
+import { loadPlaybook, playbookCategories, findNeverBidHits } from '../lib/companyPlaybook';
 import { extractSections } from '../lib/specSorter';
 import { scanSection } from '../lib/specReader';
 import { scanSpecSection, SCAN_CATEGORIES, extractPageTexts, aiEnhanceSection, detectCrossReferences } from '../lib/specScanner';
@@ -1450,7 +1451,7 @@ function buildVerdictSentence(riskScore, checklistResults) {
 }
 
 // ── ChecklistTab ──────────────────────────────────────────────────────────────
-function ChecklistTab({ checklistResults, riskScore, onJumpToPage }) {
+function ChecklistTab({ checklistResults, riskScore, onJumpToPage, neverBidHits = [] }) {
   if (!checklistResults.length) {
     return (
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
@@ -1467,6 +1468,40 @@ function ChecklistTab({ checklistResults, riskScore, onJumpToPage }) {
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+      {/* ── Never-bid stop banner — the company's own hard NO, above everything.
+             This outranks the grade: no point reading a risk report for scope
+             the company does not bid. ── */}
+      {neverBidHits.length > 0 && (
+        <div style={{
+          flexShrink: 0, padding: '12px 16px',
+          background: 'rgba(239,68,68,0.15)',
+          borderBottom: '2px solid #ef4444',
+        }}>
+          <div style={{
+            fontSize: '0.8rem', fontWeight: 800, color: '#ef4444',
+            display: 'flex', alignItems: 'center', gap: 7,
+          }}>
+            <span>🛑</span> Your playbook says you don&rsquo;t bid this
+          </div>
+          {neverBidHits.map((h, i) => (
+            <div
+              key={`${h.phrase}-${h.sectionNumber}-${i}`}
+              onClick={() => h.page && onJumpToPage?.(h.page)}
+              style={{
+                fontSize: '0.73rem', color: '#c9d1d9', marginTop: 5, lineHeight: 1.5,
+                cursor: h.page ? 'pointer' : 'default',
+              }}
+            >
+              <strong style={{ color: '#f85149' }}>{h.phrase}</strong>
+              {' — found in '}
+              <span style={{ fontFamily: 'ui-monospace, monospace' }}>{h.sectionNumber}</span>
+              {h.sectionTitle ? ` ${h.sectionTitle}` : ''}
+              {h.page ? <span style={{ color: '#58a6ff' }}> · p. {h.page}</span> : null}
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* ── Verdict header (Task 3) ── */}
       {gradeInfo && (
         <div style={{
@@ -1812,6 +1847,11 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   const [parseError, setParseError] = useState(null);
   const [parseNeedsOcr, setParseNeedsOcr] = useState(false);
   const [sections, setSections] = useState([]);            // from parseSpecSectionsV2
+
+  // ── Company playbook (per company, loaded once) ────────────────────────────
+  const [playbook, setPlaybook] = useState(null);
+  useEffect(() => { loadPlaybook().then(setPlaybook).catch(() => {}); }, []);
+  const playbookCats = useMemo(() => playbookCategories(playbook), [playbook]);
   const [sectionScope, setSectionScope] = useState({});    // { [sectionNumber]: true|false }
   const [selected, setSelected] = useState({});            // checkboxes for scanning
   const [filter, setFilter] = useState('scope');           // 'scope'|'review'|'all'
@@ -2083,7 +2123,7 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
             sectionNumber: ex.sectionNumber,
             sectionTitle:  ex.sectionTitle,
             pdfBuffer:     ex.pdfBuffer,
-          }),
+          }, playbookCats),
         ]);
 
         // Convert all page numbers from sub-PDF-relative to absolute full-PDF pages.
@@ -2299,6 +2339,11 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   }
 
   // ── Derived
+  // Never-bid scope the company has told us it will not price.
+  const neverBidHits = useMemo(
+    () => findNeverBidHits(playbook, sections, scanResults),
+    [playbook, sections, scanResults],
+  );
   const filteredSections = getFiltered();
   const scopeCount    = sections.filter(s => s.isScopeRelevant).length;
   const reviewCount   = sections.filter(s => s.isReviewRelevant).length;
@@ -2889,6 +2934,7 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
               checklistResults={checklistResults}
               riskScore={riskScore}
               onJumpToPage={handleJump}
+              neverBidHits={neverBidHits}
             />
           )}
 

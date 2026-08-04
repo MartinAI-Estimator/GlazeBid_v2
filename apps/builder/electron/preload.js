@@ -28,6 +28,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveSections: (sections, folderPath, options) => ipcRenderer.invoke('spec:saveSections', sections, folderPath, options),
   /** Reveal a saved folder in Explorer. */
   openPath: (targetPath) => ipcRenderer.invoke('shell:openPath', targetPath),
+  /** Company playbook (app settings dir, shared across projects). */
+  loadPlaybook: () => ipcRenderer.invoke('playbook:load'),
+  savePlaybook: (playbook) => ipcRenderer.invoke('playbook:save', playbook),
   /** Default "Save my scope" root: <projects root>\<project>\Specs. */
   defaultScopeFolder: (projectName) => ipcRenderer.invoke('spec:defaultScopeFolder', projectName),
   /** Get the real filesystem path from a File object (contextIsolation-safe). */
@@ -133,6 +136,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveSections: (sections, folderPath, options) => ipcRenderer.invoke('spec:saveSections', sections, folderPath, options),
   /** Reveal a saved folder in Explorer. */
   openPath: (targetPath) => ipcRenderer.invoke('shell:openPath', targetPath),
+  /** Company playbook (app settings dir, shared across projects). */
+  loadPlaybook: () => ipcRenderer.invoke('playbook:load'),
+  savePlaybook: (playbook) => ipcRenderer.invoke('playbook:save', playbook),
   /** Default "Save my scope" root: <projects root>\<project>\Specs. */
   defaultScopeFolder: (projectName) => ipcRenderer.invoke('spec:defaultScopeFolder', projectName),
   /** Write a validated citation to the SQLite store. */

@@ -830,6 +830,31 @@ app.whenReady().then(async () => {
     }
   });
 
+  // ── Company playbook — per COMPANY, not per project ────────────────────────
+  // Lives in the app settings dir so one file can be copied to every estimator
+  // in the shop. Never written into .gbid (that is project data).
+  const playbookPath = () => path.join(app.getPath('userData'), 'company-playbook.json');
+
+  ipcMain.handle('playbook:load', () => {
+    try {
+      const p = playbookPath();
+      if (!fs.existsSync(p)) return { ok: true, playbook: null };
+      return { ok: true, playbook: JSON.parse(fs.readFileSync(p, 'utf8')), path: p };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  ipcMain.handle('playbook:save', (_event, playbook: unknown) => {
+    try {
+      const p = playbookPath();
+      fs.writeFileSync(p, JSON.stringify(playbook, null, 2), 'utf8');
+      return { ok: true, path: p };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
   // ── shell:openPath — reveal a saved folder in Explorer ─────────────────────
   ipcMain.handle('shell:openPath', async (_event, targetPath: string) => {
     try {
