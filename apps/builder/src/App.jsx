@@ -22,6 +22,7 @@ import DoorSchedule from './components/DoorSchedule';
 import BidSheet from './components/BidSheet/BidSheet';
 import BidCart from './components/BidCart/BidCart';
 import EquipmentRatesAdmin from './components/Admin/EquipmentRatesAdmin';
+import PlaybookTab from './components/Settings/PlaybookTab';
 import AdminSettingsPanel from './components/Admin/AdminSettingsPanel';
 // AdminDashboard — placeholder stub
 const AdminDashboard = ({ onClose }) => (
@@ -930,8 +931,31 @@ function App() {
             >
               🏗️ Equipment Rates
             </button>
+            <button
+              onClick={() => setSettingsTab('playbook')}
+              style={{
+                padding: '8px 20px',
+                backgroundColor: settingsTab === 'playbook' ? '#1c2128' : 'transparent',
+                border: 'none',
+                borderBottom: settingsTab === 'playbook' ? '2px solid #58a6ff' : '2px solid transparent',
+                color: settingsTab === 'playbook' ? '#58a6ff' : '#8b949e',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: '0.2s'
+              }}
+            >
+              📕 Playbook
+            </button>
           </div>
         </div>
+
+        {/* Company Playbook — the company's own spec rules */}
+        {settingsTab === 'playbook' && (
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+            <PlaybookTab />
+          </div>
+        )}
 
         {/* AI Training Tab — padded narrow container */}
         {settingsTab === 'training' && (
