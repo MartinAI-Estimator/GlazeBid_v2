@@ -859,6 +859,16 @@ app.whenReady().then(async () => {
     model?: 'haiku' | 'sonnet';
     /** clamped 256–8192; default 4096 (1024 truncated multi-frame JSON) */
     maxTokens?: number;
+    /**
+     * Repeatable extraction mode — disables thinking.
+     *
+     * NOTE: do NOT send `temperature` here. It is deprecated on claude-sonnet-5
+     * and the API rejects the request with a 400 ("`temperature` is deprecated
+     * for this model"). Sampling is controlled by the model itself now, so
+     * run-to-run repeatability comes from the extraction cache in
+     * scheduleParser.js, not from a sampling parameter.
+     */
+    deterministic?: boolean;
   }) => {
     const apiKey = loadAiKey();
     if (!apiKey) return { ok: false, error: 'No API key configured. Add your Anthropic key in Settings → AI.' };
@@ -877,15 +887,37 @@ app.whenReady().then(async () => {
       // model family controls thinking via adaptive mode + output effort —
       // fixed budget_tokens is rejected with a 400.
       const maxTokens = Math.max(256, Math.min(32768, payload.maxTokens ?? (isSonnet ? 16384 : 4096)));
-      const response = await client.messages.create({
+      // Deterministic mode turns thinking OFF — that alone removes most of the
+      // per-run variance and is the bulk of the speedup. Temperature is NOT set
+      // (deprecated on this model family; sending it 400s).
+      const samplingOpts = payload.deterministic
+        ? (isSonnet ? { thinking: { type: 'disabled' } } : {})
+        : (isSonnet ? { thinking: { type: 'adaptive' }, output_config: { effort: 'medium' } } : {});
+      // Calls now run in parallel, which makes 429 / 529 far more likely. A
+      // dropped call silently loses whole elevations, so retry with backoff
+      // rather than letting the batch fail.
+      const request = {
         model,
         max_tokens: maxTokens,
         system:     payload.systemPrompt,
         messages:   payload.messages,
-        ...(isSonnet
-          ? { thinking: { type: 'adaptive' }, output_config: { effort: 'medium' } }
-          : {}),
-      } as Parameters<typeof client.messages.create>[0]);
+        ...samplingOpts,
+      } as Parameters<typeof client.messages.create>[0];
+
+      let response;
+      for (let attempt = 0; ; attempt++) {
+        try {
+          response = await client.messages.create(request);
+          break;
+        } catch (err: unknown) {
+          const status = (err as { status?: number })?.status;
+          const retryable = status === 429 || status === 500 || status === 502 || status === 503 || status === 529;
+          if (!retryable || attempt >= 4) throw err;
+          const waitMs = Math.min(16000, 1000 * 2 ** attempt) + Math.floor(Math.random() * 400);
+          console.warn(`[ai:chat] ${status} — retry ${attempt + 1}/4 in ${waitMs}ms`);
+          await new Promise((r) => setTimeout(r, waitMs));
+        }
+      }
       const text = response.content
         .filter((b: { type: string }) => b.type === 'text')
         .map((b: { text: string }) => b.text)
@@ -1054,7 +1086,10 @@ app.whenReady().then(async () => {
       if (rel.startsWith('..') || path.isAbsolute(rel)) {
         return { ok: false, error: 'PATH_TRAVERSAL' };
       }
-      fs.rmSync(targetDir, { recursive: true, force: true });
+      // ASYNC delete — fs.rmSync blocks the main process, which freezes input
+      // for EVERY window (Electron dispatches input from the browser process).
+      // A large or network/OneDrive-backed folder made the whole app hang.
+      await fs.promises.rm(targetDir, { recursive: true, force: true, maxRetries: 3 });
       const prefs = readPrefs();
       prefs.projectRegistry = ((prefs.projectRegistry as Array<Record<string, string>>) ?? [])
         .filter(r => r.aiqPath !== (explicitPath || path.join(targetDir, PROJECT_FILE_NAME)));

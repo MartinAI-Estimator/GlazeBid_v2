@@ -48,6 +48,7 @@ import DoorBuilder from './components/Tools/DoorBuilder';
 import QuickQuoteApp from './components/Tools/QuickQuote/QuickQuoteApp';
 import { ProjectProvider } from './context/ProjectContext'; // Import the brain
 import useBidStore from './store/useBidStore';
+import useFrameBuilderStore from './store/useFrameBuilderStore';
 import useBidProjectStore from './store/useBidProjectStore';
 import { useEstimatorSync } from './hooks/useEstimatorSync';
 import { useInboxSync } from './hooks/useInboxSync';
@@ -749,9 +750,14 @@ function App() {
     // ── End spec section persistence ────────────────────────────────────────
 
     // ── Rehydration Engine (project intake / re-open) ──────────────────────
+    // Frame Builder state persists globally — reset FIRST so a brand-new
+    // project starts with zero frames/elevations. If the project file carries
+    // a saved Frame Builder snapshot, applyLocalState + rehydrate restore it.
+    useFrameBuilderStore.getState().resetAll();
     const payload = await safeLoadFromCloud(projectName);
     if (payload) {
       safeApplyLocalState(payload); // v3: restore localStorage snapshot FIRST
+      await useFrameBuilderStore.persist?.rehydrate?.();
       useBidStore.getState().rehydrateBid({
         frames:           payload.takeoff?.frames          ?? [],
         workspaceSystems: payload.workspaceSystems         ?? null,
@@ -786,9 +792,13 @@ function App() {
     // ── Rehydration Engine ───────────────────────────────────────────────────
     // Use the payload already loaded by ProjectList (avoids a second disk read),
     // or fall back to loading by name + explicit aiqPath.
+    // Reset Frame Builder first so another project's elevations never leak in;
+    // the saved snapshot (if any) is restored via applyLocalState + rehydrate.
+    useFrameBuilderStore.getState().resetAll();
     const payload = project.payload ?? await safeLoadFromCloud(project.name, project.aiqPath);
     if (payload) {
       safeApplyLocalState(payload); // v3: restore localStorage snapshot FIRST
+      await useFrameBuilderStore.persist?.rehydrate?.();
       useBidStore.getState().rehydrateBid({
         frames:           payload.takeoff?.frames       ?? [],
         workspaceSystems: payload.workspaceSystems      ?? null,

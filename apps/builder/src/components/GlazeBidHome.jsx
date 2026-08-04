@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Trash2 } from 'lucide-react';
 import topLogo from '../assets/TOP_LOGO.svg';
 
 // ─── Status config ─────────────────────────────────────────────────────────────
@@ -16,8 +17,68 @@ export default function GlazeBidHome({ onProjectSelect, onNewProject, onSettings
   const [projects, setProjects] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [hovered, setHovered]   = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null); // project | null
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => { loadProjects(); }, []);
+
+  // ── Delete a project: disk folder + registry entry + scoped local state ──────
+  const handleDeleteProject = async () => {
+    if (!deleteTarget) return;
+    const name = deleteTarget.name;
+    setDeleting(true);
+    try {
+      // 1. Remove the project folder from disk (Electron only — no-op in browser).
+      //    A disk failure must NEVER block removing the project from the list,
+      //    so this is isolated in its own try/catch.
+      if (window.electronAPI?.deleteProject) {
+        try {
+          const result = await window.electronAPI.deleteProject({
+            folderName: name,
+            aiqPath:    deleteTarget.aiqPath,
+          });
+          if (!result?.ok && result?.error && result.error !== 'NO_ROOT') {
+            console.warn('[GlazeBidHome] disk delete failed:', result.error);
+          }
+        } catch (err) {
+          console.warn('[GlazeBidHome] delete IPC threw:', err);
+        }
+      }
+
+      // 2. Drop it from the registry
+      try {
+        const raw = localStorage.getItem('glazebid:projectRegistry');
+        const registry = raw ? JSON.parse(raw) : [];
+        localStorage.setItem(
+          'glazebid:projectRegistry',
+          JSON.stringify(registry.filter(p => p?.name !== name)),
+        );
+      } catch { /* ignore */ }
+
+      // 3. Purge every project-scoped localStorage key so a re-created project
+      //    with the same name starts clean.
+      try {
+        const doomed = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('glazebid') && k.includes(`:${name}`)) doomed.push(k);
+        }
+        doomed.forEach(k => localStorage.removeItem(k));
+        if (localStorage.getItem('currentProject') === name) {
+          localStorage.removeItem('currentProject');
+          localStorage.removeItem('projectData');
+        }
+      } catch { /* ignore */ }
+
+      setDeleteTarget(null);
+      loadProjects();
+    } catch (err) {
+      console.error('[GlazeBidHome] delete failed:', err);
+      alert(`Delete failed: ${err?.message || err}`);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   // ── Read project registry from localStorage ──────────────────────────────────
   const loadProjects = () => {
@@ -157,8 +218,10 @@ export default function GlazeBidHome({ onProjectSelect, onNewProject, onSettings
               const cfg = STATUS_CONFIG[project.status] || DEFAULT_STATUS;
               const isHov = hovered === i;
               return (
-                <button
+                <div
                   key={project.name}
+                  role="button"
+                  tabIndex={0}
                   style={{
                     ...styles.card,
                     borderColor: isHov ? cfg.color : 'rgba(255,255,255,0.07)',
@@ -170,9 +233,21 @@ export default function GlazeBidHome({ onProjectSelect, onNewProject, onSettings
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                   onClick={() => onProjectSelect(project)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onProjectSelect(project); }}
                 >
                   {/* Accent top bar */}
                   <div style={{ ...styles.accentBar, background: cfg.color }} />
+
+                  {/* Delete */}
+                  <button
+                    title={`Delete ${project.name}`}
+                    style={{ ...styles.deleteBtn, opacity: isHov ? 1 : 0.35 }}
+                    onClick={(e) => { e.stopPropagation(); setDeleteTarget(project); }}
+                    onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = 'rgba(239,68,68,0.12)'; }}
+                    onMouseOut={(e)  => { e.currentTarget.style.color = '#8b949e'; e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <Trash2 size={15} />
+                  </button>
 
                   {/* Icon */}
                   <div style={styles.cardIcon}>📐</div>
@@ -205,12 +280,41 @@ export default function GlazeBidHome({ onProjectSelect, onNewProject, onSettings
                   >
                     Open Project →
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
         )}
       </div>
+
+      {/* ── Delete confirmation ──────────────────────────────────────────────── */}
+      {deleteTarget && (
+        <div style={styles.overlay} onClick={() => !deleting && setDeleteTarget(null)}>
+          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Delete Project</h3>
+            <p style={styles.modalText}>
+              Permanently delete <strong style={{ color: '#e6edf3' }}>{deleteTarget.name}</strong> and
+              all of its files? This cannot be undone.
+            </p>
+            <div style={styles.modalActions}>
+              <button
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                style={styles.cancelBtn}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProject}
+                disabled={deleting}
+                style={{ ...styles.confirmDeleteBtn, opacity: deleting ? 0.6 : 1 }}
+              >
+                {deleting ? 'Deleting…' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
       <div style={styles.footer}>
@@ -371,6 +475,76 @@ const styles = {
     textAlign: 'left',
     overflow: 'hidden',
     transition: 'border-color 0.18s, box-shadow 0.18s, transform 0.18s',
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 10,
+    background: 'transparent',
+    border: 'none',
+    color: '#8b949e',
+    lineHeight: 0,
+    padding: 6,
+    borderRadius: 6,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'opacity 0.18s, color 0.18s, background 0.18s',
+  },
+  overlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.65)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+  modal: {
+    background: '#161b22',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 14,
+    padding: '26px 28px',
+    minWidth: 360,
+    maxWidth: 460,
+    boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+  },
+  modalTitle: {
+    margin: 0,
+    fontSize: 18,
+    fontWeight: 700,
+    color: '#e6edf3',
+  },
+  modalText: {
+    margin: '12px 0 24px',
+    fontSize: 14,
+    lineHeight: 1.55,
+    color: '#8b949e',
+  },
+  modalActions: {
+    display: 'flex',
+    gap: 12,
+    justifyContent: 'flex-end',
+  },
+  cancelBtn: {
+    padding: '9px 20px',
+    background: 'transparent',
+    border: '1px solid rgba(255,255,255,0.14)',
+    borderRadius: 8,
+    color: '#e6edf3',
+    fontSize: 13,
+    cursor: 'pointer',
+  },
+  confirmDeleteBtn: {
+    padding: '9px 20px',
+    background: '#ef4444',
+    border: 'none',
+    borderRadius: 8,
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
   },
   accentBar: {
     position: 'absolute',

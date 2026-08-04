@@ -220,6 +220,7 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
     groups, frames, glassSpecs,
     setActiveTopTab, setActiveFrame,
     addGroup, addFrame, updateFrame, updateGroup, resolveBOM,
+    removeFrame, removeGroup,
   } = useFrameBuilderStore();
 
   const inboxItems = useInboxStore?.((s) => s.inbox || []) ?? [];
@@ -539,6 +540,18 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
                           {isExp ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
                           <span style={st.groupName}>{group.name}</span>
                           <span style={st.groupCnt}>{gf.length}</span>
+                          <button
+                            style={st.delBtn}
+                            title="Delete group and all its frames"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (window.confirm(`Delete group "${group.name}" and its ${gf.length} frame(s)?`)) {
+                                removeGroup(group.groupId);
+                              }
+                            }}
+                            onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; }}
+                            onMouseOut={(e)  => { e.currentTarget.style.color = '#52525b'; }}
+                          >×</button>
                         </div>
                         {isExp && (
                           <div style={st.groupFrames}>
@@ -562,6 +575,16 @@ const FrameBuilder = ({ project, onNavigate, onBack }) => {
                                       {fwarn.some(w => w.level === 'error') ? '🔴' : '⚠️'}{fwarn.length}
                                     </span>
                                   )}
+                                  <button
+                                    style={st.delBtn}
+                                    title={`Delete frame ${frame.mark}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (window.confirm(`Delete frame ${frame.mark}?`)) removeFrame(frame.frameId);
+                                    }}
+                                    onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; }}
+                                    onMouseOut={(e)  => { e.currentTarget.style.color = '#52525b'; }}
+                                  >×</button>
                                 </div>
                                 );
                               })
@@ -1107,6 +1130,7 @@ const st = {
   frameMark:  { fontSize: 11, fontWeight: 600, color: '#e4e4e7' },
   frameDims:  { fontSize: 9, color: '#52525b', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   addFirstBtn:{ background: '#0ea5e9', border: 'none', color: '#fff', fontSize: 10, padding: '2px 7px', borderRadius: 3, cursor: 'pointer' },
+  delBtn:     { background: 'none', border: 'none', color: '#52525b', fontSize: 13, lineHeight: 1, padding: '0 3px', cursor: 'pointer', flexShrink: 0 },
   addFrameBtn:{ background: 'transparent', border: 'none', color: '#52525b', fontSize: 10, padding: '1px 3px', cursor: 'pointer', textAlign: 'left' },
 
   // Canvas area

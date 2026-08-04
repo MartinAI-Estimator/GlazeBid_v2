@@ -402,6 +402,20 @@ const useFrameBuilderStore = create(
         }));
       },
 
+      /**
+       * resetAll — wipe every frame + group (clean slate for a new project).
+       * Called by App.jsx on project create/open so imported elevations never
+       * leak from one project into the next. Keeps the glass-spec library.
+       */
+      resetAll: () =>
+        set({
+          groups: [],
+          frames: [],
+          activeFrameId: null,
+          activeTopTab: 'framed',
+          activeInputTab: 0,
+        }),
+
       // ══════════════════════════════════════════════════════════════════════
       // SCHEDULE IMPORT — hydrateFrame / hydrateFrames
       // ══════════════════════════════════════════════════════════════════════

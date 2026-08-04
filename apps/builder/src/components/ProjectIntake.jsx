@@ -4,7 +4,7 @@ import { pdfjs } from 'react-pdf';
 import { 
   Upload, FileText, FolderOpen, CheckCircle2, AlertCircle, 
   Clock, BookOpen, Settings, Zap, BarChart3, HelpCircle,
-  Plus, Search, TrendingUp, Calendar, Download
+  Plus, Search, TrendingUp, Calendar, Download, Trash2
 } from 'lucide-react';
 import StatusChip from './StatusChip';
 import topLogo from '../assets/TOP_LOGO.svg';
@@ -107,6 +107,24 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings, onBack }) =
 
   const toggleCalendar = () => {
     setCalendarEnabled(!calendarEnabled);
+  };
+
+  // ── Project delete (dashboard cards) ────────────────────────────────────
+  const [deleteTarget, setDeleteTarget] = useState(null); // { name, aiqPath }
+
+  const handleDeleteProject = async () => {
+    if (!deleteTarget) return;
+    if (!window.electronAPI?.deleteProject) { setDeleteTarget(null); return; }
+    const result = await window.electronAPI.deleteProject({
+      aiqPath:    deleteTarget.aiqPath,
+      folderName: deleteTarget.name,
+    });
+    if (result?.ok) {
+      setDeleteTarget(null);
+      fetchRecentProjects();
+    } else {
+      alert(`Delete failed: ${result?.error || 'unknown error'}`);
+    }
   };
 
   const fetchRecentProjects = async () => {
@@ -1154,6 +1172,15 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings, onBack }) =
                           return <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, border: '1px solid', color: st.color, borderColor: st.color + '55', background: st.color + '18', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{st.label}</span>;
                         })()}
                         {hero.bidDate && <span style={{ fontSize: 11, color: '#a1a1aa' }}>{getDaysLeft(hero.bidDate)}d to bid</span>}
+                        <button
+                          title="Delete project"
+                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(hero); }}
+                          onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; }}
+                          onMouseOut={(e)  => { e.currentTarget.style.color = '#52525b'; }}
+                          style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#52525b', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center' }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                       <div style={{ fontSize: 22, fontWeight: 700, color: '#fafafa', marginBottom: 6, lineHeight: 1.2, letterSpacing: '-0.3px' }}>{hero.name}</div>
                       <div style={{ fontSize: 12, color: '#71717a' }}>Last modified {new Date(hero.modified).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
@@ -1255,7 +1282,18 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings, onBack }) =
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                       <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 9px', borderRadius: 20, border: '1px solid', color: st.color, borderColor: st.color + '55', background: st.color + '18', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{st.label}</span>
-                      <span style={{ fontSize: 11, color: '#52525b' }}>{new Date(p.modified).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{new Date(p.modified).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                        <button
+                          title="Delete project"
+                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(p); }}
+                          onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; }}
+                          onMouseOut={(e)  => { e.currentTarget.style.color = '#52525b'; }}
+                          style={{ background: 'none', border: 'none', color: '#52525b', cursor: 'pointer', padding: 2, display: 'flex', alignItems: 'center' }}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#e4e4e7', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
                     <div style={{ fontSize: 11, color: '#52525b', marginBottom: 14 }}>Takeoff in progress</div>
@@ -1297,6 +1335,33 @@ const ProjectIntake = ({ onProjectReady, onShowProjects, onSettings, onBack }) =
           <div style={styles.bentoDragInner}>
             <Upload size={36} color="#007BFF" style={{ marginBottom: 12 }} />
             <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, margin: 0 }}>Drop to upload drawings</p>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Project Confirmation Modal */}
+      {deleteTarget && (
+        <div style={styles.modalOverlay} onClick={() => setDeleteTarget(null)}>
+          <div style={{ ...styles.modalContent, maxWidth: 440 }} onClick={(e) => e.stopPropagation()}>
+            <h2 style={styles.modalTitle}>Delete Project</h2>
+            <p style={{ color: '#a1a1aa', fontSize: 14, lineHeight: 1.5, margin: '14px 0 22px' }}>
+              Permanently delete <strong style={{ color: '#fafafa' }}>{deleteTarget.name}</strong> and
+              all its files from disk? This cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setDeleteTarget(null)}
+                style={{ padding: '9px 20px', background: 'transparent', border: '1px solid #3f3f46', borderRadius: 6, color: '#e4e4e7', fontSize: 13, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProject}
+                style={{ padding: '9px 20px', background: '#ef4444', border: 'none', borderRadius: 6, color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

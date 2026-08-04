@@ -35,6 +35,8 @@ const GLOBAL_STATE_KEYS = [
   'glazebid-production-rates',   // zustand persist: hourly functions + item rates
   'glazebid-equipment-rates',    // zustand persist: equipment rental rates
   'glazebid_adminSettings',
+  'glazebid-frame-builder-store',// zustand persist: Frame Builder groups/frames — captured
+                                 // per project file so elevations follow their project
 ];
 
 // Keys that must NOT be captured (transient, or first-class payload sections).

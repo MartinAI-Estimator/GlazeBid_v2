@@ -17,6 +17,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { parseSpecSectionsV2 } from '../lib/specSorterV2';
+import { classifySection } from '../lib/glazingScope';
 import { extractSections } from '../lib/specSorter';
 import { scanSection } from '../lib/specReader';
 import { scanSpecSection, SCAN_CATEGORIES, extractPageTexts, aiEnhanceSection, detectCrossReferences } from '../lib/specScanner';
@@ -1949,20 +1950,37 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
         }
         setSections([]);
       } else {
-        setSections(result);
-        // Default scope: glazing-relevant sections in scope, rest out
+        // specSorterV2 classifies at DIVISION level — every Division 08 section
+        // comes back as scope. That is wrong: hollow metal doors, overhead doors
+        // and hardware are other subs' work. Re-classify by 4-digit FAMILY so
+        // the estimator is never handed another trade's sections as their scope.
+        const classified = result.map((s) => {
+          const c = classifySection(s.sectionNumber);
+          return {
+            ...s,
+            scopeBucket:       c.bucket,
+            scopeLabel:        c.label,
+            scopeReason:       c.reason,
+            scopeDivision:     c.division,
+            isScopeRelevant:   c.bucket === 'scope',
+            isReviewRelevant:  c.bucket === 'review',
+            isGlazingRelevant: c.bucket === 'scope' || c.bucket === 'review',
+          };
+        });
+        setSections(classified);
+        // Default scope: only true glazing families start in scope
         const scope = {};
-        result.forEach(s => {
-          scope[s.sectionNumber] = s.isGlazingRelevant !== false;
+        classified.forEach(s => {
+          scope[s.sectionNumber] = s.scopeBucket === 'scope';
         });
         setSectionScope(scope);
-        // Default-check Div 08 (scope) + Div 00/01/02 (review) for scanning
+        // Default-check scope families + review divisions for scanning
         const preCheck = {};
-        result.forEach(s => {
+        classified.forEach(s => {
           preCheck[s.sectionNumber] = !!(s.isScopeRelevant || s.isReviewRelevant);
         });
         setSelected(preCheck);
-        if (result.length > 0) setStage('sections');
+        if (classified.length > 0) setStage('sections');
       }
     } catch (err) {
       setParseError(err.message);
@@ -2493,8 +2511,18 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
                       }}>
                         {s.sectionNumber}
                       </span>
-                      {isDiv08 && <span style={{ fontSize: '0.6rem', color: '#58a6ff', fontWeight: 700 }}>DIV 08</span>}
+                      {isDiv08 && <span style={{ fontSize: '0.6rem', color: '#58a6ff', fontWeight: 700 }}>MY SCOPE</span>}
                       {isReview && !isDiv08 && <span style={{ fontSize: '0.6rem', color: '#f59e0b', fontWeight: 600 }}>REVIEW</span>}
+                      {/* A Division 08 section that is NOT ours looks like a bug
+                          unless we say whose it is. */}
+                      {s.scopeBucket === 'other' && s.scopeDivision === '08' && (
+                        <span
+                          title={s.scopeReason}
+                          style={{ fontSize: '0.6rem', color: '#8b949e', fontWeight: 600 }}
+                        >
+                          NOT YOUR TRADE
+                        </span>
+                      )}
                       {hasResult && <span style={{ fontSize: '0.6rem', color: '#3fb950', fontWeight: 600 }}>✓ scanned</span>}
                       {s.confidence === 'medium' && <span title="Medium confidence — verify boundary" style={{ fontSize: '0.58rem', color: '#f59e0b', fontWeight: 600, padding: '0 3px', borderRadius: 2, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)' }}>~</span>}
                       {s.confidence === 'low' && <span title="Low confidence — manually verify boundary" style={{ fontSize: '0.58rem', color: '#ef4444', fontWeight: 600, padding: '0 3px', borderRadius: 2, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>?</span>}

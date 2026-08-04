@@ -380,6 +380,7 @@ export async function aiMapSchedule(text) {
     const result = await window.electronAPI.aiChat({
       systemPrompt: PAYLOAD_SCHEMA_PROMPT,
       messages: [{ role: 'user', content: `WINDOW SCHEDULE CONTENT:\n\n${clipped}\n\nReturn ONLY the JSON array.` }],
+      deterministic: true, // same schedule text → same rows every run
     });
     if (!result?.ok) return { payloads: [], error: result?.error || 'AI request failed' };
 
@@ -624,6 +625,96 @@ HOW TO READ:
 - Never put the inch symbol (") inside JSON strings — write "40 in" style.
 Return ONLY a JSON array with one object per crop, in crop order.`;
 
+// ─── Extraction cache ─────────────────────────────────────────────────────────
+// `temperature` is deprecated on claude-sonnet-5, so there is no sampling knob
+// that guarantees byte-identical output. Instead we cache by CONTENT HASH:
+// re-dropping the exact same PDF replays the stored result instead of
+// re-querying. Same drawing → same frames, and it returns instantly.
+// Bump CACHE_VERSION whenever a prompt or the payload shape changes.
+// v2 — invalidates anything captured during the thinking-disabled experiment,
+// which produced measurably worse reads. Bump this on any prompt/model change.
+const CACHE_VERSION = 'v2';
+const CACHE_PREFIX  = 'glazebid:elevCache:';
+const CACHE_MAX     = 8; // keep the last N sheets; localStorage is small
+
+async function hashFile(file) {
+  const buf = await file.arrayBuffer();
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function readCache(key) {
+  try {
+    const raw = localStorage.getItem(CACHE_PREFIX + key);
+    if (!raw) return null;
+    const entry = JSON.parse(raw);
+    return entry?.version === CACHE_VERSION ? entry.result : null;
+  } catch { return null; }
+}
+
+function writeCache(key, result) {
+  try {
+    // Evict oldest beyond CACHE_MAX so a long session can't fill localStorage.
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k?.startsWith(CACHE_PREFIX)) keys.push(k);
+    }
+    if (keys.length >= CACHE_MAX) {
+      keys
+        .map((k) => { try { return { k, at: JSON.parse(localStorage.getItem(k))?.at ?? 0 }; } catch { return { k, at: 0 }; } })
+        .sort((a, b) => a.at - b.at)
+        .slice(0, keys.length - CACHE_MAX + 1)
+        .forEach(({ k }) => localStorage.removeItem(k));
+    }
+    localStorage.setItem(
+      CACHE_PREFIX + key,
+      JSON.stringify({ version: CACHE_VERSION, at: Date.now(), result }),
+    );
+  } catch { /* quota — cache is best-effort */ }
+}
+
+/** Clear all cached elevation extractions (forces a fresh read). */
+export function clearElevationCache() {
+  try {
+    const doomed = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k?.startsWith(CACHE_PREFIX)) doomed.push(k);
+    }
+    doomed.forEach((k) => localStorage.removeItem(k));
+    return doomed.length;
+  } catch { return 0; }
+}
+
+// ─── Concurrency ──────────────────────────────────────────────────────────────
+// How many AI calls may be in flight at once. The pipeline used to be fully
+// serial (one page, then one 3-crop batch at a time), which is what made a
+// single elevation sheet take minutes.
+const PAGE_CONCURRENCY  = 2; // hi-res page canvases are memory-heavy — keep low
+const BATCH_CONCURRENCY = 3; // crop batches within one page
+
+/**
+ * Run `worker` over `items` with at most `limit` in flight.
+ * Results are returned in INPUT order, never completion order — this is what
+ * keeps the merged output identical from run to run once parallelism is on.
+ */
+async function runPool(items, limit, worker) {
+  const results = new Array(items.length);
+  let cursor = 0;
+  const runner = async () => {
+    for (;;) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      results[i] = await worker(items[i], i);
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, runner),
+  );
+  return results;
+}
+
 /**
  * Stage 1: locate elevation regions on a full page image.
  * @returns {Promise<Array<{mark:string,x0:number,y0:number,x1:number,y1:number}>>}
@@ -640,6 +731,8 @@ async function locateElevations(pageImage) {
     }],
     model: 'sonnet',
     maxTokens: 4096,
+    // Thinking stays ON — disabling it measurably degraded elevation reads.
+    // Repeatability comes from the content-hash cache, not from sampling.
   });
   if (!result?.ok) throw new Error(result?.error || 'locate call failed');
   const arr = extractJsonArray((result.text || '').trim());
@@ -712,7 +805,9 @@ async function extractCropBatch(crops) {
     systemPrompt: STAGE2_PROMPT,
     messages: [{ role: 'user', content }],
     model: 'sonnet',
-    maxTokens: 16384,
+    maxTokens: 16384, // thinking budget + JSON answer headroom
+    // Thinking stays ON — this is the call that reads dims/bays/glass off the
+    // crop, and it is where turning thinking off cost the most accuracy.
   });
   if (!result?.ok) throw new Error(result?.error || 'extract call failed');
   console.log('[scheduleParser] stage2 raw:', (result.text || '').slice(0, 1500));
@@ -725,7 +820,20 @@ async function extractCropBatch(crops) {
  * Full two-stage pipeline for one PDF. Falls back to whole-page extraction
  * per page if stage 1 fails there.
  */
-export async function visionExtractElevations(file, { maxPages = 6 } = {}) {
+export async function visionExtractElevations(file, { maxPages = 6, noCache = false } = {}) {
+  // Identical PDF → replay the identical result (instant, and repeatable).
+  let cacheKey = null;
+  if (!noCache) {
+    try {
+      cacheKey = `${await hashFile(file)}:${maxPages}`;
+      const hit = readCache(cacheKey);
+      if (hit) {
+        console.log('[scheduleParser] cache hit — replaying previous extraction');
+        return { ...hit, fromCache: true };
+      }
+    } catch { /* hashing unavailable — just extract */ }
+  }
+
   const buf = new Uint8Array(await file.arrayBuffer());
   const doc = await pdfjsLib.getDocument({ data: buf, useWorkerFetch: false, isEvalSupported: false, useSystemFonts: true }).promise;
 
@@ -733,7 +841,14 @@ export async function visionExtractElevations(file, { maxPages = 6 } = {}) {
   const errors = [];
   const pageCount = Math.min(doc.numPages, maxPages);
 
-  for (let p = 1; p <= pageCount; p++) {
+  // Pages run concurrently (bounded); each returns its payloads in crop order.
+  // Merging happens afterwards in page order, so a fast page finishing before a
+  // slow one can never change the result.
+  const pageNos = Array.from({ length: pageCount }, (_, i) => i + 1);
+
+  const processPage = async (p) => {
+    const pageErrors = [];
+    const pagePayloads = [];
     try {
       // stage-1 image (whole page, standard size)
       const page = await doc.getPage(p);
@@ -765,54 +880,80 @@ export async function visionExtractElevations(file, { maxPages = 6 } = {}) {
       }));
       hiCanvas.width = 0; hiCanvas.height = 0;
 
-      for (let i = 0; i < crops.length; i += 3) {
-        const batch = crops.slice(i, i + 3);
+      // Crop batches for this page, run concurrently but collected in order.
+      const batches = [];
+      for (let i = 0; i < crops.length; i += 3) batches.push(crops.slice(i, i + 3));
+
+      const batchResults = await runPool(batches, BATCH_CONCURRENCY, async (batch) => {
         try {
-          const payloads = await extractCropBatch(batch);
-          for (const raw of payloads) {
-            if (!raw || !raw.mark) continue;
-            const pay = {
-              ...raw,
-              overallWidth: typeof raw.overallWidth === 'number' ? raw.overallWidth : parseDimToInches(raw.overallWidth),
-              overallHeight: typeof raw.overallHeight === 'number' ? raw.overallHeight : parseDimToInches(raw.overallHeight),
-              sillAFF: typeof raw.sillAFF === 'number' ? raw.sillAFF : parseDimToInches(raw.sillAFF),
-              quantity: Math.max(1, parseInt(raw.quantity, 10) || 1),
-              flaggedFields: Array.isArray(raw.flaggedFields) ? raw.flaggedFields : [],
-            };
-            const key = (pay.mark || '').toUpperCase().replace(/\s+/g, '');
-            const prev = merged.get(key);
-            if (!prev || (pay.confidence || 0) > (prev.confidence || 0)) merged.set(key, pay);
-          }
+          return { payloads: await extractCropBatch(batch) };
         } catch (err) {
-          errors.push(`p${p} crops ${batch.map((b) => b.mark).join('/')}: ${err.message}`);
+          return { error: `p${p} crops ${batch.map((b) => b.mark).join('/')}: ${err.message}` };
+        }
+      });
+
+      for (const res of batchResults) {
+        if (res?.error) { pageErrors.push(res.error); continue; }
+        for (const raw of res?.payloads ?? []) {
+          if (!raw || !raw.mark) continue;
+          pagePayloads.push({
+            ...raw,
+            overallWidth: typeof raw.overallWidth === 'number' ? raw.overallWidth : parseDimToInches(raw.overallWidth),
+            overallHeight: typeof raw.overallHeight === 'number' ? raw.overallHeight : parseDimToInches(raw.overallHeight),
+            sillAFF: typeof raw.sillAFF === 'number' ? raw.sillAFF : parseDimToInches(raw.sillAFF),
+            quantity: Math.max(1, parseInt(raw.quantity, 10) || 1),
+            flaggedFields: Array.isArray(raw.flaggedFields) ? raw.flaggedFields : [],
+          });
         }
       }
     } catch (err) {
       // stage-1 failure on this page → whole-page fallback
-      errors.push(`p${p}: two-stage failed (${err.message}) — whole-page fallback`);
+      pageErrors.push(`p${p}: two-stage failed (${err.message}) — whole-page fallback`);
       try {
         const { images } = await renderPdfPagesToImages(file, { maxPages: p }); // re-render just up to p
         const img = images[p - 1];
         if (img) {
           const vis = await aiVisionExtract([img], '');
-          if (vis.error) errors.push(`p${p} fallback: ${vis.error}`);
-          for (const pay of vis.payloads) {
-            const key = (pay.mark || '').toUpperCase().replace(/\s+/g, '');
-            if (!merged.has(key)) merged.set(key, pay);
-          }
+          if (vis.error) pageErrors.push(`p${p} fallback: ${vis.error}`);
+          for (const pay of vis.payloads) pagePayloads.push({ ...pay, _fallback: true });
         }
       } catch (e2) {
-        errors.push(`p${p} fallback failed: ${e2.message}`);
+        pageErrors.push(`p${p} fallback failed: ${e2.message}`);
       }
+    }
+    return { payloads: pagePayloads, errors: pageErrors };
+  };
+
+  const pageResults = await runPool(pageNos, PAGE_CONCURRENCY, processPage);
+
+  // Deterministic merge — page order, then crop order within the page.
+  // Highest confidence wins; ties keep the earlier occurrence.
+  for (const pr of pageResults) {
+    for (const err of pr?.errors ?? []) errors.push(err);
+    for (const pay of pr?.payloads ?? []) {
+      const key = (pay.mark || '').toUpperCase().replace(/\s+/g, '');
+      if (!key) continue;
+      const prev = merged.get(key);
+      if (!prev) { merged.set(key, pay); continue; }
+      // Two-stage results always beat a whole-page fallback read.
+      if (prev._fallback && !pay._fallback) { merged.set(key, pay); continue; }
+      if (!prev._fallback && pay._fallback) continue;
+      if ((pay.confidence || 0) > (prev.confidence || 0)) merged.set(key, pay);
     }
   }
 
-  return {
-    payloads: [...merged.values()],
+  const result = {
+    // strip the internal provenance flag before handing payloads to the UI
+    payloads: [...merged.values()].map(({ _fallback, ...pay }) => pay),
     totalPages: doc.numPages,
     pagesRead: pageCount,
     error: errors.length ? errors.join(' | ') : undefined,
   };
+
+  // Only cache a clean, non-empty read — never memoize a failed run.
+  if (cacheKey && result.payloads.length > 0 && !result.error) writeCache(cacheKey, result);
+
+  return result;
 }
 
 // ─── Orchestrator ─────────────────────────────────────────────────────────────
