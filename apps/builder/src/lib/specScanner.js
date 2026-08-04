@@ -28,8 +28,24 @@ if (typeof ReadableStream !== 'undefined' && !ReadableStream.prototype[Symbol.as
 
 /**
  * Scan categories with regex patterns.
- * Each finding returns { found, excerpt, page }.
+ * Each finding returns { found, excerpt, page, matchCount, precision }.
+ *
+ * PRECISION TIERING (fix plan Phase 6)
+ * Some patterns are decisive on their own — "AAMA 2605", "ASTM E283" appear in
+ * a spec only when that requirement is real. Others fire on boilerplate that
+ * exists in every document ever written: `color:` shows up in a paint schedule,
+ * `NOA` is also a common abbreviation. Treating both tiers the same is what
+ * made the report noisy enough to distrust.
+ *
+ * Optional per-category fields:
+ *   lowPrecision  Array<RegExp>  patterns that may NOT stand alone
+ *   requireNear   Array<RegExp>  corroborating context for the low-precision
+ *                                tier; a low-precision hit is only accepted
+ *                                when one of these appears within NEAR_WINDOW
+ *                                characters, or the same pattern hits twice.
  */
+const NEAR_WINDOW = 300;
+
 export const SCAN_CATEGORIES = [
   {
     key: 'warranty',
@@ -89,9 +105,17 @@ export const SCAN_CATEGORIES = [
       /anodiz/i,
       /PVDF|Kynar|fluoropolymer/i,
       /powder[\s\-]coat/i,
+      /high[\s\-]performance\s+(organic\s+)?coat/i,
+    ],
+    // `finish:` and `color:` appear in every schedule in the book — they only
+    // mean a glazing finish requirement when aluminum/coating context is near.
+    lowPrecision: [
       /\bfinish\s*:/i,
       /\bcolor\s*:/i,
-      /high[\s\-]performance\s+(organic\s+)?coat/i,
+    ],
+    requireNear: [
+      /alumin/i, /anodiz/i, /coat/i, /AAMA\s*2\d{3}/i, /kynar|pvdf/i,
+      /frame|storefront|curtain\s*wall|mullion/i,
     ],
   },
   {
@@ -208,11 +232,16 @@ export const SCAN_CATEGORIES = [
       /\bhigh\s+velocity\s+hurricane\s+zone\b/i,
       /\bHVHZ\b/,
       /Miami[\s\-]Dade\s+(NOA|product\s+approval)/i,
-      /\bNOA\b/,
       /windborne\s+debris/i,
       /impact[\s\-]resistant\s+glaz/i,
       /large[\s\-]missile\s+impact/i,
       /FBC\s+section|florida\s+building\s+code/i,
+    ],
+    // Bare "NOA" is also just a word/abbreviation — require hurricane context.
+    lowPrecision: [/\bNOA\b/],
+    requireNear: [
+      /miami|dade|florida|hurricane|impact|missile|windborne|HVHZ/i,
+      /product\s+approval/i,
     ],
   },
   {
@@ -663,22 +692,85 @@ function findItemRects(items, charStart, charEnd) {
   return rects;
 }
 
+/** Build the display excerpt + stored rects for one match. */
+function buildHit(match, page, text, items, precision) {
+  const start = Math.max(0, match.index - 80);
+  const end = Math.min(text.length, match.index + match[0].length + 160);
+  const raw = text.slice(start, end).replace(/\s+/g, ' ').trim();
+  const excerpt = (start > 0 ? '…' : '') + raw + (end < text.length ? '…' : '');
+  return {
+    page,
+    precision,
+    excerpt: excerpt.slice(0, 300),
+    // Phase 4: capture item rects at scan time — never re-search at render time
+    rects: items ? findItemRects(items, match.index, match.index + match[0].length) : null,
+  };
+}
+
+/** All non-overlapping matches of one pattern in a page's text. */
+function allMatches(pattern, text) {
+  const re = new RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+  const out = [];
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    out.push(m);
+    if (m.index === re.lastIndex) re.lastIndex++; // zero-width guard
+    if (out.length > 50) break;                   // pathological-pattern guard
+  }
+  return out;
+}
+
+/**
+ * Scan one category across a section's pages.
+ *
+ * High-precision patterns stand alone. Low-precision patterns are only accepted
+ * with corroborating context nearby, or when the same pattern hits twice —
+ * this is what stops `color:` and a bare `NOA` from generating a "finding".
+ *
+ * Returns every match (ranked high-precision first), not just the first hit,
+ * so the UI can show how many times a requirement actually appears.
+ */
 function scanCategory(category, pageTexts) {
+  const hits = [];
+
   for (const { page, text, items } of pageTexts) {
-    for (const pattern of category.patterns) {
-      const match = pattern.exec(text);
-      if (match) {
-        const start = Math.max(0, match.index - 80);
-        const end = Math.min(text.length, match.index + match[0].length + 160);
-        const raw = text.slice(start, end).replace(/\s+/g, ' ').trim();
-        const excerpt = (start > 0 ? '…' : '') + raw + (end < text.length ? '…' : '');
-        // Phase 4: capture item rects for the matched span
-        const rects = items ? findItemRects(items, match.index, match.index + match[0].length) : null;
-        return { found: true, excerpt: excerpt.slice(0, 300), page, rects };
+    for (const pattern of category.patterns || []) {
+      for (const m of allMatches(pattern, text)) {
+        hits.push(buildHit(m, page, text, items, 'high'));
+      }
+    }
+
+    for (const pattern of category.lowPrecision || []) {
+      const matches = allMatches(pattern, text);
+      if (matches.length === 0) continue;
+      for (const m of matches) {
+        const from = Math.max(0, m.index - NEAR_WINDOW);
+        const to   = Math.min(text.length, m.index + m[0].length + NEAR_WINDOW);
+        const window = text.slice(from, to);
+        const corroborated =
+          (category.requireNear || []).some((re) => re.test(window)) ||
+          matches.length >= 2; // repeated use is itself evidence
+        if (corroborated) hits.push(buildHit(m, page, text, items, 'low'));
       }
     }
   }
-  return { found: false, excerpt: null, page: null, rects: null };
+
+  if (hits.length === 0) {
+    return { found: false, excerpt: null, page: null, rects: null, matchCount: 0, precision: null, matches: [] };
+  }
+
+  // Rank: high-precision first, then earliest page — the best evidence leads.
+  hits.sort((a, b) => (a.precision === b.precision ? a.page - b.page : a.precision === 'high' ? -1 : 1));
+  const best = hits[0];
+  return {
+    found: true,
+    excerpt: best.excerpt,
+    page: best.page,
+    rects: best.rects,
+    precision: best.precision,
+    matchCount: hits.length,
+    matches: hits.slice(0, 10),
+  };
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -691,11 +783,29 @@ function scanCategory(category, pageTexts) {
 export async function scanSpecSection(section) {
   try {
     const pageTexts = await extractPageTextsWithItems(section.pdfBuffer);
+    // Division 00/01 are procurement and general requirements. A warranty or
+    // finish pattern matching there describes the CONTRACT, not the glazing
+    // product — presenting it as a product risk sends the estimator chasing a
+    // requirement that does not exist in their scope.
+    const division = String(section.sectionNumber ?? '').replace(/\D/g, '').slice(0, 2);
+    const isContractLevel = division === '00' || division === '01';
+
     const findings = {};
     for (const cat of SCAN_CATEGORIES) {
-      findings[cat.key] = scanCategory(cat, pageTexts);
+      const finding = scanCategory(cat, pageTexts);
+      if (finding.found && isContractLevel) {
+        finding.contractLevel = true;
+        finding.scopeNote = `Found in Division ${division} — contract-level requirement, not a glazing product spec`;
+      }
+      findings[cat.key] = finding;
     }
-    return { sectionNumber: section.sectionNumber, sectionTitle: section.sectionTitle, ok: true, findings };
+    return {
+      sectionNumber: section.sectionNumber,
+      sectionTitle: section.sectionTitle,
+      ok: true,
+      isContractLevel,
+      findings,
+    };
   } catch (err) {
     return {
       sectionNumber: section.sectionNumber,
