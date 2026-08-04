@@ -25,7 +25,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   /** Prompt user to choose a target folder for saved section PDFs. */
   selectFolder: () => ipcRenderer.invoke('dialog:selectFolder'),
   /** Write extracted spec section PDFs to disk via main process (fs unavailable in renderer). */
-  saveSections: (sections, folderPath) => ipcRenderer.invoke('spec:saveSections', sections, folderPath),
+  saveSections: (sections, folderPath, options) => ipcRenderer.invoke('spec:saveSections', sections, folderPath, options),
+  /** Reveal a saved folder in Explorer. */
+  openPath: (targetPath) => ipcRenderer.invoke('shell:openPath', targetPath),
+  /** Default "Save my scope" root: <projects root>\<project>\Specs. */
+  defaultScopeFolder: (projectName) => ipcRenderer.invoke('spec:defaultScopeFolder', projectName),
   /** Get the real filesystem path from a File object (contextIsolation-safe). */
   getPathForFile: (file) => webUtils.getPathForFile(file),
 
@@ -126,7 +130,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // ── Citation Store ──────────────────────────────────────────────────────
   /** Save extracted spec section PDFs to a folder on disk (main-process fs). */
-  saveSections: (sections, folderPath) => ipcRenderer.invoke('spec:saveSections', sections, folderPath),
+  saveSections: (sections, folderPath, options) => ipcRenderer.invoke('spec:saveSections', sections, folderPath, options),
+  /** Reveal a saved folder in Explorer. */
+  openPath: (targetPath) => ipcRenderer.invoke('shell:openPath', targetPath),
+  /** Default "Save my scope" root: <projects root>\<project>\Specs. */
+  defaultScopeFolder: (projectName) => ipcRenderer.invoke('spec:defaultScopeFolder', projectName),
   /** Write a validated citation to the SQLite store. */
   writeCitation:        (raw) => ipcRenderer.invoke('citation:write', raw),
   /** Get all citations for a project. */

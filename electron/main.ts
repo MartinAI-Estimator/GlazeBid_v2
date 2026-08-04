@@ -721,25 +721,133 @@ app.whenReady().then(async () => {
     }
   });
 
+  // ── MasterFormat division folder names ──────────────────────────────────────
+  const DIVISION_NAMES: Record<string, string> = {
+    '00': 'Procurement and Contracting Requirements',
+    '01': 'General Requirements',
+    '02': 'Existing Conditions',
+    '03': 'Concrete',
+    '04': 'Masonry',
+    '05': 'Metals',
+    '06': 'Wood, Plastics, and Composites',
+    '07': 'Thermal and Moisture Protection',
+    '08': 'Openings',
+    '09': 'Finishes',
+    '10': 'Specialties',
+    '11': 'Equipment',
+    '12': 'Furnishings',
+    '13': 'Special Construction',
+    '14': 'Conveying Equipment',
+    '21': 'Fire Suppression',
+    '22': 'Plumbing',
+    '23': 'HVAC',
+    '26': 'Electrical',
+    '27': 'Communications',
+    '28': 'Electronic Safety and Security',
+    '31': 'Earthwork',
+    '32': 'Exterior Improvements',
+    '33': 'Utilities',
+  };
+
+  const sanitizeName = (s: string) =>
+    String(s ?? '').replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').replace(/\s+/g, ' ').trim();
+
   // ── spec:saveSections — write extracted spec PDFs to disk in main process ───
   // Renderer cannot use fs directly (Vite externalises Node built-ins to stubs).
+  // Channel name and the (sections, folderPath) signature are frozen; `options`
+  // is additive so existing callers keep working unchanged.
   ipcMain.handle('spec:saveSections', async (_event,
-    sections: Array<{ sectionNumber: string; sectionTitle: string; buffer: Uint8Array }>,
+    sections: Array<{
+      sectionNumber: string; sectionTitle: string; buffer: Uint8Array;
+      startPage?: number; endPage?: number; confidence?: string; scopeBucket?: string;
+    }>,
     folderPath: string,
+    options?: {
+      divisionFolders?: boolean;
+      /** e.g. "{number} - {title}" (extension always .pdf) */
+      template?: string;
+      manifest?: Record<string, unknown>;
+    },
   ) => {
     try {
+      const useDivisionFolders = options?.divisionFolders !== false; // default ON
+      const template = options?.template || '{number} - {title}';
+
       fs.mkdirSync(folderPath, { recursive: true });
       const savedPaths: string[] = [];
+      const manifestSections: Array<Record<string, unknown>> = [];
+
       for (const section of sections) {
-        const safeName = `${section.sectionNumber} - ${section.sectionTitle || 'Section'}.pdf`
-          .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
-        const fullPath = path.join(folderPath, safeName);
+        const digits   = String(section.sectionNumber ?? '').replace(/\D/g, '');
+        const division = digits.slice(0, 2);
+
+        let targetDir = folderPath;
+        if (useDivisionFolders && division) {
+          const divName = DIVISION_NAMES[division]
+            ? `${division} ${DIVISION_NAMES[division]}`
+            : `${division} Division ${division}`;
+          targetDir = path.join(folderPath, sanitizeName(divName));
+          fs.mkdirSync(targetDir, { recursive: true });
+        }
+
+        const fileName = sanitizeName(
+          template
+            .replace(/\{number\}/g, section.sectionNumber ?? '')
+            .replace(/\{title\}/g,  section.sectionTitle  || 'Section'),
+        ) + '.pdf';
+
+        const fullPath = path.join(targetDir, fileName);
         fs.writeFileSync(fullPath, Buffer.from(section.buffer));
         savedPaths.push(fullPath);
+
+        manifestSections.push({
+          sectionNumber: section.sectionNumber,
+          sectionTitle:  section.sectionTitle,
+          division,
+          startPage:     section.startPage ?? null,
+          endPage:       section.endPage ?? null,
+          confidence:    section.confidence ?? null,
+          scopeBucket:   section.scopeBucket ?? null,
+          file:          path.relative(folderPath, fullPath),
+        });
       }
-      return { ok: true, savedPaths };
+
+      // _sections.json — lets a later session (or a human) know exactly what was
+      // exported, from which source, and how confident the boundaries were.
+      const manifest = {
+        generatedAt: new Date().toISOString(),
+        app: 'GlazeBid',
+        ...(options?.manifest ?? {}),
+        sectionCount: manifestSections.length,
+        sections: manifestSections,
+      };
+      const manifestPath = path.join(folderPath, '_sections.json');
+      fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
+
+      return { ok: true, savedPaths, manifestPath, folderPath };
     } catch (err) {
       return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── shell:openPath — reveal a saved folder in Explorer ─────────────────────
+  ipcMain.handle('shell:openPath', async (_event, targetPath: string) => {
+    try {
+      const error = await shell.openPath(targetPath);
+      return error ? { ok: false, error } : { ok: true };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── spec:defaultScopeFolder — <project folder>\Specs, per owner decision ────
+  ipcMain.handle('spec:defaultScopeFolder', (_event, projectName?: string) => {
+    try {
+      const root = readPrefs().projectsRoot as string | undefined;
+      if (!root || !projectName) return null;
+      return path.join(root, safeFolderName(projectName), 'Specs');
+    } catch {
+      return null;
     }
   });
 

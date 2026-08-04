@@ -2220,13 +2220,30 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
   const [savingSections, setSavingSections] = useState(false);
   const [saveSectionsMsg, setSaveSectionsMsg] = useState(null); // { ok, text }
 
-  async function handleSaveSections() {
-    const toSave = sections.filter(s => selected[s.sectionNumber]);
+  const [lastSaveFolder, setLastSaveFolder] = useState(null);
+
+  /**
+   * Save sections to disk as individual PDFs, organised into division folders
+   * with a _sections.json manifest.
+   *
+   * @param {'selected'|'scope'} mode  'scope' = one-click "Save my scope":
+   *        every glazing-family section plus the review divisions, no ticking.
+   */
+  async function handleSaveSections(mode = 'selected') {
+    const toSave = mode === 'scope'
+      ? sections.filter(s => s.isScopeRelevant || s.isReviewRelevant)
+      : sections.filter(s => selected[s.sectionNumber]);
     if (!toSave.length || !pdfBuffer) return;
 
-    // Ask user to pick an output folder
-    const folderPath = await window.electronAPI?.selectFolder?.();
-    if (!folderPath) return;
+    // Default to <project folder>\Specs so the scope travels with the project;
+    // fall back to a picker when there is no project root yet.
+    const projectName = project?.name || project?.projectName || null;
+    let folderPath = lastSaveFolder
+      || (projectName ? await window.electronAPI?.defaultScopeFolder?.(projectName) : null);
+    if (!folderPath) {
+      folderPath = await window.electronAPI?.selectFolder?.();
+      if (!folderPath) return;
+    }
 
     setSavingSections(true);
     setSaveSectionsMsg(null);
@@ -2238,21 +2255,45 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
         endPage:       s.endPage,
       })));
 
-      const payload = extracted.map(ex => ({
-        sectionNumber: ex.sectionNumber,
-        sectionTitle:  ex.sectionTitle,
-        buffer:        ex.pdfBuffer instanceof Uint8Array ? ex.pdfBuffer : new Uint8Array(ex.pdfBuffer),
-      }));
+      const byNumber = new Map(sections.map(s => [s.sectionNumber, s]));
+      const payload = extracted.map(ex => {
+        const src = byNumber.get(ex.sectionNumber) || {};
+        return {
+          sectionNumber: ex.sectionNumber,
+          sectionTitle:  ex.sectionTitle,
+          buffer:        ex.pdfBuffer instanceof Uint8Array ? ex.pdfBuffer : new Uint8Array(ex.pdfBuffer),
+          startPage:     src.startPage,
+          endPage:       src.endPage,
+          confidence:    src.confidence,
+          scopeBucket:   src.scopeBucket,
+        };
+      });
 
-      const result = await window.electronAPI?.saveSections?.(payload, folderPath);
+      const result = await window.electronAPI?.saveSections?.(payload, folderPath, {
+        divisionFolders: true,
+        template: '{number} - {title}',
+        manifest: {
+          sourceFile:  pdfFileName || null,
+          projectName: projectName || null,
+          totalPages:  numPages || null,
+          savedMode:   mode,
+        },
+      });
       if (!result?.ok) throw new Error(result?.error || 'Save failed');
 
-      setSaveSectionsMsg({ ok: true, text: `✓ ${result.savedPaths.length} section${result.savedPaths.length !== 1 ? 's' : ''} saved` });
+      setLastSaveFolder(result.folderPath || folderPath);
+      const n = result.savedPaths.length;
+      setSaveSectionsMsg({
+        ok: true,
+        text: `✓ ${n} section${n !== 1 ? 's' : ''} saved to division folders`,
+        folder: result.folderPath || folderPath,
+      });
     } catch (err) {
       setSaveSectionsMsg({ ok: false, text: `⚠ ${err.message}` });
     } finally {
       setSavingSections(false);
-      setTimeout(() => setSaveSectionsMsg(null), 4000);
+      // Keep the success message up longer — it carries the Open folder action.
+      setTimeout(() => setSaveSectionsMsg(null), 12000);
     }
   }
 
@@ -2577,9 +2618,27 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
               </div>
             )}
 
+            {/* Save my scope — one click, no ticking: every glazing-family
+                section plus the review divisions, into division folders. */}
+            <button
+              onClick={() => handleSaveSections('scope')}
+              disabled={savingSections || !pdfBuffer || (scopeCount + reviewCount) === 0}
+              title="Save every Division 08 section that is your work, plus the review divisions, organised into division folders"
+              style={{
+                ...btnStyle('#1f6f3f'),
+                border: '1px solid #2ea043',
+                opacity: (savingSections || !pdfBuffer || (scopeCount + reviewCount) === 0) ? 0.45 : 1,
+                cursor: (savingSections || !pdfBuffer || (scopeCount + reviewCount) === 0) ? 'not-allowed' : 'pointer',
+                fontSize: '0.75rem', padding: '6px 12px', marginBottom: 6,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              }}
+            >
+              {savingSections ? '⟳ Saving…' : `💾 Save my scope (${scopeCount + reviewCount})`}
+            </button>
+
             {/* Save Sections button */}
             <button
-              onClick={handleSaveSections}
+              onClick={() => handleSaveSections('selected')}
               disabled={savingSections || !selectedCount || !pdfBuffer}
               title="Export selected sections as individual PDFs"
               style={{
@@ -2602,7 +2661,19 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
                 color: saveSectionsMsg.ok ? '#3fb950' : '#f85149',
                 border: `1px solid ${saveSectionsMsg.ok ? '#3fb95033' : '#f8514933'}`,
               }}>
-                {saveSectionsMsg.text}
+                <div>{saveSectionsMsg.text}</div>
+                {saveSectionsMsg.folder && (
+                  <button
+                    onClick={() => window.electronAPI?.openPath?.(saveSectionsMsg.folder)}
+                    style={{
+                      marginTop: 5, background: 'transparent', border: '1px solid #3fb95055',
+                      color: '#3fb950', borderRadius: 4, padding: '3px 8px',
+                      fontSize: '0.68rem', cursor: 'pointer',
+                    }}
+                  >
+                    Open folder
+                  </button>
+                )}
               </div>
             )}
 
