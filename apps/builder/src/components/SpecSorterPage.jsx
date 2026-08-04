@@ -2237,7 +2237,8 @@ export default function SpecSorterPage({ project, sheets = [], onBack }) {
 
     // Default to <project folder>\Specs so the scope travels with the project;
     // fall back to a picker when there is no project root yet.
-    const projectName = project?.name || project?.projectName || null;
+    // `project` is the project NAME string (App.jsx passes currentProject).
+    const projectName = typeof project === 'string' ? project : (project?.name ?? null);
     let folderPath = lastSaveFolder
       || (projectName ? await window.electronAPI?.defaultScopeFolder?.(projectName) : null);
     if (!folderPath) {

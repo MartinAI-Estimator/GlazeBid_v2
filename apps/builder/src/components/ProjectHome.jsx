@@ -41,6 +41,92 @@ function ModuleCard({ mod, onLaunch }) {
   );
 }
 
+/**
+ * SpecSummaryCard — surfaces the saved spec analysis on the project landing
+ * page so the estimator sees their Division 08 scope and risk grade without
+ * reopening the Spec Sorter. Reads the same project-scoped key the sorter
+ * writes (`glazebid:specSort:<project>`), which the .aiq v3 localState
+ * snapshot already carries, so it survives save/reopen.
+ */
+function SpecSummaryCard({ project, onLaunch }) {
+  const [summary, setSummary] = React.useState(null);
+
+  React.useEffect(() => {
+    if (!project) return;
+    try {
+      const raw = localStorage.getItem(`glazebid:specSort:${project}`);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      const sections = Array.isArray(data?.sections) ? data.sections : [];
+      if (!sections.length) return;
+
+      const scope  = sections.filter(s => s.isScopeRelevant).length;
+      const review = sections.filter(s => s.isReviewRelevant).length;
+
+      // Count findings that actually carry a verified page — never claim a
+      // finding the report itself would not link to.
+      let findings = 0;
+      for (const res of Object.values(data?.scanResults ?? {})) {
+        for (const f of Object.values(res?.findings ?? {})) {
+          if (f?.found && !f?.contractLevel) findings += 1;
+        }
+      }
+
+      setSummary({
+        fileName: data.pdfFileName || 'Spec book',
+        total: sections.length,
+        scope, review, findings,
+        savedAt: data.savedAt || null,
+      });
+    } catch { /* unreadable — card stays hidden */ }
+  }, [project]);
+
+  if (!summary) return null;
+
+  const stat = (value, label, color) => (
+    <div style={{ minWidth: 68 }}>
+      <div style={{ fontSize: '1.35rem', fontWeight: 700, color, lineHeight: 1.1 }}>{value}</div>
+      <div style={{ fontSize: '0.68rem', color: '#8b949e', marginTop: 2 }}>{label}</div>
+    </div>
+  );
+
+  return (
+    <div
+      onClick={() => onLaunch?.('specSplitter')}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 26, flexWrap: 'wrap',
+        padding: '16px 20px', marginBottom: 22, cursor: 'pointer',
+        background: '#161b22', border: '1px solid rgba(88,166,255,0.28)',
+        borderRadius: 12, transition: 'border-color 0.15s',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = '#58a6ff'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(88,166,255,0.28)'; }}
+    >
+      <div style={{ flex: 1, minWidth: 200 }}>
+        <div style={{ fontSize: '0.7rem', color: '#58a6ff', fontWeight: 700, letterSpacing: '0.04em' }}>
+          SPEC SUMMARY
+        </div>
+        <div style={{
+          fontSize: '0.95rem', color: '#e6edf3', fontWeight: 600, marginTop: 3,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>
+          {summary.fileName}
+        </div>
+        {summary.savedAt && (
+          <div style={{ fontSize: '0.68rem', color: '#6b7280', marginTop: 2 }}>
+            Analyzed {new Date(summary.savedAt).toLocaleDateString()}
+          </div>
+        )}
+      </div>
+      {stat(summary.scope,    'my scope',  '#58a6ff')}
+      {stat(summary.review,   'to review', '#f59e0b')}
+      {stat(summary.findings, 'findings',  summary.findings > 0 ? '#ef4444' : '#3fb950')}
+      {stat(summary.total,    'sections',  '#8b949e')}
+      <span style={{ fontSize: '0.75rem', color: '#58a6ff', fontWeight: 600 }}>Open →</span>
+    </div>
+  );
+}
+
 function ToolCard({ tool, onLaunch }) {
   const [hov, setHov] = React.useState(false);
   return (
@@ -251,6 +337,9 @@ const ProjectHome = ({
             </button>
           </div>
         </div>
+
+        {/* ── SPEC SUMMARY (only once a spec has been analyzed) ── */}
+        <SpecSummaryCard project={project} onLaunch={onLaunch} />
 
         {/* ── SUITE MODULES & TOOLS ── */}
         {onLaunch && (
