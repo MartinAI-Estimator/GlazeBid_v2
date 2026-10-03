@@ -102,9 +102,18 @@ export function getGlassRFQ(frames) {
   const map = {};
 
   for (const frame of frames) {
-    const g = frame.bom?.glassSizes;
-    if (!g) continue;
+    // Engine frames (StudioInbox / Parametric Frame Builder) carry the full
+    // per-lite schedule in bom.rfq.glass — vision, transom, raked, uneven
+    // rows.  Legacy saves only have the single bom.glassSizes line.
+    const frameQty = Math.max(1, Math.round(Number(frame.quantity ?? 1) || 1));
+    const lines = Array.isArray(frame.bom?.rfq?.glass) && frame.bom.rfq.glass.length
+      ? frame.bom.rfq.glass.map(l => ({
+          widthInches: l.widthInches, heightInches: l.heightInches, glassType: l.glassType,
+          qty: l.qtyPerFrame * frameQty,
+        }))
+      : (frame.bom?.glassSizes ? [frame.bom.glassSizes] : []);
 
+    for (const g of lines) {
     const w    = parseFloat((g.widthInches  ?? 0).toFixed(2));
     const h    = parseFloat((g.heightInches ?? 0).toFixed(2));
     const qty  = g.qty ?? frame.bom.glassLitesCount ?? 0;
@@ -129,6 +138,7 @@ export function getGlassRFQ(frames) {
     map[key].qty       += qty;
     map[key].totalSqFt += +((w * h * qty) / 144).toFixed(4);
     map[key].elevationTags.push(frame.elevationTag ?? '');
+    }
   }
 
   // Sort: largest lite first (most important cut on the schedule)

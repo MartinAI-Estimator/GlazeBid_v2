@@ -21,6 +21,7 @@ import SpecSorterPage from './components/SpecSorterPage';
 import DoorSchedule from './components/DoorSchedule';
 import BidSheet from './components/BidSheet/BidSheet';
 import BidCart from './components/BidCart/BidCart';
+import FrameEditorView from './components/BidSheet/FrameEditorView';
 import EquipmentRatesAdmin from './components/Admin/EquipmentRatesAdmin';
 import PlaybookTab from './components/Settings/PlaybookTab';
 import AdminSettingsPanel from './components/Admin/AdminSettingsPanel';
@@ -126,6 +127,8 @@ function App() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [projectType, setProjectType] = useState('pdf'); // 'pdf' or 'tiles'
   const [currentView, setCurrentView] = useState('glazebidHome'); // Navigation state
+  // Bid-cart frame currently open in the Parametric Frame Builder ('frame-editor' view)
+  const [editingFrameId, setEditingFrameId] = useState(null);
   const [activeSidebarSection, setActiveSidebarSection] = useState(null);
   const [showProjectList, setShowProjectList] = useState(false); // Toggle between intake and project list
   const [pageInfo, setPageInfo] = useState({ numPages: 0, currentPage: 1 }); // Track current document's pages
@@ -1144,7 +1147,24 @@ function App() {
 
     // Bid Cart & Labor Engine
     if (currentView === 'bid-cart') {
-      return <BidCart project={currentProject} onNavigate={setCurrentView} />;
+      return (
+        <BidCart
+          project={currentProject}
+          onNavigate={setCurrentView}
+          onEditFrame={(frameId) => { setEditingFrameId(frameId); setCurrentView('frame-editor'); }}
+        />
+      );
+    }
+
+    // One bid-cart frame open in the Parametric Frame Builder for editing
+    if (currentView === 'frame-editor') {
+      return (
+        <FrameEditorView
+          key={editingFrameId}
+          frameId={editingFrameId}
+          onBack={() => setCurrentView('bid-cart')}
+        />
+      );
     }
 
     // Review Bid Page
@@ -1220,7 +1240,7 @@ function App() {
       return (
         <div style={{ flex: 1, padding: '24px', overflowY: 'auto', background: 'var(--bg-deep)' }}>
           <h2 style={{ color: '#60a5fa', marginBottom: '16px', fontSize: '18px', fontWeight: 700 }}>📥 Studio Takeoffs</h2>
-          <StudioInbox />
+          <StudioInbox onNavigate={setCurrentView} />
         </div>
       );
     }

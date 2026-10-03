@@ -10,6 +10,7 @@
 
 import React, { useState } from 'react';
 import useBidProjectStore from '../../store/useBidProjectStore';
+import ParametricFramesSection from './ParametricFramesSection';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -50,7 +51,7 @@ function WaterfallRow({ label, value, accent, bold, indent, borderTop }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function BidCart({ project, onNavigate }) {
+export default function BidCart({ project, onNavigate, onEditFrame }) {
   const systems     = useBidProjectStore(s => s.systems);
   const recap       = useBidProjectStore(s => s.projectRecap);
   const bidSettings = useBidProjectStore(s => s.bidSettings);
@@ -186,6 +187,9 @@ export default function BidCart({ project, onNavigate }) {
 
       {/* ── Scrollable body ── */}
       <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-8">
+
+        {/* ── Engineered frames (AI + Builder) — click to open in Frame Builder ── */}
+        <ParametricFramesSection onEditFrame={onEditFrame} />
 
         {!hasData ? (
           /* ── Empty State ── */

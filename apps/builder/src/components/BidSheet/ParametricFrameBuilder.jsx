@@ -2,13 +2,23 @@
 import useBidStore from '../../store/useBidStore';
 import { SYSTEM_PACKAGES, DEFAULT_SYSTEM_ID, SYSTEM_GEOMETRY_CATALOG } from '../../data/systemPackages';
 import { parseArchitecturalString, formatArchitecturalInches } from '../../utils/parseArchitecturalDim';
-import { calcFrameMH } from '../../utils/laborCalcEngine';
-import { toCanonicalSystemType } from '../../utils/systemTypes';
 import useProductionRatesStore from '../../store/useProductionRatesStore';
+// Gap 8 (2026-09-18): ALL frame math — live preview and save — runs through
+// the shared engine. This component owns UI state only.
+import {
+  buildFrameBOM,
+  buildFramePayload,
+  builderStateFromFrame,
+  frameLaborHours,
+  systemTypeForPackageId,
+  formatInches,
+  DOOR_HEIGHT as ENGINE_DOOR_HEIGHT,
+  DOOR_HEADER_SIGHTLINE as ENGINE_DOOR_HEADER_SL,
+} from '../../engine/parametricFrameMath';
 
 // ─── Constants (non-system-specific) ──────────────────────────────────────────────────
-const DOOR_HEIGHT       = 84;      // inches — standard door leaf height (Single & Pair)
-const DOOR_HEADER_SL    = 2;       // inches — door header sightline (standard 2")
+const DOOR_HEIGHT       = ENGINE_DOOR_HEIGHT;      // inches — single source: engine
+const DOOR_HEADER_SL    = ENGINE_DOOR_HEADER_SL;   // inches — single source: engine
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const css = {
@@ -1077,11 +1087,30 @@ export default function ParametricFrameBuilder({
   bayWidths:   externalBayWidths  = [],
   rowHeights:  externalRowHeights = [],
   onBaysRowsChange,
-  quantity        = 1,
+  quantity: quantityProp = 1,
   onQuantityChange,
   systemProfile   = SYSTEM_PACKAGES[DEFAULT_SYSTEM_ID],
+  /**
+   * A saved bid-cart frame to EDIT.  Every control is hydrated from it and
+   * Save replaces that frame (same frameId) instead of adding a new one.
+   * Schema: buildFramePayload() in engine/parametricFrameMath.js — the same
+   * payload StudioInbox writes, so AI frames open here unchanged.
+   */
+  initialFrame    = null,
 }) {
-  const addFrame = useBidStore((state) => state.addFrame);
+  const addFrame    = useBidStore((state) => state.addFrame);
+  const updateFrame = useBidStore((state) => state.updateFrame);
+
+  // Hydration snapshot — read once on mount. Parent remounts (key=frameId)
+  // to open a different frame.
+  const [init] = useState(() => (initialFrame ? builderStateFromFrame(initialFrame) : null));
+  const isEditing = !!init;
+  const activeProfile = init?.systemProfile ?? systemProfile;
+
+  // Quantity: controlled when the parent passes onQuantityChange, else local.
+  const isQtyControlled = typeof onQuantityChange === 'function';
+  const [qtyLocal, setQtyLocal] = useState(() => init?.quantity ?? quantityProp);
+  const quantity = isQtyControlled ? quantityProp : qtyLocal;
 
   // ── System Geometry — Base + Override architecture ────────────────────────
   // Helper: build an activeGeometry object from a system profile or catalog default
@@ -1098,48 +1127,56 @@ export default function ParametricFrameBuilder({
         };
   };
 
-  const [activeGeometry,  setActiveGeometry]  = useState(() => geoFromProfile(systemProfile));
-  const [geoOverride,     setGeoOverride]     = useState(false);  // reveals custom inputs
-  const [selectedPreset,  setSelectedPreset]  = useState('__default__');
+  const [activeGeometry,  setActiveGeometry]  = useState(() => init?.geometry ?? geoFromProfile(activeProfile));
+  const [geoOverride,     setGeoOverride]     = useState(() => init?.isOverride ?? false);  // reveals custom inputs
+  const [selectedPreset,  setSelectedPreset]  = useState(() => init?.preset ?? '__default__');
 
-  // Sync geometry when the parent swaps the systemProfile prop (Toolbelt scope change)
+  // Sync geometry when the parent swaps the systemProfile prop (Toolbelt scope change).
+  // Skipped on the first run when editing so the saved geometry is not reset.
+  const skipGeoResetRef = useRef(isEditing);
   useEffect(() => {
-    setActiveGeometry(geoFromProfile(systemProfile));
+    if (skipGeoResetRef.current) { skipGeoResetRef.current = false; return; }
+    setActiveGeometry(geoFromProfile(activeProfile));
     setSelectedPreset('__default__');
     setGeoOverride(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [systemProfile?.id]);
+  }, [activeProfile?.id]);
 
   // Convenience aliases — all downstream math + render code reads these
   const sysSL   = activeGeometry.sightline;
   const sysBite = activeGeometry.bite;
 
   // Catalog entry for the active system (null-safe)
-  const geoCatalog = SYSTEM_GEOMETRY_CATALOG[systemProfile?.id] ?? null;
+  const geoCatalog = SYSTEM_GEOMETRY_CATALOG[activeProfile?.id] ?? null;
 
-  const [overallWidth,  setOverallWidth]  = useState(initialWidth);
-  const [overallHeight, setOverallHeight] = useState(initialHeight);
+  // When editing, the saved frame's size wins over the initialWidth/Height props.
+  const startWidth  = init?.width  ?? initialWidth;
+  const startHeight = init?.height ?? initialHeight;
+  const [overallWidth,  setOverallWidth]  = useState(startWidth);
+  const [overallHeight, setOverallHeight] = useState(startHeight);
 
   // When the parent draws a new box (without remounting the component),
   // propagate the fresh dimensions into local state.
-  useEffect(() => { setOverallWidth(initialWidth);  }, [initialWidth]);
-  useEffect(() => { setOverallHeight(initialHeight); }, [initialHeight]);
-  const [bays,          setBays]          = useState(4);
-  const [rows,          setRows]          = useState(1);
-  const [elevationTag,  setElevationTag]  = useState('Elev-A');
-  const [systemType,    setSystemType]    = useState('Storefront 2×4.5');
-  const [glassType,     setGlassType]     = useState('GL-1 (1" Low-E)');
-  const [headSightline, setHeadSightline] = useState(2);        // inches — head (top) sightline
-  const [sillSightline, setSillSightline] = useState(2);        // inches — sill (base) sightline
-  const [doorType,      setDoorType]      = useState('none');   // 'none' | 'single' | 'pair'
-  const [doorBay,       setDoorBay]       = useState(1);        // 1-indexed bay that receives the door
+  useEffect(() => { setOverallWidth(startWidth);  }, [startWidth]);
+  useEffect(() => { setOverallHeight(startHeight); }, [startHeight]);
+  const [bays,          setBays]          = useState(() => init?.bays ?? 4);
+  const [rows,          setRows]          = useState(() => init?.rows ?? 1);
+  const [elevationTag,  setElevationTag]  = useState(() => init?.elevationTag ?? 'Elev-A');
+  // Free-text system DESCRIPTION (e.g. "Kawneer 451T 2×4.5"). Saved as
+  // inputs.systemLabel; the payload's systemType is always canonical.
+  const [systemType,    setSystemType]    = useState(() => init?.systemLabel ?? 'Storefront 2×4.5');
+  const [glassType,     setGlassType]     = useState(() => init?.glassType ?? 'GL-1 (1" Low-E)');
+  const [headSightline, setHeadSightline] = useState(() => init?.headSightline ?? 2);  // inches — head (top) sightline
+  const [sillSightline, setSillSightline] = useState(() => init?.sillSightline ?? 2);  // inches — sill (base) sightline
+  const [doorType,      setDoorType]      = useState(() => init?.doorType ?? 'none');  // 'none' | 'single' | 'pair'
+  const [doorBay,       setDoorBay]       = useState(() => init?.doorBay ?? 1);        // 1-indexed bay that receives the door
   const [saved,         setSaved]         = useState(false);
 
   // ── Shape Mode (Raked Head + Stepped Sill) ──────────────────────────────
-  const [shapeMode,     setShapeMode]     = useState('rectangular'); // 'rectangular' | 'raked_head'
-  const [leftLegHeight, setLeftLegHeight] = useState(initialHeight);
-  const [rightLegHeight,setRightLegHeight]= useState(initialHeight);
-  const [sillStepUps,   setSillStepUps]   = useState({});  // { [bayIdx]: offsetInches }
+  const [shapeMode,     setShapeMode]     = useState(() => init?.shapeMode ?? 'rectangular'); // 'rectangular' | 'raked_head'
+  const [leftLegHeight, setLeftLegHeight] = useState(() => init?.leftLegHeight ?? initialHeight);
+  const [rightLegHeight,setRightLegHeight]= useState(() => init?.rightLegHeight ?? initialHeight);
+  const [sillStepUps,   setSillStepUps]   = useState(() => init?.sillStepUps ?? {});  // { [bayIdx]: offsetInches }
 
   // Keep leg heights in sync when overall height changes in rectangular mode
   useEffect(() => {
@@ -1159,8 +1196,8 @@ export default function ParametricFrameBuilder({
   // ── Bay-Based Horizontals ─────────────────────────────────────────────
   // Sparse map: { [bayIdx]: [..mullionBottomEdge_in_from_sill..] }
   // Missing key → bay inherits the global `rows` default.
-  const [bayHorizontals, setBayHorizontals] = useState({});
-  const lastDoorBayRef = useRef(null); // tracks which bay was last cleared for the door
+  const [bayHorizontals, setBayHorizontals] = useState(() => init?.bayHorizontals ?? {});
+  const lastDoorBayRef = useRef(init && init.doorType !== 'none' ? init.doorBay - 1 : null); // tracks which bay was last cleared for the door
 
   // Helper: get resolved edge list for a bay
   const resolvedEdges = (bayIdx) =>
@@ -1171,12 +1208,17 @@ export default function ParametricFrameBuilder({
   // Smart door insertion: auto-clear the door bay below the header,
   // and restore default when the door is removed.
   useEffect(() => {
+    // Capture the previous door bay NOW. The state updaters below run later,
+    // after this effect has already overwritten lastDoorBayRef — reading the
+    // ref inside them deleted the wrong key and left a phantom 84" horizontal
+    // (plus a split lite) in the bay the door moved out of.
+    const prevDoorBay = lastDoorBayRef.current;
     if (doorType === 'none') {
       // Restore the bay that previously held the door back to default
-      if (lastDoorBayRef.current !== null) {
+      if (prevDoorBay !== null) {
         setBayHorizontals(prev => {
           const next = { ...prev };
-          delete next[lastDoorBayRef.current];
+          delete next[prevDoorBay];
           return next;
         });
         lastDoorBayRef.current = null;
@@ -1185,10 +1227,10 @@ export default function ParametricFrameBuilder({
     }
     const bayIdx = doorBay - 1;
     // If we're moving the door, also restore the old bay
-    if (lastDoorBayRef.current !== null && lastDoorBayRef.current !== bayIdx) {
+    if (prevDoorBay !== null && prevDoorBay !== bayIdx) {
       setBayHorizontals(prev => {
         const next = { ...prev };
-        delete next[lastDoorBayRef.current];
+        delete next[prevDoorBay];
         return next;
       });
     }
@@ -1206,285 +1248,122 @@ export default function ParametricFrameBuilder({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doorType, doorBay]);
 
-  // ── Math Engine ──────────────────────────────────────────────────────────
+  // ── Math Engine (Gap 8: engine/parametricFrameMath.js) ────────────────
+  // UI state → one engine spec.  The live preview below and the saved bid
+  // payload are computed from this same spec, so what the estimator sees is
+  // exactly what goes into the RFQ.
+  const canonicalSystemType = systemTypeForPackageId(activeProfile?.id);
+  // Stable identity for the (optional) unequal bay widths prop.
+  const bayWidthsKey = externalBayWidths.length === bays ? externalBayWidths.join(',') : '';
+  const bayWidthsForSpec = useMemo(
+    () => (bayWidthsKey ? bayWidthsKey.split(',').map(Number) : undefined),
+    [bayWidthsKey],
+  );
+  const frameSpec = useMemo(() => ({
+    widthInches:  overallWidth,
+    heightInches: shapeMode === 'raked_head' ? Math.max(leftLegHeight, rightLegHeight) : overallHeight,
+    systemType:   canonicalSystemType,
+    bays,
+    rows,
+    quantity,
+    elevationTag,
+    glassType,
+    geometryOverride: {
+      sightline:  activeGeometry.sightline,
+      hSightline: activeGeometry.hSightline,
+      bite:       activeGeometry.bite,
+      hBite:      activeGeometry.hBite,
+    },
+    headSightline,
+    sillSightline,
+    door:  { type: doorType, bay: doorBay },
+    shape: { mode: shapeMode, leftHeight: leftLegHeight, rightHeight: rightLegHeight },
+    bayHorizontals,
+    sillStepUps,
+    bayWidths: bayWidthsForSpec,
+  }), [overallWidth, overallHeight, shapeMode, leftLegHeight, rightLegHeight, canonicalSystemType,
+      bays, rows, quantity, elevationTag, glassType, activeGeometry, headSightline, sillSightline,
+      doorType, doorBay, bayHorizontals, sillStepUps, bayWidthsForSpec]);
+
+  // Per-frame view model for the UI (the render multiplies by quantity).
   const calc = useMemo(() => {
-    const w  = overallWidth;
-    const h  = overallHeight;
-    const hs = headSightline;  // user-controlled head sightline
-    const ss = sillSightline;  // user-controlled sill sightline
-
-    // ── Vertical (bay) aluminum ──────────────────────────────────────────────
-    const verticalsCount    = bays + 1;
-    const totalVerticalLF   = (verticalsCount * h) / 12;
-
-    // ── Horizontal (row) aluminum ────────────────────────────────────────────
-    // Head + sill are user-overrideable; interior horizontal mullions use sysSL
-    const horizontalsCount          = rows + 1;                            // display only
-    const interiorHorizSightlines   = (rows - 1) * sysSL;
-    const totalHorizontalSightlines = hs + ss + interiorHorizSightlines;   // needed for dloHeight
-
-    // ── Vertical DLO (width) ───────────────────────────────────────────────
-    const totalVerticalSightlines = verticalsCount * sysSL;
-    const dloWidth                = (w - totalVerticalSightlines) / bays;
-
-    // ── Horizontal DLO (height) ─────────────────────────────────────────────
-    // Uses the spec formula with user-provided head + sill overrides
-    const dloHeight = (h - totalHorizontalSightlines) / rows;
-
-    // ── Standard glass cut sizes ───────────────────────────────────────────────
-    const glassCutWidth  = dloWidth  + sysBite * 2;   // DLO + bite each side
-    const glassCutHeight = dloHeight + sysBite * 2;
-    const sqFtPerLite    = (glassCutWidth * glassCutHeight) / 144;
-
-    // ── Per-bay accurate horizontal LF ─────────────────────────────────
-    const defEdgesCalc        = computeDefaultHorizontals(rows, h, hs, ss, sysSL);
-    const allBayEdgesCalc     = Array.from({ length: bays }, (_, i) =>
-      bayHorizontals[i] !== undefined ? bayHorizontals[i] : defEdgesCalc
-    );
-    const totalInteriorHorizPcs = allBayEdgesCalc.reduce((sum, edges) => sum + edges.length, 0);
-    const totalHorizontalLF = (w * 2) / 12
-      + (totalInteriorHorizPcs * glassCutWidth) / 12;
-    const totalAluminumLF   = totalVerticalLF + totalHorizontalLF;
-
-    // Glass counts — derive per-bay lite counts from actual edge lists
-    const bayLiteCounts = allBayEdgesCalc.map(edges => edges.length + 1);
-    const baseTotalLites     = bayLiteCounts.reduce((s, n) => s + n, 0);
-    const baseTotalGlassSqFt = sqFtPerLite * baseTotalLites;
-
-    // ── Door engine ────────────────────────────────────────────────────────
-    const hasDoor       = doorType !== 'none';
-    const doorLeavesQty = doorType === 'pair' ? 2 : 1;
-    const safeDoorBay   = Math.max(1, Math.min(doorBay, bays));
-
-    // Spec formula: transomDloHeight = height − 84 − DOOR_HEADER_SL − headSightline
-    //   e.g. 120" − 84" − 2" − 2" = 32" DLO
-    const transomDLOH = hasDoor ? h - DOOR_HEIGHT - DOOR_HEADER_SL - hs : 0;
-    const hasTransom  = hasDoor && transomDLOH > 0;
-
-    // Transom glass — width DLO is the same as standard bays (spec)
-    const transomCutW = hasTransom ? glassCutWidth               : 0;
-    const transomCutH = hasTransom ? transomDLOH + sysBite * 2  : 0;
-    const transomSqFt = hasTransom ? (transomCutW * transomCutH) / 144 : 0;
-
-    // Glass totals adjusted for door bay:
-    //   − 1 full-height std lite  (replaced by door unit)
-    //   + 1 transom lite          (if height allows)
-    const stdGlassLites      = baseTotalLites - (hasDoor ? 1 : 0);
-    const adjustedTotalLites = stdGlassLites + (hasTransom ? 1 : 0);
-    const adjustedTotalGlassSqFt =
-      baseTotalGlassSqFt
-      - (hasDoor    ? sqFtPerLite : 0)
-      + (hasTransom ? transomSqFt : 0);
-
-    // Aluminum adjustments for door bay:
-    //   − sill extrusion (door threshold replaces it)
-    //   + door header   (same length, seated at DOOR_HEIGHT from floor)
-    const doorSillRemovedLF = hasDoor ? dloWidth / 12 : 0; // DLO width, not cut width
-    const doorHeaderLF      = hasDoor ? dloWidth / 12 : 0;
-
-    // ── Labor hours — via THE labor engine (Excel parity, AUDIT 8.2) ──────
-    // The old velocity model (LF/hr, ft²/hr) was a fifth parallel labor
-    // implementation. Frame hours now come from laborCalcEngine with the
-    // same rates the workspace / Review Bid / classic grid use.
-    const laborSysType = toCanonicalSystemType(systemProfile?.systemType ?? systemProfile?.id);
-    const { getHourlyFunctions, getItemRates, beadsOfCaulk } = useProductionRatesStore.getState();
-    const engineMH = calcFrameMH(
-      {
-        quantity:  1,
-        bays,
-        rows,
-        panels:    adjustedTotalLites,
-        pairs:     hasDoor && doorLeavesQty === 2 ? 1 : 0,
-        singles:   hasDoor && doorLeavesQty === 1 ? 1 : 0,
-        perimeter: (2 * (overallWidth + overallHeight)) / 12,
-      },
-      getHourlyFunctions(laborSysType),
-      getItemRates(laborSysType),
-      beadsOfCaulk ?? 2,
-      laborSysType,
-    );
-    const shopHours  = engineMH.shopMH;
-    const distHours  = engineMH.distributionMH;
-    const fieldHours = engineMH.fieldMH;
-
+    const rfq    = buildFrameBOM({ ...frameSpec, quantity: 1 });
+    const geo    = rfq.geometry;
+    const labor  = frameLaborHours(geo, canonicalSystemType);
+    const vision  = rfq.glass.find(l => l.liteType === 'vision')  ?? null;
+    const transom = rfq.glass.find(l => l.liteType === 'transom') ?? null;
+    const transomPane = geo.panes.find(pn => pn.liteType === 'transom') ?? null;
+    const lf = (orientation) => rfq.metal
+      .filter(m => m.orientation === orientation)
+      .reduce((s, m) => s + m.lfPerFrame, 0);
     return {
+      rfq,
+      geo,
       // Grid
-      verticalsCount,
-      horizontalsCount,
-      totalVerticalLF,
-      totalHorizontalLF,
-      totalAluminumLF,
-      totalHorizontalSightlines,
+      verticalsCount:            geo.bays + 1,
+      horizontalsCount:          rfq.metal.filter(m => m.orientation === 'horizontal').reduce((s, m) => s + m.qtyPerFrame, 0),
+      totalVerticalLF:           lf('vertical'),
+      totalHorizontalLF:         lf('horizontal'),
+      totalAluminumLF:           rfq.totals.metalLF,
+      totalHorizontalSightlines: geo.totalHorizontalSightlines,
       // DLO
-      dloWidth,
-      dloHeight,
-      glassCutWidth,
-      glassCutHeight,
-      sqFtPerLite,
-      baseTotalLites,
-      baseTotalGlassSqFt,
+      dloWidth:                  geo.dloWidth,
+      dloHeight:                 geo.dloHeight,
+      unequalBays:               geo.unequalBays,
+      perBayGlass:               geo.bayLayout.map(bl => ({ dloW: bl.dloWidth })),
+      glassCutWidth:             vision?.widthInches  ?? 0,
+      glassCutHeight:            vision?.heightInches ?? 0,
+      sqFtPerLite:               vision?.sqFtEach     ?? 0,
+      stdGlassLites:             geo.visionLiteCount,
+      adjustedTotalLites:        geo.liteCount,
+      totalLites:                geo.liteCount,
+      adjustedTotalGlassSqFt:    rfq.totals.glassSqFt,
+      totalGlassSqFt:            rfq.totals.glassSqFt,
       // Door
-      hasDoor,
-      doorLeavesQty,
-      safeDoorBay,
-      hasTransom,
-      transomDLOH,
-      transomCutW,
-      transomCutH,
-      transomSqFt,
-      stdGlassLites,
-      adjustedTotalLites,
-      adjustedTotalGlassSqFt,
-      doorSillRemovedLF,
-      doorHeaderLF,
-      // Aliases used by BOM/save
-      totalLites:     adjustedTotalLites,
-      totalGlassSqFt: adjustedTotalGlassSqFt,
-      // Labor (per single frame — laborCalcEngine output)
-      shopHours,
-      distHours,
-      fieldHours,
-      laborSysType,
+      hasDoor:                   !!geo.door,
+      doorLeavesQty:             geo.door?.leaves ?? 0,
+      safeDoorBay:               geo.door?.bay ?? 1,
+      hasTransom:                geo.transomLiteCount > 0,
+      transomDLOH:               transomPane ? Math.max(transomPane.dloHeightLeft, transomPane.dloHeightRight) : 0,
+      transomCutW:               transom?.widthInches  ?? 0,
+      transomCutH:               transom?.heightInches ?? 0,
+      transomSqFt:               transom?.sqFtEach     ?? 0,
+      // Labor (per single frame — laborCalcEngine)
+      shopHours:                 labor.shopHours,
+      distHours:                 labor.distHours,
+      fieldHours:                labor.fieldHours,
+      laborSysType:              labor.laborSysType,
+      warnings:                  rfq.warnings,
     };
-  }, [overallWidth, overallHeight, bays, rows, headSightline, sillSightline,
-      doorType, doorBay, sysSL, sysBite, systemProfile, activeGeometry, bayHorizontals]);
+  }, [frameSpec, canonicalSystemType]);
 
   // ── Save Handler ─────────────────────────────────────────────────────────
+  // Builds the payload with the shared engine — the same function StudioInbox
+  // uses — so the saved frame is the die-level BOM, and it can be reopened here.
   const handleSave = () => {
-    const frameId = `frame_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-    // Cut list — standard storefront fabrication pieces
-    // Verticals   : bays+1 members, each runs the full frame height
-    // Horizontals : (rows+1) rails × bays sections; each cut to the glass bite
-    //               span (dloWidth + 2×bite) which seats perfectly in the vertical pockets
-    const cutList = [
-      {
-        part:         'Vertical',
-        qty:          calc.verticalsCount,
-        lengthInches: overallHeight,
-        note:         'Full-height member — head to sill',
-      },
-      {
-        part:         'Horizontal',
-        qty:          calc.horizontalsCount * bays,
-        lengthInches: +calc.glassCutWidth.toFixed(4),
-        note:         'Cut to DLO + 2× glass bite (pocket-to-pocket)',
-      },
-      ...(calc.hasDoor ? [
-        {
-          part:         'Sill (Door Bay)',
-          qty:          -1,
-          lengthInches: +calc.glassCutWidth.toFixed(4),
-          note:         `Removed — door in Bay ${calc.safeDoorBay}; threshold replaces it`,
-        },
-        {
-          part:         'Door Header',
-          qty:          1,
-          lengthInches: +calc.glassCutWidth.toFixed(4),
-          note:         `At ${DOOR_HEIGHT}" AFF — Bay ${calc.safeDoorBay}`,
-        },
-        {
-          part:         'Door Hardware Allowance',
-          qty:          calc.doorLeavesQty,
-          lengthInches: null,
-          note:         calc.doorLeavesQty === 2 ? 'Pair — 2 leafs + 3-pt lock + closers' : 'Single — leaf + latch set + closer',
-        },
-      ] : []),
-    ];
-
-    const payload = {
-      frameId,
+    const payload = buildFramePayload(frameSpec, {
+      frameId:        isEditing ? init.frameId : undefined,
       elevationTag,
-      systemType,
-      quantity,
-      inputs: {
-        width:            overallWidth,
-        height:           overallHeight,
-        bays,
-        rows,
-        glassBite:        sysBite,
-        mullionSightline: sysSL,
-        headSightline,
-        sillSightline,
-        systemName:       systemProfile?.name ?? 'Storefront',
-        // Shape mode
-        shapeMode,
-        ...(shapeMode === 'raked_head' ? { leftLegHeight, rightLegHeight } : {}),
-        sillStepUps:      Object.keys(sillStepUps).length > 0 ? sillStepUps : undefined,
-        // Full active geometry snapshot (captures any custom override)
-        geometry: {
-          sightline:  activeGeometry.sightline,
-          hSightline: activeGeometry.hSightline,
-          bite:       activeGeometry.bite,
-          hBite:      activeGeometry.hBite,
-          preset:     selectedPreset,
-          isOverride: geoOverride,
-        },
-      },
-      bom: {
-        quantity,
-        totalAluminumLF:  +(calc.totalAluminumLF * quantity).toFixed(2),
-        totalGlassSqFt:   +(calc.adjustedTotalGlassSqFt * quantity).toFixed(2),
-        glassLitesCount:  calc.adjustedTotalLites * quantity,
-        shopHours:        +(calc.shopHours * quantity).toFixed(2),
-        distHours:        +(calc.distHours * quantity).toFixed(2),
-        fieldHours:       +(calc.fieldHours * quantity).toFixed(2),
-        totalLaborHours:  +((calc.shopHours + calc.distHours + calc.fieldHours) * quantity).toFixed(2),
-        laborEngine:      'laborCalcEngine', // marks Excel-parity hours (vs legacy velocity model)
-        cutList:          cutList.map(item => ({
-          ...item,
-          // Multiply qty for positive items (sill removal stays -1 per frame, × quantity)
-          qty: item.qty > 0 ? item.qty * quantity : item.qty * quantity,
-        })),
-        glassSizes: {
-          glassType,
-          widthInches:  +calc.glassCutWidth.toFixed(4),
-          heightInches: +calc.glassCutHeight.toFixed(4),
-          qty:          calc.stdGlassLites * quantity,
-        },
-        ...(calc.hasTransom ? {
-          transomGlass: {
-            glassType,
-            widthInches:  +calc.transomCutW.toFixed(4),
-            heightInches: +calc.transomCutH.toFixed(4),
-            qty:          quantity,
-            note:         `Transom above door — Bay ${calc.safeDoorBay}`,
-          },
-        } : {}),
-        door: calc.hasDoor ? {
-          type:       doorType,
-          bay:        calc.safeDoorBay,
-          heightIn:   DOOR_HEIGHT,
-          leaves:     calc.doorLeavesQty,
-          hasTransom: calc.hasTransom,
-          transomDLOH: calc.hasTransom ? +calc.transomDLOH.toFixed(4) : null,
-        } : null,
-        // Detailed breakdown (useful downstream for pricing engines)
-        _detail: {
-          dloWidth:               +calc.dloWidth.toFixed(4),
-          dloHeight:              +calc.dloHeight.toFixed(4),
-          sqFtPerLite:            +calc.sqFtPerLite.toFixed(4),
-          totalHorizontalSightlines: calc.totalHorizontalSightlines,
-          totalVerticalLF:        +calc.totalVerticalLF.toFixed(2),
-          totalHorizontalLF:      +calc.totalHorizontalLF.toFixed(2),
-          verticalsCount:         calc.verticalsCount,
-          horizontalsCount:       calc.horizontalsCount,
-          systemName:             systemProfile?.name ?? 'Storefront',
-          mullionSightline:       sysSL,
-          glassBite:              sysBite,
-        },
-      },
-    };
+      source:         init?.source ?? 'builder',
+      sourceSystemId: init?.sourceSystemId ?? null,
+      takeoffIds:     init?.takeoffIds ?? [],
+      ai:             init?.ai ?? undefined,
+      systemLabel:    systemType,
+      preset:         selectedPreset,
+      isOverride:     geoOverride,
+    });
 
-    // Always push to the global Zustand bid cart
-    addFrame(payload);
+    // Editing → replace in place (same frameId). New → append.
+    const exists = isEditing && useBidStore.getState().frames.some(f => f.frameId === payload.frameId);
+    if (exists) {
+      updateFrame(payload.frameId, payload);
+    } else {
+      addFrame(payload);
+    }
 
-    // Also fire the optional callback prop (e.g. parent wants to navigate away)
     if (typeof onSaveFrame === 'function') {
       onSaveFrame(payload);
     }
-
-    console.log('[ParametricFrameBuilder] → Bid cart:', payload);
 
     setSaved(true);
     setTimeout(() => setSaved(false), 2200);
@@ -1720,7 +1599,7 @@ export default function ParametricFrameBuilder({
                         step={1}
                         onChange={e => {
                           const v = Math.max(1, parseInt(e.target.value, 10) || 1);
-                          if (typeof onQuantityChange === 'function') onQuantityChange(v);
+                          if (isQtyControlled) onQuantityChange(v); else setQtyLocal(v);
                         }}
                         style={{
                           ...css.numberInput,
@@ -1958,10 +1837,10 @@ export default function ParametricFrameBuilder({
                     <div style={{ fontSize: '0.58rem', fontWeight: 700, color: '#60a5fa',
                       textTransform: 'uppercase', letterSpacing: '0.08em' }}>Active System</div>
                     <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#e6edf3' }}>
-                      {systemProfile?.name ?? 'Storefront'}
+                      {activeProfile?.name ?? 'Storefront'}
                     </div>
                     <div style={{ fontSize: '0.58rem', color: '#9ea7b3' }}>
-                      Fab {systemProfile?.labor?.fabLFPerHour ?? 12} LF/hr &middot; Install {systemProfile?.labor?.installSqFtPerHour ?? 25} SF/hr
+                      Fab {activeProfile?.labor?.fabLFPerHour ?? 12} LF/hr &middot; Install {activeProfile?.labor?.installSqFtPerHour ?? 25} SF/hr
                     </div>
                   </div>
 
@@ -2137,29 +2016,42 @@ export default function ParametricFrameBuilder({
                   />
                 </div>
 
-                {/* Glass cut sizes */}
+                {/* Glass schedule — engine lines (what the RFQ will show) */}
                 <div style={css.bomCard}>
                   <div style={css.bomCardHeader}>
                     <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>
-                    Glass Cut Sizes
+                    Glass Schedule
                   </div>
-                  <BomRow label="Cut Width"     value={`${calc.glassCutWidth.toFixed(4)}"`}  />
-                  <BomRow label="Cut Height"    value={`${calc.glassCutHeight.toFixed(4)}"`} />
-                  <BomRow label="Sq Ft / Lite"  value={`${calc.sqFtPerLite.toFixed(2)} ft²`}      />
-                  {calc.hasTransom && (
-                    <>
-                      <BomRow label="─ Transom Cut Width"  value={`${calc.transomCutW.toFixed(4)}"`} accent />
-                      <BomRow label="─ Transom Cut Height" value={`${calc.transomCutH.toFixed(4)}"`} accent />
-                      <BomRow label="─ Transom Sq Ft"      value={`${calc.transomSqFt.toFixed(2)} ft²`}  accent />
-                    </>
-                  )}
+                  {calc.rfq.glass.map(l => (
+                    <div key={l.lineId} style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2,
+                      background: l.liteType === 'transom' ? 'rgba(52,211,153,0.05)' : undefined }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{ ...css.bomKey, color: l.liteType === 'transom' ? '#6ee7b7' : '#93c5fd', fontWeight: 700 }}>
+                          {l.lineId} · {l.liteType === 'transom' ? 'Transom' : 'Vision'}{l.shape === 'raked' ? ' (raked)' : ''}
+                        </span>
+                        <span style={css.bomVal}>Qty: {l.qtyPerFrame * quantity}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{ ...css.bomKey, fontSize: '0.7rem' }}>Order size</span>
+                        <span style={{ ...css.bomVal, color: '#e2e8f0' }}>
+                          {l.widthDisplay} × {l.shape === 'raked' ? `${l.heightLeftDisplay} / ${l.heightRightDisplay}` : l.heightDisplay}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary, #9ea7b3)', fontStyle: 'italic' }}>
+                        {l.location} · DLO {formatInches(l.dloWidthInches)} × {formatInches(l.dloHeightInches)} · {l.sqFtEach.toFixed(2)} ft² ea
+                      </div>
+                    </div>
+                  ))}
                   <BomRow
                     label={quantity > 1 ? `Total Glass Sq Ft (×${quantity})` : 'Total Glass Sq Ft'}
                     value={`${(calc.adjustedTotalGlassSqFt * quantity).toFixed(2)} ft²${quantity > 1 ? ` (${calc.adjustedTotalGlassSqFt.toFixed(2)} each)` : ''}`}
                     accent highlight
                   />
+                  <div style={{ padding: '6px 12px 8px', fontSize: '0.6rem', color: 'var(--text-secondary, #9ea7b3)', fontStyle: 'italic' }}>
+                    Glass = DLO + 2 × bite − {formatInches(calc.geo.edgeClearance)} clearance, rounded down to 1/16"
+                  </div>
                 </div>
 
                 {/* Door Configuration */}
@@ -2192,27 +2084,7 @@ export default function ParametricFrameBuilder({
                   </div>
                 )}
 
-                {/* Aluminum LF */}
-                <div style={css.bomCard}>
-                  <div style={css.bomCardHeader}>
-                    <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                    </svg>
-                    Aluminum Linear Footage
-                  </div>
-                  <BomRow label="Vertical Members"   value={`${calc.verticalsCount} × ${overallHeight}"`}  />
-                  <BomRow label="Vertical LF"        value={`${calc.totalVerticalLF.toFixed(2)} LF`}            />
-                  <BomRow label="Horizontal Members" value={`${calc.horizontalsCount} × ${overallWidth}"`} />
-                  <BomRow label="Horizontal LF"      value={`${calc.totalHorizontalLF.toFixed(2)} LF`}          />
-                  <BomRow
-                    label={quantity > 1 ? `Total Aluminum LF (×${quantity})` : 'Total Aluminum LF'}
-                    value={`${(calc.totalAluminumLF * quantity).toFixed(2)} LF${quantity > 1 ? ` (${calc.totalAluminumLF.toFixed(2)} each)` : ''}`}
-                    accent highlight
-                  />
-                </div>
-
-                {/* Fabrication Cut List */}
+                {/* Die-level cut list — engine lines (what the RFQ will show) */}
                 <div style={css.bomCard}>
                   <div style={css.bomCardHeader}>
                     <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -2221,67 +2093,53 @@ export default function ParametricFrameBuilder({
                     </svg>
                     Fabrication Cut List
                   </div>
-                  {/* Verticals */}
-                  <div style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                      <span style={{ ...css.bomKey, color: '#93c5fd', fontWeight: 700 }}>Vertical</span>
-                      <span style={css.bomVal}>Qty: {calc.verticalsCount * quantity}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                      <span style={{ ...css.bomKey, fontSize: '0.7rem' }}>Length each</span>
-                      <span style={{ ...css.bomVal, color: '#e2e8f0' }}>{overallHeight}" (full height)</span>
-                    </div>
-                  </div>
-                  {/* Horizontals */}
-                  <div style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                      <span style={{ ...css.bomKey, color: '#86efac', fontWeight: 700 }}>Horizontal</span>
-                      <span style={css.bomVal}>Qty: {calc.horizontalsCount * bays * quantity}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                      <span style={{ ...css.bomKey, fontSize: '0.7rem' }}>Length each</span>
-                      <span style={{ ...css.bomVal, color: '#e2e8f0' }}>{calc.glassCutWidth.toFixed(4)}"</span>
-                    </div>
-                    <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary, #9ea7b3)', fontStyle: 'italic', marginTop: 1 }}>
-                      DLO + 2&times; glass bite &mdash; pocket-to-pocket
-                    </div>
-                  </div>
-                  {/* Door cut items */}
-                  {calc.hasDoor && (
-                    <>
-                      <div style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2, background: 'rgba(239,68,68,0.04)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <span style={{ ...css.bomKey, color: '#f87171', fontWeight: 700, textDecoration: 'line-through' }}>Sill (Bay {calc.safeDoorBay})</span>
-                          <span style={{ ...css.bomVal, color: '#fca5a5' }}>− 1 pc</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <span style={{ ...css.bomKey, fontSize: '0.7rem' }}>Length removed</span>
-                          <span style={{ ...css.bomVal, color: '#fca5a5' }}>{calc.glassCutWidth.toFixed(4)}"</span>
-                        </div>
-                        <div style={{ fontSize: '0.62rem', color: '#f87171', fontStyle: 'italic', marginTop: 1, opacity: 0.7 }}>Threshold replaces sill extrusion</div>
+                  {calc.rfq.metal.map(m => (
+                    <div key={m.lineId} style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2,
+                      background: m.role === 'door_header' ? 'rgba(59,130,246,0.04)' : undefined }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{ ...css.bomKey, fontWeight: 700,
+                          color: m.orientation === 'vertical' ? '#93c5fd' : m.role === 'door_header' ? '#60a5fa' : '#86efac' }}>
+                          {m.lineId} · {m.roleLabel}
+                        </span>
+                        <span style={css.bomVal}>Qty: {m.qtyPerFrame * quantity}</span>
                       </div>
-                      <div style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2, background: 'rgba(59,130,246,0.04)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <span style={{ ...css.bomKey, color: '#60a5fa', fontWeight: 700 }}>Door Header</span>
-                          <span style={css.bomVal}>Qty: 1</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <span style={{ ...css.bomKey, fontSize: '0.7rem' }}>Length @ {DOOR_HEIGHT}" from floor</span>
-                          <span style={{ ...css.bomVal, color: '#e2e8f0' }}>{calc.glassCutWidth.toFixed(4)}"</span>
-                        </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{ ...css.bomKey, fontSize: '0.7rem' }}>Length each</span>
+                        <span style={{ ...css.bomVal, color: '#e2e8f0' }}>{m.lengthDisplay} <span style={{ opacity: 0.55 }}>({m.lengthInches.toFixed(4)}")</span></span>
                       </div>
-                      <div style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2, background: 'rgba(251,191,36,0.04)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <span style={{ ...css.bomKey, color: '#fbbf24', fontWeight: 700 }}>Door Hardware</span>
-                          <span style={css.bomVal}>Allowance</span>
-                        </div>
-                        <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary, #9ea7b3)', fontStyle: 'italic', marginTop: 1 }}>
-                          {calc.doorLeavesQty === 2 ? 'Pair: 2 leafs + 3-pt lock + closers' : 'Single: leaf + latch + closer'}
-                        </div>
+                      <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary, #9ea7b3)', fontStyle: 'italic' }}>{m.note}</div>
+                    </div>
+                  ))}
+                  <BomRow label="Vertical LF"   value={`${calc.totalVerticalLF.toFixed(2)} LF`} />
+                  <BomRow label="Horizontal LF" value={`${calc.totalHorizontalLF.toFixed(2)} LF`} />
+                  <BomRow
+                    label={quantity > 1 ? `Total Aluminum LF (×${quantity})` : 'Total Aluminum LF'}
+                    value={`${(calc.totalAluminumLF * quantity).toFixed(2)} LF${quantity > 1 ? ` (${calc.totalAluminumLF.toFixed(2)} each)` : ''}`}
+                    accent highlight
+                  />
+                  {calc.rfq.doors.map(d => (
+                    <div key={d.lineId} style={{ ...css.bomRow, flexDirection: 'column', alignItems: 'flex-start', gap: 2, background: 'rgba(251,191,36,0.04)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{ ...css.bomKey, color: '#fbbf24', fontWeight: 700 }}>{d.lineId} · Door ({d.type === 'pair' ? 'Pair' : 'Single'})</span>
+                        <span style={css.bomVal}>Qty: {d.qtyPerFrame * quantity}</span>
                       </div>
-                    </>
-                  )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{ ...css.bomKey, fontSize: '0.7rem' }}>Opening (Bay {d.bay})</span>
+                        <span style={{ ...css.bomVal, color: '#e2e8f0' }}>{d.openingWidthDisplay} × {d.openingHeightDisplay}</span>
+                      </div>
+                      <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary, #9ea7b3)', fontStyle: 'italic' }}>{d.note}</div>
+                    </div>
+                  ))}
                 </div>
+
+                {calc.warnings.length > 0 && (
+                  <div style={{ ...css.bomCard, border: '1px solid rgba(245,158,11,0.35)' }}>
+                    <div style={{ ...css.bomCardHeader, background: 'rgba(245,158,11,0.1)', color: '#fbbf24' }}>Check</div>
+                    {calc.warnings.map((w, i) => (
+                      <div key={i} style={{ padding: '6px 12px', fontSize: '0.66rem', color: '#fcd34d', lineHeight: 1.45 }}>{w}</div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Labor Hours */}
                 <div style={{ ...css.bomCard, border: '1px solid rgba(52,211,153,0.25)' }}>
@@ -2289,7 +2147,7 @@ export default function ParametricFrameBuilder({
                     <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                       <circle cx={12} cy={12} r={10}/><polyline points="12 6 12 12 16 14"/>
                     </svg>
-                    Labor Hours — {systemProfile?.name ?? 'Storefront'}
+                    Labor Hours — {activeProfile?.name ?? 'Storefront'}
                   </div>
                   <BomRow
                     label={`Shop MH (${calc.laborSysType})`}
@@ -2322,7 +2180,7 @@ export default function ParametricFrameBuilder({
                 <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                Saved to Bid!
+                {isEditing ? 'Frame Updated!' : 'Saved to Bid!'}
               </div>
             ) : (
               <button
@@ -2338,7 +2196,7 @@ export default function ParametricFrameBuilder({
                   <polyline points="17 21 17 13 7 13 7 21"/>
                   <polyline points="7 3 7 8 15 8"/>
                 </svg>
-                Save Frame to Bid
+                {isEditing ? 'Update Frame in Bid' : 'Save Frame to Bid'}
               </button>
             )}
           </div>

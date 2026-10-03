@@ -5,12 +5,31 @@
  * Shows a table of all measured items with dimensions, type, and label.
  *
  * Designed to slot into the legacy Builder alongside the existing BidSheet.
+ *
+ * ── Intake (Money Bridge, 2026-09-18) ────────────────────────────────────────
+ * "+ Add to Bid" no longer hardcodes a 1×1 perimeter box.  Each takeoff group
+ * is run through the G4 parametric math (engine/parametricFrameMath.js — the
+ * ParametricFrameBuilder formulas as a pure function) using what the takeoff
+ * already knows:
+ *   • widthInches × heightInches         — from Studio calibration
+ *   • systemType  ('Ext SF' | 'Int SF' | 'Cap CW' | 'SSG CW') — from Box & Snap /
+ *                 Drawing Intelligence, else parsed from the label, else Ext SF
+ *   • bayCount × rowCount                — from geometry_anchoring.py
+ *                 (geometry ⊕ vision), default 1 × 1 and flagged as such
+ * so the frame that lands in the bid cart has the right profile geometry,
+ * a real DLO / glass cut size, a multi-lite cut list and labor hours from
+ * laborCalcEngine — the same payload ParametricFrameBuilder saves.
  */
 
 import React, { useMemo, useCallback, useState } from 'react';
 import { useInboxStore } from '../store/useInboxStore';
 import useBidStore from '../store/useBidStore';
-import { toCanonicalSystemType, tryCanonicalSystemType } from '../utils/systemTypes';
+import { toCanonicalSystemType } from '../utils/systemTypes';
+import {
+  asGridCount,
+  buildFrameFromTakeoff,
+  takeoffSystemType,
+} from '../engine/parametricFrameMath';
 
 const TYPE_ICONS = {
   Area:  '⬜',
@@ -22,79 +41,90 @@ function sqFt(w, h) {
   return ((w * h) / 144).toFixed(2);
 }
 
+/**
+ * Group RawTakeoffs that would build the SAME frame:
+ * type × size × system × grid × label × Studio systemId.
+ * Exported for tests.
+ */
+export function groupTakeoffs(inbox) {
+  const map = {};
+  for (const t of inbox) {
+    const systemType = takeoffSystemType(t) || toCanonicalSystemType(null);
+    const bayCount   = asGridCount(t.bayCount);
+    const rowCount   = asGridCount(t.rowCount);
+    const key = [
+      t.type,
+      `${(t.widthInches ?? 0).toFixed(2)}x${(t.heightInches ?? 0).toFixed(2)}`,
+      systemType,
+      `${bayCount}x${rowCount}`,
+      t.label ?? '',
+      t.systemId ?? '',
+    ].join('::');
+    if (!map[key]) {
+      map[key] = {
+        key,
+        type:         t.type,
+        widthInches:  t.widthInches  ?? 0,
+        heightInches: t.heightInches ?? 0,
+        label:        t.label ?? '—',
+        systemId:     t.systemId ?? null,   // Studio FrameType link — preserved (AUDIT 2.3)
+        systemType,
+        bayCount,
+        rowCount,
+        // 'default' = nobody counted the grid; the row shows it as unverified
+        gridSource:   t.gridSource ?? (t.bayCount != null || t.rowCount != null ? 'takeoff' : 'default'),
+        mark:         t.mark ?? null,
+        confidence:   typeof t.confidence === 'number' ? t.confidence : null,
+        takeoffIds:   [],
+        qty:          0,
+      };
+    }
+    const g = map[key];
+    g.qty += 1;
+    if (t.id) g.takeoffIds.push(t.id);
+    // Keep the best confidence seen for the group's badge
+    if (typeof t.confidence === 'number' && (g.confidence == null || t.confidence > g.confidence)) {
+      g.confidence = t.confidence;
+    }
+  }
+  return Object.values(map).sort((a, b) => b.widthInches * b.heightInches - a.widthInches * a.heightInches);
+}
+
+/** One group → one bid-cart frame payload (G4 shape).  Exported for tests. */
+export function framePayloadForGroup(g) {
+  return buildFrameFromTakeoff({
+    widthInches:    g.widthInches,
+    heightInches:   g.heightInches,
+    systemType:     g.systemType,
+    bayCount:       g.bayCount,
+    rowCount:       g.rowCount,
+    quantity:       g.qty,
+    // Mark first (SF-1), else a label that isn't the placeholder, else size
+    elevationTag:   g.mark || (g.label !== '—' ? g.label : null),
+    mark:           g.mark,
+    gridSource:     g.gridSource,
+    confidence:     g.confidence,
+    sourceSystemId: g.systemId,
+    takeoffIds:     g.takeoffIds,
+  });
+}
+
 export default function StudioInbox({ className = '', onNavigate = null }) {
   const inbox = useInboxStore((s) => s.inbox);
   const addFrame = useBidStore((s) => s.addFrame);
   const [lastAdded, setLastAdded] = useState(null);
 
+  const groups = useMemo(() => groupTakeoffs(inbox), [inbox]);
+
   const addGroupToBid = useCallback((g) => {
-    const sqFtEach = (g.widthInches * g.heightInches) / 144;
-    const frameId = `studio-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-    addFrame({
-      frameId,
-      elevationTag: g.label !== '—' ? g.label : `${g.widthInches.toFixed(0)}"x${g.heightInches.toFixed(0)}"`,
-      // Canonical SystemType only — 'Studio Takeoff' violated the frozen contract
-      // and fell through every downstream systemType switch (AUDIT 2.1).
-      // Resolve from the label if it names a real type; otherwise default Ext SF.
-      systemType: tryCanonicalSystemType(g.label) || toCanonicalSystemType(null),
-      source: 'studio',
-      sourceSystemId: g.systemId ?? null, // Studio FrameType link — preserved (AUDIT 2.3)
-      inputs: { width: g.widthInches, height: g.heightInches, bays: 1, rows: 1, glassBite: 0.75, sightline: 2 },
-      bom: {
-        totalAluminumLF: (2 * (g.widthInches + g.heightInches) / 12) * g.qty,
-        totalGlassSqFt:  sqFtEach * g.qty,
-        glassLitesCount: g.qty,
-        cutList: [],
-        glassSizes: { widthInches: g.widthInches, heightInches: g.heightInches, qty: g.qty },
-      },
-    });
+    addFrame(framePayloadForGroup(g));
     // AUDIT 2.2: track by group key (what the row button compares against), not frameId
     setLastAdded(g.key);
     setTimeout(() => setLastAdded(null), 4000);
   }, [addFrame]);
 
-  // Group by (widthInches × heightInches × type × label × systemId) for concise display.
-  // systemId is part of the key so the Studio FrameType link survives grouping (AUDIT 2.3).
-  const groups = useMemo(() => {
-    const map = {};
-    for (const t of inbox) {
-      const key = `${t.type}::${(t.widthInches ?? 0).toFixed(2)}x${(t.heightInches ?? 0).toFixed(2)}::${t.label ?? ''}::${t.systemId ?? ''}`;
-      if (!map[key]) {
-        map[key] = {
-          key,
-          type:         t.type,
-          widthInches:  t.widthInches  ?? 0,
-          heightInches: t.heightInches ?? 0,
-          label:        t.label ?? '—',
-          systemId:     t.systemId ?? null,
-          qty:          0,
-        };
-      }
-      map[key].qty += 1;
-    }
-    return Object.values(map).sort((a, b) => b.widthInches * b.heightInches - a.widthInches * a.heightInches);
-  }, [inbox]);
-
   const handleAddAll = useCallback(() => {
-    groups.forEach((g) => {
-      const sqFtEach = (g.widthInches * g.heightInches) / 144;
-      const frameId = `studio-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-      addFrame({
-        frameId,
-        elevationTag: g.label !== '—' ? g.label : `${g.widthInches.toFixed(0)}"x${g.heightInches.toFixed(0)}"`,
-        systemType: tryCanonicalSystemType(g.label) || toCanonicalSystemType(null),
-        source: 'studio',
-        sourceSystemId: g.systemId ?? null,
-        inputs: { width: g.widthInches, height: g.heightInches, bays: 1, rows: 1, glassBite: 0.75, sightline: 2 },
-        bom: {
-          totalAluminumLF: (2 * (g.widthInches + g.heightInches) / 12) * g.qty,
-          totalGlassSqFt:  sqFtEach * g.qty,
-          glassLitesCount: g.qty,
-          cutList: [],
-          glassSizes: { widthInches: g.widthInches, heightInches: g.heightInches, qty: g.qty },
-        },
-      });
-    });
+    groups.forEach((g) => addFrame(framePayloadForGroup(g)));
     setLastAdded('all');
     setTimeout(() => setLastAdded(null), 4000);
   }, [groups, addFrame]);
@@ -150,6 +180,8 @@ export default function StudioInbox({ className = '', onNavigate = null }) {
             <tr>
               <th style={styles.th}>Type</th>
               <th style={styles.th}>Label</th>
+              <th style={styles.th}>System</th>
+              <th style={styles.th} title="Lites across × lites high, as read by the AI. ? = not detected, defaulted to 1×1">Grid</th>
               <th style={styles.th}>Width (in)</th>
               <th style={styles.th}>Height (in)</th>
               <th style={styles.th}>Area (SF)</th>
@@ -163,6 +195,19 @@ export default function StudioInbox({ className = '', onNavigate = null }) {
               <tr key={g.key} style={i % 2 === 0 ? styles.rowEven : styles.rowOdd}>
                 <td style={styles.td}>{TYPE_ICONS[g.type] ?? ''} {g.type}</td>
                 <td style={styles.td}>{g.label}</td>
+                <td style={styles.td}>
+                  <span style={styles.sysChip}>{g.systemType}</span>
+                </td>
+                <td style={{ ...styles.td, ...styles.numCell }}>
+                  <span
+                    style={g.gridSource === 'default' ? styles.gridUnverified : styles.gridVerified}
+                    title={g.gridSource === 'default'
+                      ? 'Grid not detected — will build as 1×1. Adjust in the Frame Builder.'
+                      : `Grid from ${g.gridSource}${g.confidence != null ? ` · ${Math.round(g.confidence * 100)}%` : ''}`}
+                  >
+                    {g.bayCount}×{g.rowCount}{g.gridSource === 'default' ? '?' : ''}
+                  </span>
+                </td>
                 <td style={{ ...styles.td, ...styles.numCell }}>{g.widthInches.toFixed(2)}"</td>
                 <td style={{ ...styles.td, ...styles.numCell }}>{g.heightInches.toFixed(2)}"</td>
                 <td style={{ ...styles.td, ...styles.numCell }}>{sqFt(g.widthInches, g.heightInches)}</td>
@@ -293,6 +338,25 @@ const styles = {
   },
   rowOdd: {
     background: '#0d1a2e',
+  },
+  sysChip: {
+    display: 'inline-block',
+    padding: '1px 7px',
+    borderRadius: 3,
+    fontSize: 11,
+    fontWeight: 600,
+    background: 'rgba(96, 165, 250, 0.12)',
+    border: '1px solid rgba(96, 165, 250, 0.35)',
+    color: '#93c5fd',
+    whiteSpace: 'nowrap',
+  },
+  gridVerified: {
+    color: '#6ee7b7',
+    fontWeight: 600,
+  },
+  gridUnverified: {
+    color: '#f59e0b',
+    fontWeight: 600,
   },
   totals: {
     padding: '10px 16px',
