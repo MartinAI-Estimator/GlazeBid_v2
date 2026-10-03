@@ -14,6 +14,8 @@ export default defineConfig(({ command }) => ({
   base: command === 'build' ? './' : '/',  // './' lets Electron load assets from dist/
   resolve: {
     alias: {
+      // must precede the package alias below (prefix match)
+      '@glazebid/frame-engine/core': resolve(__dirname, '../../packages/frame-engine/src/core/index.js'),
       '@glazebid/frame-engine': resolve(__dirname, '../../packages/frame-engine/src/index.ts'),
     },
   },

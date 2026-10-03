@@ -41,7 +41,9 @@ import SidebarNav from './components/SidebarNav';
 import ProjectSideNav from './components/ProjectSideNav';
 import SuiteHome from './components/SuiteHome';
 import GlazeBidHome from './components/GlazeBidHome';
-import FrameBuilder from './components/FrameBuilder/FrameBuilder';
+import FrameBuilder from './components/FrameBuilder/FrameBuilder'; // legacy G3 module — superseded by FrameBuilderV1
+import FrameBuilderV1 from './components/FrameBuilderV1/FrameBuilderV1';
+import useFrameTakeoffStore from './components/FrameBuilderV1/useFrameTakeoffStore';
 import StructuralCalculator from './components/Tools/StructuralCalculator';
 import BrakeMetalCalculator from './components/Tools/BrakeMetalCalculator';
 import CaulkingCalculator from './components/Tools/CaulkingCalculator';
@@ -1055,12 +1057,24 @@ function App() {
       return <QuickQuoteApp onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')} />;
     }
 
-    // Parametric Frame Builder - standalone suite module
+    // Parametric Frame Builder - standalone suite module (now the v1 builder;
+    // without a project it works on a scratch takeoff)
     if (currentView === 'frameBuilder') {
       return (
-        <FrameBuilder
+        <FrameBuilderV1
+          projectName={currentProject || null}
           onBack={() => setCurrentView(currentProject ? 'projectHome' : 'glazebidHome')}
-          project={projectData}
+          onNavigate={handleViewChange}
+        />
+      );
+    }
+
+    // Parametric Frame Builder — project sidebar tab
+    if (currentView === 'frame-takeoff') {
+      return (
+        <FrameBuilderV1
+          projectName={currentProject}
+          onBack={() => setCurrentView('projectHome')}
           onNavigate={handleViewChange}
         />
       );
@@ -1151,7 +1165,18 @@ function App() {
         <BidCart
           project={currentProject}
           onNavigate={setCurrentView}
-          onEditFrame={(frameId) => { setEditingFrameId(frameId); setCurrentView('frame-editor'); }}
+          onEditFrame={(frameId) => {
+            // frames built in the v1 Frame Builder reopen there, on that frame
+            const f = useBidStore.getState().frames.find((x) => x.frameId === frameId);
+            if (f?.source === 'frame-builder-v1') {
+              const st = useFrameTakeoffStore.getState();
+              st.open(currentProject);
+              st.selectFrame(f.sourceFrameId);
+              setCurrentView('frame-takeoff');
+              return;
+            }
+            setEditingFrameId(frameId); setCurrentView('frame-editor');
+          }}
         />
       );
     }

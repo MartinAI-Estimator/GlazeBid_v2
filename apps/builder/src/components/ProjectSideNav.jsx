@@ -4,6 +4,7 @@ import {
   FileDown,
   FileCheck,
   Brain,
+  Frame,
 } from 'lucide-react';
 const ProjectSideNav = ({
   currentView,
@@ -26,6 +27,7 @@ const ProjectSideNav = ({
   const overviewActive = isProjectHome && activeSidebarSection === null;
   const bidsheetActive = currentView === 'bidsheet';
   const bidCartActive = currentView === 'bid-cart';
+  const frameBuilderActive = currentView === 'frame-takeoff';
   const proposalActive = currentView === 'proposal';
   const aiSettingsActive = currentView === 'ai-settings';
 
@@ -62,6 +64,17 @@ const ProjectSideNav = ({
           onLeave={() => setHoveredItem(null)}
         >
           <FileDown size={15} style={{ flexShrink: 0, color: '#34d399' }} />
+        </Btn>
+
+        <Btn
+          title="Frame Builder"
+          active={frameBuilderActive}
+          hovered={hoveredItem === 'frame-takeoff'}
+          onClick={() => onNavigate('frame-takeoff')}
+          onEnter={() => setHoveredItem('frame-takeoff')}
+          onLeave={() => setHoveredItem(null)}
+        >
+          <Frame size={15} style={{ flexShrink: 0, color: '#60a5fa' }} />
         </Btn>
 
         <Btn

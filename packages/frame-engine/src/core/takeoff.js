@@ -51,16 +51,21 @@ export function createTakeoff(over = {}) {
  * @param {object} tp      TakeoffProject
  * @param {object} [labor] { calc: calcFrameMH, ratesFor: (systemType) => { hf, ir, beadsOfCaulk } }
  */
-export function buildTakeoff(tp, labor = {}) {
+export function buildTakeoff(tp, labor = {}, cache = null) {
   const project = {
     glassTypes: tp.glassTypes, defaultGlassTypeId: tp.defaultGlassTypeId,
     company: tp.company, customSystems: tp.customSystems, frameSets: tp.frameSets,
   };
   const rules = { ...DEFAULT_RULES, ...(tp.company?.rules ?? {}) };
   const warnings = [];
+  const settingsKey = JSON.stringify([tp.glassTypes, tp.defaultGlassTypeId, tp.company, tp.customSystems]);
   const frames = (tp.frames ?? []).map((spec) => {
     let bom;
-    try { bom = buildFrameTakeoff(spec, project); }
+    const ck = cache ? `${settingsKey}|${JSON.stringify(tp.frameSets?.[spec.frameSet] ?? null)}|${JSON.stringify(spec)}` : null;
+    try {
+      bom = ck && cache.has(ck) ? cache.get(ck) : buildFrameTakeoff(spec, project);
+      if (ck && !cache.has(ck)) { cache.set(ck, bom); if (cache.size > 2000) cache.delete(cache.keys().next().value); }
+    }
     catch (err) {
       warnings.push(`${spec.mark || spec.id}: could not be solved — ${err.message}`);
       return { spec, bom: null, labor: null, error: err.message };

@@ -210,8 +210,14 @@ export function solveFrame(specIn, ctx = {}) {
   // Extra (split) members
   for (const xm of spec.extraMembers ?? []) {
     const sl = xm.orient === 'v' ? num(xm.sightline, mullSL) : num(xm.sightline, P.horizontal.sightline);
-    if (xm.orient === 'v') vlines.push({ key: xm.key, x: num(xm.at, 0), y0: num(xm.from, 0), y1: num(xm.to, 0), sl, role: 'mullion', kind: 'v', extra: true });
-    else hsegs.push({ key: xm.key, y: num(xm.at, 0), x0: num(xm.from, 0), x1: num(xm.to, 0), sl, role: 'horizontal', kind: 'h', extra: true });
+    // clamp to the outline so a split under a raked / arched head ends on the head
+    if (xm.orient === 'v') {
+      const xv = num(xm.at, 0);
+      vlines.push({ key: xm.key, x: xv, y0: Math.max(num(xm.from, 0), outline.bottomAt(xv)), y1: Math.min(num(xm.to, 0), outline.topAt(xv)), sl, role: 'mullion', kind: 'v', extra: true });
+    } else {
+      const yh = num(xm.at, 0);
+      hsegs.push({ key: xm.key, y: yh, x0: Math.max(num(xm.from, 0), outline.leftAt(yh)), x1: Math.min(num(xm.to, 0), outline.rightAt(yh)), sl, role: 'horizontal', kind: 'h', extra: true });
+    }
   }
 
   // Removals: whole members or vertical ranges
@@ -368,7 +374,7 @@ export function solveFrame(specIn, ctx = {}) {
 
   return {
     spec, es, warnings,
-    width: W, height: H, topY, sillAFF,
+    width: W, height: outline.isRect ? H : topY, nominalHeight: H, topY, sillAFF,
     roughOpening: sz.mode === 'ro' ? { width: num(sz.width, 0), height: num(sz.height, 0), joints: { ...sz.joints } } : null,
     outline: { template: outline.template, params: outline.params, poly: outline.poly.map(roundPt),
       edges: outline.edges.map((e) => ({ key: e.key, role: e.role, a: e.a, b: e.b, arc: e.arc ? { radius: e.arc.radius, center: e.arc.center } : null, length: e.length, sightline: e.sightline, pts: e.pts.map(roundPt) })),
