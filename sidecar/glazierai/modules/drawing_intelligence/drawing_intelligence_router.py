@@ -52,6 +52,13 @@ class DrawingIntelligenceRequest(BaseModel):
     # subsequent sheets → interior_schedule.
     sheet_modes: Optional[dict[str, str]] = None
 
+    # Page scope reader (tiled, full-detail read of every glazing-relevant sheet:
+    # schedules, floor plans, elevations, details).  On by default — it is what
+    # finds interior / glazing-only / plan scope.  Set False for a quick run.
+    page_reader: bool = True
+    # Limit the page reader to these sheet numbers (debug / single-sheet runs).
+    page_reader_sheets: Optional[list[str]] = None
+
     # Anthropic API key passed from Electron's safeStorage.
     # Used instead of the ANTHROPIC_API_KEY env var if provided.
     anthropic_api_key: Optional[str] = None
@@ -296,7 +303,61 @@ def _run_pipeline(req: DrawingIntelligenceRequest) -> dict:
             # Anchoring must never sink a takeoff that vision already produced.
             logger.exception(f"[DI] anchoring failed: {exc}")
             out["anchoring"] = {"error": f"{type(exc).__name__}: {exc}"}
+
+    # ── Step 6: Page scope reader — every glazing-relevant sheet, tiled ──────
+    # Martin's read order: schedules → floor plans → elevations → details.
+    # Floor plans give the COUNT.  Runs with the job key from Steps 2–4.
+    out["page_reader"] = {"enabled": bool(req.page_reader)}
+    if req.page_reader:
+        from glazierai.modules.drawing_intelligence.page_scope_reader import (
+            PageScopeReader, READ_ORDER, build_job_key,
+        )
+        try:
+            psr = PageScopeReader()
+            job_key = build_job_key(system_registry, schedule_registry, mark_registry)
+            page_dets = []
+            sheets_read = []
+            for step in READ_ORDER:
+                for sheet in routing.sheets_for_step(step):
+                    if req.page_reader_sheets and sheet.sheet_number not in req.page_reader_sheets:
+                        continue
+                    dets = psr.read_page(req.pdf_path, sheet.page_index, sheet.sheet_number,
+                                         sheet.sheet_title, step, req.project_name, job_key)
+                    page_dets += [d.to_dict() for d in dets]
+                    sheets_read.append({"sheet_number": sheet.sheet_number, "page_index": sheet.page_index,
+                                        "step": step, "items": len(dets)})
+            # Anchored tag boxes that the page reader also found are the same item —
+            # keep the page reader's box (it boxes the frame, not the tag) but
+            # carry the mark over.
+            kept_anchor = []
+            for a in out["detections"]:
+                dup = next((p for p in page_dets if p["page_index"] == a.get("page_index")
+                            and _iou(p["bbox"], a.get("bbox") or [0, 0, 0, 0]) >= 0.4), None)
+                if dup is None:
+                    kept_anchor.append(a)
+                elif not dup.get("mark") and a.get("mark"):
+                    dup["mark"] = a["mark"]
+            out["detections"] = kept_anchor + page_dets
+            out["page_reader"].update({
+                "sheets": sheets_read,
+                "items": len(page_dets),
+                "needs_review": sum(1 for d in page_dets if d.get("needs_review")),
+                "tokens_used": psr.tokens_used,
+            })
+            out["total_tokens"] = out.get("total_tokens", 0) + psr.tokens_used
+        except Exception as exc:
+            logger.exception(f"[DI] page reader failed: {exc}")
+            out["page_reader"]["error"] = f"{type(exc).__name__}: {exc}"
     return out
+
+
+def _iou(a, b) -> float:
+    ix0, iy0, ix1, iy1 = max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])
+    if ix1 <= ix0 or iy1 <= iy0:
+        return 0.0
+    inter = (ix1 - ix0) * (iy1 - iy0)
+    ua = (a[2]-a[0])*(a[3]-a[1]) + (b[2]-b[0])*(b[3]-b[1]) - inter
+    return inter / ua if ua > 0 else 0.0
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────

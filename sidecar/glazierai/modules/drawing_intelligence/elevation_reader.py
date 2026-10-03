@@ -105,7 +105,9 @@ sealants, or other non-glass/non-aluminum materials.
 For each glazing entry, assign a scope_type from:
   curtain_wall     Aluminum CW (stick, unitized, SSG, bi-fold CW infill)
   storefront       Aluminum storefront (thermal or non-thermal)
-  glazing_only     Glass in hollow-metal or overhead doors — no aluminum supplied
+  glazing_only     Glass in hollow-metal or wood doors/frames — no aluminum supplied
+  window_wall      Aluminum window wall (slab-to-slab stick system)
+  window           Aluminum fixed / operable windows (NOT vinyl, fiberglass or wood)
   glass_film       Applied window film (3M, Llumar, etc.)
   all_glass_wall   Frameless patch-fit glass walls / butt-jointed glass
 
@@ -254,6 +256,13 @@ List every mark visible. Return only the JSON."""
 
 
 # ─── Elevation Reader ──────────────────────────────────────────────────────────
+
+
+# ── Martin's trade knowledge appended to every system prompt (2026-10-03) ──
+from glazierai.modules.drawing_intelligence._knowledge import with_knowledge as _wk  # noqa: E402
+LEGEND_EXTRACT_SYSTEM = _wk(LEGEND_EXTRACT_SYSTEM)
+ELEVATION_MARKS_SYSTEM = _wk(ELEVATION_MARKS_SYSTEM)
+INT_SCHEDULE_SYSTEM = _wk(INT_SCHEDULE_SYSTEM)
 
 class ElevationReader:
     """

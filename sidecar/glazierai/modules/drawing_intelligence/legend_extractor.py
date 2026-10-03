@@ -99,9 +99,9 @@ every entry that is relevant to a glazing subcontractor's scope.
 SCOPE TYPE TAXONOMY — assign one of these scope_type values to each glazing entry:
   curtain_wall     #008000  Aluminum curtain wall systems (stick, unitized, SSG)
   storefront       #FF8000  Aluminum storefront systems (thermal or non-thermal)
-  wet_wall         #008080  Wet-seal wall systems, sealant joints
+  window_wall      #008080  Aluminum window wall (slab-to-slab stick system) — 'WW'
   all_glass_wall   #80FFFF  Frameless glass partitions, patch-fit, butt-jointed
-  glazing_only     #800040  Glass in HM frames, OH door vision lites — no aluminum
+  glazing_only     #800040  Glass in HM or wood doors/frames — no aluminum (NOT overhead doors)
   window           #0000FF  Fixed or operable aluminum windows
   translucent_panel #0080FF Kalwall, polycarbonate, SSG panels
   bifold_sliding   #FFFF00  Standalone bi-fold or sliding door systems
@@ -116,7 +116,9 @@ SCOPE TYPE TAXONOMY — assign one of these scope_type values to each glazing en
   smart_glass      #9933FF  Electrochromic or switchable glass
 
 NOT GLAZING SCOPE — mark is_glazing_scope: false for:
-  - Wood doors (flush, stile-and-rail, solid core)
+  - Wood doors themselves (their vision lites ARE glazing_only scope)
+  - Overhead / sectional / coiling doors, including their lites
+  - Vinyl, fiberglass, wood/clad windows
   - Hollow metal doors and frames with NO glass
   - Toilet accessories (Bobrick, Bradley, ASI, Lacava)
   - Cable railing systems (posts, top rail, cables — glass infill IS scope)
@@ -222,6 +224,11 @@ Return nothing but the JSON array."""
 
 
 # ─── Legend Extractor ─────────────────────────────────────────────────────────
+
+
+# ── Martin's trade knowledge appended to every system prompt (2026-10-03) ──
+from glazierai.modules.drawing_intelligence._knowledge import with_knowledge as _wk  # noqa: E402
+LEGEND_SYSTEM = _wk(LEGEND_SYSTEM)
 
 class LegendExtractor:
     """

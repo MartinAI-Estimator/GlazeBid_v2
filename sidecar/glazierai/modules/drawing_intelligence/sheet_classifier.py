@@ -157,6 +157,11 @@ Classify all {page_count} sheets. Return nothing but the JSON array."""
 
 # ─── Classifier ───────────────────────────────────────────────────────────────
 
+
+# ── Martin's trade knowledge appended to every system prompt (2026-10-03) ──
+from glazierai.modules.drawing_intelligence._knowledge import with_knowledge as _wk  # noqa: E402
+CLASSIFIER_SYSTEM = _wk(CLASSIFIER_SYSTEM)
+
 class SheetClassifier:
     """
     Classifies all pages in a drawing set in a single Claude API call.

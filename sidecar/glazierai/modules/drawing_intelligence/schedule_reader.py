@@ -133,7 +133,7 @@ SCOPE TYPES (pick the closest):
   curtain_wall    — stick-built or unitized curtain wall (thermally broken, large spans)
   storefront      — aluminum framed storefront (thermally broken or non-TB, spans ≤ 12' typ.)
   glass_door      — aluminum-framed glass door (hinged, pivot, sliding; framed in SF or CW)
-  overhead_door   — overhead sectional door with glass panels
+  overhead_door   — overhead sectional door with glass panels (ALWAYS excluded, is_glazing_scope false)
   rolling_door    — rolling steel or glass door (storefront)
   all_glass_wall  — frameless tempered glass partition (butt-jointed, patch fittings)
   other           — non-glazing openings (solid doors, louvers, etc.)
@@ -213,6 +213,11 @@ List every mark visible. Return only the JSON.
 
 
 # ─── Schedule Reader ──────────────────────────────────────────────────────────
+
+
+# ── Martin's trade knowledge appended to every system prompt (2026-10-03) ──
+from glazierai.modules.drawing_intelligence._knowledge import with_knowledge as _wk  # noqa: E402
+SCHEDULE_SYSTEM = _wk(SCHEDULE_SYSTEM)
 
 class ScheduleReader:
     """
