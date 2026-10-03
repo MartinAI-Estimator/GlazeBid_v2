@@ -7,6 +7,8 @@ import { useCountTool }      from '../../hooks/useCountTool';
 import { useWandTool }       from '../../hooks/useWandTool';
 import { useAIAutoScan }     from '../../hooks/useAIAutoScan';
 import { useGhostTool }      from '../../hooks/useGhostTool';
+import { useBoxSnapTool }    from '../../hooks/useBoxSnapTool';
+import { BoxSnapOverlay }    from './BoxSnapOverlay';
 import { useGhostDetector }  from '../../hooks/useGhostDetector';
 import FrameOverlay          from '../parametric/FrameOverlay';
 import GhostOverlay          from './GhostOverlay';
@@ -81,6 +83,11 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
   const ghostDetector = useGhostDetector(canvasRef, engine, sessionLearner);
   const { drawPreview: ghostDrawPreview } = useGhostTool(canvasRef, ghostDetector.runDetection);
 
+  // ── Plugin: Box & Snap — AiQ vision region takeoff ──────────────────────
+  const boxSnap = useBoxSnapTool(canvasRef, engine);
+  const activeTool   = useStudioStore(s => s.activeTool);
+  const activePageId = useStudioStore(s => s.activePageId);
+
   // Lift the engine API on mount
   useEffect(() => {
     onEngine(engine);
@@ -137,6 +144,21 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
         onReject={ghostDetector.rejectDetection}
         onAcceptAll={ghostDetector.acceptAll}
         onClear={ghostDetector.clearDetections}
+      />
+
+      {/* ── Box & Snap: AiQ vision detections in page space ─────────────── */}
+      <BoxSnapOverlay
+        engine={engine}
+        active={activeTool === 'boxsnap'}
+        activePageId={activePageId}
+        dragPreview={boxSnap.dragPreview}
+        detections={boxSnap.detections}
+        isRunning={boxSnap.isRunning}
+        error={boxSnap.error}
+        onAccept={boxSnap.accept}
+        onReject={boxSnap.reject}
+        onClear={boxSnap.clear}
+        onDismissError={boxSnap.dismissError}
       />
 
       {/* ── Citation capture layer (observer + modal + highlight overlay) ── */}

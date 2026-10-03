@@ -1,92 +1,33 @@
 """
-GlazierAI — Main FastAPI Application
-This is the unified GlazierAI service, running at localhost:8100.
-It replaces and extends the AiQ sidecar.
+glazierai_main.py — DEPRECATED.  Do not add routes here.
 
-Modules:
-  /spec-reader  — Spec Reader (live)
-  /aiq          — Drawing Intelligence / AiQ (existing, imported from aiq module)
+The single GlazeBid sidecar application lives in `sidecar/main.py`.  It mounts
+the AiQ geometry layers, the Spec Reader (/spec-reader) and the vision
+Drawing Intelligence pipeline (/drawing-intelligence) on port 8100.
 
-Start:
-  uvicorn glazierai_main:app --host 0.0.0.0 --port 8100 --reload
+This file used to be a second FastAPI app that mounted ONLY the spec reader
+and carried a TODO to mount the AiQ routes.  Anyone who started it got a
+service with no drawing intelligence.  It now re-exports `main:app` so that
+any stale launcher (`uvicorn glazierai_main:app`) still gets the full service,
+and logs a warning so the stale launcher gets fixed.
+
+Correct start command:
+    uvicorn main:app --host 127.0.0.1 --port 8100
 """
 
 import logging
-import os
-from pathlib import Path
+import warnings
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
+logging.getLogger("glazierai").warning(
+    "glazierai_main is deprecated — start the sidecar with `uvicorn main:app`. "
+    "Re-exporting main:app."
 )
-logger = logging.getLogger("glazierai")
-
-# ─── App ──────────────────────────────────────────────────────────────────────
-
-app = FastAPI(
-    title="GlazierAI",
-    description=(
-        "GlazierAI — Domain AI for commercial glazing. "
-        "Powers GlazeBid, GlazeOps, GlazePrism, GlazeField."
-    ),
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+warnings.warn(
+    "sidecar/glazierai_main.py is deprecated; use sidecar/main.py",
+    DeprecationWarning,
+    stacklevel=2,
 )
 
-# CORS — allow GlazeBid Electron renderer and Builder dev server
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",   # Builder (Vite dev)
-        "http://localhost:5174",   # Studio (Vite dev)
-        "http://localhost:3000",   # Any other local dev
-        "app://.",                 # Electron renderer origin
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+from main import app  # noqa: E402,F401  — re-export the real app
 
-# ─── Mount Spec Reader ────────────────────────────────────────────────────────
-from spec_reader.router import spec_reader_router
-
-app.include_router(
-    spec_reader_router,
-    prefix="/spec-reader",
-    tags=["Spec Reader"],
-)
-
-# ─── Mount AiQ (Drawing Intelligence) ────────────────────────────────────────
-# TODO: import and mount existing AiQ routes here
-# from modules.drawing.router import drawing_router
-# app.include_router(drawing_router, prefix="/aiq", tags=["Drawing Intelligence"])
-
-
-# ─── Root ─────────────────────────────────────────────────────────────────────
-
-@app.get("/", tags=["Root"])
-async def root():
-    return {
-        "service": "GlazierAI",
-        "version": "1.0.0",
-        "status": "running",
-        "modules": {
-            "spec_reader": "/spec-reader",
-            "drawing_intelligence": "/aiq (coming soon)",
-        },
-        "docs": "/docs",
-    }
-
-
-@app.get("/health", tags=["Root"])
-async def health():
-    """Top-level health check for Electron sidecar manager"""
-    return {
-        "status": "ok",
-        "anthropic_configured": bool(os.getenv("ANTHROPIC_API_KEY")),
-    }
+__all__ = ["app"]

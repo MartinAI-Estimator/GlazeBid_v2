@@ -82,6 +82,13 @@ const PDFToolbar = ({ activeTool, onSelectTool, onRotate, onExport, onCalibrate 
           <button style={btnStyle(currentMode === TOOL_MODES.POLYLINE)} onClick={() => setMode(TOOL_MODES.POLYLINE)}>📏 Polyline</button>
           <button style={btnStyle(currentMode === TOOL_MODES.COUNT)} onClick={() => setMode(TOOL_MODES.COUNT)}>1️⃣ Count</button>
           <button style={btnStyle(currentMode === TOOL_MODES.HIGHLIGHT)} onClick={() => setMode(TOOL_MODES.HIGHLIGHT)}>🖊️ Highlight</button>
+          {/* Box & Snap — drag a region, AiQ vision returns glazing detections with geometry */}
+          <button
+            style={btnStyle(currentMode === 'BoxSnap')}
+            onClick={() => onSelectTool({ type: 'boxsnap', mode: 'BoxSnap' })}
+            title="Box & Snap: drag a box around an elevation; AiQ vision detects glazing systems inside it"
+            data-testid="box-snap-button"
+          >▭ Box &amp; Snap</button>
         </div>
         
         {onExport && (

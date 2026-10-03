@@ -170,6 +170,25 @@ export type RawTakeoff = {
    * Real engineering happens in EngineeredFrame.
    */
   systemId?:    string;
+
+  // ── AI takeoff facts (Box & Snap / Drawing Intelligence) ─────────────────
+  // These are what the vision + geometry pipeline already knows about the
+  // opening; Builder's inbox turns them into a parametric multi-lite frame
+  // instead of a 1×1 perimeter box.  All optional: a hand-drawn rect has none.
+  /** Canonical Builder system type: 'Ext SF' | 'Int SF' | 'Cap CW' | 'SSG CW'. */
+  systemType?:  string;
+  /** Glass lites across (vertical mullions + 1). ≥ 1. */
+  bayCount?:    number;
+  /** Glass lites high (horizontal mullions + 1). ≥ 1. */
+  rowCount?:    number;
+  /** Where the grid came from: 'geometry' | 'vision' | 'geometry+vision' | 'default'. */
+  gridSource?:  string;
+  /** Callout tag read off the drawing (e.g. 'SF-1'), if any. */
+  mark?:        string | null;
+  /** Detector confidence 0–1. */
+  confidence?:  number;
+  /** How this takeoff was produced: 'boxsnap' for AI regions; absent = drawn by hand. */
+  source?:      string;
 };
 
 // ── Screen 2 — Builder Engineering ───────────────────────────────────────────

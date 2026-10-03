@@ -167,6 +167,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
    */
   runTakeoff: (payload) => ipcRenderer.invoke('glazierai:runTakeoff', payload),
 
+  /**
+   * Box & Snap — run vision detection on ONE region of ONE page.
+   * payload: { pdfPath?|pdfBase64?, pageIndex (0-based), region: [x0,y0,x1,y1] (fitz pts), projectName }
+   * Returns { ok: true, data: { detections: [...] } } or { ok: false, error }.
+   */
+  runRegionTakeoff: (payload) => ipcRenderer.invoke('glazierai:runRegion', payload),
+
   // ── Project filesystem ─────────────────────────────────────────────────────
   /**
    * Get the configured projects root path (e.g. "Z:\\GlazeBid Projects").

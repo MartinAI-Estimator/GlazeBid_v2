@@ -145,3 +145,58 @@ DPI_ELEVATION     = 200  # Step 3 — mark labels, dimension strings
 DPI_SCHEDULE      = 200  # Steps 4/5 — dense table text, glass specs
 DPI_LEGEND        = 200  # Step 2 — system codes, finish designations
 DPI_DETAIL        = 200  # Step 7 — condition references (future)
+DPI_REGION        = 300  # Box & Snap — a user-chosen crop; small area, so go high
+
+
+# ─── Region (Box & Snap) ──────────────────────────────────────────────────────
+
+def pdf_region_to_vision_block(
+    pdf_path_or_doc,
+    page_index: int,
+    region: tuple[float, float, float, float],
+    dpi: int = DPI_REGION,
+) -> dict:
+    """
+    Render ONE rectangular region of a page as a Claude Vision content block.
+
+    `region` is [x0, y0, x1, y1] in fitz page space — top-left origin, 72 pt/in,
+    unrotated — exactly what the Builder overlay sends (pdfCoordinates.mjs) and
+    what fitz.Rect expects.  The crop is intersected with the page box; a region
+    entirely off-page raises ValueError.
+
+    The returned block carries `_region` (the clipped rect actually rendered)
+    so callers can map the model's normalized [0..1] boxes back to page space:
+        x = region.x0 + nx * (region.x1 - region.x0)
+        y = region.y0 + ny * (region.y1 - region.y0)
+    """
+    own_doc = isinstance(pdf_path_or_doc, (str, Path))
+    doc = fitz.open(str(pdf_path_or_doc)) if own_doc else pdf_path_or_doc
+    try:
+        if page_index < 0 or page_index >= len(doc):
+            raise IndexError(f"Page index {page_index} out of range for {len(doc)}-page PDF")
+        page = doc[page_index]
+
+        clip = fitz.Rect(*region).normalize() & page.rect
+        if clip.is_empty or clip.width < 1 or clip.height < 1:
+            raise ValueError(f"Region {list(region)} does not intersect page {page_index} ({page.rect})")
+
+        # Clamp DPI so the crop stays under Claude's pixel limit.
+        max_dpi = int(min(_CLAUDE_MAX_PX / clip.width, _CLAUDE_MAX_PX / clip.height) * 72)
+        dpi = min(dpi, max_dpi)
+
+        matrix = fitz.Matrix(dpi / 72, dpi / 72)
+        pix = page.get_pixmap(matrix=matrix, clip=clip, alpha=False)
+        b64 = base64.b64encode(pix.tobytes("png")).decode("utf-8")
+
+        return {
+            "type": "image",
+            "source": {"type": "base64", "media_type": "image/png", "data": b64},
+            "_page_index": page_index,
+            "_dpi": dpi,
+            "_width_px": pix.width,
+            "_height_px": pix.height,
+            "_region": [clip.x0, clip.y0, clip.x1, clip.y1],
+        }
+    finally:
+        if own_doc:
+            doc.close()

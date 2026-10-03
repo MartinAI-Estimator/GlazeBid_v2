@@ -29,6 +29,7 @@ import anthropic
 from .vision_helper import pdf_page_to_vision_block, strip_metadata, DPI_LEGEND
 from .legend_extractor import SystemRegistry
 from .sheet_classifier import ClassificationResult
+from glazierai.model_config import VISION_MODEL, EXTRACTION_OPTS
 
 logger = logging.getLogger(__name__)
 
@@ -327,7 +328,8 @@ class ScheduleReader:
         logger.info(f"  Pass 1 — reading schedule marks from {sheet_number}")
 
         response = self._client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model=VISION_MODEL,
+            **EXTRACTION_OPTS,
             max_tokens=8192,
             system=SCHEDULE_SYSTEM,
             messages=[

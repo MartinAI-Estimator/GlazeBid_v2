@@ -57,6 +57,19 @@ contextBridge.exposeInMainWorld('electron', {
   /** Record usage of an implication (for usage-based ranking). */
   recordImplicationUsage: (implId: string) => ipcRenderer.invoke('citation:recordUsage', implId),
 
+  /**
+   * Box & Snap — run vision detection on ONE region of ONE page.
+   * region is [x0,y0,x1,y1] in fitz page space, which equals Studio PAGE space.
+   * Returns { ok: true, data: { detections: [...] } } or { ok: false, error }.
+   */
+  runRegionTakeoff: (payload: {
+    pdfPath?: string;
+    pdfBase64?: string;
+    pageIndex: number;
+    region: [number, number, number, number];
+    projectName?: string;
+  }) => ipcRenderer.invoke('glazierai:runRegion', payload),
+
   // ── AiQ Sidecar ───────────────────────────────────────────────────────
   aiq: {
     /** Check if sidecar is healthy (via main process). */

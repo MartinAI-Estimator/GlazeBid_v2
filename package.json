@@ -18,7 +18,10 @@
     "pack": "electron-builder --dir",
     "sidecar": "cd sidecar && ../.venv/Scripts/python -m uvicorn main:app --host 127.0.0.1 --port 8100 --reload",
     "sidecar:install": "cd sidecar && ../.venv/Scripts/pip install -r requirements.txt",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "sidecar:bundle-python": "powershell -ExecutionPolicy Bypass -File scripts/fetch-python-embed.ps1",
+    "predist:win": "node scripts/check-python-embed.mjs",
+    "predist:win:dir": "node scripts/check-python-embed.mjs"
   },
   "workspaces": [
     "apps/*",
@@ -55,8 +58,21 @@
         "to": "sidecar",
         "filter": [
           "**/*",
-          "!__pycache__",
-          "!*.pyc"
+          "!**/__pycache__/**",
+          "!**/*.pyc",
+          "!**/.pytest_cache/**",
+          "!qaqc/**",
+          "!corpus/**",
+          "!experiments/**",
+          "!README.md"
+        ]
+      },
+      {
+        "from": "python-embed",
+        "to": "python",
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**"
         ]
       }
     ],

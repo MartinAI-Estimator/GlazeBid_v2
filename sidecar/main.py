@@ -1,21 +1,30 @@
 """
-main.py
+main.py — THE GlazeBid sidecar service.  Single entry point on localhost:8100.
 
-GlazeBid AiQ Sidecar Service — FastAPI Application
+    uvicorn main:app --host 127.0.0.1 --port 8100
 
-Runs on localhost:8100. Launched by the GlazeBid Electron main process
-at app startup. Killed when the Electron app closes.
+Launched by the GlazeBid Electron main process at app startup (electron/main.ts
+startSidecar) and killed when the app closes.  This module mounts every
+service the desktop app talks to; there is no second app.  glazierai_main.py
+is a deprecated shim that re-exports this `app` — do not add routes there.
 
-Endpoints:
+Mounted modules:
+    /                          AiQ geometry layers (L0/L1/L2/L9, prescan, rules engine)
+    /spec-reader/*             Spec Reader (spec_reader/router.py)
+    /drawing-intelligence/*    Vision takeoff pipeline (glazierai/.../drawing_intelligence_router.py)
+
+Root endpoints (AiQ):
     GET  /health              — Health check for Electron startup verification
     POST /classify-sheet      — Layer 1: Classify sheet type from PDF buffer
     POST /extract-graph       — Layer 2: Extract vector graph from PDF buffer
     POST /detect-grid-labels  — Layer 9: Detect grid labels from PDF buffer
     POST /sync-sheets         — Layer 9: Compute homography between two PDF pages
+    POST /detect-glazing      — L0→L2→rules engine→scope filter on one page
+    POST /prescan-drawing-set — page triage for a whole set
 
-All endpoints accept PDF data as base64-encoded strings in JSON bodies.
-All endpoints return structured JSON. Never return 500 errors to the client —
-all errors are returned as structured error responses with status='error'.
+All root endpoints accept PDF data as base64-encoded strings in JSON bodies and
+return structured JSON; they never return 500 — errors come back as
+status='error'.  The mounted routers use normal HTTP status codes.
 """
 
 import base64
@@ -100,6 +109,11 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     layers: list
+    # Which mounted services are live, so Electron can gate UI features.
+    modules: dict = {}
+    # True when an Anthropic key is present in the process env — the vision
+    # pipeline and spec reader need it; the geometry layers do not.
+    anthropic_configured: bool = False
 
 
 class ErrorResponse(BaseModel):
@@ -143,8 +157,14 @@ async def health():
     """
     return HealthResponse(
         status="ok",
-        version="0.1.0",
-        layers=["layer0_normalizer", "layer1_router", "layer2_extractor", "layer9_homography"]
+        version="0.2.0",
+        layers=["layer0_normalizer", "layer1_router", "layer2_extractor", "layer9_homography"],
+        modules={
+            "aiq":                  "/",
+            "spec_reader":          "/spec-reader",
+            "drawing_intelligence": "/drawing-intelligence",
+        },
+        anthropic_configured=bool(os.environ.get("ANTHROPIC_API_KEY")),
     )
 
 

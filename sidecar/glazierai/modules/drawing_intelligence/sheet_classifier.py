@@ -20,6 +20,7 @@ from .vision_helper import (
     strip_metadata,
     DPI_CLASSIFIER,
 )
+from glazierai.model_config import VISION_MODEL, EXTRACTION_OPTS
 
 logger = logging.getLogger(__name__)
 
@@ -223,9 +224,9 @@ class SheetClassifier:
 
             try:
                 response = self.client.messages.create(
-                    model="claude-sonnet-4-20250514",
+                    model=VISION_MODEL,
+                    **EXTRACTION_OPTS,
                     max_tokens=2048,
-                    temperature=0,
                     system=CLASSIFIER_SYSTEM,
                     messages=[{"role": "user", "content": content}],
                 )
@@ -328,9 +329,9 @@ class SheetClassifier:
 
             try:
                 response = await async_client.messages.create(
-                    model="claude-sonnet-4-20250514",
+                    model=VISION_MODEL,
+                    **EXTRACTION_OPTS,
                     max_tokens=2048,
-                    temperature=0,
                     system=CLASSIFIER_SYSTEM,
                     messages=[{"role": "user", "content": content}],
                 )

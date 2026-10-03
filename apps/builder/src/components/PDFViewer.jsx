@@ -1,6 +1,10 @@
 import { apiFetch } from '../apiClient';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { pdfjs } from 'react-pdf';
+// Box & Snap — vision region takeoff overlay (Astra) + request layer (Fable)
+import CanvasOverlay from './PDFViewer/overlay/CanvasOverlay.jsx';
+import useRegionTakeoff from './PDFViewer/hooks/useRegionTakeoff';
+import useDevicePixelRatio from './PDFViewer/hooks/useDevicePixelRatio';
 import { useProject } from '../context/ProjectContext';
 import useGhostLayer from './PDFViewer/hooks/useGhostLayer';
 import useMarkupTools from './PDFViewer/hooks/useMarkupTools.jsx';
@@ -35,7 +39,10 @@ const PDFViewer = ({
 
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  
+  // PDFDocumentProxy for the loaded file — useRegionTakeoff needs getData()
+  // when `file` is not a filesystem path.
+  const pdfDocRef = useRef(null);
+
   // Connect to ProjectContext - The Brain
   const { markups: contextMarkups, setMarkups: setContextMarkups } = useProject();
   
@@ -79,7 +86,24 @@ const PDFViewer = ({
   const [smartFrameLineDrag, setSmartFrameLineDrag] = useState(null); // { markupId, orientation, index }
   const [hoverMarkupId, setHoverMarkupId] = useState(null);
   const [detectingSmartFrameIds, setDetectingSmartFrameIds] = useState([]);
-  
+
+  // ── Box & Snap (vision region takeoff) ───────────────────────────────────
+  // The ONE PageViewport shared by the paper wrapper, the PDF render and the
+  // overlay.  Memoized so a re-render never hands the overlay a new identity
+  // (useRegionSelection cancels an in-progress drag when viewport changes).
+  const viewport = useMemo(
+    () => (pdfPage ? pdfPage.getViewport({ scale: renderedScale, rotation }) : null),
+    [pdfPage, renderedScale, rotation]
+  );
+  const dpr = useDevicePixelRatio();
+  const isBoxSnap = activeTool?.mode === 'BoxSnap';
+  const regionTakeoff = useRegionTakeoff({
+    file,
+    pdfDocRef,
+    pageNumber,
+    projectName: projectId || sheetId || 'default_project',
+  });
+
   const renderTaskRef = useRef(null);
   // Double-buffer: PDF.js renders into this hidden canvas while the visible
   // canvasRef keeps its current pixels, preventing any white-flash on zoom.
@@ -398,6 +422,7 @@ const PDFViewer = ({
         console.log('🔄 Loading PDF page:', pageNumber);
         const loadingTask = pdfjs.getDocument(file);
         const doc = await loadingTask.promise;
+        pdfDocRef.current = doc;
         const page = await doc.getPage(pageNumber);
         console.log('✅ PDF page loaded:', pageNumber);
         
@@ -562,6 +587,12 @@ const PDFViewer = ({
     if (contextMenu) {
       setContextMenu(null);
     }
+
+    // Box & Snap owns the pointer while active.  The overlay canvas calls
+    // preventDefault() on pointerdown (which suppresses the compat mousedown),
+    // but guard here too so the pan / markup-draw paths below can never start
+    // from a click that reached the container.
+    if (isBoxSnap && e.button === 0) return;
 
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -1036,14 +1067,27 @@ const PDFViewer = ({
                 left: 0, top: 0,
                 transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale / renderedScale})`,
                 transformOrigin: '0 0',
-                width: `${pdfPage.getViewport({ scale: renderedScale, rotation }).width}px`,
-                height: `${pdfPage.getViewport({ scale: renderedScale, rotation }).height}px`,
+                width: `${viewport.width}px`,
+                height: `${viewport.height}px`,
                 backgroundColor: 'white',           // Ensure paper is white even if PDF transparent
                 border: '1px solid #999',           // Crisp edge definition like Bluebeam
                 boxShadow: '0 10px 30px rgba(0,0,0,0.5)' // Heavy lift shadow for depth
             }}>
                 <canvas ref={canvasRef} />
-                
+
+                {/* BOX & SNAP OVERLAY — sibling of the PDF canvas inside the
+                    same positioned, viewport-sized, CSS-transformed "Paper"
+                    wrapper, so it pans/zooms with the page for free.
+                    Remounted per (document, page) so results never bleed. */}
+                <CanvasOverlay
+                  key={`${projectId ?? 'doc'}:${sheetId ?? ''}:${pageNumber}`}
+                  viewport={viewport}
+                  dpr={dpr}
+                  takeoffResults={regionTakeoff.results}
+                  selectionEnabled={isBoxSnap && !regionTakeoff.isRunning}
+                  onRegionSelected={regionTakeoff.runRegion}
+                />
+
                 {/* GRID OVERLAY: Sits exactly on top of canvas, transforms with it */}
                 {showGrid && <PDFGrid visible={true} scale={renderedScale} />}
 
@@ -1310,6 +1354,23 @@ const PDFViewer = ({
         </div>
       )}
       
+      {/* Box & Snap status — running / error / hint */}
+      {isBoxSnap && (
+        <div style={{
+          position: 'absolute', bottom: 14, left: 14, zIndex: 1500,
+          padding: '6px 10px', borderRadius: 6, fontSize: 12, fontFamily: 'monospace',
+          background: regionTakeoff.error ? 'rgba(127, 29, 29, 0.94)' : 'rgba(18, 24, 32, 0.94)',
+          color: regionTakeoff.error ? '#fecaca' : '#e5e7eb',
+          border: '1px solid rgba(255,255,255,0.12)', pointerEvents: 'none',
+        }}>
+          {regionTakeoff.isRunning
+            ? '⏳ Box & Snap — reading region…'
+            : regionTakeoff.error
+              ? `✖ Box & Snap: ${regionTakeoff.error}`
+              : `▭ Box & Snap — drag a box · ${regionTakeoff.results.detections.length} detected on this page · Esc cancels`}
+        </div>
+      )}
+
       {/* Context Menu */}
       {contextMenu && (
         <ContextMenu

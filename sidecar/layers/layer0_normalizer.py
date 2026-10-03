@@ -34,6 +34,7 @@ MAX_STROKE_WIDTH = 2.0          # Floor plan normalization upper bound
 IQ_TEXT_THRESHOLD = 0.30        # Isoperimetric quotient below this = likely text
 MAX_SEGMENT_COUNT_TEXT = 8      # More segments than this = likely text character
 MIN_SEGMENT_LENGTH = 2.0        # Segments shorter than this are noise (points)
+MAX_GLYPH_PTS = 48.0            # A path bigger than this in BOTH axes cannot be a glyph
 
 # Hatch fill detection constants
 HATCH_MAX_LENGTH = 20.0         # Max segment length (pts) to be considered hatch fill
@@ -123,10 +124,23 @@ def is_text_path(path: dict) -> bool:
     Returns:
         True if the path should be discarded as a text artifact
     """
-    items = path.get("items", [])
+    # Use the same segment view as the extractor so 're'/'qu' primitives count.
+    # Judging a frame by its mullion lines alone (ignoring its rectangle
+    # perimeter) made it look like the letter "H" and got it discarded. (2026-09-17)
+    segments = _extract_line_segments(path)
+    segment_count = len(segments)
 
-    # Count line segments only
-    segment_count = sum(1 for item in items if item[0] == "l")
+    # Condition 0: Size gate.  The three heuristics below were tuned for
+    # outlined font glyphs, which are small.  A path spanning more than
+    # MAX_GLYPH_PTS in both axes is drawing geometry regardless of how many
+    # segments it has or how its endpoint polygon scores — a storefront frame
+    # exported as one path (perimeter + mullions) has >8 segments and a
+    # self-cancelling shoelace area, and was being thrown away as text.
+    r = path.get("rect")
+    if r is not None:
+        r = fitz.Rect(r)
+        if r.width > MAX_GLYPH_PTS and r.height > MAX_GLYPH_PTS:
+            return False
 
     # Condition 1: Too many segments
     if segment_count > MAX_SEGMENT_COUNT_TEXT:
@@ -134,11 +148,9 @@ def is_text_path(path: dict) -> bool:
 
     # Extract all line endpoints for geometry analysis
     points = []
-    for item in items:
-        if item[0] == "l":
-            p1, p2 = item[1], item[2]
-            points.append((p1.x, p1.y))
-            points.append((p2.x, p2.y))
+    for (x1, y1), (x2, y2) in segments:
+        points.append((x1, y1))
+        points.append((x2, y2))
 
     if len(points) < 4:
         return False  # Too few points to analyze — keep it
@@ -244,14 +256,33 @@ def _extract_line_segments(
     Filters out segments shorter than MIN_SEGMENT_LENGTH (noise).
     """
     segments = []
+
+    def _add(x1, y1, x2, y2):
+        length = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        if length >= MIN_SEGMENT_LENGTH:
+            segments.append(((x1, y1), (x2, y2)))
+
     for item in path.get("items", []):
-        if item[0] == "l":
+        kind = item[0]
+        if kind == "l":
             p1, p2 = item[1], item[2]
-            x1, y1 = p1.x, p1.y
-            x2, y2 = p2.x, p2.y
-            length = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-            if length >= MIN_SEGMENT_LENGTH:
-                segments.append(((x1, y1), (x2, y2)))
+            _add(p1.x, p1.y, p2.x, p2.y)
+        elif kind == "re":
+            # Rectangle primitive — CAD exports frame perimeters this way.
+            # Previously dropped, which made whole frames invisible to the
+            # rules engine.  Expand to its four edges.  (2026-09-17)
+            r = fitz.Rect(item[1])
+            _add(r.x0, r.y0, r.x1, r.y0)
+            _add(r.x1, r.y0, r.x1, r.y1)
+            _add(r.x1, r.y1, r.x0, r.y1)
+            _add(r.x0, r.y1, r.x0, r.y0)
+        elif kind == "qu":
+            # Quad primitive — same treatment, four edges of the quad.
+            q = item[1]
+            pts = [(q.ul.x, q.ul.y), (q.ur.x, q.ur.y), (q.lr.x, q.lr.y), (q.ll.x, q.ll.y)]
+            for (ax, ay), (bx, by) in zip(pts, pts[1:] + pts[:1]):
+                _add(ax, ay, bx, by)
+        # "c" (bezier) is still skipped: curves are not glazing framing.
     return segments
 
 

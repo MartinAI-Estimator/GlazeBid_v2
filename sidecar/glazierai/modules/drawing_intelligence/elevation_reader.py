@@ -29,6 +29,7 @@ import anthropic
 from .vision_helper import pdf_page_to_vision_block, strip_metadata, DPI_LEGEND
 from .legend_extractor import SystemRegistry, SystemEntry
 from .sheet_classifier import ClassificationResult
+from glazierai.model_config import VISION_MODEL, EXTRACTION_OPTS
 
 logger = logging.getLogger(__name__)
 
@@ -365,9 +366,9 @@ class ElevationReader:
 
         try:
             response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=VISION_MODEL,
+                **EXTRACTION_OPTS,
                 max_tokens=8192,
-                temperature=0,
                 system=LEGEND_EXTRACT_SYSTEM,
                 messages=[{"role": "user", "content": content}],
             )
@@ -403,6 +404,21 @@ class ElevationReader:
                 source_sheet=sheet_number,
                 confidence=float(item.get("confidence", 1.0)),
             )
+            # Legend precedence: a code already bound by a DIFFERENT sheet (the
+            # dedicated Step 2 legend) is authoritative for this sheet's marks.
+            # The embedded read may only fill fields the bound entry left empty.
+            existing = registry.get(entry.code)
+            if existing is not None and existing.source_sheet != sheet_number:
+                if existing.scope_type != entry.scope_type or existing.is_glazing_scope != entry.is_glazing_scope:
+                    logger.warning(
+                        f"  {sheet_number} embedded legend says {entry.code} = {entry.scope_type!r} "
+                        f"(glazing={entry.is_glazing_scope}); keeping {existing.source_sheet} = "
+                        f"{existing.scope_type!r} (glazing={existing.is_glazing_scope})"
+                    )
+                for f in ("manufacturer", "series", "finish", "glazing", "description"):
+                    if not getattr(existing, f) and getattr(entry, f):
+                        setattr(existing, f, getattr(entry, f))
+                continue
             registry.add(entry)
             added += 1
 
@@ -448,9 +464,9 @@ class ElevationReader:
 
         try:
             response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=VISION_MODEL,
+                **EXTRACTION_OPTS,
                 max_tokens=4096,
-                temperature=0,
                 system=ELEVATION_MARKS_SYSTEM,
                 messages=[{"role": "user", "content": content}],
             )
@@ -493,9 +509,9 @@ class ElevationReader:
 
         try:
             response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=VISION_MODEL,
+                **EXTRACTION_OPTS,
                 max_tokens=8192,
-                temperature=0,
                 system=INT_SCHEDULE_SYSTEM,
                 messages=[{"role": "user", "content": content}],
             )

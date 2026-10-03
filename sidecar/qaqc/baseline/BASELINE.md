@@ -35,3 +35,24 @@ Run to reproduce:
 cd sidecar/qaqc
 python eval_harness.py baseline/cand_*.json --corpus ../corpus/markup_corpus.json -o baseline
 ```
+
+## Vision pipeline — how to produce the next ledger row (added 2026-09-17)
+
+The vision pipeline now returns `detections[]` with `bbox` + `page_index`
+(geometry_anchoring.py: PyMuPDF finds each callout tag, snaps it to a
+rules-engine frame).  Score it with the same harness, same four jobs:
+
+```bash
+cd sidecar            # ANTHROPIC_API_KEY must be set; ~2–4 min and real API spend per set
+python qaqc/takeoff_to_candidates.py --list-jobs --corpus corpus/markup_corpus.json
+python qaqc/takeoff_to_candidates.py --run "qaqc/test_data/McLarty Mazda - Bid Plans - Non Marked.pdf" \
+    --job "McLarty Mazda - Bid Plans" --save-result qaqc/baseline/result_vision_McLarty.json \
+    -o qaqc/baseline/cand_vision_McLarty_Mazda.json
+# repeat for Hope Aquatic, Curtis MS, Olathe (PDFs for the last two are not in test_data/)
+python qaqc/eval_harness.py qaqc/baseline/cand_vision_*.json --corpus corpus/markup_corpus.json -o qaqc/baseline/vision-v1
+```
+
+Record the AGGREGATE row here as `vision+geometry-v1`.  Rerun with
+`--no-fallback` to see how much of the score comes from tag_fallback boxes
+(tags with no geometry candidate within 150 pt) — if that gap is large, the
+rules engine is the bottleneck, not vision.

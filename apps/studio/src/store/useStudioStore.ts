@@ -42,7 +42,8 @@ export type ToolType =
   | 'rake'    // Task 5.x: Raked Frame (4-point polygon)
   | 'count'   // Task 5.x: Count Marker (point-based takeoff)
   | 'wand'   // Task 5.x: Magic Wand auto-detect
-  | 'ghost'; // Task 6.3: Ghost Highlighter ML detector
+  | 'ghost'  // Task 6.3: Ghost Highlighter ML detector
+  | 'boxsnap'; // Box & Snap: drag a region → AiQ vision detection with geometry
 
 export type PageState = {
   id:           string;

@@ -70,6 +70,7 @@ const CURSOR: Record<ToolType | 'panning', string> = {
   count:     'cell',
   wand:      'copy',
   ghost:     'crosshair',
+  boxsnap:   'crosshair',
 };
 
 // ── Public API ────────────────────────────────────────────────────────────────

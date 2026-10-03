@@ -109,21 +109,67 @@ function readEnvGlazierai(): string | null {
     return match ? match[1].trim() : null;
   } catch { return null; }
 }
+/**
+ * Locate the sidecar directory.
+ *
+ * Packaged: electron-builder's `extraResources` copies `sidecar/` to
+ *   <install>/resources/sidecar   — i.e. path.join(process.resourcesPath, 'sidecar').
+ *   NOT inside app.asar.  `__dirname` in a packaged build resolves to
+ *   resources/app.asar/dist-electron, so `__dirname/../sidecar` would look for
+ *   resources/app.asar/sidecar, which does not exist.  (Bug B5.)
+ * Dev: repo-root/sidecar, relative to dist-electron/.
+ */
+function getSidecarDir(): string {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'sidecar');
+  }
+  return path.join(__dirname, '../sidecar');
+}
+
+/**
+ * Locate the Python interpreter that runs the sidecar.
+ *
+ * Packaged: a self-contained Python is bundled via `extraResources` from
+ *   `python-embed/` → <install>/resources/python.  Built by
+ *   `npm run sidecar:bundle-python` (scripts/fetch-python-embed.ps1), which
+ *   downloads the official Windows embeddable distribution and pip-installs
+ *   sidecar/requirements.txt into it.  The installer must never depend on a
+ *   Python already being on the customer's machine.
+ * Dev: the repo .venv, then PATH python as a last resort.
+ */
 function getSidecarPythonPath(): string {
-  const candidates = [
-    path.join(__dirname, '../.venv/Scripts/python.exe'),
-    path.join(__dirname, '../.venv/bin/python'),
-    path.join(process.cwd(), '.venv/Scripts/python.exe'),
-    path.join(process.cwd(), '.venv/bin/python'),
-  ];
+  const isWin = process.platform === 'win32';
+  const candidates: string[] = [];
+
+  if (app.isPackaged) {
+    candidates.push(
+      path.join(process.resourcesPath, 'python', isWin ? 'python.exe' : 'bin/python3'),
+    );
+  } else {
+    candidates.push(
+      path.join(__dirname, '../.venv/Scripts/python.exe'),
+      path.join(__dirname, '../.venv/bin/python'),
+      path.join(process.cwd(), '.venv/Scripts/python.exe'),
+      path.join(process.cwd(), '.venv/bin/python'),
+      // A dev build of the embedded runtime, if the bundle script has been run.
+      path.join(__dirname, '../python-embed', isWin ? 'python.exe' : 'bin/python3'),
+    );
+  }
+
   for (const p of candidates) {
     if (fs.existsSync(p)) return p;
   }
-  return process.platform === 'win32' ? 'python' : 'python3';
-}
 
-function getSidecarDir(): string {
-  return path.join(__dirname, '../sidecar');
+  if (app.isPackaged) {
+    // Bundled runtime missing = broken installer.  Say so loudly; the PATH
+    // fallback below will almost certainly fail on a customer machine.
+    console.error(
+      '[AiQ] Bundled Python not found at', candidates[0],
+      '— the installer was built without `npm run sidecar:bundle-python`. ' +
+      'Falling back to PATH python (unlikely to work on a customer machine).',
+    );
+  }
+  return isWin ? 'python' : 'python3';
 }
 
 async function checkSidecarHealth(): Promise<boolean> {
@@ -161,9 +207,13 @@ async function startSidecar(): Promise<void> {
   console.log('[AiQ] Starting sidecar:', pythonPath, 'in', sidecarDir);
 
   const envKey = readEnvGlazierai();
+  // `--app-dir` puts sidecarDir on sys.path explicitly.  The embedded Windows
+  // Python runs in isolated mode (its ._pth file replaces sys.path and drops
+  // the implicit cwd entry), so relying on cwd for `import main` breaks in the
+  // packaged build.  Harmless in the .venv dev case.
   sidecarProcess = spawn(
     pythonPath,
-    ['-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', String(SIDECAR_PORT), '--log-level', 'warning'],
+    ['-m', 'uvicorn', '--app-dir', sidecarDir, 'main:app', '--host', '127.0.0.1', '--port', String(SIDECAR_PORT), '--log-level', 'warning'],
     {
       cwd: sidecarDir,
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -937,6 +987,69 @@ app.whenReady().then(async () => {
       const data = await res.json();
       return { ok: true, data };
     } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    }
+  });
+
+  // ── Box & Snap: vision detection on one region of one page ────────────────
+  // Renderer → here → POST /drawing-intelligence/run-region.  The API key is
+  // attached here from safeStorage; the renderer never sees it.
+  ipcMain.handle('glazierai:runRegion', async (_event, payload: {
+    pdfPath?: string;
+    pdfBase64?: string;
+    pageIndex: number;
+    region: [number, number, number, number];
+    projectName?: string;
+  }) => {
+    // DEBUG (2026-09-18): Box & Snap chain tracing. These print in the terminal
+    // that launched Electron (GlazeBid.bat window), NOT in DevTools.
+    const t0 = Date.now();
+    console.log('[BoxSnap:main] runRegion ▶', {
+      pageIndex: payload?.pageIndex,
+      region: payload?.region,
+      hasPath: !!payload?.pdfPath,
+      base64Chars: payload?.pdfBase64?.length ?? 0,
+      port: SIDECAR_PORT,
+    });
+    const apiKey = loadAiKey();
+    if (!apiKey) {
+      console.warn('[BoxSnap:main] ✖ no API key');
+      return { ok: false, error: 'No API key configured. Add your Anthropic key in Settings → AI.' };
+    }
+    if (!payload?.pdfPath && !payload?.pdfBase64) {
+      console.warn('[BoxSnap:main] ✖ no PDF source');
+      return { ok: false, error: 'No PDF source provided.' };
+    }
+    if (!Array.isArray(payload.region) || payload.region.length !== 4) {
+      console.warn('[BoxSnap:main] ✖ bad region', payload.region);
+      return { ok: false, error: 'region must be [x0,y0,x1,y1].' };
+    }
+
+    const body = {
+      pdf_path:          payload.pdfPath ?? null,
+      pdf_base64:        payload.pdfBase64 ?? null,
+      page_index:        payload.pageIndex,
+      region:            payload.region,
+      project_name:      payload.projectName ?? '',
+      anthropic_api_key: apiKey,
+    };
+    try {
+      const res = await fetch(`http://localhost:${SIDECAR_PORT}/drawing-intelligence/run-region`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(120_000),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        console.warn(`[BoxSnap:main] ✖ sidecar HTTP ${res.status} after ${Date.now() - t0} ms:`, text.slice(0, 500));
+        return { ok: false, error: `Sidecar returned ${res.status}: ${text}` };
+      }
+      const data = await res.json();
+      console.log(`[BoxSnap:main] ✔ ${data?.detections?.length ?? 0} detections in ${Date.now() - t0} ms`);
+      return { ok: true, data };
+    } catch (err) {
+      console.error(`[BoxSnap:main] ✖ fetch failed after ${Date.now() - t0} ms:`, err);
       return { ok: false, error: err instanceof Error ? err.message : String(err) };
     }
   });

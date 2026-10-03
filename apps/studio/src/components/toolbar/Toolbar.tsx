@@ -70,6 +70,9 @@ function CountIcon()     { return <svg className="w-4 h-4" fill="none" viewBox="
 function WandIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>; }
 function GhostIcon()     { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 2C8.134 2 5 5.134 5 9v7l2-2 2 2 2-2 2 2 2-2 2 2V9c0-3.866-3.134-7-7-7z" /><circle cx="9.5" cy="9.5" r="1" fill="currentColor" stroke="none" /><circle cx="14.5" cy="9.5" r="1" fill="currentColor" stroke="none" /></svg>; }
 
+/** Box & Snap — marquee + sparkle: drag a region, AI reads the glazing in it. */
+function BoxSnapIcon()   { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeDasharray="3 2" d="M3.5 3.5h17v17h-17z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.2 8.4l.7 2.2 2.2.7-2.2.7-.7 2.2-.7-2.2-2.2-.7 2.2-.7z" /></svg>; }
+
 // ── Tool definitions ──────────────────────────────────────────────────────────
 
 type ToolDef = {
@@ -86,6 +89,7 @@ const TOOLS: ToolDef[] = [
   { id: 'calibrate', label: 'Calibrate',       icon: <CalibrateIcon />, shortcut: 'A' },
   { id: 'frame',     label: 'Frame Highlight', icon: <FrameIcon />,     shortcut: 'F' },
   { id: 'rake',      label: 'Raked Frame',     icon: <RakeIcon />,      shortcut: 'R' },
+  { id: 'boxsnap',   label: 'Box & Snap (AI)', icon: <BoxSnapIcon />,   shortcut: 'S' },
 ];
 
 // ── Toolbar ────────────────────────────────────────────────────────────────────

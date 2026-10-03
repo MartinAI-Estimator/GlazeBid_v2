@@ -28,6 +28,7 @@ from .schema import (
     SectionExtraction,
     SpecAnalysisResult,
 )
+from glazierai.model_config import VISION_MODEL, EXTRACTION_OPTS
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ async def health_check():
         "module": "spec_reader",
         "status": "ok" if api_key_set else "degraded",
         "anthropic_api_key_configured": api_key_set,
-        "model": "claude-sonnet-4-20250514",
+        "model": VISION_MODEL,
     }
 
 

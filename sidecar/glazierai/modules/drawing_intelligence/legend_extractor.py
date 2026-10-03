@@ -26,6 +26,7 @@ import anthropic
 
 from .vision_helper import pdf_page_to_vision_block, strip_metadata, DPI_LEGEND
 from .sheet_classifier import ClassificationResult
+from glazierai.model_config import VISION_MODEL, EXTRACTION_OPTS
 
 logger = logging.getLogger(__name__)
 
@@ -275,9 +276,9 @@ class LegendExtractor:
         ]
         try:
             p1_response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=VISION_MODEL,
+                **EXTRACTION_OPTS,
                 max_tokens=1024,
-                temperature=0,
                 system=LEGEND_SYSTEM,
                 messages=[{"role": "user", "content": p1_content}],
             )
@@ -331,9 +332,9 @@ class LegendExtractor:
         ]
         try:
             p2_response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=VISION_MODEL,
+                **EXTRACTION_OPTS,
                 max_tokens=4096,
-                temperature=0,
                 system=LEGEND_SYSTEM,
                 messages=[{"role": "user", "content": p2_content}],
             )
@@ -468,9 +469,9 @@ class LegendExtractor:
         ]
         try:
             response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=VISION_MODEL,
+                **EXTRACTION_OPTS,
                 max_tokens=4096,
-                temperature=0,
                 system=LEGEND_SYSTEM,
                 messages=[{"role": "user", "content": content}],
             )

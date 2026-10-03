@@ -19,13 +19,13 @@ from .schema import (
     MockupSpec,
     FieldWaterTestSpec,
 )
+from glazierai.model_config import VISION_MODEL, EXTRACTION_OPTS
 
 logger = logging.getLogger(__name__)
 
-# Claude model — always Sonnet 4, temperature 0 for deterministic extraction
-_MODEL = "claude-sonnet-4-20250514"
+# Claude model — see glazierai/model_config.py (thinking off = deterministic; no temperature on Sonnet 5)
+_MODEL = VISION_MODEL
 _MAX_TOKENS = 4096
-_TEMPERATURE = 0
 
 
 # ─── Extractor ────────────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ class SpecExtractor:
             response = self.client.messages.create(
                 model=_MODEL,
                 max_tokens=_MAX_TOKENS,
-                temperature=_TEMPERATURE,
+                **EXTRACTION_OPTS,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": user_prompt}],
             )
@@ -164,7 +164,7 @@ class SpecExtractor:
             response = await async_client.messages.create(
                 model=_MODEL,
                 max_tokens=_MAX_TOKENS,
-                temperature=_TEMPERATURE,
+                **EXTRACTION_OPTS,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": user_prompt}],
             )

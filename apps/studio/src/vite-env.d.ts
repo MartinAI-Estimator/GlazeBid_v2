@@ -34,6 +34,36 @@ interface Window {
     getImplications:        (params: { systemType?: string; specSections?: string[]; keywords?: string[] }) => Promise<{ ok: boolean; suggestions: unknown[]; error?: string }>;
     recordImplicationUsage: (implId: string) => Promise<{ ok: boolean; error?: string }>;
 
+    // Box & Snap — vision detection on one region of one page.
+    // `region` is [x0,y0,x1,y1] in fitz page space == Studio PAGE space.
+    runRegionTakeoff?: (payload: {
+      pdfPath?: string;
+      pdfBase64?: string;
+      pageIndex: number;
+      region: [number, number, number, number];
+      projectName?: string;
+    }) => Promise<{
+      ok: boolean;
+      error?: string;
+      data?: {
+        status?: string;
+        page_index?: number;
+        region?: number[];
+        tokens_used?: number;
+        detections?: Array<{
+          system_type?: string;
+          bbox?: number[];
+          confidence?: number;
+          description?: string;
+          mark?: string | null;
+          /** Lites across / high — geometry ⊕ vision, ≥ 1 (see geometry_anchoring.py). */
+          bay_count?: number | null;
+          row_count?: number | null;
+          grid_source?: string;
+        }>;
+      };
+    }>;
+
     // AiQ Sidecar
     aiq?: {
       health: () => Promise<{ healthy: boolean; port?: number }>;

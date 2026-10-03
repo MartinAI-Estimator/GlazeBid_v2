@@ -47,3 +47,6 @@ sidecar/.pytest_cache/
 
 # Electron build artifacts
 release/
+
+# Bundled sidecar Python runtime (built by npm run sidecar:bundle-python, ~120 MB)
+python-embed/
