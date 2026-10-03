@@ -174,3 +174,12 @@ test('job takeoff: metal grouped by die with bars, glass grouped by type', () =>
   assert.ok(t.glassRfq[0].sizes[0].blockW % 2 === 0);
   assert.equal(t.totals.lites, 6);
 });
+
+test('joint connections: 2-bay storefront counts every horizontal end once', () => {
+  const b = E.buildFrameTakeoff(E.createFrame({ size: { mode: 'frame', width: 96, height: 120 }, columns: [{ dlo: null }, { dlo: null }] }), {});
+  // 4 corners (head/sill ends at jambs) + 2 sill ends + 2 head ends at the mullion
+  assert.equal(b.connections.hEnds, 8);
+  assert.equal(b.connections.total, 8);
+  const arch = E.buildFrameTakeoff(E.createFrame({ size: { mode: 'frame', width: 96, height: 120 }, shape: { type: 'half_round' }, columns: [{ dlo: null }, { dlo: null }] }), {});
+  assert.equal(arch.connections.total, 8);
+});

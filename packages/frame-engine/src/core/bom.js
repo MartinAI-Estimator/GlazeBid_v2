@@ -235,7 +235,8 @@ function perimeterCaulkLF(solved) {
  */
 export function jointConnections(solved) {
   let hEndsPerimeter = 0; let hEndsInterior = 0; let vEnds = 0;
-  const perimEndsAt = (x, tol) => solved.pieces.filter((p) => p.perimeter && p.role !== 'jamb'
+  // perimeter pieces of ONE edge (the sill or head the vertical lands on) that end at x
+  const perimEndsAt = (edgeKey, x, tol) => solved.pieces.filter((p) => p.perimeter && p.member === edgeKey
     && (Math.abs(p.x0 - x) < tol || Math.abs(p.x1 - x) < tol)).length;
   const byJoint = [];
   for (const j of solved.joints) {
@@ -245,7 +246,8 @@ export function jointConnections(solved) {
       case 'miter': h = 1; hp = true; break;
       case 'vPerim': {
         const vl = solved.verticals.find((x) => `${x.key}:bot` === j.key || `${x.key}:top` === j.key);
-        if (j.owner === 'h') v = 1; else { h = perimEndsAt(j.x - (vl?.sl ?? 0) / 2, 1e-3) + perimEndsAt(j.x + (vl?.sl ?? 0) / 2, 1e-3); hp = true; }
+        const edgeKey = (j.members ?? [])[1];
+        if (j.owner === 'h') v = 1; else { h = perimEndsAt(edgeKey, j.x - (vl?.sl ?? 0) / 2, 1e-3) + perimEndsAt(edgeKey, j.x + (vl?.sl ?? 0) / 2, 1e-3); hp = true; }
         break;
       }
       case 'vOnH': v = 1; break;
@@ -257,8 +259,9 @@ export function jointConnections(solved) {
     // door header ends are the vendor's (door package) — still a field joint, not a shear block
     const isDH = (j.members ?? []).some((m) => String(m).startsWith('DH'));
     if (hp) hEndsPerimeter += h; else if (!isDH) hEndsInterior += h;
-    vEnds += v;
-    byJoint.push({ key: j.key, type: j.type, owner: j.owner, x: j.x, y: j.y, h, v });
+    if (!isDH) vEnds += v;
+    // door-header joints belong to the vendor's door package (installed under door labor)
+    byJoint.push({ key: j.key, type: j.type, owner: j.owner, x: j.x, y: j.y, h: isDH ? 0 : h, v: isDH ? 0 : v });
   }
   const hEnds = hEndsPerimeter + hEndsInterior;
   return { hEnds, hEndsPerimeter, hEndsInterior, vEnds, total: hEnds + vEnds, byJoint };
