@@ -1,0 +1,1625 @@
+{
+ "_generated_by": "sidecar/knowledge/build_scope_taxonomy.py",
+ "_source_toolbox": "reference/bluebeam/Estimating ToolBox.btx (Revu 21, Martin's Estimating Tool Box)",
+ "_notes": [
+  "WW = WINDOW WALL (Martin 2026-10-03). Window wall and Break Metal share #008080 \u2014 tell them apart by subject, never by color.",
+  "General Note and Architect markups are ignored (Martin 2026-10-03).",
+  "Pass-thru items (auto sliders, skylights, revolving doors) are their own scope type: carried in our number, done by a hired sub."
+ ],
+ "classes": {
+  "ext_sf": {
+   "label": "Exterior Storefront",
+   "family": "storefront",
+   "kind": "scope"
+  },
+  "int_sf": {
+   "label": "Interior Storefront",
+   "family": "storefront",
+   "kind": "scope"
+  },
+  "int_alum_partition": {
+   "label": "Interior Aluminum Partition",
+   "family": "storefront",
+   "kind": "scope"
+  },
+  "ext_cw": {
+   "label": "Exterior Curtain Wall",
+   "family": "curtain_wall",
+   "kind": "scope"
+  },
+  "int_cw": {
+   "label": "Interior Curtain Wall",
+   "family": "curtain_wall",
+   "kind": "scope"
+  },
+  "window_wall": {
+   "label": "Window Wall",
+   "family": "window_wall",
+   "kind": "scope"
+  },
+  "window": {
+   "label": "Fixed / Operable Window",
+   "family": "window",
+   "kind": "scope"
+  },
+  "transaction_window": {
+   "label": "Transaction Window",
+   "family": "window",
+   "kind": "scope"
+  },
+  "br_transaction_window": {
+   "label": "Bullet-Resistant Transaction Window",
+   "family": "window",
+   "kind": "scope"
+  },
+  "fire_rated_sf": {
+   "label": "Fire-Rated Storefront",
+   "family": "fire_rated",
+   "kind": "scope"
+  },
+  "all_glass_wall": {
+   "label": "All-Glass Wall / Entrance",
+   "family": "all_glass",
+   "kind": "scope"
+  },
+  "glazing_only": {
+   "label": "Glazing Only",
+   "family": "glazing_only",
+   "kind": "scope"
+  },
+  "fire_rated_glazing": {
+   "label": "Fire-Rated Glazing Only",
+   "family": "glazing_only",
+   "kind": "scope"
+  },
+  "mirror": {
+   "label": "Mirror",
+   "family": "specialty",
+   "kind": "scope"
+  },
+  "glass_handrail": {
+   "label": "Glass Handrail",
+   "family": "specialty",
+   "kind": "scope"
+  },
+  "translucent_panel": {
+   "label": "Translucent Panel",
+   "family": "specialty",
+   "kind": "scope"
+  },
+  "sun_control": {
+   "label": "Sun Control Device",
+   "family": "specialty",
+   "kind": "scope"
+  },
+  "ext_sf_door": {
+   "label": "Ext Storefront Door",
+   "family": "storefront",
+   "kind": "scope"
+  },
+  "int_sf_door": {
+   "label": "Int Storefront Door",
+   "family": "storefront",
+   "kind": "scope"
+  },
+  "ext_cw_door": {
+   "label": "Ext Curtain Wall Door",
+   "family": "curtain_wall",
+   "kind": "scope"
+  },
+  "int_cw_door": {
+   "label": "Int Curtain Wall Door",
+   "family": "curtain_wall",
+   "kind": "scope"
+  },
+  "terrace_door": {
+   "label": "Terrace Door",
+   "family": "curtain_wall",
+   "kind": "scope"
+  },
+  "all_glass_door": {
+   "label": "All-Glass Door",
+   "family": "all_glass",
+   "kind": "scope"
+  },
+  "glazing_only_door": {
+   "label": "Glazing Only Door (HM/wood lite)",
+   "family": "glazing_only",
+   "kind": "scope"
+  },
+  "fire_rated_door": {
+   "label": "Fire-Rated Aluminum Door / Lite",
+   "family": "fire_rated",
+   "kind": "scope"
+  },
+  "alum_frame_only": {
+   "label": "Aluminum Door Frame Only",
+   "family": "storefront",
+   "kind": "scope"
+  },
+  "revolving_door": {
+   "label": "Revolving Door",
+   "family": "pass_thru",
+   "kind": "pass_thru"
+  },
+  "bifold_sliding": {
+   "label": "Bi-Fold / Sliding Door",
+   "family": "specialty",
+   "kind": "scope"
+  },
+  "auto_door": {
+   "label": "Automatic Sliding Door",
+   "family": "pass_thru",
+   "kind": "pass_thru"
+  },
+  "skylight": {
+   "label": "Skylight",
+   "family": "pass_thru",
+   "kind": "pass_thru"
+  },
+  "break_metal": {
+   "label": "Break Metal Flashing & Trim",
+   "family": "implied",
+   "kind": "implied"
+  },
+  "floor_line_fire_caulk": {
+   "label": "Floor Line Fire Caulking",
+   "family": "implied",
+   "kind": "implied"
+  },
+  "wl_dl_clip": {
+   "label": "Windload / Deadload Clip",
+   "family": "implied",
+   "kind": "implied"
+  },
+  "ssg_caulk": {
+   "label": "SSG Caulk Joint",
+   "family": "implied",
+   "kind": "implied"
+  },
+  "polished_edge": {
+   "label": "Polished Edge",
+   "family": "implied",
+   "kind": "implied"
+  },
+  "hm_lite_count": {
+   "label": "HM Lite Count",
+   "family": "glazing_only",
+   "kind": "implied"
+  },
+  "structural_steel": {
+   "label": "Structural Steel",
+   "family": "implied",
+   "kind": "implied"
+  },
+  "glass_film": {
+   "label": "Glass Film",
+   "family": "specialty",
+   "kind": "scope"
+  },
+  "excluded": {
+   "label": "Excluded by Binswanger",
+   "family": "exclusion",
+   "kind": "exclusion"
+  },
+  "qty_label": {
+   "label": "Qty Text Box (mark + count)",
+   "family": "note",
+   "kind": "note"
+  },
+  "note": {
+   "label": "Note / callout",
+   "family": "note",
+   "kind": "note"
+  },
+  "measure": {
+   "label": "Length measurement",
+   "family": "measure",
+   "kind": "measure"
+  },
+  "ignore": {
+   "label": "Ignored (not takeoff)",
+   "family": "ignore",
+   "kind": "ignore"
+  }
+ },
+ "subjects": {
+  "all glass door": {
+   "subject": "All Glass Door",
+   "class": "all_glass_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "all glass doors": {
+   "subject": "All Glass Doors",
+   "class": "all_glass_door",
+   "role": "door",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF",
+   "opacity": 0.6,
+   "in_toolbox": true
+  },
+  "all glass wall area": {
+   "subject": "All Glass Wall Area",
+   "class": "all_glass_wall",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "all glass wall highlight": {
+   "subject": "All Glass Wall Highlight",
+   "class": "all_glass_wall",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "all glass wall line": {
+   "subject": "All Glass Wall Line",
+   "class": "all_glass_wall",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "all glass wall polylength": {
+   "subject": "All Glass Wall Polylength",
+   "class": "all_glass_wall",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "aluminum door frame only": {
+   "subject": "Aluminum Door Frame Only",
+   "class": "alum_frame_only",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#FF8000",
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "aluminum stile door": {
+   "subject": "Aluminum Stile Door",
+   "class": "color_classed",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#000000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "architect": {
+   "subject": "Architect",
+   "class": "ignore",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#0080FF",
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "arrow": {
+   "subject": "arrow",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "auto-sliding door highlight": {
+   "subject": "Auto-Sliding Door Highlight",
+   "class": "auto_door",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "automatic sliding door": {
+   "subject": "Automatic Sliding Door",
+   "class": "auto_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "bi-fold / slding door polylength": {
+   "subject": "Bi-Fold / Slding Door Polylength",
+   "class": "bifold_sliding",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "bi-fold / sliding door": {
+   "subject": "Bi-Fold / Sliding Door",
+   "class": "bifold_sliding",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "bi-fold / sliding door highlight": {
+   "subject": "Bi-Fold / Sliding Door Highlight",
+   "class": "bifold_sliding",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "bi-fold / sliding door's": {
+   "subject": "Bi-Fold / Sliding Door's",
+   "class": "bifold_sliding",
+   "role": "door",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "br transaction window area": {
+   "subject": "BR Transaction Window Area",
+   "class": "br_transaction_window",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "br transaction window highlight": {
+   "subject": "BR Transaction Window Highlight",
+   "class": "br_transaction_window",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "break metal flashing & trim polylength": {
+   "subject": "Break Metal Flashing & Trim Polylength",
+   "class": "break_metal",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#008080",
+   "fill": "#008080",
+   "opacity": 0.6,
+   "in_toolbox": true
+  },
+  "break metal flashing & trims": {
+   "subject": "Break Metal Flashing & Trims",
+   "class": "break_metal",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#008080",
+   "fill": "#008080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "callout": {
+   "subject": "callout",
+   "class": "note",
+   "role": "label",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "cloud": {
+   "subject": "Cloud",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "cloud+": {
+   "subject": "Cloud+",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "excluded by binswanger": {
+   "subject": "Excluded by Binswanger",
+   "class": "excluded",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext cw area": {
+   "subject": "Ext. CW Area",
+   "class": "ext_cw",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext cw door": {
+   "subject": "Ext CW Door",
+   "class": "ext_cw_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext cw highlight": {
+   "subject": "Ext CW Highlight",
+   "class": "ext_cw",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext cw line": {
+   "subject": "Ext CW Line",
+   "class": "ext_cw",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext cw polylength": {
+   "subject": "Ext CW Polylength",
+   "class": "ext_cw",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext sf area": {
+   "subject": "Ext. SF Area",
+   "class": "ext_sf",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext sf door": {
+   "subject": "Ext SF Door",
+   "class": "ext_sf_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext sf highlight": {
+   "subject": "Ext SF Highlight",
+   "class": "ext_sf",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext sf line": {
+   "subject": "Ext SF Line",
+   "class": "ext_sf",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext sf polylength": {
+   "subject": "Ext SF Polylength",
+   "class": "ext_sf",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext ww area": {
+   "subject": "Ext WW Area",
+   "class": "window_wall",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#008080",
+   "fill": "#008080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext ww highlight": {
+   "subject": "Ext WW Highlight",
+   "class": "window_wall",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#008080",
+   "fill": "#008080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext ww line": {
+   "subject": "Ext WW Line",
+   "class": "window_wall",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#008080",
+   "fill": "#008080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ext ww polylength": {
+   "subject": "Ext WW Polylength",
+   "class": "window_wall",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#008080",
+   "fill": "#008080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "exterior sf": {
+   "subject": "exterior sf",
+   "class": "ext_sf",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "fire rated aluminum door": {
+   "subject": "Fire Rated Aluminum Door",
+   "class": "fire_rated_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fire rated door lite's": {
+   "subject": "Fire Rated Door Lite's",
+   "class": "fire_rated_door",
+   "role": "door",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "fire rated glazing area": {
+   "subject": "Fire Rated Glazing Area",
+   "class": "fire_rated_glazing",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fire rated glazing only highlight": {
+   "subject": "Fire Rated Glazing Only Highlight",
+   "class": "fire_rated_glazing",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fire rated sf highlight": {
+   "subject": "Fire Rated SF Highlight",
+   "class": "fire_rated_sf",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fire rated sf polylength": {
+   "subject": "Fire Rated SF Polylength",
+   "class": "fire_rated_sf",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fire rated storefront area": {
+   "subject": "Fire Rated Storefront Area",
+   "class": "fire_rated_sf",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fire rated storefront line": {
+   "subject": "Fire Rated Storefront Line",
+   "class": "fire_rated_sf",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fixed / operable window": {
+   "subject": "Fixed / Operable Window",
+   "class": "window",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "fixed / operable window highlight": {
+   "subject": "Fixed / Operable Window Highlight",
+   "class": "window",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "floor line fire caulking polylength": {
+   "subject": "Floor Line Fire Caulking Polylength",
+   "class": "floor_line_fire_caulk",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "general note": {
+   "subject": "General Note",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#0000FF",
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "glass film area": {
+   "subject": "glass film area",
+   "class": "glass_film",
+   "role": "area",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "glass film highlight": {
+   "subject": "glass film highlight",
+   "class": "glass_film",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "glass film polylength": {
+   "subject": "glass film polylength",
+   "class": "glass_film",
+   "role": "linear",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "glass handrail area": {
+   "subject": "Glass Handrail Area",
+   "class": "glass_handrail",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF0080",
+   "fill": "#FF0080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "glass handrail line": {
+   "subject": "Glass Handrail Line",
+   "class": "glass_handrail",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#FF0080",
+   "fill": "#FF0080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "glass handrail polylength": {
+   "subject": "Glass Handrail Polylength",
+   "class": "glass_handrail",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF0080",
+   "fill": "#FF0080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "glazing only area": {
+   "subject": "Glazing Only Area",
+   "class": "glazing_only",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#800040",
+   "fill": "#800040",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "glazing only door": {
+   "subject": "Glazing ONLY Door",
+   "class": "glazing_only_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#000000",
+   "fill": "#800080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "glazing only door's": {
+   "subject": "Glazing Only Door's",
+   "class": "glazing_only_door",
+   "role": "door",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#800040",
+   "fill": "#800040",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "glazing only highlight": {
+   "subject": "Glazing Only Highlight",
+   "class": "glazing_only",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#800040",
+   "fill": "#800040",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "glazing only line": {
+   "subject": "Glazing Only Line",
+   "class": "glazing_only",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#800040",
+   "fill": "#800040",
+   "opacity": 0.7,
+   "in_toolbox": true
+  },
+  "handrail highlight": {
+   "subject": "Handrail Highlight",
+   "class": "glass_handrail",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF0080",
+   "fill": "#FF0080",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "highlight": {
+   "subject": "highlight",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "hm lite counts": {
+   "subject": "HM Lite Counts",
+   "class": "hm_lite_count",
+   "role": "count",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#800040",
+   "fill": "#800040",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "image": {
+   "subject": "image",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "int aluminum partition highlight": {
+   "subject": "Int Aluminum Partition Highlight",
+   "class": "int_alum_partition",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "int cw area": {
+   "subject": "Int. CW Area",
+   "class": "int_cw",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "int cw door": {
+   "subject": "Int CW Door",
+   "class": "int_cw_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "int cw highlight": {
+   "subject": "Int CW Highlight",
+   "class": "int_cw",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "int cw polylength": {
+   "subject": "Int CW Polylength",
+   "class": "int_cw",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": 0.2,
+   "in_toolbox": true
+  },
+  "int sf area": {
+   "subject": "Int. SF Area",
+   "class": "int_sf",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "int sf door": {
+   "subject": "Int SF Door",
+   "class": "int_sf_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "int sf highlight": {
+   "subject": "Int SF Highlight",
+   "class": "int_sf",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "int sf line": {
+   "subject": "Int SF Line",
+   "class": "int_sf",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#FF8040",
+   "fill": "#FF8040",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "int sf polylength": {
+   "subject": "Int SF Polylength",
+   "class": "int_sf",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "interior aluminum partition area": {
+   "subject": "Interior Aluminum Partition Area",
+   "class": "int_alum_partition",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "interior aluminum partition doors": {
+   "subject": "Interior Aluminum Partition Doors",
+   "class": "int_sf_door",
+   "role": "door",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": 0.2,
+   "in_toolbox": true
+  },
+  "interior aluminum partition line": {
+   "subject": "Interior Aluminum Partition Line",
+   "class": "int_alum_partition",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#FF8040",
+   "fill": "#FF8040",
+   "opacity": 0.2,
+   "in_toolbox": true
+  },
+  "interior aluminum partition polylength": {
+   "subject": "Interior Aluminum Partition Polylength",
+   "class": "int_alum_partition",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "legend": {
+   "subject": "legend",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "length measurement": {
+   "subject": "length measurement",
+   "class": "measure",
+   "role": "linear",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "line": {
+   "subject": "Line",
+   "class": "ignore",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#000000",
+   "fill": "#000000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "mirror area": {
+   "subject": "Mirror Area",
+   "class": "mirror",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF80C0",
+   "fill": "#FF80C0",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "mirror highlight": {
+   "subject": "Mirror Highlight",
+   "class": "mirror",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF80C0",
+   "fill": "#FF80C0",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "mirror line": {
+   "subject": "Mirror Line",
+   "class": "mirror",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#FF80C0",
+   "fill": "#FF80C0",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "mirror polylength": {
+   "subject": "Mirror Polylength",
+   "class": "mirror",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF80C0",
+   "fill": "#FF80C0",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "operable window line": {
+   "subject": "Operable Window Line",
+   "class": "window",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "operable window polylength": {
+   "subject": "Operable Window Polylength",
+   "class": "window",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "polished edge count": {
+   "subject": "Polished Edge Count",
+   "class": "polished_edge",
+   "role": "count",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "polygon": {
+   "subject": "polygon",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "polyline": {
+   "subject": "polyline",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "qty text box": {
+   "subject": "Qty Text Box",
+   "class": "qty_label",
+   "role": "label",
+   "annot_type": "AnnotationFreeText",
+   "stroke": "#FFFFFF",
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "rectangle": {
+   "subject": "Rectangle",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": "AnnotationSquare",
+   "stroke": "#000000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "revolving door": {
+   "subject": "Revolving Door",
+   "class": "revolving_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "sf frames": {
+   "subject": "SF Frames",
+   "class": "ext_sf",
+   "role": "count",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#FF8000",
+   "fill": "#FF8000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "skylight area": {
+   "subject": "skylight area",
+   "class": "skylight",
+   "role": "area",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "skylight count": {
+   "subject": "skylight count",
+   "class": "skylight",
+   "role": "count",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "skylight highlight": {
+   "subject": "skylight highlight",
+   "class": "skylight",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "snapshot": {
+   "subject": "Snapshot",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": "AnnotationBRXStamp",
+   "stroke": "#FF0000",
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "ssg caulk count": {
+   "subject": "SSG Caulk Count",
+   "class": "ssg_caulk",
+   "role": "count",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#0080FF",
+   "fill": "#0080FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "stamp": {
+   "subject": "stamp",
+   "class": "ignore",
+   "role": "region",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "structural steel": {
+   "subject": "Structural Steel",
+   "class": "structural_steel",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "sun control device area": {
+   "subject": "Sun Control Device Area",
+   "class": "sun_control",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#FF80FF",
+   "fill": "#FF80FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "sun control device highlight": {
+   "subject": "Sun Control Device Highlight",
+   "class": "sun_control",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#FF80FF",
+   "fill": "#FF80FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "sun control device polylength": {
+   "subject": "Sun Control Device Polylength",
+   "class": "sun_control",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#FF80FF",
+   "fill": "#FF80FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "terrace door": {
+   "subject": "Terrace Door",
+   "class": "terrace_door",
+   "role": "door",
+   "annot_type": "AnnotationCircle",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "terrace door highlight": {
+   "subject": "Terrace Door Highlight",
+   "class": "terrace_door",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#008000",
+   "fill": "#008000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "text box": {
+   "subject": "Text Box",
+   "class": "note",
+   "role": "label",
+   "annot_type": "AnnotationFreeText",
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "transaction window area": {
+   "subject": "Transaction Window Area",
+   "class": "transaction_window",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "transaction window highlight": {
+   "subject": "Transaction Window Highlight",
+   "class": "transaction_window",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#0000A0",
+   "fill": "#0000A0",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "transaction window line": {
+   "subject": "Transaction Window Line",
+   "class": "transaction_window",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#0000FF",
+   "fill": "#0000FF",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "translucent panel area": {
+   "subject": "Translucent Panel Area",
+   "class": "translucent_panel",
+   "role": "area",
+   "annot_type": "AnnotationMeasureArea",
+   "stroke": "#0080FF",
+   "fill": "#0080FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "translucent panel highlight": {
+   "subject": "Translucent Panel Highlight",
+   "class": "translucent_panel",
+   "role": "region",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#0080FF",
+   "fill": "#0080FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "translucent panel line": {
+   "subject": "Translucent Panel Line",
+   "class": "translucent_panel",
+   "role": "linear",
+   "annot_type": "AnnotationLine",
+   "stroke": "#0080FF",
+   "fill": "#0080FF",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "translucent panel polylength": {
+   "subject": "Translucent Panel Polylength",
+   "class": "translucent_panel",
+   "role": "linear",
+   "annot_type": "AnnotationMeasurePolylength",
+   "stroke": "#0080FF",
+   "fill": "#0080FF",
+   "opacity": 0.5,
+   "in_toolbox": true
+  },
+  "typewritten text": {
+   "subject": "typewritten text",
+   "class": "note",
+   "role": "label",
+   "annot_type": null,
+   "stroke": null,
+   "fill": null,
+   "opacity": null,
+   "in_toolbox": false
+  },
+  "windload - deadload": {
+   "subject": "Windload - Deadload",
+   "class": "wl_dl_clip",
+   "role": "count",
+   "annot_type": "AnnotationMeasureCount",
+   "stroke": "#FF0000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  },
+  "wl-dl clip": {
+   "subject": "WL-DL Clip",
+   "class": "wl_dl_clip",
+   "role": "count",
+   "annot_type": "AnnotationPolygon",
+   "stroke": "#000000",
+   "fill": "#FF0000",
+   "opacity": null,
+   "in_toolbox": true
+  }
+ },
+ "color_classed_subjects": [
+  "aluminum stile door"
+ ],
+ "color_to_door_class": {
+  "#FF8000": "ext_sf_door",
+  "#008000": "ext_cw_door",
+  "#80FFFF": "all_glass_door",
+  "#FFFF00": "bifold_sliding",
+  "#FF0000": "fire_rated_door",
+  "#800040": "glazing_only_door"
+ },
+ "draw_style": {
+  "ext_sf": {
+   "subject": "Ext SF Highlight",
+   "stroke": "#FF8000",
+   "fill": "#FF8000"
+  },
+  "ext_cw": {
+   "subject": "Ext CW Highlight",
+   "stroke": "#008000",
+   "fill": "#008000"
+  },
+  "window_wall": {
+   "subject": "Ext WW Highlight",
+   "stroke": "#008080",
+   "fill": "#008080"
+  },
+  "int_sf": {
+   "subject": "Int SF Highlight",
+   "stroke": "#FF8000",
+   "fill": "#FF8000"
+  },
+  "int_cw": {
+   "subject": "Int CW Highlight",
+   "stroke": "#008000",
+   "fill": "#008000"
+  },
+  "window": {
+   "subject": "Fixed / Operable Window Highlight",
+   "stroke": "#0000FF",
+   "fill": "#0000FF"
+  },
+  "all_glass_wall": {
+   "subject": "All Glass Wall Highlight",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF"
+  },
+  "int_alum_partition": {
+   "subject": "Int Aluminum Partition Highlight",
+   "stroke": "#FF8000",
+   "fill": "#FF8000"
+  },
+  "translucent_panel": {
+   "subject": "Translucent Panel Highlight",
+   "stroke": "#0080FF",
+   "fill": "#0080FF"
+  },
+  "sun_control": {
+   "subject": "Sun Control Device Highlight",
+   "stroke": "#FF80FF",
+   "fill": "#FF80FF"
+  },
+  "fire_rated_sf": {
+   "subject": "Fire Rated SF Highlight",
+   "stroke": "#FF0000",
+   "fill": "#FF0000"
+  },
+  "glazing_only": {
+   "subject": "Glazing Only Highlight",
+   "stroke": "#800040",
+   "fill": "#800040"
+  },
+  "fire_rated_glazing": {
+   "subject": "Fire Rated Glazing Only Highlight",
+   "stroke": "#FF0000",
+   "fill": "#FF0000"
+  },
+  "mirror": {
+   "subject": "Mirror Highlight",
+   "stroke": "#FF80C0",
+   "fill": "#FF80C0"
+  },
+  "glass_handrail": {
+   "subject": "Handrail Highlight",
+   "stroke": "#FF0080",
+   "fill": "#FF0080"
+  },
+  "transaction_window": {
+   "subject": "Transaction Window Highlight",
+   "stroke": "#0000A0",
+   "fill": "#0000A0"
+  },
+  "br_transaction_window": {
+   "subject": "BR Transaction Window Highlight",
+   "stroke": "#0000FF",
+   "fill": "#0000FF"
+  },
+  "break_metal": {
+   "subject": "Break Metal Flashing & Trims",
+   "stroke": "#008080",
+   "fill": "#008080"
+  },
+  "bifold_sliding": {
+   "subject": "Bi-Fold / Sliding Door Highlight",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00"
+  },
+  "auto_door": {
+   "subject": "Auto-Sliding Door Highlight",
+   "stroke": "#FFFF00",
+   "fill": "#FFFF00"
+  },
+  "terrace_door": {
+   "subject": "Terrace Door Highlight",
+   "stroke": "#008000",
+   "fill": "#008000"
+  },
+  "excluded": {
+   "subject": "Excluded by Binswanger",
+   "stroke": "#FF0000",
+   "fill": "#FF0000"
+  },
+  "ignore": {
+   "subject": "General Note",
+   "stroke": "#0000FF",
+   "fill": null
+  },
+  "floor_line_fire_caulk": {
+   "subject": "Floor Line Fire Caulking Polylength",
+   "stroke": "#FF0000",
+   "fill": "#FF0000"
+  },
+  "structural_steel": {
+   "subject": "Structural Steel",
+   "stroke": "#FF0000",
+   "fill": "#FF0000"
+  },
+  "ext_sf_door": {
+   "subject": "Ext SF Door",
+   "stroke": "#FF8000",
+   "fill": "#FF8000"
+  },
+  "ext_cw_door": {
+   "subject": "Ext CW Door",
+   "stroke": "#008000",
+   "fill": "#008000"
+  },
+  "int_sf_door": {
+   "subject": "Int SF Door",
+   "stroke": "#FF8000",
+   "fill": "#FF8000"
+  },
+  "int_cw_door": {
+   "subject": "Int CW Door",
+   "stroke": "#008000",
+   "fill": "#008000"
+  },
+  "all_glass_door": {
+   "subject": "All Glass Door",
+   "stroke": "#80FFFF",
+   "fill": "#80FFFF"
+  },
+  "revolving_door": {
+   "subject": "Revolving Door",
+   "stroke": "#FF8000",
+   "fill": "#FF8000"
+  },
+  "glazing_only_door": {
+   "subject": "Glazing ONLY Door",
+   "stroke": "#000000",
+   "fill": "#800080"
+  },
+  "fire_rated_door": {
+   "subject": "Fire Rated Aluminum Door",
+   "stroke": "#FF0000",
+   "fill": "#FF0000"
+  },
+  "alum_frame_only": {
+   "subject": "Aluminum Door Frame Only",
+   "stroke": "#FF8000",
+   "fill": null
+  },
+  "wl_dl_clip": {
+   "subject": "WL-DL Clip",
+   "stroke": "#000000",
+   "fill": "#FF0000"
+  },
+  "polished_edge": {
+   "subject": "Polished Edge Count",
+   "stroke": "#0000FF",
+   "fill": "#0000FF"
+  },
+  "ssg_caulk": {
+   "subject": "SSG Caulk Count",
+   "stroke": "#0080FF",
+   "fill": "#0080FF"
+  },
+  "hm_lite_count": {
+   "subject": "HM Lite Counts",
+   "stroke": "#800040",
+   "fill": "#800040"
+  }
+ },
+ "ignored_authors": [
+  "AutoCAD SHX Text"
+ ],
+ "unmapped_toolbox_subjects": []
+}

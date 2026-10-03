@@ -8,8 +8,10 @@
 #   - GlazeField (future)
 #   - GlazierAI Pro (future)
 #
-# Rule: one color = one scope type = one system card category.
-# Never use these hex values for anything other than their assigned scope type.
+# Subjects/colors mirror Martin's Estimating ToolBox.btx (reference/bluebeam/).
+# The full subject → class map lives in sidecar/knowledge/scope_taxonomy.json;
+# this file is the per-scope color card.  NOTE: #008080 is shared by Window Wall
+# and Break Metal, and #FF8000 by Ext/Int SF — classify by SUBJECT, not color.
 
 SCOPE_COLORS = {
 
@@ -45,17 +47,27 @@ SCOPE_COLORS = {
         "notes": "Includes interior aluminum partitions and bi-fold/sliding panels within SF assembly",
     },
 
-    "wet_wall": {
+    "window_wall": {
         "hex": "#008080",
-        "name": "Wet Wall",
+        "name": "Window Wall",
         "bluebeam_subjects": [
-            "Ext WW Highlight", "Ext WW Area", "Ext WW Polylength",
-            "Ext WW Line", "Break Metal Flashing & Trims",
-            "Break Metal Flashing & Trim Polylength",
+            "Ext WW Highlight", "Ext WW Area", "Ext WW Polylength", "Ext WW Line",
+        ],
+        "csi_sections": ["08 44 00"],
+        "system_card_label": "Window Wall",
+        "notes": "WW = WINDOW WALL (Martin, 2026-10-03) — was mislabeled 'Wet Wall'. "
+                 "Shares #008080 with Break Metal; tell them apart by subject, never color.",
+    },
+
+    "break_metal": {
+        "hex": "#008080",
+        "name": "Break Metal Flashing & Trim",
+        "bluebeam_subjects": [
+            "Break Metal Flashing & Trims", "Break Metal Flashing & Trim Polylength",
         ],
         "csi_sections": [],
-        "system_card_label": "Wet Wall / Sealant",
-        "notes": "Includes break metal flashing and trim scope",
+        "system_card_label": "Break Metal",
+        "notes": "Ours when it touches our frame (Martin, 2026-10-03).",
     },
 
     # ── Glass-Primary Systems ─────────────────────────────────────────────────
@@ -247,9 +259,10 @@ SCOPE_COLORS = {
 # ── Quick-reference color maps ────────────────────────────────────────────────
 # Use these for GlazierAI classification output and Builder System card colors
 
+# Colors are NOT unique (see header) — this map is lossy; prefer subjects.
 COLOR_TO_SCOPE = {v["hex"]: k for k, v in SCOPE_COLORS.items()}
 SCOPE_TO_COLOR = {k: v["hex"] for k, v in SCOPE_COLORS.items()}
 SCOPE_TO_LABEL = {k: v["system_card_label"] for k, v in SCOPE_COLORS.items()}
 
-# Total scope types: 17
+# Total scope types: 18
 # Complete as of GlazeBid v2 / GlazierAI v1.0

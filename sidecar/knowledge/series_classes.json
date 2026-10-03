@@ -1,0 +1,534 @@
+{
+ "_generated_by": "scripts/export-series-classes.mjs from packages/frame-engine/src/core/library.js",
+ "_rule": "Series code is the decisive SF vs CW signal when present. Never classify from panel size when a series is named.",
+ "window_wall": {
+  "status": "pending",
+  "note": "Martin will supply Kawneer/Tubelite window wall series later (2026-10-03)."
+ },
+ "systems": [
+  {
+   "id": "kawneer-450",
+   "manufacturer": "Kawneer",
+   "series": "450",
+   "name": "Trifab 450 — 1-3/4\" x 4-1/2\" Non-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "450",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "TRIFAB 450",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "TRIFAB VG 450",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-451",
+   "manufacturer": "Kawneer",
+   "series": "451",
+   "name": "Trifab 451 — 2\" x 4-1/2\" Non-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "451",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "TRIFAB 451",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "TRIFAB VG 451",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-451t",
+   "manufacturer": "Kawneer",
+   "series": "451T",
+   "name": "Trifab 451T — 2\" x 4-1/2\" Thermal (Center Glaze)",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "451T",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "TRIFAB 451T",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "TRIFAB VG 451T",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-451ut",
+   "manufacturer": "Kawneer",
+   "series": "451UT",
+   "name": "Trifab 451UT — 2\" x 4-1/2\" Ultra-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "451UT",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "TRIFAB 451UT",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-601",
+   "manufacturer": "Kawneer",
+   "series": "601",
+   "name": "Trifab 601 — 2\" x 6\" Non-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "601",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "TRIFAB 601",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-601t",
+   "manufacturer": "Kawneer",
+   "series": "601T",
+   "name": "Trifab 601T — 2\" x 6\" Thermal (Center Glaze)",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "601T",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "TRIFAB 601T",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-601ut",
+   "manufacturer": "Kawneer",
+   "series": "601UT",
+   "name": "Trifab 601UT — 2\" x 6\" Ultra-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "601UT",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "TRIFAB 601UT",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-501t-ir",
+   "manufacturer": "Kawneer",
+   "series": "IR 501T",
+   "name": "IR 501T — 2\" x 5\" Impact-Rated Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "IR 501T",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "IR501T",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "501T",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "kawneer-1600-6",
+   "manufacturer": "Kawneer",
+   "series": "1600 Wall (6\")",
+   "name": "1600 Wall System — 2-1/2\" x 6\"",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "1600 WALL (6\")",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "1600 WALL",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "1600WALL",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "1600 SYSTEM 1",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "1600 SYSTEM1",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-1600-75",
+   "manufacturer": "Kawneer",
+   "series": "1600 Wall (7-1/2\")",
+   "name": "1600 Wall System — 2-1/2\" x 7-1/2\"",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "1600 WALL (7-1/2\")",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "1600 WALL SYSTEM 2",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "1600 SYSTEM 2",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "1600 SYSTEM2",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "kawneer-1600ut",
+   "manufacturer": "Kawneer",
+   "series": "1600 UT",
+   "name": "1600 UT Ultra-Thermal Wall — 2-1/2\" x 7-1/2\"",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "1600 UT",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "1600UT",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "1600 UT SYSTEM",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "kawneer-1620",
+   "manufacturer": "Kawneer",
+   "series": "1620",
+   "name": "1620 / 1620 SSG Wall — 2\" x 6\"",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": true,
+   "aliases": [
+    {
+     "text": "1620",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "1620 SSG",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "1620UT",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "tubelite-450",
+   "manufacturer": "Tubelite",
+   "series": "4500",
+   "name": "Tubelite 4500 — 1-3/4\" x 4-1/2\" Non-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "4500",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "tubelite-451",
+   "manufacturer": "Tubelite",
+   "series": "E14000",
+   "name": "Tubelite E14000 — 2\" x 4-1/2\" Non-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "E14000",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "14000",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "tubelite-451t",
+   "manufacturer": "Tubelite",
+   "series": "T14000",
+   "name": "Tubelite T14000 — 2\" x 4-1/2\" Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "T14000",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "tubelite-451ut",
+   "manufacturer": "Tubelite",
+   "series": "TU14000",
+   "name": "Tubelite TU14000 — 2\" x 4-1/2\" Ultra-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "TU14000",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "tubelite-601",
+   "manufacturer": "Tubelite",
+   "series": "E24650",
+   "name": "Tubelite E24650 — 2\" x 6\" Non-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "E24650",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "24650",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "tubelite-601t",
+   "manufacturer": "Tubelite",
+   "series": "T24650",
+   "name": "Tubelite T24650 — 2\" x 6\" Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "T24650",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "tubelite-601ut",
+   "manufacturer": "Tubelite",
+   "series": "TU24650",
+   "name": "Tubelite TU24650 — 2\" x 6\" Ultra-Thermal",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "TU24650",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "tubelite-501t-ir",
+   "manufacturer": "Tubelite",
+   "series": "T34000 IR",
+   "name": "Tubelite T34000 IR — Impact-Rated (approx. to 501T)",
+   "system_type": "Ext SF",
+   "family": "storefront",
+   "scope_class": "ext_sf",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "T34000 IR",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "T34000",
+     "needs_manufacturer_context": false
+    }
+   ]
+  },
+  {
+   "id": "tubelite-1600-6",
+   "manufacturer": "Tubelite",
+   "series": "400CW (6\")",
+   "name": "Tubelite 400 Curtain Wall — 2-1/2\" x 6\"",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "400CW (6\")",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "400CW",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "400 CW",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "400 CURTAIN WALL",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "400 SERIES",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "tubelite-1600-75",
+   "manufacturer": "Tubelite",
+   "series": "400CW (7-1/2\")",
+   "name": "Tubelite 400 Curtain Wall — 2-1/2\" x 7-1/2\"",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "400CW (7-1/2\")",
+     "needs_manufacturer_context": false
+    },
+    {
+     "text": "400CW",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "400 CURTAIN WALL",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "tubelite-1600ut",
+   "manufacturer": "Tubelite",
+   "series": "400CW UT",
+   "name": "Tubelite 400 Curtain Wall Ultra-Thermal",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": false,
+   "aliases": [
+    {
+     "text": "400CW UT",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "400 UT",
+     "needs_manufacturer_context": true
+    }
+   ]
+  },
+  {
+   "id": "tubelite-1620",
+   "manufacturer": "Tubelite",
+   "series": "200 Series",
+   "name": "Tubelite 200 Series Curtain Wall — 2\" face",
+   "system_type": "Cap CW",
+   "family": "curtainwall",
+   "scope_class": "ext_cw",
+   "ssg_capable": true,
+   "aliases": [
+    {
+     "text": "200 SERIES",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "200CW",
+     "needs_manufacturer_context": true
+    },
+    {
+     "text": "200 CURTAIN WALL",
+     "needs_manufacturer_context": true
+    }
+   ]
+  }
+ ]
+}

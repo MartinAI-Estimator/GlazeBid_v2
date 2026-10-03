@@ -5,15 +5,16 @@
  * Studio reads scopeHex from GlazierAI output and renders markup
  * overlays in the correct color automatically.
  *
- * Rule: one color = one scope type. Never use these values for anything
- * else. To add a scope type, update glazebid_scope_colors.py first,
+ * Colors mirror Martin's Estimating ToolBox.btx. Colors are NOT unique
+ * (SF ext/int share orange; window wall + break metal share teal). To add a scope type, update glazebid_scope_colors.py first,
  * then mirror it here.
  */
 
 export type ScopeType =
   | 'curtain_wall'
   | 'storefront'
-  | 'wet_wall'
+  | 'window_wall'
+  | 'break_metal'
   | 'all_glass_wall'
   | 'glazing_only'
   | 'window'
@@ -48,9 +49,16 @@ export const SCOPE_COLORS: Record<ScopeType, ScopeColorDef> = {
     name: 'Storefront',
     csiSections: ['08 41 13', '08 42 26'],
   },
-  wet_wall: {
+  // WW = WINDOW WALL (Martin, 2026-10-03). Shares #008080 with break metal —
+  // classify by subject, never by color.
+  window_wall: {
     hex: '#008080',
-    name: 'Wet Wall',
+    name: 'Window Wall',
+    csiSections: ['08 44 00'],
+  },
+  break_metal: {
+    hex: '#008080',
+    name: 'Break Metal Flashing & Trim',
     csiSections: [],
   },
 

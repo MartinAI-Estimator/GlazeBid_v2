@@ -1,88 +1,91 @@
 {
-  "_description": "GlazeBid AiQ System Knowledge Base — trade knowledge that classification depends on. Authored/verified by Martin (master estimator). Vision detects; THIS classifies; rules bound scope. Extend freely — every entry here fixes a class of AI error permanently.",
-  "_verified_by": "Martin, July 15, 2026",
+ "_description": "GlazeBid AiQ System Knowledge Base — trade knowledge that classification depends on. Authored/verified by Martin (master estimator). Vision detects; THIS classifies; rules bound scope. Every entry fixes a class of AI error permanently. Rendered into every vision prompt by knowledge/prompt_context.py.",
+ "_verified_by": "Martin, July 15 2026; interview Oct 3 2026",
+ "_series_source": "knowledge/series_classes.json (generated from Frame Builder SYSTEM_LIBRARY — Kawneer + Tubelite)",
+ "scope_color_convention": "See knowledge/scope_taxonomy.json (generated from Martin's Estimating ToolBox.btx).",
 
-  "scope_color_convention": {
-    "_note": "Martin's Bluebeam tool-chest colors, confirmed 2026-07-15. RGB 0-1.",
-    "ext_cw": { "color": "green", "rgb": [0.0, 0.502, 0.0], "label": "Ext CW Highlight" },
-    "ext_sf": { "color": "orange", "rgb": [1.0, 0.502, 0.0], "label": "Ext SF Highlight" },
-    "int_sf": { "color": "blue_variants", "label": "Int SF Highlight" },
-    "glazing_only": { "color": "magenta_purple", "rgb": [0.502, 0.0, 0.251], "label": "Glazing Only Highlight" },
-    "all_glass_wall": { "color": "pink", "rgb": [1.0, 0.0, 0.502], "label": "All Glass Wall Highlight" },
-    "break_metal": { "color": "teal_blue", "label": "Break Metal Flashing & Trims" }
-  },
+ "manufacturers_in_focus": ["Kawneer", "Tubelite"],
+ "other_manufacturer_rule": "When drawings name another maker (YKK, EFCO, Oldcastle/OBE, Arcadia, US Aluminum, PITCO, Vitro...), classify it, map it to the nearest Kawneer/Tubelite equivalent, keep the original name, and flag 'non-Kawneer/Tubelite basis of design'.",
+ "other_manufacturer_hints": {
+  "PITCO": {"TMW 450": "ext_cw", "TMS 114": "ext_sf", "_verified": "McLarty A3.2 vs Martin markups"},
+  "OLDCASTLE_OBE": {"FG-3000T": "ext_sf", "RELIANCE": "ext_cw", "_source": "Martin 2026-07-15"}
+ },
 
-  "manufacturer_systems": {
-    "_note": "series → system class. THE decisive signal for SF vs CW — never classify from panel size or appearance when a series code is present. The SPEC decides which manufacturers are approved on a job (basis of design + approved equals) — this table classifies whatever series appears; it never restricts. Growing list; add every series encountered.",
-    "PITCO": {
-      "TMW 450": { "class": "ext_cw", "verified": "McLarty A3.2 vs Martin markups" },
-      "TMS 114": { "class": "ext_sf", "verified": "McLarty A3.2 vs Martin markups" }
-    },
-    "KAWNEER": {
-      "450T": { "class": "ext_sf", "note": "center glazed storefront", "verified": "Hope A3.1" },
-      "451T": { "class": "ext_sf", "note": "center glazed storefront — very common", "source": "Martin 2026-07-15" },
-      "1600": { "class": "ext_cw", "note": "curtain wall — very common", "source": "Martin 2026-07-15" }
-    },
-    "TUBELITE": {
-      "T14000": { "class": "ext_sf", "note": "common", "source": "Martin 2026-07-15" },
-      "400CW": { "class": "ext_cw", "note": "common", "source": "Martin 2026-07-15" }
-    },
-    "OLDCASTLE_OBE": {
-      "FG-3000T": { "class": "ext_sf", "note": "thermal storefront — common", "source": "Martin 2026-07-15" },
-      "RELIANCE": { "class": "ext_cw", "note": "curtain wall — common", "source": "Martin 2026-07-15" }
-    }
-  },
+ "scope_in": [
+  {"rule": "Aluminum storefront, curtain wall, window wall and aluminum windows (08 41 13 / 08 44 13 / 08 51 13) are our scope.", "class_hint": "ext_sf|int_sf|ext_cw|int_cw|window_wall|window"},
+  {"rule": "All-glass entrances and all-glass (frameless / patch-fitting) walls are our scope.", "class_hint": "all_glass_wall|all_glass_door"},
+  {"rule": "Interior aluminum frames set in drywall (RACO, Western Integrated, Rapid and similar) are our scope.", "class_hint": "int_alum_partition"},
+  {"rule": "Glass and vision lites in hollow metal doors and frames = Glazing Only (we furnish glass, not the frame).", "class_hint": "glazing_only|glazing_only_door"},
+  {"rule": "Vision lites in WOOD doors = Glazing Only (we glaze them).", "class_hint": "glazing_only_door", "source": "Martin 2026-10-03"},
+  {"rule": "Fire-rated glass in HM doors/frames is ours, glass only.", "class_hint": "fire_rated_glazing", "source": "Martin 2026-10-03"},
+  {"rule": "Bullet-resistant glazing and transaction / drive-up windows are ours.", "class_hint": "br_transaction_window|transaction_window"},
+  {"rule": "Louvers set within storefront or curtain wall framing are ours.", "class_hint": "parent system"},
+  {"rule": "Frameless shower doors and back-painted glass are ours.", "class_hint": "all_glass_door|glazing_only"},
+  {"rule": "Translucent panels (Kalwall and similar) are ALWAYS ours.", "class_hint": "translucent_panel"},
+  {"rule": "Glass film (GF- callouts) on frames is a line item.", "class_hint": "glass_film"},
+  {"rule": "Mirrors: FRAMELESS mirrors are ours. Framed mirrors or toilet-accessory mirrors (Bobrick, Bradley, ASI — Div 10 28 00) are excluded.", "class_hint": "mirror|excluded"},
+  {"rule": "Glass handrails: ALUMINUM rail systems = whole system is ours (subbed out). WELDED STEEL rails = glass infill only; steel by others.", "class_hint": "glass_handrail"}
+ ],
 
-  "scope_boundary_rules": [
-    {
-      "rule": "Overhead doors are ALWAYS excluded — sectional, rolling, coiling, high-speed spiral — including any glass or polycarbonate lites in them (glazed by door supplier).",
-      "confidence": "universal",
-      "source": "Martin, 2026-07-15"
-    },
-    {
-      "rule": "Glass/vision lites in hollow metal doors and hollow metal frames = Glazing Only scope (glazier furnishes glass, not frames).",
-      "confidence": "universal",
-      "source": "McLarty + Hope blind tests vs Martin markups"
-    },
-    {
-      "rule": "Hardware items 'provided by aluminum storefront provider' in hardware sets/schedules are bid scope — highlight and carry into pricing.",
-      "confidence": "universal",
-      "source": "Hope A3.1 Martin markups"
-    },
-    {
-      "rule": "Scope-relevant general notes (e.g. 'at curtainwall frames provide internal reinforcing...') must be flagged and attached to the affected system.",
-      "confidence": "universal",
-      "source": "McLarty A3.2 Martin markups"
-    },
-    {
-      "rule": "Louvered hollow metal doors with no glass = not glazing scope.",
-      "confidence": "universal",
-      "source": "McLarty A3.2"
-    },
-    {
-      "rule": "Glass film (GF- marks) called out on frames = glazing scope line item; cross-reference finish schedule.",
-      "confidence": "universal",
-      "source": "McLarty A3.2 frame 3"
-    },
-    {
-      "rule": "Mirrors: FRAMELESS mirrors = included. Framed mirrors, or mirrors by Bobrick (toilet accessory manufacturers generally), = excluded.",
-      "confidence": "universal",
-      "source": "Martin, 2026-07-15",
-      "detection_hint": "check spec section / accessory schedule for Bobrick or 10 28 00 toilet accessories vs 08 83 00 mirrors"
-    },
-    {
-      "rule": "Glass handrails: ALUMINUM rail systems = pick up entire system (subcontracted out). WELDED STEEL rails = pick up glazing infill only, if any; steel by others.",
-      "confidence": "universal",
-      "source": "Martin, 2026-07-15",
-      "detection_hint": "rail material callout on details; 05 52 13 (steel) vs 05 73 00 / glazed aluminum railings"
-    },
-    {
-      "rule": "Translucent panels (Kalwall and similar) = ALWAYS included in scope.",
-      "confidence": "universal",
-      "source": "Martin, 2026-07-15"
-    }
-  ],
+ "pass_thru": [
+  {"rule": "Automatic sliding doors are carried in our number but installed by a hired auto-door sub. Own scope type, tagged pass-thru.", "class_hint": "auto_door"},
+  {"rule": "Unit skylights are pass-thru items (sub quote). Own scope type.", "class_hint": "skylight"},
+  {"rule": "Revolving doors are pass-thru items.", "class_hint": "revolving_door"}
+ ],
 
-  "open_questions_for_martin": [],
-  "growth_strategy": "The series table grows three ways: (1) Martin adds entries as he hits them; (2) the spec reader extracts basis-of-design + approved equal series from every job's Division 8 specs and proposes new entries for Martin's confirmation; (3) unknown series encountered on drawings get flagged, never guessed. Long-term this table can be bulk-seeded from manufacturer catalogs — every major manufacturer publishes series/system-type data publicly."
+ "scope_out": [
+  {"rule": "Overhead doors are ALWAYS excluded — sectional, rolling, coiling, high-speed spiral — including any glass or polycarbonate lites in them (glazed by the door supplier).", "confidence": "universal"},
+  {"rule": "Vinyl, fiberglass and wood/clad windows are excluded. They are drawn exactly like aluminum windows on plans — confirm the material in the window schedule, legend or details before calling any window ours.", "source": "Martin 2026-10-03"},
+  {"rule": "Hollow metal and wood doors/frames themselves are not ours (only their glass).", "confidence": "universal"},
+  {"rule": "Louvered hollow metal doors with no glass are not glazing scope.", "confidence": "universal"},
+  {"rule": "Demolition/removal of existing glazing is excluded unless the GC specifically asks.", "source": "Martin 2026-10-03"},
+  {"rule": "Excluded items are still MARKED (red 'Excluded by Binswanger') so the estimator can see they were considered.", "source": "Martin 2026-10-03"}
+ ],
+
+ "review_flags": [
+  {"rule": "Existing / EX / existing-to-remain glazing on renovations: mark and flag for review.", "source": "Martin 2026-10-03"},
+  {"rule": "When legend, details, schedule or spec disagree on a system type: go with legend + details, and FLAG the conflict (and draft an RFI).", "source": "Martin 2026-10-03"},
+  {"rule": "Anything uncertain is still marked, with a yellow 'needs review' flag and the reason. A missed item and a false item cost the same.", "source": "Martin 2026-10-03"},
+  {"rule": "No specs in the set: run anyway and flag 'no specifications reviewed'.", "source": "Martin 2026-10-03"}
+ ],
+
+ "implied_scope": [
+  {"rule": "Break metal flashing / trim / closures are ours when they touch our frame (sills, head flashing, jamb closures).", "class_hint": "break_metal"},
+  {"rule": "Hardware on aluminum storefront doors: ALL of it is ours, taken from the specs/hardware sets. Default included; the estimator can uncheck. Hardware items 'provided by aluminum storefront provider' are bid scope.", "class_hint": "hardware"},
+  {"rule": "Scope-relevant general notes (e.g. 'at curtainwall frames provide internal reinforcing') are flagged and attached to the affected system.", "class_hint": "note"},
+  {"rule": "Floor-line fire caulking (slab-edge safing at curtain wall) is ours.", "class_hint": "floor_line_fire_caulk"},
+  {"rule": "Windload / deadload clips and anchors are counted.", "class_hint": "wl_dl_clip"},
+  {"rule": "SSG caulk joints and polished edges (butt-glazed / all-glass) are counted.", "class_hint": "ssg_caulk|polished_edge"},
+  {"rule": "Standalone sun shades / fins are ours; integral sunshades inherit the parent system.", "class_hint": "sun_control"}
+ ],
+
+ "classification": [
+  {"rule": "A named series decides SF vs CW (see series_classes.json). Never classify from panel size or appearance when a series is named."},
+  {"rule": "No series named: decide from height (spans floors / tall spans = CW), head/sill details (pressure plate, stack joints, anchors at slab = CW), legend/keynote text, and cross-references. Legend + details win; flag disagreement."},
+  {"rule": "Exterior vs interior: the architect's label first; otherwise if one face touches outside air it is exterior."},
+  {"rule": "Window wall (slab-to-slab stick system) is its own class, not SF or CW."},
+  {"rule": "Kawneer 1620 / Tubelite 200 read as SSG curtain wall when the drawings say SSG / structural silicone; otherwise captured CW."}
+ ],
+
+ "counting": [
+  {"rule": "Mark and count EVERY instance. The floor plan count is the truth; elevations and schedules confirm. Show mismatches."},
+  {"rule": "Label each counted type as architect's mark + count, e.g. 'SF-1 — 4 Thus'."},
+  {"rule": "Alternates and phases: tag every item as base / alternate # / phase #."}
+ ],
+
+ "doors": [
+  {"rule": "Per door capture: single or pair, size, hardware set #, stile type, and swing (from the floor plan)."}
+ ],
+
+ "glass": [
+  {"rule": "Capture each glass type's makeup from the glass legend / spec (IGU, coatings, thickness) — Frame Builder uses it for the glass-size takeoff and quote."},
+  {"rule": "No glass type shown: exterior = 1\" insulated glass unit, interior = 1/4\" tempered."}
+ ],
+
+ "drawings": [
+  {"rule": "Every architect draws differently. No per-architect rules — read the set's own legend, schedules and details."},
+  {"rule": "Read in this order: specs → schedules → floor plans → elevations (compare to plans) → details."}
+ ],
+
+ "growth_strategy": "Every accept / reject / edit the estimator makes is logged. Repeated corrections become proposed rules here; Martin confirms them."
 }
