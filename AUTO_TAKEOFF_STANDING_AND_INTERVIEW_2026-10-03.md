@@ -308,9 +308,19 @@ Answer in any order. Short answers are fine. "Depends" is a fine answer if you s
 - Blind: Commerce 1–3, Chipotle, Tierra, Greenwood, BOA Broomfield. Never opened while building.
 - Metrics per scope type: did we find the item (instance recall/precision on plans + elevations), classify it right, and count it right.
 
-## Part 5 — Still open (free-text answers needed)
-- Series → class list: every manufacturer series you see often, beyond the 9 in the knowledge base (YKK, EFCO, Arcadia, US Aluminum, Vitro/Oldcastle, Tubelite, Kawneer…).
-- Your standard exclusions list (from a proposal is fine).
-- Glass-type conventions: GL-1 / GL-2 style, or whatever the architect uses — needed at takeoff, or later?
-- Specific architects/firms whose drawing styles trip you up.
-- What a "General Note" (blue polygon) and "Architect" (blue circle) markup mean in your chest.
+## Part 5 — Round 15 answers (2026-10-03, later)
+- **Manufacturers: Kawneer and Tubelite only.** The classifier's series list comes from Frame Builder's `SYSTEM_LIBRARY` (one source, no duplicate table). Confirmed:
+  - **Storefront (SF):** Trifab 450 / 451 / 451T / 451UT / 601 / 601T / 601UT, IR 501T; Tubelite 4500, E/T/TU14000, E/T/TU24650, T34000 IR.
+  - **Curtain wall (CW):** Kawneer 1600 / 1600UT; Tubelite 400 / 200.
+  - **SSG curtain wall:** Kawneer 1620 SSG.
+- **Window wall is missing** from both the library and the classifier. Its Kawneer and Tubelite series still need to be added.
+- **Other manufacturers named on drawings** (YKK, EFCO, Oldcastle, Arcadia, US Aluminum): map to the nearest Kawneer/Tubelite equivalent, keep the original name, and flag it.
+- **Glass:** the takeoff captures the **glass legend makeup** for each glass type (IGU, coatings, thickness), so Frame Builder can produce the glass-size takeoff for the quote.
+- **No glass type shown:** default to exterior 1" IGU, interior 1/4" tempered.
+- **Exclusions:** list to be uploaded later.
+- **Architects:** every architect is different, so the logic must be universal; no per-architect tuning. Clean (vector) PDFs are the priority; scans come later.
+- **"General Note" and "Architect" markups:** ignore them, for both ground truth and output.
+
+## Part 6 — Still open
+- Window wall series names for Kawneer and Tubelite.
+- Exclusions list (Martin to upload).
