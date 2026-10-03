@@ -119,6 +119,8 @@ def _load_env_glazierai() -> None:
 
 def run_pipeline(pdf_path: str, project_name: str) -> dict:
     """Call _run_pipeline directly (same code path as the HTTP endpoint)."""
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     if str(SIDECAR) not in sys.path:
         sys.path.insert(0, str(SIDECAR))
     _load_env_glazierai()
