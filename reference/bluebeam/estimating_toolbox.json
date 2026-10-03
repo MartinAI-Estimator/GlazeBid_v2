@@ -1,0 +1,2189 @@
+[
+ {
+  "subject": "Ext. CW Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Ext. SF Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Ext WW Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0 0.5019608 0.5019608",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#008080",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Int. SF Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Int. CW Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Fixed / Operable Window",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "All Glass Wall Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0.5019608 1 1",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#80FFFF",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Interior Aluminum Partition Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Translucent Panel Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0 0.5019608 1",
+  "fill": "0 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#0080FF",
+  "fill_hex": "#0080FF"
+ },
+ {
+  "subject": "Sun Control Device Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0.5019608 1",
+  "fill": "1 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#FF80FF",
+  "fill_hex": "#FF80FF"
+ },
+ {
+  "subject": "Fire Rated Storefront Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Glazing Only Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0.5019608 0 0.2509804",
+  "fill": "0.5019608 0 0.2509804",
+  "opacity": null,
+  "stroke_hex": "#800040",
+  "fill_hex": "#800040"
+ },
+ {
+  "subject": "Fire Rated Glazing Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Mirror Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0.5019608 0.7529412",
+  "fill": "1 0.5019608 0.7529412",
+  "opacity": null,
+  "stroke_hex": "#FF80C0",
+  "fill_hex": "#FF80C0"
+ },
+ {
+  "subject": "Glass Handrail Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "1 0 0.5019608",
+  "fill": "1 0 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#FF0080",
+  "fill_hex": "#FF0080"
+ },
+ {
+  "subject": "Transaction Window Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "BR Transaction Window Area",
+  "type": "AnnotationMeasureArea",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "Ext SF Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Ext CW Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Ext WW Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0.5019608 0.5019608",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#008080",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Int SF Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Int CW Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Fixed / Operable Window Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "All Glass Wall Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0.5019608 1 1",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#80FFFF",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Ext CW Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Int Aluminum Partition Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Translucent Panel Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0.5019608 1",
+  "fill": "0 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#0080FF",
+  "fill_hex": "#0080FF"
+ },
+ {
+  "subject": "Sun Control Device Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0.5019608 1",
+  "fill": "1 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#FF80FF",
+  "fill_hex": "#FF80FF"
+ },
+ {
+  "subject": "Fire Rated SF Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Glazing Only Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0.5019608 0 0.2509804",
+  "fill": "0.5019608 0 0.2509804",
+  "opacity": null,
+  "stroke_hex": "#800040",
+  "fill_hex": "#800040"
+ },
+ {
+  "subject": "Fire Rated Glazing Only Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Mirror Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0.5019608 0.7529412",
+  "fill": "1 0.5019608 0.7529412",
+  "opacity": null,
+  "stroke_hex": "#FF80C0",
+  "fill_hex": "#FF80C0"
+ },
+ {
+  "subject": "Handrail Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0 0.5019608",
+  "fill": "1 0 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#FF0080",
+  "fill_hex": "#FF0080"
+ },
+ {
+  "subject": "Transaction Window Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0 0.627451",
+  "fill": "0 0 0.627451",
+  "opacity": null,
+  "stroke_hex": "#0000A0",
+  "fill_hex": "#0000A0"
+ },
+ {
+  "subject": "BR Transaction Window Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "Break Metal Flashing & Trims",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0.5019608 0.5019608",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#008080",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Bi-Fold / Sliding Door Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 1 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#FFFF00",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Auto-Sliding Door Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "1 1 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#FFFF00",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Terrace Door Highlight",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Ext SF Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Ext WW Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "0 0.5019608 0.5019608",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#008080",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Int SF Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": "0.5",
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Int CW Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": "0.2",
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Operable Window Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "All Glass Wall Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "0.5019608 1 1",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#80FFFF",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Interior Aluminum Partition Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": "0.5",
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Translucent Panel Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "0 0.5019608 1",
+  "fill": "0 0.5019608 1",
+  "opacity": "0.5",
+  "stroke_hex": "#0080FF",
+  "fill_hex": "#0080FF"
+ },
+ {
+  "subject": "Sun Control Device Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0.5019608 1",
+  "fill": "1 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#FF80FF",
+  "fill_hex": "#FF80FF"
+ },
+ {
+  "subject": "Fire Rated SF Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Mirror Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0.5019608 0.7529412",
+  "fill": "1 0.5019608 0.7529412",
+  "opacity": "0.5",
+  "stroke_hex": "#FF80C0",
+  "fill_hex": "#FF80C0"
+ },
+ {
+  "subject": "Glass Handrail Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0 0.5019608",
+  "fill": "1 0 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#FF0080",
+  "fill_hex": "#FF0080"
+ },
+ {
+  "subject": "Break Metal Flashing & Trim Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "0 0.5019608 0.5019608",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": "0.6",
+  "stroke_hex": "#008080",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Floor Line Fire Caulking Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Bi-Fold / Slding Door Polylength",
+  "type": "AnnotationMeasurePolylength",
+  "stroke": "1 1 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#FFFF00",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Ext SF Line",
+  "type": "AnnotationLine",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Ext CW Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Int SF Line",
+  "type": "AnnotationLine",
+  "stroke": "1 0.5019608 0.2509804",
+  "fill": "1 0.5019608 0.2509804",
+  "opacity": "0.5",
+  "stroke_hex": "#FF8040",
+  "fill_hex": "#FF8040"
+ },
+ {
+  "subject": "Ext WW Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0.5019608 0.5019608",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#008080",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Operable Window Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "All Glass Wall Line",
+  "type": "AnnotationLine",
+  "stroke": "0.5019608 1 1",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#80FFFF",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Interior Aluminum Partition Line",
+  "type": "AnnotationLine",
+  "stroke": "1 0.5019608 0.2509804",
+  "fill": "1 0.5019608 0.2509804",
+  "opacity": "0.2",
+  "stroke_hex": "#FF8040",
+  "fill_hex": "#FF8040"
+ },
+ {
+  "subject": "Translucent Panel Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0.5019608 1",
+  "fill": "0 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#0080FF",
+  "fill_hex": "#0080FF"
+ },
+ {
+  "subject": "Fire Rated Storefront Line",
+  "type": "AnnotationLine",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Glazing Only Line",
+  "type": "AnnotationLine",
+  "stroke": "0.5019608 0 0.2509804",
+  "fill": "0.5019608 0 0.2509804",
+  "opacity": "0.7",
+  "stroke_hex": "#800040",
+  "fill_hex": "#800040"
+ },
+ {
+  "subject": "Mirror Line",
+  "type": "AnnotationLine",
+  "stroke": "1 0.5019608 0.7529412",
+  "fill": "1 0.5019608 0.7529412",
+  "opacity": "0.5",
+  "stroke_hex": "#FF80C0",
+  "fill_hex": "#FF80C0"
+ },
+ {
+  "subject": "Glass Handrail Line",
+  "type": "AnnotationLine",
+  "stroke": "1 0 0.5019608",
+  "fill": "1 0 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#FF0080",
+  "fill_hex": "#FF0080"
+ },
+ {
+  "subject": "Transaction Window Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": "0.5",
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "Ext SF Door",
+  "type": "AnnotationCircle",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Ext CW Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Int SF Door",
+  "type": "AnnotationCircle",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Int CW Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "All Glass Door",
+  "type": "AnnotationCircle",
+  "stroke": "0.5019608 1 1",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#80FFFF",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Bi-Fold / Sliding Door",
+  "type": "AnnotationCircle",
+  "stroke": "1 1 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#FFFF00",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Automatic Sliding Door",
+  "type": "AnnotationCircle",
+  "stroke": "1 1 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#FFFF00",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Terrace Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0.5019608 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#008000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Revolving Door",
+  "type": "AnnotationCircle",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Glazing ONLY Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "0.5019608 0 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#800080"
+ },
+ {
+  "subject": "Fire Rated Aluminum Door",
+  "type": "AnnotationCircle",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Aluminum Door Frame Only",
+  "type": "AnnotationCircle",
+  "stroke": "1 0.5019608 0",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Excluded by Binswanger",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "General Note",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Cloud+",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Cloud+",
+  "type": "AnnotationFreeText",
+  "stroke": null,
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Cloud+",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0 1",
+  "fill": "1 1 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#FFFFFF"
+ },
+ {
+  "subject": "Cloud+",
+  "type": "AnnotationFreeText",
+  "stroke": null,
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "",
+  "fill_hex": ""
+ },
+ {
+  "subject": "WL-DL Clip",
+  "type": "AnnotationPolygon",
+  "stroke": "0 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Structural Steel",
+  "type": "AnnotationLine",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Qty Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Snapshot",
+  "type": "AnnotationBRXStamp",
+  "stroke": "1 0 0",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": ""
+ },
+ {
+  "subject": "SF Frames",
+  "type": "AnnotationMeasureCount",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Architect",
+  "type": "AnnotationCircle",
+  "stroke": "0 0.5019608 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#0080FF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": null,
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0.5019608 0 0.2509804",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#800040"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0.7529412",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF80C0"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF0080"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#0080FF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF80FF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": null,
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Cloud",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "0.5019608 1 1",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Aluminum Stile Door",
+  "type": "AnnotationCircle",
+  "stroke": "0 0 0",
+  "fill": "1 1 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0.5019608 0 0.2509804",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#800040"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0.7529412",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF80C0"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF0080"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "1 0.5019608 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": null,
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Rectangle",
+  "type": "AnnotationSquare",
+  "stroke": "0 0 0",
+  "fill": "0 0.5019608 0.5019608",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#008080"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Cloud",
+  "type": "AnnotationPolygon",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Line",
+  "type": "AnnotationLine",
+  "stroke": "0 0 0",
+  "fill": "0 0 0",
+  "opacity": null,
+  "stroke_hex": "#000000",
+  "fill_hex": "#000000"
+ },
+ {
+  "subject": "Structural Steel",
+  "type": "AnnotationLine",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Text Box",
+  "type": "AnnotationFreeText",
+  "stroke": "1 1 1",
+  "fill": null,
+  "opacity": null,
+  "stroke_hex": "#FFFFFF",
+  "fill_hex": ""
+ },
+ {
+  "subject": "Interior Aluminum Partition Doors",
+  "type": "AnnotationMeasureCount",
+  "stroke": "1 0.5019608 0",
+  "fill": "1 0.5019608 0",
+  "opacity": "0.2",
+  "stroke_hex": "#FF8000",
+  "fill_hex": "#FF8000"
+ },
+ {
+  "subject": "All Glass Doors",
+  "type": "AnnotationMeasureCount",
+  "stroke": "0.5019608 1 1",
+  "fill": "0.5019608 1 1",
+  "opacity": "0.6",
+  "stroke_hex": "#80FFFF",
+  "fill_hex": "#80FFFF"
+ },
+ {
+  "subject": "Fire Rated Door Lite's",
+  "type": "AnnotationMeasureCount",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": "0.5",
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Glazing Only Door's",
+  "type": "AnnotationMeasureCount",
+  "stroke": "0.5019608 0 0.2509804",
+  "fill": "0.5019608 0 0.2509804",
+  "opacity": "0.5",
+  "stroke_hex": "#800040",
+  "fill_hex": "#800040"
+ },
+ {
+  "subject": "Bi-Fold / Sliding Door's",
+  "type": "AnnotationMeasureCount",
+  "stroke": "1 1 0",
+  "fill": "1 1 0",
+  "opacity": "0.5",
+  "stroke_hex": "#FFFF00",
+  "fill_hex": "#FFFF00"
+ },
+ {
+  "subject": "Windload - Deadload",
+  "type": "AnnotationMeasureCount",
+  "stroke": "1 0 0",
+  "fill": "1 0 0",
+  "opacity": null,
+  "stroke_hex": "#FF0000",
+  "fill_hex": "#FF0000"
+ },
+ {
+  "subject": "Polished Edge Count",
+  "type": "AnnotationMeasureCount",
+  "stroke": "0 0 1",
+  "fill": "0 0 1",
+  "opacity": null,
+  "stroke_hex": "#0000FF",
+  "fill_hex": "#0000FF"
+ },
+ {
+  "subject": "SSG Caulk Count",
+  "type": "AnnotationMeasureCount",
+  "stroke": "0 0.5019608 1",
+  "fill": "0 0.5019608 1",
+  "opacity": null,
+  "stroke_hex": "#0080FF",
+  "fill_hex": "#0080FF"
+ },
+ {
+  "subject": "HM Lite Counts",
+  "type": "AnnotationMeasureCount",
+  "stroke": "0.5019608 0 0.2509804",
+  "fill": "0.5019608 0 0.2509804",
+  "opacity": null,
+  "stroke_hex": "#800040",
+  "fill_hex": "#800040"
+ }
+]
