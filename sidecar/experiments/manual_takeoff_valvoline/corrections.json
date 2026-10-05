@@ -1,0 +1,25 @@
+{
+  "_note": "Added AFTER comparing with Martin's marked set. Shown hatched in the viewer so the blind result stays honest.",
+  "fixes": [
+    {"item":"B", "sheet":"A-1.2", "page":36, "subject":"Ext SF Highlight", "rect":[2141,1296,2161,1410], "why":"My blind box sat 40 pt (≈2'-2\") west of the east wall; the grid crop I read stopped at x=2110 so I never saw the wall line. Scope was right, position was wrong.", "replaces":[2098,1298,2118,1407]}
+  ],
+  "added": [
+    {"item":"D9", "sheet":"A-3.2", "page":39, "subject":"Ext. SF Area", "rect":[628,1443,692,1575], "text":"A = 24.4 sf\nW = 3'-4\"\nH = 7'-4\"", "why":"I highlighted the D9 frame but did not carry an Area/SF for the alum door frame F3. Martin did."},
+    {"item":"DET", "sheet":"A-6.2", "page":45, "subject":"Ext SF Highlight", "rect":[1759,1615,2238,1685], "why":"Detail title 1/A-6.2 STOREFRONT DOOR THRESHOLD DETAIL — I read it for D2's threshold but didn't mark the title."},
+    {"item":"NOTE", "sheet":"A-6.1", "page":44, "subject":"Ext SF Highlight", "rect":[1761,406,2318,427], "why":"Door remark 8: 'storefront doors type A shall be Kawneer medium stile' — a scope note. I used it (medium stile in D2/D3/D9) but didn't mark it."},
+    {"item":"NOTE", "sheet":"A-6.1", "page":44, "subject":"Ext SF Highlight", "rect":[1741,616,2363,885], "why":"STOREFRONT NOTES block (tempered at hazardous locations, sill receptors w/ end dams, 1\" IG, spandrel black). Used, not marked."},
+    {"item":"D5", "sheet":"A-6.1", "page":44, "subject":"Glazing Only Highlight", "rect":[1273,355,1334,404], "why":"Door type C vision-lite drawing with '2 Thus' — Martin counts the glazing-only lites at the door TYPE. I counted them on the schedule rows."},
+    {"item":"D5", "sheet":"A-6.1", "page":44, "subject":"Qty Text Box", "at":[1278,318], "text":"2 Thus"}
+  ],
+  "convention_differences": [
+    "Martin highlights the storefront TAG boxes on the plan (A, B, C, D) in the system color; I highlighted the openings only.",
+    "Martin marks the frame-type LABEL (F1, F4, F5, F6) with a '1 Thus' Qty box beside it; I highlighted the whole frame drawing and the schedule rows, with the Qty box at the schedule row.",
+    "On elevations Martin places only the Area (W/H/SF); I added a highlight and door circle too.",
+    "Martin leaves overhead doors, awnings and HM doors blank; I marked them red as considered-and-excluded.",
+    "Martin highlights detail titles on A-6.1 in Ext SF orange even for the interior S.F. details; I used Int SF (same orange in the toolbox)."
+  ],
+  "mine_only_judgment": [
+    "Break metal to match storefront at jamb/sidelite (3/A-6.2) and door jamb (2/A-6.2) — touches our frame, matches our finish. Martin marked only the sill flashing on A-6.1.",
+    "Double aluminum head filler at the storefront door head (5/A-6.2) — Martin marked the detail title, not the note."
+  ]
+}

@@ -1,0 +1,952 @@
+[
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1927,
+   1421,
+   2129,
+   1439
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   2143,
+   1295,
+   2159,
+   1411
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1904,
+   1282,
+   1921,
+   1422
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1819,
+   883,
+   1888,
+   899
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Circle",
+  "subject": "Ext SF Door",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1846,
+   874,
+   1860,
+   888
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Circle",
+  "subject": "Ext SF Door",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   2012,
+   1446,
+   2026,
+   1460
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Circle",
+  "subject": "Int SF Door",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1905,
+   1395,
+   1919,
+   1409
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1906,
+   1139,
+   1922,
+   1245
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1917,
+   1340,
+   1945,
+   1364
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1917,
+   1169,
+   1945,
+   1193
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1935,
+   1433,
+   1963,
+   1457
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   2158,
+   1347,
+   2186,
+   1371
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Circle",
+  "subject": "Glazing ONLY Door",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1950,
+   1111,
+   1964,
+   1125
+  ],
+  "stroke": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ {
+  "page": 2,
+  "sheet": "A-1.2",
+  "type": "Circle",
+  "subject": "Glazing ONLY Door",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1910,
+   932,
+   1924,
+   946
+  ],
+  "stroke": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ {
+  "page": 4,
+  "sheet": "A-3.1",
+  "type": "Polygon",
+  "subject": "Ext. SF Area",
+  "author": "mmaldonado",
+  "content": "A = 34.4569 sf / W = 5'-10 1/2\" / H = 5'-10 3/8\"",
+  "rect": [
+   372,
+   627,
+   487,
+   741
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 4,
+  "sheet": "A-3.1",
+  "type": "Polygon",
+  "subject": "Ext. SF Area",
+  "author": "mmaldonado",
+  "content": "A = 106.9286 sf / W = 10'-8 3/8\" / H = 9'-11 15/16\"",
+  "rect": [
+   1099,
+   1395,
+   1301,
+   1584
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 5,
+  "sheet": "A-3.2",
+  "type": "Polygon",
+  "subject": "Ext. SF Area",
+  "author": "mmaldonado",
+  "content": "A = 24.5423 sf / W = 3'-4 3/16\" / H = 7'-4\"",
+  "rect": [
+   625,
+   1443,
+   694,
+   1584
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 9,
+  "sheet": "A-5.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   715,
+   1579,
+   1175,
+   1661
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 9,
+  "sheet": "A-5.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1561,
+   1579,
+   1913,
+   1661
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   167,
+   841,
+   189
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   258,
+   841,
+   281
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   180,
+   841,
+   202
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "FreeText",
+  "subject": "Qty Text Box",
+  "author": "mmaldonado",
+  "content": "1 Thus",
+  "rect": [
+   181,
+   854,
+   232,
+   870
+  ],
+  "stroke": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "FreeText",
+  "subject": "Qty Text Box",
+  "author": "mmaldonado",
+  "content": "1 Thus",
+  "rect": [
+   843,
+   856,
+   894,
+   872
+  ],
+  "stroke": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "FreeText",
+  "subject": "Qty Text Box",
+  "author": "mmaldonado",
+  "content": "1 Thus",
+  "rect": [
+   1121,
+   857,
+   1172,
+   873
+  ],
+  "stroke": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "FreeText",
+  "subject": "Qty Text Box",
+  "author": "mmaldonado",
+  "content": "1 Thus",
+  "rect": [
+   1391,
+   856,
+   1442,
+   872
+  ],
+  "stroke": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   230,
+   848,
+   263,
+   880
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1177,
+   850,
+   1210,
+   882
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   894,
+   849,
+   925,
+   880
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1452,
+   846,
+   1483,
+   877
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   948,
+   779,
+   1069
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   1059,
+   779,
+   1133
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Glazing Only Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   206,
+   365,
+   229
+  ],
+  "stroke": [
+   0.501960813999176,
+   0.0,
+   0.250980406999588
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Glazing Only Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   245,
+   365,
+   268
+  ],
+  "stroke": [
+   0.501960813999176,
+   0.0,
+   0.250980406999588
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   69,
+   1615,
+   475,
+   1696
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   599,
+   1615,
+   1005,
+   1696
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1072,
+   1615,
+   1479,
+   1696
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1771,
+   1615,
+   2178,
+   1696
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Break Metal Flashing & Trims",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1510,
+   1445,
+   1654,
+   1480
+  ],
+  "stroke": [
+   0.0,
+   0.501960813999176,
+   0.501960813999176
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Glazing Only Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1273,
+   355,
+   1334,
+   404
+  ],
+  "stroke": [
+   0.501960813999176,
+   0.0,
+   0.250980406999588
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "FreeText",
+  "subject": "Qty Text Box",
+  "author": "mmaldonado",
+  "content": "2 Thus",
+  "rect": [
+   1278,
+   316,
+   1329,
+   332
+  ],
+  "stroke": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1761,
+   406,
+   2318,
+   427
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 10,
+  "sheet": "A-6.1",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1741,
+   616,
+   2363,
+   885
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 11,
+  "sheet": "A-6.2",
+  "type": "Polygon",
+  "subject": "Int SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   49,
+   607,
+   581,
+   689
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 11,
+  "sheet": "A-6.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1759,
+   607,
+   2218,
+   678
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 11,
+  "sheet": "A-6.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1759,
+   265,
+   2176,
+   334
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 11,
+  "sheet": "A-6.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1759,
+   949,
+   2203,
+   996
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 11,
+  "sheet": "A-6.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1759,
+   1183,
+   2170,
+   1259
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 11,
+  "sheet": "A-6.2",
+  "type": "Polygon",
+  "subject": "Ext SF Highlight",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1759,
+   1615,
+   2238,
+   1685
+  ],
+  "stroke": [
+   1.0,
+   0.501960813999176,
+   0.0
+  ]
+ },
+ {
+  "page": 12,
+  "sheet": "A-7.1",
+  "type": "Polygon",
+  "subject": "Excluded by Binswanger",
+  "author": "mmaldonado",
+  "content": "",
+  "rect": [
+   1749,
+   903,
+   2085,
+   1221
+  ],
+  "stroke": [
+   1.0,
+   0.0,
+   0.0
+  ]
+ }
+]
