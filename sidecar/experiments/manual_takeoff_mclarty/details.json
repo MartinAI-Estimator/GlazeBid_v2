@@ -1,0 +1,3884 @@
+{
+ "A4.0": {
+  "page": 12,
+  "details": [
+   {
+    "num": "1",
+    "title": "BUILDING SECTION",
+    "title_rect": [
+     158,
+     696,
+     394,
+     720
+    ],
+    "region": [
+     98,
+     30,
+     2042,
+     720
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "BUILDING SECTION",
+    "title_rect": [
+     167,
+     1335,
+     403,
+     1359
+    ],
+    "region": [
+     107,
+     725,
+     1067,
+     1359
+    ],
+    "hits": []
+   },
+   {
+    "num": "3",
+    "title": "BUILDING SECTION",
+    "title_rect": [
+     163,
+     1922,
+     399,
+     1946
+    ],
+    "region": [
+     103,
+     1364,
+     1063,
+     1946
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "BUILDING SECTION",
+    "title_rect": [
+     170,
+     2508,
+     406,
+     2532
+    ],
+    "region": [
+     110,
+     1951,
+     1070,
+     2532
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "PARTIAL BUILDING SECTION",
+    "title_rect": [
+     2072,
+     694,
+     2419,
+     718
+    ],
+    "region": [
+     2012,
+     30,
+     2972,
+     718
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A4.1": {
+  "page": 13,
+  "details": [
+   {
+    "num": "1",
+    "title": "BUILDING SECTION",
+    "title_rect": [
+     158,
+     544,
+     394,
+     568
+    ],
+    "region": [
+     98,
+     30,
+     1058,
+     568
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "BUILDING SECTION",
+    "title_rect": [
+     167,
+     1031,
+     403,
+     1055
+    ],
+    "region": [
+     107,
+     573,
+     1067,
+     1055
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "ENLARGED PLAN at FEATURE WALL",
+    "title_rect": [
+     2456,
+     1520,
+     2875,
+     1544
+    ],
+    "region": [
+     2396,
+     30,
+     3230,
+     1544
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "ENLARGED PLAN at FEATURE WALL",
+    "title_rect": [
+     192,
+     2501,
+     611,
+     2525
+    ],
+    "region": [
+     132,
+     1993,
+     1917,
+     2525
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       1685,
+       2368,
+       1864,
+       2377
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       1054,
+       2488,
+       1233,
+       2497
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "ELEVATION  at WASH BAYS",
+    "title_rect": [
+     176,
+     1964,
+     493,
+     1988
+    ],
+    "region": [
+     116,
+     1060,
+     1076,
+     1988
+    ],
+    "hits": []
+   },
+   {
+    "num": "6",
+    "title": "ELEVATION  at VIDEO WALL",
+    "title_rect": [
+     1947,
+     2506,
+     2269,
+     2530
+    ],
+    "region": [
+     1887,
+     30,
+     2847,
+     2530
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A4.2": {
+  "page": 14,
+  "details": [
+   {
+    "num": "11",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     146,
+     2503,
+     299,
+     2527
+    ],
+    "region": [
+     86,
+     1981,
+     818,
+     2527
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL",
+      [
+       631,
+       2202,
+       691,
+       2211
+      ]
+     ],
+     [
+      "CURTAIN WALL",
+      [
+       150,
+       2481,
+       209,
+       2490
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "12",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     848,
+     2503,
+     1001,
+     2527
+    ],
+    "region": [
+     788,
+     1283,
+     1691,
+     2527
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL",
+      [
+       843,
+       2227,
+       903,
+       2236
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "13",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1721,
+     2503,
+     1874,
+     2527
+    ],
+    "region": [
+     1661,
+     30,
+     2573,
+     2527
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL",
+      [
+       1716,
+       2231,
+       1776,
+       2240
+      ]
+     ],
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       2067,
+       478,
+       2180,
+       487
+      ]
+     ],
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       2067,
+       506,
+       2180,
+       515
+      ]
+     ],
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       1807,
+       486,
+       1920,
+       495
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "14",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2603,
+     2503,
+     2756,
+     2527
+    ],
+    "region": [
+     2543,
+     651,
+     3230,
+     2527
+    ],
+    "hits": []
+   },
+   {
+    "num": "1",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     129,
+     658,
+     283,
+     682
+    ],
+    "region": [
+     69,
+     30,
+     788,
+     682
+    ],
+    "hits": [
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       156,
+       71,
+       268,
+       80
+      ]
+     ],
+     [
+      "STOREFRONT",
+      [
+       702,
+       477,
+       757,
+       486
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "6",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     129,
+     1315,
+     283,
+     1339
+    ],
+    "region": [
+     69,
+     687,
+     1029,
+     1339
+    ],
+    "hits": [
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       156,
+       728,
+       268,
+       737
+      ]
+     ],
+     [
+      "STOREFRONT",
+      [
+       701,
+       1131,
+       756,
+       1140
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "10",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     145,
+     1952,
+     298,
+     1976
+    ],
+    "region": [
+     85,
+     1344,
+     1045,
+     1976
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     818,
+     622,
+     971,
+     646
+    ],
+    "region": [
+     758,
+     30,
+     1436,
+     646
+    ],
+    "hits": [
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       859,
+       484,
+       973,
+       493
+      ]
+     ],
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       1221,
+       486,
+       1335,
+       495
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1466,
+     622,
+     1619,
+     646
+    ],
+    "region": [
+     1406,
+     30,
+     2034,
+     646
+    ],
+    "hits": [
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       1807,
+       486,
+       1920,
+       495
+      ]
+     ],
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       1445,
+       484,
+       1558,
+       493
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "4",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2064,
+     622,
+     2218,
+     646
+    ],
+    "region": [
+     2004,
+     30,
+     2637,
+     646
+    ],
+    "hits": [
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       2067,
+       478,
+       2180,
+       487
+      ]
+     ],
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       2067,
+       506,
+       2180,
+       515
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "5",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2667,
+     622,
+     2821,
+     646
+    ],
+    "region": [
+     2607,
+     30,
+     3230,
+     646
+    ],
+    "hits": [
+     [
+      "STOREFRONT  PER SCHEDULE",
+      [
+       2694,
+       179,
+       2808,
+       188
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "7",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     822,
+     1254,
+     976,
+     1278
+    ],
+    "region": [
+     762,
+     651,
+     1440,
+     1278
+    ],
+    "hits": []
+   },
+   {
+    "num": "8",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1470,
+     1254,
+     1624,
+     1278
+    ],
+    "region": [
+     1410,
+     651,
+     1985,
+     1278
+    ],
+    "hits": []
+   },
+   {
+    "num": "9",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2015,
+     1254,
+     2168,
+     1278
+    ],
+    "region": [
+     1955,
+     651,
+     2844,
+     1278
+    ],
+    "hits": []
+   },
+   {
+    "num": "15",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2874,
+     1254,
+     3028,
+     1278
+    ],
+    "region": [
+     2814,
+     651,
+     3230,
+     1278
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A4.3": {
+  "page": 15,
+  "details": [
+   {
+    "num": "1",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     121,
+     623,
+     275,
+     647
+    ],
+    "region": [
+     61,
+     30,
+     1504,
+     647
+    ],
+    "hits": [
+     [
+      "ALUM. STOREFRONT",
+      [
+       1381,
+       190,
+       1462,
+       199
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1534,
+     623,
+     1688,
+     647
+    ],
+    "region": [
+     1474,
+     30,
+     2107,
+     647
+    ],
+    "hits": [
+     [
+      "ALUM. STOREFRONT",
+      [
+       1984,
+       190,
+       2065,
+       199
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2137,
+     623,
+     2291,
+     647
+    ],
+    "region": [
+     2077,
+     30,
+     3037,
+     647
+    ],
+    "hits": [
+     [
+      "ALUM. STOREFRONT",
+      [
+       2272,
+       126,
+       2353,
+       135
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "4",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     136,
+     1182,
+     289,
+     1206
+    ],
+    "region": [
+     76,
+     652,
+     790,
+     1206
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     820,
+     1182,
+     973,
+     1206
+    ],
+    "region": [
+     760,
+     30,
+     1510,
+     1206
+    ],
+    "hits": [
+     [
+      "ALUM. STOREFRONT",
+      [
+       1381,
+       190,
+       1462,
+       199
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "6",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1540,
+     1182,
+     1693,
+     1206
+    ],
+    "region": [
+     1480,
+     652,
+     2113,
+     1206
+    ],
+    "hits": [
+     [
+      "GALV. HM FRAME AND GLAZING PER SCHEDULE",
+      [
+       1568,
+       957,
+       1749,
+       966
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "9",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     130,
+     1869,
+     283,
+     1893
+    ],
+    "region": [
+     70,
+     1211,
+     865,
+     1893
+    ],
+    "hits": []
+   },
+   {
+    "num": "7",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2143,
+     1182,
+     2296,
+     1206
+    ],
+    "region": [
+     2083,
+     652,
+     2662,
+     1206
+    ],
+    "hits": []
+   },
+   {
+    "num": "8",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2692,
+     1182,
+     2845,
+     1206
+    ],
+    "region": [
+     2632,
+     30,
+     3230,
+     1206
+    ],
+    "hits": []
+   },
+   {
+    "num": "13",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     160,
+     2503,
+     313,
+     2527
+    ],
+    "region": [
+     100,
+     1898,
+     877,
+     2527
+    ],
+    "hits": []
+   },
+   {
+    "num": "10",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     895,
+     1869,
+     1048,
+     1893
+    ],
+    "region": [
+     835,
+     1211,
+     1684,
+     1893
+    ],
+    "hits": [
+     [
+      "STOREFRONT ENTRY PER SCHEDULE",
+      [
+       1506,
+       1256,
+       1646,
+       1265
+      ]
+     ],
+     [
+      "FRAMELESS GLASS DOOR",
+      [
+       1506,
+       1488,
+       1610,
+       1497
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "11",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1714,
+     1869,
+     1867,
+     1893
+    ],
+    "region": [
+     1654,
+     1211,
+     2476,
+     1893
+    ],
+    "hits": [
+     [
+      "ALUM. STOREFRONT",
+      [
+       2267,
+       1265,
+       2347,
+       1274
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "12",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2506,
+     1869,
+     2659,
+     1893
+    ],
+    "region": [
+     2446,
+     1211,
+     3230,
+     1893
+    ],
+    "hits": [
+     [
+      "PRE-FIN MTL CLOSURE TRMI TO MATCH STOREFRONT",
+      [
+       2456,
+       1257,
+       2657,
+       1266
+      ]
+     ],
+     [
+      "STOREFRONT ENTRY PER SCHEDULE",
+      [
+       2517,
+       1334,
+       2656,
+       1343
+      ]
+     ],
+     [
+      "FRAMELESS GLASS DOOR AND",
+      [
+       2535,
+       1527,
+       2658,
+       1536
+      ]
+     ],
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       2546,
+       1238,
+       2658,
+       1247
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "14",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     907,
+     2503,
+     1060,
+     2527
+    ],
+    "region": [
+     847,
+     1898,
+     1534,
+     2527
+    ],
+    "hits": [
+     [
+      "STOREFRONT PER",
+      [
+       898,
+       2196,
+       970,
+       2205
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "15",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1564,
+     2503,
+     1717,
+     2527
+    ],
+    "region": [
+     1504,
+     1898,
+     2146,
+     2527
+    ],
+    "hits": []
+   },
+   {
+    "num": "16",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2176,
+     2503,
+     2329,
+     2527
+    ],
+    "region": [
+     2116,
+     1211,
+     2677,
+     2527
+    ],
+    "hits": [
+     [
+      "PRE-FIN MTL CLOSURE TRMI TO MATCH STOREFRONT",
+      [
+       2456,
+       1257,
+       2657,
+       1266
+      ]
+     ],
+     [
+      "STOREFRONT ENTRY PER SCHEDULE",
+      [
+       2517,
+       1334,
+       2656,
+       1343
+      ]
+     ],
+     [
+      "FRAMELESS GLASS DOOR AND",
+      [
+       2535,
+       1527,
+       2658,
+       1536
+      ]
+     ],
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       2546,
+       1238,
+       2658,
+       1247
+      ]
+     ],
+     [
+      "ALUM. STOREFRONT",
+      [
+       2267,
+       1265,
+       2347,
+       1274
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "17",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2707,
+     2503,
+     2860,
+     2527
+    ],
+    "region": [
+     2647,
+     1898,
+     3230,
+     2527
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A4.4": {
+  "page": 16,
+  "details": [
+   {
+    "num": "1",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     121,
+     623,
+     275,
+     647
+    ],
+    "region": [
+     61,
+     30,
+     757,
+     647
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     787,
+     623,
+     941,
+     647
+    ],
+    "region": [
+     727,
+     30,
+     1243,
+     647
+    ],
+    "hits": []
+   },
+   {
+    "num": "3",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1273,
+     623,
+     1427,
+     647
+    ],
+    "region": [
+     1213,
+     30,
+     2107,
+     647
+    ],
+    "hits": []
+   },
+   {
+    "num": "6",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     128,
+     1179,
+     281,
+     1203
+    ],
+    "region": [
+     68,
+     652,
+     1028,
+     1203
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS DOOR",
+      [
+       806,
+       1028,
+       910,
+       1037
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "8",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     819,
+     1950,
+     972,
+     1974
+    ],
+    "region": [
+     759,
+     652,
+     1455,
+     1974
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS DOOR",
+      [
+       806,
+       1397,
+       910,
+       1406
+      ]
+     ],
+     [
+      "FRAMELESS GLASS DOOR",
+      [
+       806,
+       1028,
+       910,
+       1037
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "4",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2137,
+     623,
+     2291,
+     647
+    ],
+    "region": [
+     2077,
+     30,
+     2701,
+     647
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION",
+      [
+       2188,
+       410,
+       2309,
+       419
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION",
+      [
+       2541,
+       410,
+       2662,
+       419
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "5",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2731,
+     623,
+     2885,
+     647
+    ],
+    "region": [
+     2671,
+     30,
+     3230,
+     647
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITIONS",
+      [
+       2747,
+       284,
+       2873,
+       293
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "9",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1485,
+     1950,
+     1638,
+     1974
+    ],
+    "region": [
+     1425,
+     652,
+     2128,
+     1974
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS DOOR",
+      [
+       1472,
+       1397,
+       1576,
+       1406
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION",
+      [
+       1454,
+       1028,
+       1577,
+       1037
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "7",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     133,
+     1800,
+     286,
+     1824
+    ],
+    "region": [
+     73,
+     1208,
+     1033,
+     1824
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS DOOR",
+      [
+       806,
+       1397,
+       910,
+       1406
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "10",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2167,
+     1284,
+     2321,
+     1308
+    ],
+    "region": [
+     2107,
+     652,
+     3067,
+     1308
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       2170,
+       985,
+       2350,
+       994
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       2490,
+       829,
+       2669,
+       838
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "11",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2158,
+     1949,
+     2312,
+     1973
+    ],
+    "region": [
+     2098,
+     1313,
+     3058,
+     1973
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       2628,
+       1433,
+       2807,
+       1442
+      ]
+     ],
+     [
+      "FRAMELESS GLASS DOOR PER SCHEDULE",
+      [
+       2136,
+       1878,
+       2297,
+       1887
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "12",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     145,
+     2507,
+     298,
+     2531
+    ],
+    "region": [
+     85,
+     1829,
+     804,
+     2531
+    ],
+    "hits": []
+   },
+   {
+    "num": "13",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     834,
+     2507,
+     987,
+     2531
+    ],
+    "region": [
+     774,
+     1979,
+     1362,
+     2531
+    ],
+    "hits": []
+   },
+   {
+    "num": "14",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1392,
+     2507,
+     1545,
+     2531
+    ],
+    "region": [
+     1332,
+     1979,
+     2145,
+     2531
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       1455,
+       2103,
+       1572,
+       2112
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       1455,
+       2409,
+       1572,
+       2418
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT PER SCHED.",
+      [
+       1910,
+       2299,
+       2047,
+       2308
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "15",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2175,
+     2507,
+     2328,
+     2531
+    ],
+    "region": [
+     2115,
+     1978,
+     2649,
+     2531
+    ],
+    "hits": [
+     [
+      "INTERIOR STOREFRONT PER SCHEDULE",
+      [
+       2469,
+       2368,
+       2619,
+       2377
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "16",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2679,
+     2507,
+     2832,
+     2531
+    ],
+    "region": [
+     2619,
+     652,
+     3230,
+     2531
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       2628,
+       1433,
+       2807,
+       1442
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       2724,
+       2103,
+       2841,
+       2112
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       2724,
+       2409,
+       2841,
+       2418
+      ]
+     ]
+    ]
+   }
+  ]
+ },
+ "A5.0": {
+  "page": 17,
+  "details": [
+   {
+    "num": "1",
+    "title": "SECTION",
+    "title_rect": [
+     237,
+     2504,
+     351,
+     2528
+    ],
+    "region": [
+     177,
+     642,
+     1137,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       368,
+       1187,
+       485,
+       1196
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       370,
+       1793,
+       486,
+       1802
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT BEYOND PER SCHEDULE",
+      [
+       303,
+       1887,
+       486,
+       1896
+      ]
+     ],
+     [
+      "24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT.",
+      [
+       287,
+       2203,
+       491,
+       2212
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "DETAIL",
+    "title_rect": [
+     824,
+     613,
+     908,
+     637
+    ],
+    "region": [
+     764,
+     30,
+     1352,
+     637
+    ],
+    "hits": [
+     [
+      "INTERIOR STOREFRONT PER SCHEDULE",
+      [
+       1132,
+       402,
+       1282,
+       411
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT BEYOND",
+      [
+       1132,
+       542,
+       1256,
+       551
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "DETAIL",
+    "title_rect": [
+     140,
+     613,
+     224,
+     637
+    ],
+    "region": [
+     80,
+     30,
+     794,
+     637
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       204,
+       124,
+       320,
+       133
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       204,
+       408,
+       320,
+       417
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT BEYOND",
+      [
+       575,
+       460,
+       698,
+       469
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "4",
+    "title": "DETAIL",
+    "title_rect": [
+     1382,
+     613,
+     1466,
+     637
+    ],
+    "region": [
+     1322,
+     30,
+     2067,
+     637
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "NOT USED",
+    "title_rect": [
+     2097,
+     613,
+     2221,
+     637
+    ],
+    "region": [
+     2037,
+     30,
+     2677,
+     637
+    ],
+    "hits": []
+   },
+   {
+    "num": "6",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2707,
+     613,
+     2860,
+     637
+    ],
+    "region": [
+     2647,
+     30,
+     3230,
+     637
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.1": {
+  "page": 18,
+  "details": [
+   {
+    "num": "1",
+    "title": "SECTION",
+    "title_rect": [
+     237,
+     2504,
+     351,
+     2528
+    ],
+    "region": [
+     177,
+     642,
+     1137,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       341,
+       1187,
+       458,
+       1196
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       343,
+       1793,
+       459,
+       1802
+      ]
+     ],
+     [
+      "24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT.",
+      [
+       260,
+       2214,
+       464,
+       2223
+      ]
+     ],
+     [
+      "TYPE \"F\" LIGHT FIXTURES AT THIS BEAM BETWEEN STOREFRONT",
+      [
+       882,
+       1620,
+       1127,
+       1629
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "DETAIL",
+    "title_rect": [
+     140,
+     613,
+     224,
+     637
+    ],
+    "region": [
+     80,
+     30,
+     789,
+     637
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       204,
+       219,
+       320,
+       228
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       204,
+       489,
+       320,
+       498
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "DETAIL",
+    "title_rect": [
+     819,
+     613,
+     903,
+     637
+    ],
+    "region": [
+     759,
+     30,
+     1473,
+     637
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       863,
+       499,
+       979,
+       508
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "4",
+    "title": "GYP. BD CEILING CONTROL JOINT (CJ) DETAIL",
+    "title_rect": [
+     1501,
+     305,
+     2044,
+     329
+    ],
+    "region": [
+     1441,
+     30,
+     2401,
+     329
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "GYP. BD CEILING CONTROL JOINT (CJ) DETAIL",
+    "title_rect": [
+     1503,
+     617,
+     2046,
+     641
+    ],
+    "region": [
+     1443,
+     334,
+     2130,
+     641
+    ],
+    "hits": []
+   },
+   {
+    "num": "6",
+    "title": "DETAIL",
+    "title_rect": [
+     2160,
+     613,
+     2244,
+     637
+    ],
+    "region": [
+     2100,
+     30,
+     3060,
+     637
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.2": {
+  "page": 19,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     638,
+     1193,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       285,
+       1189,
+       401,
+       1198
+      ]
+     ],
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       284,
+       1747,
+       400,
+       1756
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1223,
+     2504,
+     1412,
+     2528
+    ],
+    "region": [
+     1163,
+     638,
+     1841,
+     2528
+    ],
+    "hits": [
+     [
+      "INTERIOR STOREFRONT PER SCHED.",
+      [
+       1268,
+       1874,
+       1405,
+       1883
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1871,
+     2504,
+     2060,
+     2528
+    ],
+    "region": [
+     1811,
+     638,
+     2543,
+     2528
+    ],
+    "hits": [
+     [
+      "INTERIOR STOREFRONT PER SCHED.",
+      [
+       2248,
+       1874,
+       2385,
+       1883
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "4",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2573,
+     2504,
+     2762,
+     2528
+    ],
+    "region": [
+     2513,
+     30,
+     3230,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       2953,
+       1821,
+       3069,
+       1830
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "5",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     128,
+     609,
+     282,
+     633
+    ],
+    "region": [
+     68,
+     30,
+     991,
+     633
+    ],
+    "hits": []
+   },
+   {
+    "num": "6",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1021,
+     609,
+     1174,
+     633
+    ],
+    "region": [
+     961,
+     30,
+     1837,
+     633
+    ],
+    "hits": []
+   },
+   {
+    "num": "7",
+    "title": "DETAIL",
+    "title_rect": [
+     1867,
+     609,
+     1951,
+     633
+    ],
+    "region": [
+     1807,
+     30,
+     2767,
+     633
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.3": {
+  "page": 20,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     642,
+     1148,
+     2528
+    ],
+    "hits": [
+     [
+      "INTERIOR STOREFRONT BEYOND PER SCHEDULE",
+      [
+       146,
+       1939,
+       330,
+       1948
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT PER SCHEDULE",
+      [
+       580,
+       644,
+       729,
+       653
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1178,
+     2504,
+     1367,
+     2528
+    ],
+    "region": [
+     1118,
+     30,
+     1895,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       1310,
+       1850,
+       1427,
+       1859
+      ]
+     ],
+     [
+      "24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT.",
+      [
+       1228,
+       2200,
+       1432,
+       2209
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT BEYOND PER SCHEDULE",
+      [
+       1246,
+       1895,
+       1429,
+       1904
+      ]
+     ],
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       1559,
+       572,
+       1671,
+       581
+      ]
+     ],
+     [
+      "CURTAIN WALL BEYOND PER SCHEDULE",
+      [
+       1282,
+       272,
+       1432,
+       281
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT BEYOND",
+      [
+       1278,
+       622,
+       1403,
+       631
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1925,
+     2504,
+     2114,
+     2528
+    ],
+    "region": [
+     1865,
+     642,
+     2543,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2573,
+     2504,
+     2762,
+     2528
+    ],
+    "region": [
+     2513,
+     641,
+     3230,
+     2528
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       2609,
+       1828,
+       2788,
+       1837
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "7",
+    "title": "DETAIL",
+    "title_rect": [
+     1485,
+     613,
+     1569,
+     637
+    ],
+    "region": [
+     1425,
+     30,
+     2058,
+     637
+    ],
+    "hits": [
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       1559,
+       572,
+       1671,
+       581
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "8",
+    "title": "DETAIL",
+    "title_rect": [
+     2088,
+     613,
+     2172,
+     637
+    ],
+    "region": [
+     2028,
+     30,
+     2701,
+     637
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "DETAIL",
+    "title_rect": [
+     135,
+     613,
+     219,
+     637
+    ],
+    "region": [
+     75,
+     30,
+     771,
+     637
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL BEYOND PER SCHEDULE",
+      [
+       580,
+       272,
+       730,
+       281
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "6",
+    "title": "DETAIL",
+    "title_rect": [
+     801,
+     613,
+     885,
+     637
+    ],
+    "region": [
+     741,
+     30,
+     1455,
+     637
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL BEYOND PER SCHEDULE",
+      [
+       1282,
+       272,
+       1432,
+       281
+      ]
+     ],
+     [
+      "INTERIOR STOREFRONT BEYOND",
+      [
+       1278,
+       622,
+       1403,
+       631
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "10",
+    "title": "SILL DETAIL",
+    "title_rect": [
+     2731,
+     612,
+     2871,
+     636
+    ],
+    "region": [
+     2671,
+     327,
+     3230,
+     636
+    ],
+    "hits": [
+     [
+      "1/2\" CLEAR, TEMPERED",
+      [
+       3119,
+       427,
+       3211,
+       436
+      ]
+     ],
+     [
+      "2\" 'U' CHANNEL",
+      [
+       3117,
+       530,
+       3174,
+       539
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "9",
+    "title": "HEAD DETAIL",
+    "title_rect": [
+     2731,
+     298,
+     2889,
+     322
+    ],
+    "region": [
+     2671,
+     30,
+     3230,
+     322
+    ],
+    "hits": [
+     [
+      "2\" 'U' CHANNEL",
+      [
+       3119,
+       293,
+       3176,
+       302
+      ]
+     ]
+    ]
+   }
+  ]
+ },
+ "A5.4": {
+  "page": 21,
+  "details": [
+   {
+    "num": "1",
+    "title": "SECTION",
+    "title_rect": [
+     237,
+     2504,
+     351,
+     2528
+    ],
+    "region": [
+     177,
+     893,
+     1137,
+     2528
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION BEYOND",
+      [
+       970,
+       2176,
+       1123,
+       2185
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "SECTION",
+    "title_rect": [
+     157,
+     864,
+     271,
+     888
+    ],
+    "region": [
+     97,
+     30,
+     1227,
+     888
+    ],
+    "hits": [
+     [
+      "INTERIOR STOREFRONT BEYOND",
+      [
+       1042,
+       662,
+       1165,
+       671
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1257,
+     855,
+     1410,
+     879
+    ],
+    "region": [
+     1197,
+     30,
+     1893,
+     879
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     1923,
+     855,
+     2076,
+     879
+    ],
+    "region": [
+     1863,
+     30,
+     2581,
+     879
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       1958,
+       213,
+       2137,
+       222
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "5",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     2611,
+     855,
+     2764,
+     879
+    ],
+    "region": [
+     2551,
+     30,
+     3230,
+     879
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.5": {
+  "page": 22,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     642,
+     1193,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1223,
+     2504,
+     1412,
+     2528
+    ],
+    "region": [
+     1163,
+     642,
+     2165,
+     2528
+    ],
+    "hits": [
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       1878,
+       1888,
+       1990,
+       1897
+      ]
+     ],
+     [
+      "24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT.",
+      [
+       1879,
+       2192,
+       2083,
+       2201
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION",
+      [
+       1236,
+       1945,
+       1356,
+       1954
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "CANOPY  SECTION",
+    "title_rect": [
+     2195,
+     2504,
+     2424,
+     2528
+    ],
+    "region": [
+     2135,
+     642,
+     3095,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "DETAIL",
+    "title_rect": [
+     132,
+     613,
+     216,
+     637
+    ],
+    "region": [
+     72,
+     30,
+     586,
+     637
+    ],
+    "hits": [
+     [
+      "'U' CHANNEL PER SCHEDULE",
+      [
+       426,
+       527,
+       533,
+       536
+      ]
+     ],
+     [
+      "GLAZING PER SCHEDULE",
+      [
+       426,
+       559,
+       521,
+       568
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "5",
+    "title": "DETAIL",
+    "title_rect": [
+     616,
+     613,
+     700,
+     637
+    ],
+    "region": [
+     556,
+     30,
+     1272,
+     637
+    ],
+    "hits": [
+     [
+      "STOREFRONT PER SCHEDULE",
+      [
+       1013,
+       527,
+       1124,
+       536
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "6",
+    "title": "DETAIL",
+    "title_rect": [
+     1302,
+     613,
+     1386,
+     637
+    ],
+    "region": [
+     1242,
+     30,
+     2014,
+     637
+    ],
+    "hits": [
+     [
+      "'U' CHANNEL PER SCHEDULE",
+      [
+       1791,
+       548,
+       1898,
+       557
+      ]
+     ],
+     [
+      "GLAZING PER SCHEDULE",
+      [
+       1791,
+       568,
+       1886,
+       577
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "7",
+    "title": "MTL STUD JAMB",
+    "title_rect": [
+     2044,
+     613,
+     2234,
+     637
+    ],
+    "region": [
+     1984,
+     327,
+     2944,
+     637
+    ],
+    "hits": []
+   },
+   {
+    "num": "8",
+    "title": "TYPICAL MTL STUD JAMB",
+    "title_rect": [
+     2044,
+     298,
+     2341,
+     322
+    ],
+    "region": [
+     1984,
+     30,
+     2944,
+     322
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.6": {
+  "page": 23,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     807,
+     923,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     953,
+     2504,
+     1142,
+     2528
+    ],
+    "region": [
+     893,
+     30,
+     1733,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       1058,
+       2025,
+       1174,
+       2034
+      ]
+     ],
+     [
+      "24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT.",
+      [
+       973,
+       2304,
+       1177,
+       2313
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1763,
+     2504,
+     1952,
+     2528
+    ],
+    "region": [
+     1703,
+     30,
+     2663,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       2087,
+       2037,
+       2203,
+       2046
+      ]
+     ],
+     [
+      "FRAMELESS GLASS DOOR AND",
+      [
+       2084,
+       2100,
+       2204,
+       2109
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "4",
+    "title": "PLAN DETAIL",
+    "title_rect": [
+     137,
+     778,
+     290,
+     802
+    ],
+    "region": [
+     77,
+     30,
+     1037,
+     802
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.7": {
+  "page": 24,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     143,
+     2504,
+     332,
+     2528
+    ],
+    "region": [
+     83,
+     30,
+     923,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     953,
+     2504,
+     1142,
+     2528
+    ],
+    "region": [
+     893,
+     30,
+     2165,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       1073,
+       1929,
+       1190,
+       1938
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2195,
+     2504,
+     2384,
+     2528
+    ],
+    "region": [
+     2135,
+     30,
+     3095,
+     2528
+    ],
+    "hits": [
+     [
+      "FRAMELESS GLASS PARTITION",
+      [
+       2256,
+       1985,
+       2377,
+       1994
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION",
+      [
+       2764,
+       1985,
+       2885,
+       1994
+      ]
+     ]
+    ]
+   }
+  ]
+ },
+ "A5.8": {
+  "page": 25,
+  "details": [
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     738,
+     2512,
+     927,
+     2536
+    ],
+    "region": [
+     678,
+     728,
+     1329,
+     2536
+    ],
+    "hits": []
+   },
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     130,
+     2512,
+     320,
+     2536
+    ],
+    "region": [
+     70,
+     728,
+     708,
+     2536
+    ],
+    "hits": []
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1359,
+     2512,
+     1548,
+     2536
+    ],
+    "region": [
+     1299,
+     728,
+     1905,
+     2536
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1935,
+     2512,
+     2124,
+     2536
+    ],
+    "region": [
+     1875,
+     728,
+     2553,
+     2536
+    ],
+    "hits": [
+     [
+      "24 GA. PRE-FIN MTL SILL FLASHING. LIP OVER FRONT OF CMU",
+      [
+       2289,
+       2101,
+       2523,
+       2110
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "5",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2583,
+     2512,
+     2772,
+     2536
+    ],
+    "region": [
+     2523,
+     728,
+     3230,
+     2536
+    ],
+    "hits": []
+   },
+   {
+    "num": "6",
+    "title": "PARAPET CAP DETAIL",
+    "title_rect": [
+     132,
+     699,
+     391,
+     723
+    ],
+    "region": [
+     72,
+     30,
+     714,
+     723
+    ],
+    "hits": []
+   },
+   {
+    "num": "7",
+    "title": "TYP. HM HEAD at EXTERIOR CMU",
+    "title_rect": [
+     744,
+     699,
+     1132,
+     723
+    ],
+    "region": [
+     684,
+     359,
+     1326,
+     723
+    ],
+    "hits": []
+   },
+   {
+    "num": "8",
+    "title": "HM HEAD at EXTERIOR CMU",
+    "title_rect": [
+     744,
+     330,
+     1072,
+     354
+    ],
+    "region": [
+     684,
+     30,
+     1344,
+     354
+    ],
+    "hits": [
+     [
+      "HM FRAME and GLAZING PER SCHEDULE",
+      [
+       1106,
+       256,
+       1260,
+       265
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "9",
+    "title": "TYP. HM JAMB at EXTERIOR CMU",
+    "title_rect": [
+     1356,
+     699,
+     1742,
+     723
+    ],
+    "region": [
+     1296,
+     359,
+     1911,
+     723
+    ],
+    "hits": []
+   },
+   {
+    "num": "10",
+    "title": "HM JAMB at EXTERIOR CMU",
+    "title_rect": [
+     1374,
+     330,
+     1700,
+     354
+    ],
+    "region": [
+     1314,
+     30,
+     1911,
+     354
+    ],
+    "hits": [
+     [
+      "HM FRAME and GLAZING PER SCHEDULE",
+      [
+       1531,
+       258,
+       1685,
+       267
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "13",
+    "title": "HM HEAD at EXTERIOR CMU and EIFS",
+    "title_rect": [
+     2601,
+     699,
+     3035,
+     723
+    ],
+    "region": [
+     2541,
+     30,
+     3230,
+     723
+    ],
+    "hits": []
+   },
+   {
+    "num": "11",
+    "title": "TYP.  JAMB at INTERIOR CMU",
+    "title_rect": [
+     1941,
+     699,
+     2281,
+     723
+    ],
+    "region": [
+     1881,
+     359,
+     2571,
+     723
+    ],
+    "hits": []
+   },
+   {
+    "num": "12",
+    "title": "TYP.  HEAD at INTERIOR CMU",
+    "title_rect": [
+     1941,
+     330,
+     2284,
+     354
+    ],
+    "region": [
+     1881,
+     30,
+     2841,
+     354
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.9": {
+  "page": 26,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     30,
+     909,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       669,
+       1851,
+       786,
+       1860
+      ]
+     ],
+     [
+      "FRAMELESS GLASS",
+      [
+       124,
+       1878,
+       204,
+       1887
+      ]
+     ],
+     [
+      "24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT.",
+      [
+       668,
+       2202,
+       873,
+       2211
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     939,
+     2504,
+     1129,
+     2528
+    ],
+    "region": [
+     879,
+     30,
+     1530,
+     2528
+    ],
+    "hits": [
+     [
+      "CURTAIN WALL PER SCHEDULE",
+      [
+       1254,
+       1851,
+       1371,
+       1860
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1560,
+     2504,
+     1750,
+     2528
+    ],
+    "region": [
+     1500,
+     30,
+     2070,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2100,
+     2504,
+     2290,
+     2528
+    ],
+    "region": [
+     2040,
+     30,
+     2718,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2748,
+     2504,
+     2938,
+     2528
+    ],
+    "region": [
+     2688,
+     30,
+     3230,
+     2528
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.10": {
+  "page": 27,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     30,
+     1026,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1056,
+     2504,
+     1246,
+     2528
+    ],
+    "region": [
+     996,
+     30,
+     1850,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1880,
+     2504,
+     2069,
+     2528
+    ],
+    "region": [
+     1820,
+     30,
+     2780,
+     2528
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.11": {
+  "page": 28,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     30,
+     954,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     984,
+     2504,
+     1174,
+     2528
+    ],
+    "region": [
+     924,
+     30,
+     1803,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1833,
+     2504,
+     2022,
+     2528
+    ],
+    "region": [
+     1773,
+     30,
+     2733,
+     2528
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.12": {
+  "page": 29,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     655,
+     657,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1266,
+     2504,
+     1455,
+     2528
+    ],
+    "region": [
+     1206,
+     30,
+     1992,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "DETAIL at ROOF HATCH",
+    "title_rect": [
+     131,
+     626,
+     418,
+     650
+    ],
+    "region": [
+     71,
+     30,
+     1585,
+     650
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION-CMU LOW WALL",
+    "title_rect": [
+     687,
+     2504,
+     1078,
+     2528
+    ],
+    "region": [
+     627,
+     1583,
+     1236,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "7",
+    "title": "SECTION at STAIR",
+    "title_rect": [
+     1615,
+     620,
+     1835,
+     644
+    ],
+    "region": [
+     1555,
+     30,
+     2503,
+     644
+    ],
+    "hits": []
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION-CMU LOW WALL",
+    "title_rect": [
+     688,
+     1554,
+     1079,
+     1578
+    ],
+    "region": [
+     628,
+     30,
+     1588,
+     1578
+    ],
+    "hits": []
+   },
+   {
+    "num": "8",
+    "title": "SECTION at STAIR",
+    "title_rect": [
+     2533,
+     620,
+     2753,
+     644
+    ],
+    "region": [
+     2473,
+     30,
+     3230,
+     644
+    ],
+    "hits": []
+   },
+   {
+    "num": "9",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2022,
+     2507,
+     2211,
+     2531
+    ],
+    "region": [
+     1962,
+     30,
+     2654,
+     2531
+    ],
+    "hits": []
+   },
+   {
+    "num": "10",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2684,
+     2507,
+     2873,
+     2531
+    ],
+    "region": [
+     2624,
+     649,
+     3230,
+     2531
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A5.13": {
+  "page": 30,
+  "details": [
+   {
+    "num": "1",
+    "title": "WALL SECTION",
+    "title_rect": [
+     129,
+     2504,
+     319,
+     2528
+    ],
+    "region": [
+     69,
+     30,
+     723,
+     2528
+    ],
+    "hits": [
+     [
+      "FOR FRAMELESS GLASS PARTITION",
+      [
+       475,
+       1554,
+       611,
+       1563
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION PER SCHEDULE",
+      [
+       477,
+       1838,
+       656,
+       1847
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "2",
+    "title": "WALL SECTION",
+    "title_rect": [
+     753,
+     2504,
+     942,
+     2528
+    ],
+    "region": [
+     693,
+     30,
+     1317,
+     2528
+    ],
+    "hits": [
+     [
+      "FOR FRAMELESS GLASS PARTITION",
+      [
+       1096,
+       1554,
+       1232,
+       1563
+      ]
+     ],
+     [
+      "FRAMELESS GLASS PARTITION",
+      [
+       1172,
+       1838,
+       1294,
+       1847
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "3",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1347,
+     2504,
+     1536,
+     2528
+    ],
+    "region": [
+     1287,
+     30,
+     1965,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "4",
+    "title": "WALL SECTION",
+    "title_rect": [
+     1995,
+     2504,
+     2184,
+     2528
+    ],
+    "region": [
+     1935,
+     30,
+     2626,
+     2528
+    ],
+    "hits": []
+   },
+   {
+    "num": "5",
+    "title": "WALL SECTION",
+    "title_rect": [
+     2656,
+     2504,
+     2845,
+     2528
+    ],
+    "region": [
+     2596,
+     30,
+     3230,
+     2528
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A6.0": {
+  "page": 31,
+  "details": [
+   {
+    "num": "10",
+    "title": "ELEVATION at  WOMEN 112",
+    "title_rect": [
+     285,
+     1797,
+     601,
+     1821
+    ],
+    "region": [
+     225,
+     30,
+     1185,
+     1821
+    ],
+    "hits": []
+   },
+   {
+    "num": "8",
+    "title": "ELEVATION at  WOMEN 112",
+    "title_rect": [
+     1872,
+     1104,
+     2188,
+     1128
+    ],
+    "region": [
+     1812,
+     30,
+     2454,
+     1128
+    ],
+    "hits": []
+   },
+   {
+    "num": "9",
+    "title": "ELEVATION at  WOMEN 112",
+    "title_rect": [
+     2484,
+     1104,
+     2800,
+     1128
+    ],
+    "region": [
+     2424,
+     30,
+     3230,
+     1128
+    ],
+    "hits": []
+   }
+  ]
+ },
+ "A6.1": {
+  "page": 32,
+  "details": [
+   {
+    "num": "1",
+    "title": "TYPICAL UPPER & LOWER CABINET",
+    "title_rect": [
+     160,
+     901,
+     578,
+     925
+    ],
+    "region": [
+     100,
+     30,
+     890,
+     925
+    ],
+    "hits": []
+   },
+   {
+    "num": "2",
+    "title": "SECTION-RESTROOM VANITY",
+    "title_rect": [
+     920,
+     901,
+     1267,
+     925
+    ],
+    "region": [
+     860,
+     30,
+     2911,
+     925
+    ],
+    "hits": [
+     [
+      "MIRROR",
+      [
+       1316,
+       570,
+       1347,
+       579
+      ]
+     ]
+    ]
+   },
+   {
+    "num": "6",
+    "title": "LOCKER BASE DETAIL",
+    "title_rect": [
+     2941,
+     909,
+     3201,
+     933
+    ],
+    "region": [
+     2881,
+     30,
+     3230,
+     933
+    ],
+    "hits": []
+   }
+  ]
+ }
+}

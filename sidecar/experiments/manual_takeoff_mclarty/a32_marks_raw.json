@@ -1,0 +1,903 @@
+{
+ "1": {
+  "mark_bbox": [
+   123,
+   556,
+   129,
+   565
+  ],
+  "head_bbox": [
+   140,
+   555,
+   280,
+   564
+  ],
+  "xmax": 540,
+  "text": [
+   "FROM EXTERIOR TO JEWEL BOX 102",
+   "PITCO ARCHITECTURAL METALS TMW 450 EFG (VSSG) W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "PITCO ARCHITECTURAL METALS TMW 450 W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "MEDIUM STILE BI-FOLD DOORS, CENTER HUNG, W/ 5/8\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSUL. & TEMP."
+  ]
+ },
+ "04": {
+  "mark_bbox": [
+   1277,
+   1088,
+   1289,
+   1097
+  ],
+  "head_bbox": [
+   1299,
+   1088,
+   1464,
+   1097
+  ],
+  "xmax": 1683,
+  "text": [
+   "FROM EXTERIOR TO PARTS RECEIVING 122",
+   "OVERHEAD INSULATED ROLLING DOOR, SERIES 625",
+   "HEAVY DUTY WALL-MOUNTED ELECTRIC OPERATOR",
+   "1/4\" CLEAR, TEMPERED GLAZING",
+   "GALVANIZED STEEL WITH BAKED FINISH COAT",
+   "WITH WINDLOCKS AND PIN LOCKS",
+   "FINISH TO MATCH (EP-1)"
+  ]
+ },
+ "10": {
+  "mark_bbox": [
+   1277,
+   1088,
+   1289,
+   1097
+  ],
+  "head_bbox": [
+   1299,
+   1088,
+   1464,
+   1097
+  ],
+  "xmax": 1683,
+  "text": [
+   "FROM EXTERIOR TO PARTS RECEIVING 122",
+   "OVERHEAD INSULATED ROLLING DOOR, SERIES 625",
+   "HEAVY DUTY WALL-MOUNTED ELECTRIC OPERATOR",
+   "1/4\" CLEAR, TEMPERED GLAZING",
+   "GALVANIZED STEEL WITH BAKED FINISH COAT",
+   "WITH WINDLOCKS AND PIN LOCKS",
+   "FINISH TO MATCH (EP-1)"
+  ]
+ },
+ "9": {
+  "mark_bbox": [
+   961,
+   1088,
+   967,
+   1097
+  ],
+  "head_bbox": [
+   979,
+   1088,
+   1145,
+   1097
+  ],
+  "xmax": 1267,
+  "text": [
+   "FROM EXTERIOR TO PARTS RECEIVING 122",
+   "2\" x 8 1/4\" 16 GA. GALV. HM FRAME",
+   "1 3/4\" THK.  18 GA. GALV. HM INSULATED DOOR",
+   "VISION LITE 5/8\" INSULATED CLEAR, TEMPERED GLAZING",
+   "(3) MASONRY JAMB ANCHORS PER JAMB",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)"
+  ]
+ },
+ "11": {
+  "mark_bbox": [
+   1693,
+   1088,
+   1705,
+   1097
+  ],
+  "head_bbox": [
+   1719,
+   1088,
+   1872,
+   1097
+  ],
+  "xmax": 2063,
+  "text": [
+   "FROM SERVICE SHOP 124 TO EXTERIOR",
+   "RYTEC \"SPIRAL FV\" HIGH-SPEED COILING DOOR",
+   "MOTOR W/ VARIABLE SPEED AC DRIVE (SEE ELECTRICAL)",
+   "INSULATION OPTION AND CLEAR POLYCARBONATE WINDOWS",
+   "GALVANIZED STEEL SIDE FRAMES",
+   "BLACK ANODIZED ALUMINUM DOOR WITH",
+   "POLYCARBONATE CLEAR VISION PANELS"
+  ]
+ },
+ "21": {
+  "mark_bbox": [
+   1170,
+   1703,
+   1182,
+   1712
+  ],
+  "head_bbox": [
+   1191,
+   1703,
+   1361,
+   1712
+  ],
+  "xmax": 1874,
+  "text": [
+   "22 FROM EXTERIOR TO SHOP 124",
+   "BETWEEN EXTERIOR TO SERVICE SHOP 124",
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME",
+   "2\" x 5 3/4\" x 16 GA. HOLLOW METAL FRAME",
+   "1 3/4\" THK.  18 GA. GALV. HM INSULATED DOOR",
+   "1\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSULATED & TEMPERED",
+   "VISION LITE 5/8\" INSULATED CLEAR, TEMPERED GLAZING",
+   "(3) ANCHORS PER JAMB",
+   "(3) MASONRY JAMB ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY",
+   "FILL JAMBS W/ GROUT",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)",
+   "PAINT INTERIOR SIDE (P-9)"
+  ]
+ },
+ "16": {
+  "mark_bbox": [
+   113,
+   1701,
+   125,
+   1710
+  ],
+  "head_bbox": [
+   131,
+   1702,
+   276,
+   1711
+  ],
+  "xmax": 395,
+  "text": [
+   "FROM EXTERIOR TO WASH BAYS 128",
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME",
+   "1 3/4\" THK.  18 GA. GALV. HM INSULATED DOOR",
+   "VISION LITE 5/8\" INSULATED CLEAR, TEMPERED GLAZING",
+   "(3) MASONRY JAMB ANCHORS PER JAMB",
+   "FILL JAMBS W/ GROUT",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)"
+  ]
+ },
+ "04_dup": {
+  "mark_bbox": [
+   783,
+   1702,
+   795,
+   1711
+  ],
+  "head_bbox": [
+   804,
+   1702,
+   947,
+   1711
+  ],
+  "xmax": 1160,
+  "text": [
+   "FROM EXTERIOR TO WASHBAYS 132",
+   "OVERHEAD INSULATED SECTIONAL DOOR, SERIES 596",
+   "HEAVY DUTY WALL-MOUNTED ELECTRIC OPERATOR",
+   "5/8\" CLEAR, TEMPERED GLAZING",
+   "GALVANIZED STEEL WITH BAKED FINISH COAT",
+   "WITH WINDLOCKS AND PIN LOCKS",
+   "FINISH TO MATCH (EP-1)"
+  ]
+ },
+ "15": {
+  "mark_bbox": [
+   3001,
+   1088,
+   3013,
+   1097
+  ],
+  "head_bbox": [
+   3021,
+   1089,
+   3172,
+   1098
+  ],
+  "xmax": 3501,
+  "text": [
+   "FROM EXTERIOR TO COMPRESSOR 132",
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME",
+   "PAIR 2'-10\" x 7'-0\" x 1 3/4\"  18 GA GALV. HM INSUL. DOOR",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS W/ GROUT",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)",
+   "ANODIZED ALUMINUM  LOUVERS- SEE HVAC"
+  ]
+ },
+ "14": {
+  "mark_bbox": [
+   2700,
+   1088,
+   2712,
+   1097
+  ],
+  "head_bbox": [
+   2721,
+   1088,
+   2861,
+   1097
+  ],
+  "xmax": 2991,
+  "text": [
+   "FROM EXTERIOR TO SPRINKLER 133",
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME",
+   "1 3/4\" THK.  18 GA. GALV. HM INSULATED DOOR",
+   "(3) MASONRY JAMB ANCHORS PER JAMB",
+   "FILL JAMBS W/ GROUT",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)"
+  ]
+ },
+ "13": {
+  "mark_bbox": [
+   2387,
+   1088,
+   2399,
+   1097
+  ],
+  "head_bbox": [
+   2409,
+   1089,
+   2551,
+   1098
+  ],
+  "xmax": 2690,
+  "text": [
+   "FROM EXTERIOR TO ELECTRICAL 131",
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME",
+   "PAIR 2'-10\" x 7'-0\" x 1 3/4\"  18 GA GALV. HM INSUL. DOOR",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS W/ GROUT",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)",
+   "ANODIZED ALUMINUM  LOUVERS- SEE HVAC"
+  ]
+ },
+ "23": {
+  "mark_bbox": [
+   1884,
+   1710,
+   1896,
+   1719
+  ],
+  "head_bbox": [
+   1910,
+   1702,
+   2080,
+   1712
+  ],
+  "xmax": 2268,
+  "text": [
+   "RYTEC \"SPIRAL FV\" HIGH-SPEED COILING DOOR",
+   "MOTOR W/ VARIABLE SPEED AC DRIVE (SEE ELECTRICAL)",
+   "INSULATION OPTION AND CLEAR POLYCARBONATE WINDOWS",
+   "GALVANIZED STEEL SIDE FRAMES",
+   "BLACK ANODIZED ALUMINUM DOOR WITH",
+   "POLYCARBONATE CLEAR VISION PANELS"
+  ]
+ },
+ "26": {
+  "mark_bbox": [
+   2314,
+   1706,
+   2326,
+   1715
+  ],
+  "head_bbox": [
+   2334,
+   1701,
+   2519,
+   1710
+  ],
+  "xmax": 2823,
+  "text": [
+   "PITCO ARCHITECTURAL METALS TMS 114XTFG (VSSG) W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED."
+  ]
+ },
+ "28": {
+  "mark_bbox": [
+   2851,
+   1705,
+   2863,
+   1714
+  ],
+  "head_bbox": [
+   2870,
+   1702,
+   3083,
+   1711
+  ],
+  "xmax": 3350,
+  "text": [
+   "RYTEC \"SPIRAL FV\" HIGH-SPEED COILING DOOR",
+   "MOTOR W/ VARIABLE SPEED AC DRIVE (SEE ELECTRICAL)",
+   "INSULATION OPTION AND CLEAR POLYCARBONATE WINDOWS",
+   "GALVANIZED STEEL SIDE FRAMES",
+   "BLACK ANODIZED ALUMINUM DOOR WITH",
+   "POLYCARBONATE CLEAR VISION PANELS"
+  ]
+ },
+ "12": {
+  "mark_bbox": [
+   2073,
+   1088,
+   2085,
+   1097
+  ],
+  "head_bbox": [
+   2095,
+   1088,
+   2248,
+   1097
+  ],
+  "xmax": 2377,
+  "text": [
+   "FROM EXTERIOR TO SERVICE SHOP 124",
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME",
+   "1 3/4\" THK.  18 GA. GALV. HM INSULATED DOOR",
+   "VISION LITE 5/8\" INSULATED CLEAR, TEMPERED GLAZING",
+   "(3) MASONRY JAMB ANCHORS PER JAMB",
+   "FILL JAMBS W/ GROUT",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)"
+  ]
+ },
+ "30": {
+  "mark_bbox": [
+   407,
+   2324,
+   418,
+   2333
+  ],
+  "head_bbox": [
+   430,
+   2324,
+   637,
+   2334
+  ],
+  "xmax": 872,
+  "text": [
+   "PITCO ARCHITECTURAL METALS TMW 450 W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "MEDIUM STILE  DOOR , CENTER HUNG, W/ 5/8\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSUL. & TEMP."
+  ]
+ },
+ "3": {
+  "mark_bbox": [
+   155,
+   662,
+   162,
+   671
+  ],
+  "head_bbox": [
+   184,
+   662,
+   336,
+   671
+  ],
+  "xmax": 1093,
+  "text": [
+   "BUTTS (CONTINUOUS GEARED HINGES)",
+   "US19",
+   "CYLINDER",
+   "US19",
+   "CLOSER",
+   "SILENCERS",
+   "BLK",
+   "SET OF WEATHERSTRIPPING",
+   "AL",
+   "PULL PLATE - ROCKWOOD #185",
+   "US28",
+   "PUSH BAR - ROCKWOOD #BP47",
+   "US28",
+   "SURFACE BOLTS (2) TOP & (2) BOTTOM",
+   "US19",
+   "ACC. THRESHOLD",
+   "MTL"
+  ]
+ },
+ "2": {
+  "mark_bbox": [
+   155,
+   673,
+   162,
+   682
+  ],
+  "head_bbox": [
+   184,
+   673,
+   224,
+   682
+  ],
+  "xmax": 1093,
+  "text": [
+   "CYLINDER",
+   "US19",
+   "CLOSER",
+   "SILENCERS",
+   "BLK",
+   "SET OF WEATHERSTRIPPING",
+   "AL",
+   "PULL PLATE - ROCKWOOD #185",
+   "US28",
+   "PUSH BAR - ROCKWOOD #BP47",
+   "US28",
+   "SURFACE BOLTS (2) TOP & (2) BOTTOM",
+   "US19",
+   "ACC. THRESHOLD",
+   "MTL"
+  ]
+ },
+ "6": {
+  "mark_bbox": [
+   155,
+   695,
+   162,
+   704
+  ],
+  "head_bbox": [
+   184,
+   695,
+   231,
+   704
+  ],
+  "xmax": 1093,
+  "text": [
+   "SILENCERS",
+   "BLK",
+   "SET OF WEATHERSTRIPPING",
+   "AL",
+   "PULL PLATE - ROCKWOOD #185",
+   "US28",
+   "PUSH BAR - ROCKWOOD #BP47",
+   "US28",
+   "SURFACE BOLTS (2) TOP & (2) BOTTOM",
+   "US19",
+   "ACC. THRESHOLD",
+   "MTL"
+  ]
+ },
+ "3_dup": {
+  "mark_bbox": [
+   929,
+   2438,
+   937,
+   2447
+  ],
+  "head_bbox": [
+   959,
+   2438,
+   1006,
+   2447
+  ],
+  "xmax": 1351,
+  "text": [
+   "SILENCERS",
+   "BLK",
+   "SET OF WEATHERSTRIPPING",
+   "AL",
+   "PULL PLATE - ROCKWOOD #185",
+   "US28",
+   "PUSH BAR - ROCKWOOD #BP47",
+   "US28",
+   "ACC. THRESHOLD",
+   "MTL"
+  ]
+ },
+ "2_dup": {
+  "mark_bbox": [
+   1814,
+   2482,
+   1820,
+   2491
+  ],
+  "head_bbox": [
+   1844,
+   2482,
+   1910,
+   2491
+  ],
+  "xmax": 2324,
+  "text": [
+   "ACC. THRESHOLD",
+   "MTL"
+  ]
+ },
+ "1_dup": {
+  "mark_bbox": [
+   929,
+   2482,
+   935,
+   2491
+  ],
+  "head_bbox": [
+   959,
+   2482,
+   1025,
+   2491
+  ],
+  "xmax": 1351,
+  "text": [
+   "ACC. THRESHOLD",
+   "MTL"
+  ]
+ },
+ "4": {
+  "mark_bbox": [
+   155,
+   739,
+   162,
+   748
+  ],
+  "head_bbox": [
+   184,
+   739,
+   335,
+   748
+  ],
+  "xmax": 1093,
+  "text": [
+   "SURFACE BOLTS (2) TOP & (2) BOTTOM",
+   "US19",
+   "ACC. THRESHOLD",
+   "MTL",
+   "3'-4\"",
+   "11'-8",
+   "2\""
+  ]
+ },
+ "6_dup": {
+  "mark_bbox": [
+   1814,
+   2438,
+   1821,
+   2447
+  ],
+  "head_bbox": [
+   1844,
+   2438,
+   1891,
+   2447
+  ],
+  "xmax": 2324,
+  "text": [
+   "SILENCERS",
+   "BLK",
+   "SET OF WEATHERSTRIPPING",
+   "AL",
+   "PULL PLATE - ROCKWOOD #185",
+   "US28",
+   "PUSH BAR - ROCKWOOD #BP47",
+   "US28",
+   "ACC. THRESHOLD",
+   "MTL"
+  ]
+ },
+ "4_dup": {
+  "mark_bbox": [
+   3032,
+   1260,
+   3040,
+   1269
+  ],
+  "head_bbox": [
+   3062,
+   1260,
+   3180,
+   1269
+  ],
+  "xmax": 3542,
+  "text": [
+   "KICK PLATES (8\" HIGH, GLUED)",
+   "US28",
+   "PANIC HARDWARE",
+   "US28",
+   "SET OF WEATHERSTRIPPING",
+   "GRAY",
+   "DOOR HEAD ALUMINUM RAIN DRIP"
+  ]
+ },
+ "5": {
+  "mark_bbox": [
+   2049,
+   556,
+   2055,
+   565
+  ],
+  "head_bbox": [
+   2067,
+   555,
+   2215,
+   564
+  ],
+  "xmax": 2541,
+  "text": [
+   "FROM EXTERIOR TO  MAIN STUDIO 102",
+   "PITCO ARCHITECTURAL METALS TMS 114XTFG (VSSG) W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "MEDIUM STILE BI-FOLD DOORS , CENTER HUNG, W/ 5/8\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSUL. & TEMP."
+  ]
+ },
+ "6b": {
+  "mark_bbox": [
+   2911,
+   556,
+   2921,
+   565
+  ],
+  "head_bbox": [
+   2931,
+   555,
+   3099,
+   564
+  ],
+  "xmax": 3411,
+  "text": [
+   "BETWEEN EXTERIOR &  CONSULTATION 105",
+   "PITCO ARCHITECTURAL METALS TMS 114XTFG (VSSG) W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED."
+  ]
+ },
+ "7": {
+  "mark_bbox": [
+   115,
+   1101,
+   121,
+   1110
+  ],
+  "head_bbox": [
+   133,
+   1100,
+   257,
+   1109
+  ],
+  "xmax": 510,
+  "text": [
+   "FROM EXTERIOR TO  ENTRY 134",
+   "PITCO ARCHITECTURAL METALS TMS 114XTFG (VSSG) W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED."
+  ]
+ },
+ "8": {
+  "mark_bbox": [
+   520,
+   1101,
+   526,
+   1110
+  ],
+  "head_bbox": [
+   535,
+   1099,
+   659,
+   1108
+  ],
+  "xmax": 951,
+  "text": [
+   "FROM EXTERIOR TO  ENTRY 134",
+   "PITCO ARCHITECTURAL METALS TMW 450 W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "MEDIUM STILE  DOOR , CENTER HUNG, W/ 5/8\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSUL. & TEMP."
+  ]
+ },
+ "19": {
+  "mark_bbox": [
+   441,
+   1702,
+   453,
+   1711
+  ],
+  "head_bbox": [
+   462,
+   1702,
+   605,
+   1711
+  ],
+  "xmax": 773,
+  "text": [
+   "FROM EXTERIOR TO WASHBAYS 132",
+   "OVERHEAD INSULATED SECTIONAL DOOR, SERIES 596",
+   "HEAVY DUTY WALL-MOUNTED ELECTRIC OPERATOR",
+   "5/8\" CLEAR, TEMPERED GLAZING",
+   "GALVANIZED STEEL WITH BAKED FINISH COAT",
+   "WITH WINDLOCKS AND PIN LOCKS",
+   "FINISH TO MATCH (EP-1)"
+  ]
+ },
+ "20": {
+  "mark_bbox": [
+   783,
+   1702,
+   795,
+   1711
+  ],
+  "head_bbox": [
+   804,
+   1702,
+   947,
+   1711
+  ],
+  "xmax": 1160,
+  "text": [
+   "FROM EXTERIOR TO WASHBAYS 132",
+   "OVERHEAD INSULATED SECTIONAL DOOR, SERIES 596",
+   "HEAVY DUTY WALL-MOUNTED ELECTRIC OPERATOR",
+   "5/8\" CLEAR, TEMPERED GLAZING",
+   "GALVANIZED STEEL WITH BAKED FINISH COAT",
+   "WITH WINDLOCKS AND PIN LOCKS",
+   "FINISH TO MATCH (EP-1)"
+  ]
+ },
+ "18": {
+  "mark_bbox": [
+   423,
+   1702,
+   435,
+   1711
+  ],
+  "head_bbox": [
+   462,
+   1702,
+   605,
+   1711
+  ],
+  "xmax": 431,
+  "text": []
+ },
+ "25": {
+  "mark_bbox": [
+   2296,
+   1706,
+   2308,
+   1715
+  ],
+  "head_bbox": [
+   2334,
+   1701,
+   2519,
+   1710
+  ],
+  "xmax": 2304,
+  "text": []
+ },
+ "27": {
+  "mark_bbox": [
+   2833,
+   1705,
+   2845,
+   1714
+  ],
+  "head_bbox": [
+   2870,
+   1702,
+   3083,
+   1711
+  ],
+  "xmax": 2841,
+  "text": []
+ },
+ "29": {
+  "mark_bbox": [
+   128,
+   2329,
+   140,
+   2338
+  ],
+  "head_bbox": [
+   148,
+   2324,
+   301,
+   2333
+  ],
+  "xmax": 397,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME",
+   "1 3/4\" THK.  18 GA. GALV. HM INSULATED DOOR",
+   "VISION LITE 5/8\" INSULATED CLEAR, TEMPERED GLAZING",
+   "(3) MASONRY JAMB ANCHORS PER JAMB",
+   "FILL JAMBS W/ GROUT",
+   "PAINT EXTERIOR SIDE (EP-1)",
+   "PAINT INTERIOR SIDE (P-9)"
+  ]
+ },
+ "32": {
+  "mark_bbox": [
+   1777,
+   2324,
+   1788,
+   2333
+  ],
+  "head_bbox": [
+   1801,
+   2324,
+   2048,
+   2334
+  ],
+  "xmax": 2281,
+  "text": [
+   "PITCO ARCHITECTURAL METALS TMW 450 W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "MEDIUM STILE  DOOR , CENTER HUNG, W/ 5/8\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSUL. & TEMP."
+  ]
+ },
+ "31b": {
+  "mark_bbox": [
+   1313,
+   2324,
+   1330,
+   2333
+  ],
+  "head_bbox": [
+   1339,
+   2324,
+   1586,
+   2334
+  ],
+  "xmax": 1767,
+  "text": [
+   "PITCO ARCHITECTURAL METALS TMW 450 W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "MEDIUM STILE  DOOR , CENTER HUNG, W/ 5/8\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSUL. & TEMP."
+  ]
+ },
+ "31a": {
+  "mark_bbox": [
+   882,
+   2324,
+   898,
+   2333
+  ],
+  "head_bbox": [
+   907,
+   2324,
+   1155,
+   2334
+  ],
+  "xmax": 1303,
+  "text": [
+   "PITCO ARCHITECTURAL METALS TMW 450 W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "MEDIUM STILE  DOOR , CENTER HUNG, W/ 5/8\" SOLARBAN 72 ACUITY GLAZING. CLEAR, INSUL. & TEMP."
+  ]
+ },
+ "6a": {
+  "mark_bbox": [
+   2551,
+   556,
+   2562,
+   565
+  ],
+  "head_bbox": [
+   2571,
+   555,
+   2739,
+   564
+  ],
+  "xmax": 2901,
+  "text": [
+   "BETWEEN EXTERIOR &  CONSULTATION 105",
+   "PITCO ARCHITECTURAL METALS TMS 114XTFG (VSSG) W/ BLACK ANODIZED #63 FINISH",
+   "1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED."
+  ]
+ }
+}

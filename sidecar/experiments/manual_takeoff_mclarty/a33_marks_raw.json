@@ -1,0 +1,1028 @@
+{
+ "100": {
+  "mark_bbox": [
+   111,
+   399,
+   126,
+   407
+  ],
+  "head_bbox": [
+   133,
+   398,
+   312,
+   407
+  ],
+  "xmax": 341,
+  "text": [
+   "BETWEEN MAIN ENTRY 100 & JEWEL BOX 102",
+   "PITCO ARCHITECTURAL METALS EMS 114",
+   "BLACK ANODIZED #63 FINISH",
+   "1/4\" CLEAR, TEMPERED GLAZING"
+  ]
+ },
+ "101": {
+  "mark_bbox": [
+   351,
+   399,
+   366,
+   407
+  ],
+  "head_bbox": [
+   374,
+   397,
+   558,
+   406
+  ],
+  "xmax": 694,
+  "text": [
+   "BETWEEN MAIN ENTRY 100 & SHOWROOM 101",
+   "PITCO ARCHITECTURAL METALS EMS 114",
+   "BLACK ANODIZED #63 FINISH",
+   "1/4\" CLEAR, TEMPERED GLAZING",
+   "MEDIUM STILE DOORS , CENTER HUNG, w/ 1/4\" 1/4\" CLEAR, TEMPERED GLAZING"
+  ]
+ },
+ "102": {
+  "mark_bbox": [
+   704,
+   400,
+   720,
+   408
+  ],
+  "head_bbox": [
+   727,
+   398,
+   914,
+   407
+  ],
+  "xmax": 1046,
+  "text": [
+   "BETWEEN MAIN ENTRY 100 & MAIN STUDIO 103",
+   "PITCO ARCHITECTURAL METALS EMS 114",
+   "BLACK ANODIZED #63 FINISH",
+   "1/4\" CLEAR, TEMPERED GLAZING"
+  ]
+ },
+ "103": {
+  "mark_bbox": [
+   1056,
+   401,
+   1072,
+   409
+  ],
+  "head_bbox": [
+   1077,
+   399,
+   1121,
+   409
+  ],
+  "xmax": 1537,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS",
+   "REFER TO A1.4 FOR THRESHOLD INFORMATION"
+  ]
+ },
+ "104": {
+  "mark_bbox": [
+   1547,
+   403,
+   1563,
+   411
+  ],
+  "head_bbox": [
+   1569,
+   399,
+   1604,
+   409
+  ],
+  "xmax": 2030,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS",
+   "REFER TO A1.4 FOR THRESHOLD INFORMATION"
+  ]
+ },
+ "105": {
+  "mark_bbox": [
+   2040,
+   406,
+   2056,
+   414
+  ],
+  "head_bbox": [
+   2061,
+   399,
+   2096,
+   409
+  ],
+  "xmax": 2552,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS",
+   "REFER TO A1.4 FOR THRESHOLD INFORMATION"
+  ]
+ },
+ "106": {
+  "mark_bbox": [
+   2562,
+   404,
+   2578,
+   412
+  ],
+  "head_bbox": [
+   2583,
+   399,
+   2665,
+   409
+  ],
+  "xmax": 3063,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS",
+   "REFER TO A1.4 FOR THRESHOLD INFORMATION"
+  ]
+ },
+ "107": {
+  "mark_bbox": [
+   105,
+   921,
+   121,
+   929
+  ],
+  "head_bbox": [
+   127,
+   920,
+   350,
+   930
+  ],
+  "xmax": 426,
+  "text": [
+   "2\" x 5 3/4\" x16 GA. HM FRAME (PAINT P-2)",
+   "1 3/4\" THICK SOLID CORE WOOD DOOR  (PL-3) COLUMBIAN WALNUT"
+  ]
+ },
+ "108": {
+  "mark_bbox": [
+   436,
+   921,
+   452,
+   929
+  ],
+  "head_bbox": [
+   458,
+   920,
+   574,
+   929
+  ],
+  "xmax": 755,
+  "text": [
+   "FROM HALL 113 T0 MEN 111",
+   "2\" x 5 3/4\" x16 GA. HM FRAME (PAINT P-2)",
+   "1 3/4\" THICK SOLID CORE WOOD DOOR  (PL-3) COLUMBIAN WALNUT"
+  ]
+ },
+ "109": {
+  "mark_bbox": [
+   765,
+   921,
+   781,
+   929
+  ],
+  "head_bbox": [
+   788,
+   920,
+   916,
+   929
+  ],
+  "xmax": 1149,
+  "text": [
+   "FROM HALL 113 TO WOMEN 112",
+   "2\" x 5 3/4\" x16 GA. HM FRAME (PAINT P-2)",
+   "1 3/4\" THICK SOLID CORE WOOD DOOR  (PL-3) COLUMBIAN WALNUT"
+  ]
+ },
+ "110": {
+  "mark_bbox": [
+   1159,
+   929,
+   1175,
+   937
+  ],
+  "head_bbox": [
+   1180,
+   922,
+   1411,
+   931
+  ],
+  "xmax": 1627,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS"
+  ]
+ },
+ "111": {
+  "mark_bbox": [
+   1637,
+   929,
+   1653,
+   937
+  ],
+  "head_bbox": [
+   1658,
+   922,
+   1912,
+   932
+  ],
+  "xmax": 2111,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS"
+  ]
+ },
+ "112": {
+  "mark_bbox": [
+   2121,
+   929,
+   2137,
+   937
+  ],
+  "head_bbox": [
+   2141,
+   922,
+   2423,
+   932
+  ],
+  "xmax": 2562,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS"
+  ]
+ },
+ "114": {
+  "mark_bbox": [
+   2956,
+   925,
+   2971,
+   933
+  ],
+  "head_bbox": [
+   2980,
+   920,
+   3152,
+   930
+  ],
+  "xmax": 3460,
+  "text": [
+   "2\" x 5 3/4\" x16 GA. HM FRAME (PAINT P-2)",
+   "1 3/4\" x 18 GA. HM DOOR (PAINT P-2)",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "115": {
+  "mark_bbox": [
+   134,
+   1449,
+   150,
+   1457
+  ],
+  "head_bbox": [
+   156,
+   1449,
+   308,
+   1458
+  ],
+  "xmax": 467,
+  "text": [
+   "FROM HALL 113 TO RETAIL PARTS 118",
+   "2\" x 5 3/4\" x16 GA. HM FRAME (PAINT P-2)",
+   "1 3/4\" THICK SOLID CORE WOOD DOOR  (PL-3) COLUMBIAN WALNUT)"
+  ]
+ },
+ "117": {
+  "mark_bbox": [
+   760,
+   1460,
+   776,
+   1468
+  ],
+  "head_bbox": [
+   781,
+   1453,
+   969,
+   1462
+  ],
+  "xmax": 1051,
+  "text": [
+   "OVERHEAD DOOR SECURITY GRILLE - MODEL 670 SERIES",
+   "SURFACE MTD JAMBS TO CMU",
+   "CLEAR ANODIZED ALUMINUM FINISH, BRICK PATTERN GRILLE",
+   "MANUALLY OPERATED"
+  ]
+ },
+ "118": {
+  "mark_bbox": [
+   1061,
+   1463,
+   1077,
+   1471
+  ],
+  "head_bbox": [
+   1083,
+   1454,
+   1261,
+   1464
+  ],
+  "xmax": 1316,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)",
+   "VISION LITE 1/4\" CLEAR, TEMPERED GLAZING",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "119": {
+  "mark_bbox": [
+   1326,
+   1463,
+   1342,
+   1471
+  ],
+  "head_bbox": [
+   1349,
+   1455,
+   1501,
+   1464
+  ],
+  "xmax": 1628,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)",
+   "1/4\"  CLEAR TEMPERED GLAZING"
+  ]
+ },
+ "120": {
+  "mark_bbox": [
+   1638,
+   1463,
+   1654,
+   1471
+  ],
+  "head_bbox": [
+   1662,
+   1456,
+   1834,
+   1465
+  ],
+  "xmax": 1881,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)",
+   "1/4\"  CLEAR TEMPERED GLAZING"
+  ]
+ },
+ "121": {
+  "mark_bbox": [
+   1891,
+   1460,
+   1907,
+   1468
+  ],
+  "head_bbox": [
+   1913,
+   1454,
+   2136,
+   1464
+  ],
+  "xmax": 2164,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME",
+   "(PAINT BREAK RM SIDE P-4/PAINT SHOP SIDE P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR",
+   "(PAINT BREAK RM SIDE P-4/PAINT SHOP SIDE P-9)",
+   "VISION LITE 1/4\" CLEAR, TEMPERED GLAZING",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "122": {
+  "mark_bbox": [
+   2174,
+   1463,
+   2190,
+   1471
+  ],
+  "head_bbox": [
+   2197,
+   1454,
+   2367,
+   1463
+  ],
+  "xmax": 2492,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "123": {
+  "mark_bbox": [
+   2502,
+   1463,
+   2518,
+   1471
+  ],
+  "head_bbox": [
+   2524,
+   1456,
+   2699,
+   1465
+  ],
+  "xmax": 2742,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "126": {
+  "mark_bbox": [
+   129,
+   1969,
+   144,
+   1977
+  ],
+  "head_bbox": [
+   151,
+   1961,
+   312,
+   1970
+  ],
+  "xmax": 395,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "127": {
+  "mark_bbox": [
+   405,
+   1968,
+   421,
+   1976
+  ],
+  "head_bbox": [
+   426,
+   1961,
+   592,
+   1970
+  ],
+  "xmax": 670,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "128": {
+  "mark_bbox": [
+   680,
+   1970,
+   696,
+   1978
+  ],
+  "head_bbox": [
+   702,
+   1961,
+   845,
+   1970
+  ],
+  "xmax": 956,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)"
+  ]
+ },
+ "129": {
+  "mark_bbox": [
+   966,
+   1969,
+   982,
+   1977
+  ],
+  "head_bbox": [
+   988,
+   1961,
+   1131,
+   1970
+  ],
+  "xmax": 1214,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. HM FRAME (PAINT P-9)",
+   "3'-0\" x 7'-0\" x 1 3/4\"  18 GA.  HM DOOR (PAINT P-9)"
+  ]
+ },
+ "130": {
+  "mark_bbox": [
+   1224,
+   1969,
+   1239,
+   1977
+  ],
+  "head_bbox": [
+   1247,
+   1961,
+   1336,
+   1970
+  ],
+  "xmax": 1555,
+  "text": [
+   "OVERHEAD DOOR SECURITY GRILLE - MODEL 670 SERIES",
+   "FLUSH MOUNTED BETWEEN JAMBS",
+   "CLEAR ANODIZED ALUMINUM FINISH, BRICK PATTERN GRILLE",
+   "MANUALLY OPERATED"
+  ]
+ },
+ "131": {
+  "mark_bbox": [
+   1565,
+   1970,
+   1580,
+   1978
+  ],
+  "head_bbox": [
+   1590,
+   1961,
+   1682,
+   1970
+  ],
+  "xmax": 1858,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS  W/ POLISHED EDGES",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "132": {
+  "mark_bbox": [
+   1868,
+   1971,
+   1883,
+   1979
+  ],
+  "head_bbox": [
+   1891,
+   1963,
+   1983,
+   1972
+  ],
+  "xmax": 2155,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS  W/ POLISHED EDGES",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "133": {
+  "mark_bbox": [
+   2165,
+   1971,
+   2180,
+   1979
+  ],
+  "head_bbox": [
+   2188,
+   1963,
+   2280,
+   1972
+  ],
+  "xmax": 2442,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS  W/ POLISHED EDGES",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "113": {
+  "mark_bbox": [
+   2572,
+   929,
+   2588,
+   937
+  ],
+  "head_bbox": [
+   2593,
+   922,
+   2750,
+   931
+  ],
+  "xmax": 2946,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS AND DOORS W/ POLISHED EDGES",
+   "PATCH FITTINGS AND HARDWARE TO HAVE POLISHED CHROME FINISH",
+   "CONCEALED HEAD CLOSERS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH,",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "APPLY CLEAR SILICONE SEALANT AT OPEN JOINTS BTWN GLASS PANELS"
+  ]
+ },
+ "116": {
+  "mark_bbox": [
+   477,
+   1457,
+   492,
+   1465
+  ],
+  "head_bbox": [
+   498,
+   1449,
+   679,
+   1458
+  ],
+  "xmax": 750,
+  "text": [
+   "2\" x 5 3/4\" x16 GA. HM FRAME (P-2)",
+   "1 3/4\" x 18 GA. HM DOOR (P-2)"
+  ]
+ },
+ "124": {
+  "mark_bbox": [
+   2752,
+   1443,
+   2768,
+   1451
+  ],
+  "head_bbox": [
+   2773,
+   1436,
+   2956,
+   1445
+  ],
+  "xmax": 3021,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME (PAINT P-9)",
+   "1 3/4\" THK.  18 GA. GALV. HM DOOR (PAINT P-9)",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "125": {
+  "mark_bbox": [
+   3031,
+   1443,
+   3047,
+   1451
+  ],
+  "head_bbox": [
+   3052,
+   1436,
+   3235,
+   1445
+  ],
+  "xmax": 3532,
+  "text": [
+   "2\" x 5 3/4\" 16 GA. GALV. HM FRAME (PAINT P-9)",
+   "1 3/4\" THK.  18 GA. GALV. HM DOOR (PAINT P-9)",
+   "(3) ANCHORS PER JAMB",
+   "FILL JAMBS WITH GROUT AT MASONRY"
+  ]
+ },
+ "134": {
+  "mark_bbox": [
+   2452,
+   1967,
+   2468,
+   1975
+  ],
+  "head_bbox": [
+   2474,
+   1958,
+   2566,
+   1967
+  ],
+  "xmax": 2709,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "135": {
+  "mark_bbox": [
+   2719,
+   1968,
+   2735,
+   1976
+  ],
+  "head_bbox": [
+   2744,
+   1958,
+   2836,
+   1967
+  ],
+  "xmax": 3021,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "136": {
+  "mark_bbox": [
+   3031,
+   1968,
+   3047,
+   1976
+  ],
+  "head_bbox": [
+   3056,
+   1958,
+   3148,
+   1967
+  ],
+  "xmax": 3536,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "11",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "12",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML",
+   "13",
+   "14",
+   "15"
+  ]
+ },
+ "137": {
+  "mark_bbox": [
+   128,
+   2491,
+   144,
+   2499
+  ],
+  "head_bbox": [
+   150,
+   2483,
+   242,
+   2492
+  ],
+  "xmax": 385,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "138": {
+  "mark_bbox": [
+   395,
+   2493,
+   411,
+   2501
+  ],
+  "head_bbox": [
+   420,
+   2483,
+   512,
+   2492
+  ],
+  "xmax": 697,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "139": {
+  "mark_bbox": [
+   707,
+   2493,
+   723,
+   2501
+  ],
+  "head_bbox": [
+   732,
+   2483,
+   824,
+   2492
+  ],
+  "xmax": 982,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "140": {
+  "mark_bbox": [
+   992,
+   2491,
+   1008,
+   2499
+  ],
+  "head_bbox": [
+   1014,
+   2483,
+   1106,
+   2492
+  ],
+  "xmax": 1249,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "141": {
+  "mark_bbox": [
+   1259,
+   2493,
+   1275,
+   2501
+  ],
+  "head_bbox": [
+   1284,
+   2483,
+   1376,
+   2492
+  ],
+  "xmax": 1561,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "142": {
+  "mark_bbox": [
+   1571,
+   2493,
+   1587,
+   2501
+  ],
+  "head_bbox": [
+   1596,
+   2483,
+   1688,
+   2492
+  ],
+  "xmax": 1840,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS",
+   "PANELS  W/ POLISHED EDGES",
+   "APPLY CLEAR SILICONE SEALANT AT WALLS",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "143": {
+  "mark_bbox": [
+   1850,
+   2496,
+   1866,
+   2504
+  ],
+  "head_bbox": [
+   1873,
+   2487,
+   1965,
+   2496
+  ],
+  "xmax": 2157,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS  W/ POLISHED EDGES",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "144": {
+  "mark_bbox": [
+   2167,
+   2494,
+   2183,
+   2502
+  ],
+  "head_bbox": [
+   2192,
+   2485,
+   2284,
+   2494
+  ],
+  "xmax": 2440,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS  W/ POLISHED EDGES",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "145": {
+  "mark_bbox": [
+   2450,
+   2496,
+   2466,
+   2504
+  ],
+  "head_bbox": [
+   2473,
+   2487,
+   2565,
+   2496
+  ],
+  "xmax": 2811,
+  "text": [
+   "1/2\" CLEAR, TEMPERED GLASS PANELS  W/ POLISHED EDGES",
+   "FROST GLASS UP TO 36\" H: 3M FASARA GLASS FINISH",
+   "MILKY WHITE (MILANO) #SH2MAML"
+  ]
+ },
+ "146": {
+  "mark_bbox": [
+   2823,
+   2273,
+   2839,
+   2281
+  ],
+  "head_bbox": [
+   2847,
+   2269,
+   2968,
+   2278
+  ],
+  "xmax": 3327,
+  "text": [
+   "ALUMINUM RAIL W/ STAINLESS STEEL CABLES BY www.stainlesssteelcablerailing.com",
+   "BLACK SQUARE POSTS W/ FLAT TOP RAIL. MOUNTING PLATE AT FLOOR TO HAVE DECORATIVE DOME",
+   "SCREW COVERS. STAINLESS STEEL CABLES TO BE MARINE GRADE TYPE 316"
+  ]
+ },
+ "147": {
+  "mark_bbox": [
+   2821,
+   2490,
+   2837,
+   2498
+  ],
+  "head_bbox": [
+   2845,
+   2485,
+   2966,
+   2494
+  ],
+  "xmax": 3325,
+  "text": [
+   "ALUMINUM RAIL W/ STAINLESS STEEL CABLES BY www.stainlesssteelcablerailing.com",
+   "BLACK SQUARE POSTS W/ FLAT TOP RAIL. MOUNTING PLATE AT FLOOR TO HAVE DECORATIVE DOME",
+   "SCREW COVERS. STAINLESS STEEL CABLES TO BE MARINE GRADE TYPE 316"
+  ]
+ }
+}

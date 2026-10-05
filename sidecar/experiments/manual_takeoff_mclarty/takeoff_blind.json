@@ -1,0 +1,7293 @@
+{
+ "job": "McLarty Mazda of Little Rock \u2014 new 2-story sales & service facility (BCO+H Architects, Benton AR), 10.16.2025 PRELIMINARY \u2014 NOT FOR CONSTRUCTION",
+ "set": "Orig Plans \u2014 35 sheets: Cover, LS1.0, A1.0\u2013A1.6, A2.0, A3.0\u2013A3.3, A4.0\u2013A4.4, A5.0\u2013A5.13, A6.0\u2013A6.1 (no S/M/E/P/C in this PDF)",
+ "sheets_read": [
+  "all 35 (text + vector); drawn/snapped on A1.2, A2.0, A3.0, A3.2, A3.3, A4.1\u2013A4.4, A5.0\u2013A5.9, A5.13, A6.1"
+ ],
+ "sheets_skipped": "none \u2014 A1.0/A1.1/A1.3\u2013A1.6/A4.0/A5.10\u2013A5.12/A6.0/LS1.0 read, no glazing scope beyond RCP shade note and mirror tags",
+ "specs": "none in set \u2014 flag",
+ "system": {
+  "basis": "Pittco Architectural Metals TMW 450 / TMW 450 EFG (legend SF-1 'curtain wall'), TMS 114XTFG VSSG (legend SF-2 'storefront'), EMS 114 interior; black anodized #63; 1\" Solarban 72 Acuity low-iron IG tempered; 5/8\" IG in doors; 1/4\" tempered interior; 1/2\" tempered frameless",
+  "series_class": "Pittco not in Frame Builder library \u2014 flag: price Kawneer/Tubelite equivalents (4-1/2\" thermal SF / 1-1/2\" x 4-1/2\" SF / interior 1-3/4\" x 4-1/2\")"
+ },
+ "glass": {
+  "ext": "1\" Solarban 72 Acuity low-iron, clear, insulated, tempered",
+  "doors": "5/8\" Solarban 72 Acuity IG tempered",
+  "interior": "1/4\" clear tempered (EMS 114); 1/2\" clear tempered polished edges (frameless)",
+  "film": "GF-1 3M Fasara Illumina gradient at 03; 3M Fasara Milky White frost to 36\" at all frameless"
+ },
+ "items": [
+  {
+   "id": "1",
+   "class": "ext_cw",
+   "label": "1 \u2014 1 Thus",
+   "desc": "Jewel Box 102 \u2014 2-story frame: 14'-0\" x 10'-0\" lower w/ pair medium-stile bi-fold doors + 14'-0\" x 12'-0\" upper (1'-0\" band between). 1\" Solarban 72 Acuity low-iron IG, tempered. Black anodized #63.",
+   "system": "SF-1 Pittco TMW 450 EFG (VSSG)",
+   "w": "14'-0\"",
+   "h": "23'-0\"",
+   "bays": "3 (upper) / doors+2 sidelites (lower)",
+   "rows": "2 / 2",
+   "sf": 308.0,
+   "qty": 1,
+   "door": "pair bi-fold (pass-thru)",
+   "hardware": "HW: cont. geared hinges, cylinder, closers, weatherstrip, pull/push, surface bolts, acc. threshold",
+   "evidence": "A3.2 type 1 (text + snapped type drawing @1/4\"); A1.2 tag 1 x1; A2.0 elevation tag 1 snapped",
+   "flags": [
+    "Series is Pittco (not Kawneer/Tubelite) \u2014 price Kawneer equivalent, flag",
+    "Bi-fold doors: pass-thru (bifold/auto door sub)"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "14'-4.5\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "1-BF",
+   "class": "bifold",
+   "label": "1 bi-fold doors \u2014 1 pair",
+   "desc": "Medium-stile center-hung bi-fold doors w/ 5/8\" Solarban 72 IG \u2014 pass-thru (bifold/auto door sub) in our frame",
+   "qty": 1,
+   "evidence": "A3.2 type 1 text",
+   "flags": [
+    "Pass-thru item: price by bifold/auto door sub; frame prep by us"
+   ],
+   "rule": "Auto/bifold doors = pass-thru"
+  },
+  {
+   "id": "2",
+   "class": "ext_cw",
+   "label": "2 \u2014 1 Thus",
+   "desc": "Jewel Box 102 \u2014 19'-9 1/2\" x 10'-0\" lower (4 bays x 2 rows) + 19'-9 1/2\" x 12'-0\" upper (4 bays x 2 rows). 1\" Solarban 72 low-iron IG tempered.",
+   "system": "SF-1 Pittco TMW 450 EFG",
+   "w": "18'-2.5\"",
+   "h": "23'-0\"",
+   "bays": "4 / 4",
+   "rows": "2 / 2",
+   "sf": 400.4,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 2 (text + snapped type drawing @1/4\"); A1.2 tag 2 x1; A2.0 elevation tag 2 snapped",
+   "flags": [
+    "Series Pittco \u2014 Kawneer equivalent, flag"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "20'-0.7\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "3",
+   "class": "ext_cw",
+   "label": "3 \u2014 1 Thus",
+   "desc": "Main Entry 100 \u2014 13'-2 1/2\" x 10'-0\" lower w/ pair medium-stile bi-fold doors + 13'-2 1/2\" x 12'-0\" upper (3 bays x 3 rows). GF-1 3M Fasara gradient film on top band.",
+   "system": "SF-1 Pittco TMW 450 EFG",
+   "w": "12'-9.5\"",
+   "h": "23'-0\"",
+   "bays": "3 / doors+sidelites",
+   "rows": "3 / 2",
+   "sf": 281.3,
+   "qty": 1,
+   "door": "pair bi-fold (pass-thru)",
+   "hardware": "HW set as 01",
+   "evidence": "A3.2 type 3 (text + snapped type drawing @1/4\"); A1.2 tag 3 x1; A2.0 elevation tag 3 snapped",
+   "flags": [
+    "GF-1 glass film (3M Fasara Illumina, 100%\u21920%) on upper band \u2014 implied scope",
+    "Bi-fold doors: pass-thru",
+    "Legend D-1 says STANDARD NARROW STILE door; schedule says MEDIUM STILE \u2014 RFI"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "13'-2.7\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "3-BF",
+   "class": "bifold",
+   "label": "3 bi-fold doors \u2014 1 pair",
+   "desc": "Medium-stile center-hung bi-fold doors w/ 5/8\" Solarban 72 IG \u2014 pass-thru (bifold/auto door sub) in our frame",
+   "qty": 1,
+   "evidence": "A3.2 type 3 text",
+   "flags": [
+    "Pass-thru item: price by bifold/auto door sub; frame prep by us"
+   ],
+   "rule": "Auto/bifold doors = pass-thru"
+  },
+  {
+   "id": "4",
+   "class": "ext_sf",
+   "label": "4 \u2014 1 Thus",
+   "desc": "Main Studio 102 \u2014 22'-11\" x 10'-0\", 6 equal bays x 2 rows (8'-1\" + 1'-11\"). 1\" Solarban 72 low-iron IG tempered.",
+   "system": "SF-2 Pittco TMS 114XTFG (VSSG)",
+   "w": "21'-1\"",
+   "h": "10'-0\"",
+   "bays": 6,
+   "rows": 2,
+   "sf": 210.8,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 4 (text + snapped type drawing @1/4\"); A1.2 tag 4 x1; A2.0 elevation tag 4 snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "22'-11.1\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "5",
+   "class": "ext_sf",
+   "label": "5 \u2014 1 Thus",
+   "desc": "Main Studio 102 \u2014 23'-8\" x 10'-0\" w/ pair medium-stile bi-fold doors + 3 bays x 2 rows.",
+   "system": "SF-2 Pittco TMS 114XTFG",
+   "w": "22'-4.5\"",
+   "h": "10'-0\"",
+   "bays": "3 + door section",
+   "rows": 2,
+   "sf": 223.9,
+   "qty": 1,
+   "door": "pair bi-fold (pass-thru)",
+   "hardware": "HW set as 01",
+   "evidence": "A3.2 type 5 (text + snapped type drawing @1/4\"); A1.2 tag 5 x1; A2.0 elevation tag 5 snapped",
+   "flags": [
+    "Bi-fold doors: pass-thru"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "23'-7.9\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "5-BF",
+   "class": "bifold",
+   "label": "5 bi-fold doors \u2014 1 pair",
+   "desc": "Medium-stile center-hung bi-fold doors w/ 5/8\" Solarban 72 IG \u2014 pass-thru (bifold/auto door sub) in our frame",
+   "qty": 1,
+   "evidence": "A3.2 type 5 text",
+   "flags": [
+    "Pass-thru item: price by bifold/auto door sub; frame prep by us"
+   ],
+   "rule": "Auto/bifold doors = pass-thru"
+  },
+  {
+   "id": "6a",
+   "class": "ext_sf",
+   "label": "6a \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 10'-6\" x 10'-0\", 3 equal bays x 2 rows.",
+   "system": "SF-2 Pittco TMS 114XTFG",
+   "w": "9'-5\"",
+   "h": "10'-0\"",
+   "bays": 3,
+   "rows": 2,
+   "sf": 94.1,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 6a (text + snapped type drawing @1/4\"); A1.2 tag 6a x1; A2.0 elevation tag 6a snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "10'-6.5\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "6b",
+   "class": "ext_sf",
+   "label": "6b \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 12'-9 1/2\" x 10'-0\", 3 equal bays x 2 rows.",
+   "system": "SF-2 Pittco TMS 114XTFG",
+   "w": "11'-2.5\"",
+   "h": "10'-0\"",
+   "bays": 3,
+   "rows": 2,
+   "sf": 112.1,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 6b (text + snapped type drawing @1/4\"); A1.2 tag 6b x1; A2.0 elevation tag 6b snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "12'-10.0\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "7",
+   "class": "ext_sf",
+   "label": "7 \u2014 1 Thus",
+   "desc": "Entry 134 \u2014 11'-8 1/2\" x 10'-0\", 3 bays x 2 rows.",
+   "system": "SF-2 Pittco TMS 114XTFG",
+   "w": "10'-3.5\"",
+   "h": "10'-0\"",
+   "bays": 3,
+   "rows": 2,
+   "sf": 102.9,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 7 (text + snapped type drawing @1/4\"); A1.2 tag 7 x1; A2.0 elevation tag 7 snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "11'-8.4\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "8",
+   "class": "ext_cw",
+   "label": "8 \u2014 1 Thus",
+   "desc": "Entry 134 \u2014 3'-4\" x 10'-0\" door frame: single medium-stile door 3'-0\" x 7'-0\" + transom. 5/8\" Solarban 72 IG in door.",
+   "system": "SF-1 Pittco TMW 450",
+   "w": "2'-7\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 2,
+   "sf": 25.9,
+   "qty": 1,
+   "door": "single medium stile",
+   "hardware": "HW: cont. hinge, cylinder, closer, weatherstrip, pull/push bar, acc. threshold",
+   "evidence": "A3.2 type 8 (text + snapped type drawing @1/4\"); A1.2 tag 8 x1; A2.0 elevation tag 8 snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "2'-7.2\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "24",
+   "class": "ext_sf",
+   "label": "24 \u2014 1 Thus",
+   "desc": "Service Reception 117 \u2014 8'-0\" x 10'-0\" (schedule) / 7'-0\" x 10'-0\" (elevation), 2 bays x 1 row.",
+   "system": "SF-2 Pittco TMS 114XTFG",
+   "w": "7'-11.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 79.8,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 24 (text + snapped type drawing @1/4\"); A1.2 tag 24 x1; A2.0 elevation tag 24 snapped",
+   "flags": [
+    "Schedule 8'-0\" vs elevation 7'-0\" \u2014 RFI"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "7'-0.7\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "25",
+   "class": "ext_sf",
+   "label": "25 \u2014 1 Thus",
+   "desc": "Service Reception 117 \u2014 same as 24.",
+   "system": "SF-2 Pittco TMS 114XTFG",
+   "w": "7'-11.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 79.8,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 25 (text + snapped type drawing @1/4\"); A1.2 tag 25 x1; A2.0 elevation tag 25 snapped",
+   "flags": [
+    "Schedule 8'-0\" vs elevation 7'-0\" \u2014 RFI"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "7'-0.0\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "26",
+   "class": "ext_sf",
+   "label": "26 \u2014 1 Thus",
+   "desc": "Service Reception 117 \u2014 same as 24.",
+   "system": "SF-2 Pittco TMS 114XTFG",
+   "w": "7'-11.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 79.8,
+   "qty": 1,
+   "door": "",
+   "hardware": "",
+   "evidence": "A3.2 type 26 (text + snapped type drawing @1/4\"); A1.2 tag 26 x1; A2.0 elevation tag 26 snapped",
+   "flags": [
+    "Schedule 8'-0\" vs elevation 7'-0\" \u2014 RFI"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "7'-0.0\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "30",
+   "class": "ext_cw",
+   "label": "30 \u2014 1 Thus",
+   "desc": "Service Reception 117 / Gen. Mgr 116 \u2014 13'-9\" x 10'-0\", 3 bays + single medium-stile door 3'-0\" x 7'-0\" w/ transom. Anodized alum closure trim to match storefront.",
+   "system": "SF-1 Pittco TMW 450",
+   "w": "12'-3\"",
+   "h": "10'-0\"",
+   "bays": "3 + door",
+   "rows": 1,
+   "sf": 122.3,
+   "qty": 1,
+   "door": "single medium stile",
+   "hardware": "HW: cont. hinge, cylinder, closer, pull/push, acc. threshold",
+   "evidence": "A3.2 type 30 (text + snapped type drawing @1/4\"); A1.2 tag 30 x1; A2.0 elevation tag 30 snapped",
+   "flags": [
+    "Faces drive-through service reception: scheduled on exterior schedule & exterior elevation \u2014 treated as exterior"
+   ],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "13'-3.6\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "31a",
+   "class": "ext_cw",
+   "label": "31a \u2014 1 Thus",
+   "desc": "Service Reception 117 / Service Advisors 114 \u2014 9'-5 1/2\" x 10'-0\", 2 bays + single door 3'-0\" x 7'-0\" w/ transom. Alum closure trim to match.",
+   "system": "SF-1 Pittco TMW 450",
+   "w": "8'-6.5\"",
+   "h": "10'-0\"",
+   "bays": "2 + door",
+   "rows": 1,
+   "sf": 85.2,
+   "qty": 1,
+   "door": "single medium stile",
+   "hardware": "HW set as 30",
+   "evidence": "A3.2 type 31a (text + snapped type drawing @1/4\"); A1.2 tag 31a x1; A2.0 elevation tag 31a snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "8'-11.6\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "31b",
+   "class": "ext_cw",
+   "label": "31b \u2014 1 Thus",
+   "desc": "Service Reception 117 / Service Advisors 114 \u2014 7'-0\" x 10'-0\", 1 bay + single door 3'-0\" x 7'-0\" w/ transom.",
+   "system": "SF-1 Pittco TMW 450",
+   "w": "6'-11.5\"",
+   "h": "10'-0\"",
+   "bays": "1 + door",
+   "rows": 1,
+   "sf": 69.7,
+   "qty": 1,
+   "door": "single medium stile",
+   "hardware": "HW set as 30",
+   "evidence": "A3.2 type 31b (text + snapped type drawing @1/4\"); A1.2 tag 31b x1; A2.0 elevation tag 31b snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)",
+   "elev_w": "6'-3.5\"",
+   "elev_h": "10'-0.0\""
+  },
+  {
+   "id": "32",
+   "class": "ext_cw",
+   "label": "32 \u2014 1 Thus",
+   "desc": "Service Reception 117 / Service Advisors 114 \u2014 25'-7 1/2\" x 10'-0\", 5 equal bays + single door 3'-0\" x 7'-0\" w/ transom.",
+   "system": "SF-1 Pittco TMW 450",
+   "w": "24'-4.5\"",
+   "h": "8'-1\"",
+   "bays": "5 + door",
+   "rows": 1,
+   "sf": 197.1,
+   "qty": 1,
+   "door": "single medium stile",
+   "hardware": "HW set as 30",
+   "evidence": "A3.2 type 32 (text + snapped type drawing @1/4\"); A1.2 tag 32 x1; A2.0 elevation tag 32 snapped",
+   "flags": [],
+   "rule": "Class from A2.0 legend: SF-1 TMW 450 = 'curtain wall', SF-2 TMS 114 = 'storefront' (legend wins, flagged)"
+  },
+  {
+   "id": "9",
+   "class": "glazing_only",
+   "label": "9 \u2014 1 Thus",
+   "desc": "Parts Receiving 122 \u2014 HM door 3'-0\" x 7'-0\": vision lite 5/8\" insulated clear tempered (glass only, HM by others)",
+   "qty": 1,
+   "evidence": "A3.2 type 9; A1.2 tag x1; A2.0 tag",
+   "flags": [],
+   "rule": "Glass in HM frames/doors = glazing only (frame by others)"
+  },
+  {
+   "id": "12",
+   "class": "glazing_only",
+   "label": "12 \u2014 1 Thus",
+   "desc": "Service Shop 124 \u2014 HM door vision lite 5/8\" insulated tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.2 type 12; A1.2 tag x1; A2.0 tag",
+   "flags": [],
+   "rule": "Glass in HM frames/doors = glazing only (frame by others)"
+  },
+  {
+   "id": "16",
+   "class": "glazing_only",
+   "label": "16 \u2014 1 Thus",
+   "desc": "Wash Bays 128 \u2014 HM door vision lite 5/8\" insulated tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.2 type 16; A1.2 tag x1; A2.0 tag",
+   "flags": [],
+   "rule": "Glass in HM frames/doors = glazing only (frame by others)"
+  },
+  {
+   "id": "22",
+   "class": "glazing_only",
+   "label": "22 \u2014 1 Thus",
+   "desc": "Service Shop 124 \u2014 HM door vision lite 5/8\" insulated tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.2 type 22; A1.2 tag x1; A2.0 tag",
+   "flags": [],
+   "rule": "Glass in HM frames/doors = glazing only (frame by others)"
+  },
+  {
+   "id": "29",
+   "class": "glazing_only",
+   "label": "29 \u2014 1 Thus",
+   "desc": "Service Shop 124 \u2014 HM door vision lite 5/8\" insulated tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.2 type 29; A1.2 tag x1; A2.0 tag",
+   "flags": [],
+   "rule": "Glass in HM frames/doors = glazing only (frame by others)"
+  },
+  {
+   "id": "21",
+   "class": "glazing_only",
+   "label": "21 \u2014 1 Thus",
+   "desc": "Service Shop 124 \u2014 HM window frame 14'-0\" x 4'-0\", 3 lites 1\" Solarban 72 IG tempered (glass only, HM frame by others)",
+   "qty": 1,
+   "evidence": "A3.2 type 21; A1.2 tag x1; A2.0 tag",
+   "flags": [],
+   "rule": "Glass in HM frames/doors = glazing only (frame by others)",
+   "w": "14'-0\"",
+   "h": "4'-0\"",
+   "bays": 3,
+   "rows": 1,
+   "sf": 56.0
+  },
+  {
+   "id": "10",
+   "class": "excluded",
+   "label": "10",
+   "desc": "OH insulated rolling door series 625 w/ 1/4\" tempered glazing \u2014 overhead door sub",
+   "qty": 1,
+   "evidence": "A3.2 type 10; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "11",
+   "class": "excluded",
+   "label": "11",
+   "desc": "Rytec Spiral FV high-speed coiling door w/ polycarbonate panels \u2014 door sub",
+   "qty": 1,
+   "evidence": "A3.2 type 11; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "17",
+   "class": "excluded",
+   "label": "17",
+   "desc": "OH insulated sectional door series 596 w/ 5/8\" tempered glazing \u2014 overhead door sub",
+   "qty": 1,
+   "evidence": "A3.2 type 17; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "18",
+   "class": "excluded",
+   "label": "18",
+   "desc": "OH sectional door (as 17)",
+   "qty": 1,
+   "evidence": "A3.2 type 18; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "19",
+   "class": "excluded",
+   "label": "19",
+   "desc": "OH sectional door (as 17)",
+   "qty": 1,
+   "evidence": "A3.2 type 19; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "20",
+   "class": "excluded",
+   "label": "20",
+   "desc": "OH sectional door (as 17)",
+   "qty": 1,
+   "evidence": "A3.2 type 20; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "23",
+   "class": "excluded",
+   "label": "23",
+   "desc": "Rytec Spiral FV high-speed door",
+   "qty": 1,
+   "evidence": "A3.2 type 23; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "27",
+   "class": "excluded",
+   "label": "27",
+   "desc": "Rytec Spiral FV high-speed door",
+   "qty": 1,
+   "evidence": "A3.2 type 27; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "28",
+   "class": "excluded",
+   "label": "28",
+   "desc": "Rytec Spiral FV high-speed door",
+   "qty": 1,
+   "evidence": "A3.2 type 28; A1.2 tag; A2.0 tag",
+   "flags": [],
+   "rule": "Overhead / high-speed doors and their glass = by door sub (considered, excluded)"
+  },
+  {
+   "id": "13",
+   "class": "not_ours",
+   "label": "13",
+   "desc": "HM pair w/ louvers (Electrical 131)",
+   "qty": 1,
+   "evidence": "A3.2 type 13",
+   "flags": [],
+   "rule": "HM/louver doors with no glass: not glazing scope, not marked"
+  },
+  {
+   "id": "14",
+   "class": "not_ours",
+   "label": "14",
+   "desc": "HM single, no lite (Sprinkler 133)",
+   "qty": 1,
+   "evidence": "A3.2 type 14",
+   "flags": [],
+   "rule": "HM/louver doors with no glass: not glazing scope, not marked"
+  },
+  {
+   "id": "15",
+   "class": "not_ours",
+   "label": "15",
+   "desc": "HM pair w/ louvers (Compressor 132)",
+   "qty": 1,
+   "evidence": "A3.2 type 15",
+   "flags": [],
+   "rule": "HM/louver doors with no glass: not glazing scope, not marked"
+  },
+  {
+   "id": "100",
+   "class": "int_sf",
+   "label": "100 \u2014 1 Thus",
+   "desc": "Main Entry 100 / Jewel Box 102 \u2014 EMS 114 interior SF 6'-3\" x 10'-0\", 2 bays, 1/4\" clear tempered",
+   "system": "Pittco EMS 114 interior storefront, black anodized #63",
+   "w": "5'-7.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 56.2,
+   "qty": 1,
+   "evidence": "A3.3 type 100 (text + snapped drawing); A1.2 tag 100 x1",
+   "flags": [
+    "Series Pittco EMS 114 \u2014 interior; price Kawneer/Tubelite interior equivalent"
+   ],
+   "rule": "Interior aluminum framed glazing = Int SF"
+  },
+  {
+   "id": "101",
+   "class": "int_sf",
+   "label": "101 \u2014 1 Thus",
+   "desc": "Main Entry 100 / Showroom 101 \u2014 EMS 114 16'-3 1/2\" x 10'-0\": pair medium-stile doors 6'-0\" x 7'-0\" w/ transom + 2 sidelites 5'-3\" (2 rows). HW: cont. hinges, cylinder, closers, pulls, panic, surface bolts, threshold",
+   "system": "Pittco EMS 114 interior storefront, black anodized #63",
+   "w": "15'-6\"",
+   "h": "10'-0\"",
+   "bays": "2 + door",
+   "rows": 2,
+   "sf": 155.0,
+   "qty": 1,
+   "evidence": "A3.3 type 101 (text + snapped drawing); A1.2 tag 101 x1",
+   "flags": [
+    "Series Pittco EMS 114 \u2014 interior; price Kawneer/Tubelite interior equivalent"
+   ],
+   "rule": "Interior aluminum framed glazing = Int SF"
+  },
+  {
+   "id": "102",
+   "class": "int_sf",
+   "label": "102 \u2014 1 Thus",
+   "desc": "Main Entry 100 / Main Studio 103 \u2014 EMS 114 6'-3\" x 10'-0\", 2 bays, 1/4\" tempered",
+   "system": "Pittco EMS 114 interior storefront, black anodized #63",
+   "w": "5'-7.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 56.2,
+   "qty": 1,
+   "evidence": "A3.3 type 102 (text + snapped drawing); A1.2 tag 102 x1",
+   "flags": [
+    "Series Pittco EMS 114 \u2014 interior; price Kawneer/Tubelite interior equivalent"
+   ],
+   "rule": "Interior aluminum framed glazing = Int SF"
+  },
+  {
+   "id": "103",
+   "class": "all_glass",
+   "label": "103 \u2014 1 Thus",
+   "desc": "Flex 106 \u2014 8'-10 3/4\" x 10'-0\" frameless 1/2\" tempered w/ single door 3'-0\", CRL floating header, 2\" U-channel, patch fittings PC, frost film to 36\"",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "8'-11\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 89.0,
+   "qty": 1,
+   "evidence": "A3.3 type 103 (text; dims from dimension strings); A1.2 tag 103 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "104",
+   "class": "all_glass",
+   "label": "104 \u2014 1 Thus",
+   "desc": "F/I 107 \u2014 9'-10 3/4\" x 10'-0\" frameless w/ door (as 103)",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "9'-11\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 99.0,
+   "qty": 1,
+   "evidence": "A3.3 type 104 (text; dims from dimension strings); A1.2 tag 104 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "105",
+   "class": "all_glass",
+   "label": "105 \u2014 1 Thus",
+   "desc": "F/I 108 \u2014 9'-10 3/4\" x 10'-0\" frameless w/ door (as 103)",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "9'-11\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 99.0,
+   "qty": 1,
+   "evidence": "A3.3 type 105 (text; dims from dimension strings); A1.2 tag 105 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "106",
+   "class": "all_glass",
+   "label": "106 \u2014 1 Thus",
+   "desc": "Sales Mgrs 109 \u2014 28'-5 5/8\" x 10'-0\" frameless: 4 equal panels 21'-5 5/8\" + 2 doors 3'-0\"",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "28'-5.5\"",
+   "h": "10'-0\"",
+   "bays": 6,
+   "rows": 1,
+   "sf": 284.7,
+   "qty": 1,
+   "evidence": "A3.3 type 106 (text; dims from dimension strings); A1.2 tag 106 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "110",
+   "class": "all_glass",
+   "label": "110 \u2014 1 Thus",
+   "desc": "Service Advisors 114 / Customer Lounge 104 \u2014 5'-0\" x 10'-0\" frameless door 3'-0\" + 1'-6\" sidelite",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "5'-0\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 50.0,
+   "qty": 1,
+   "evidence": "A3.3 type 110 (text; dims from dimension strings); A1.2 tag 110 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "111",
+   "class": "all_glass",
+   "label": "111 \u2014 1 Thus",
+   "desc": "Service Advisors 114 / Service Mgr 115 \u2014 11'-9\" x 10'-0\" frameless door + 2 panels 8'-3\"",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "11'-9\"",
+   "h": "10'-0\"",
+   "bays": 3,
+   "rows": 1,
+   "sf": 117.5,
+   "qty": 1,
+   "evidence": "A3.3 type 111 (text; dims from dimension strings); A1.2 tag 111 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "112",
+   "class": "all_glass",
+   "label": "112 \u2014 1 Thus",
+   "desc": "Service Mgr 115 / Gen Mgr 116 \u2014 4'-4 1/2\" x 10'-0\" frameless panel",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "4'-4.5\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": 43.8,
+   "qty": 1,
+   "evidence": "A3.3 type 112 (text; dims from dimension strings); A1.2 tag 112 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "113",
+   "class": "all_glass",
+   "label": "113 \u2014 1 Thus",
+   "desc": "Corridor 113 / Gen Mgr 116 \u2014 5'-0\" x 10'-0\" frameless door + sidelite",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "5'-0\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 50.0,
+   "qty": 1,
+   "evidence": "A3.3 type 113 (text; dims from dimension strings); A1.2 tag 113 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "131",
+   "class": "all_glass",
+   "label": "131 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 3'-6\" x 10'-0\" frameless panel, polished exposed end, frost to 36\"",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "3'-6\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": 35.0,
+   "qty": 1,
+   "evidence": "A3.3 type 131 (text; dims from dimension strings); A1.2 tag 131 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "132",
+   "class": "all_glass",
+   "label": "132 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 3'-6\" x 10'-0\" panel",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "3'-6\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": 35.0,
+   "qty": 1,
+   "evidence": "A3.3 type 132 (text; dims from dimension strings); A1.2 tag 132 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "133",
+   "class": "all_glass",
+   "label": "133 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 panel (type drawing not snapped \u2014 flag)",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": null,
+   "qty": 1,
+   "evidence": "A3.3 type 133 (text; dims from dimension strings); A1.2 tag 133 x1",
+   "flags": [
+    "Type drawing not snapped (open-ended U-channel panel) \u2014 size from dimension text; verify"
+   ],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "134",
+   "class": "all_glass",
+   "label": "134 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 5'-5\" x 10'-0\" panel w/ perpendicular partition",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "5'-5\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": 54.2,
+   "qty": 1,
+   "evidence": "A3.3 type 134 (text; dims from dimension strings); A1.2 tag 134 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "135",
+   "class": "all_glass",
+   "label": "135 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-9 1/2\" x 10'-0\", 2 equal panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-9.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 77.9,
+   "qty": 1,
+   "evidence": "A3.3 type 135 (text; dims from dimension strings); A1.2 tag 135 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "136",
+   "class": "all_glass",
+   "label": "136 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-9 1/2\" x 10'-0\", 2 equal panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-9.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 77.9,
+   "qty": 1,
+   "evidence": "A3.3 type 136 (text; dims from dimension strings); A1.2 tag 136 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "137",
+   "class": "all_glass",
+   "label": "137 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 5'-5\" x 10'-0\" panel",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "5'-5\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": 54.2,
+   "qty": 1,
+   "evidence": "A3.3 type 137 (text; dims from dimension strings); A1.2 tag 137 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "138",
+   "class": "all_glass",
+   "label": "138 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-9 1/2\" x 10'-0\", 2 panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-9.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 77.9,
+   "qty": 1,
+   "evidence": "A3.3 type 138 (text; dims from dimension strings); A1.2 tag 138 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "139",
+   "class": "all_glass",
+   "label": "139 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-9 1/2\" x 10'-0\", 2 panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-9.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 77.9,
+   "qty": 1,
+   "evidence": "A3.3 type 139 (text; dims from dimension strings); A1.2 tag 139 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "140",
+   "class": "all_glass",
+   "label": "140 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 5'-5\" x 10'-0\" panel",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "5'-5\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": 54.2,
+   "qty": 1,
+   "evidence": "A3.3 type 140 (text; dims from dimension strings); A1.2 tag 140 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "141",
+   "class": "all_glass",
+   "label": "141 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-9 1/2\" x 10'-0\", 2 panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-9.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 77.9,
+   "qty": 1,
+   "evidence": "A3.3 type 141 (text; dims from dimension strings); A1.2 tag 141 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "142",
+   "class": "all_glass",
+   "label": "142 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-9 1/2\" x 10'-0\", 2 panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-9.5\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 77.9,
+   "qty": 1,
+   "evidence": "A3.3 type 142 (text; dims from dimension strings); A1.2 tag 142 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "143",
+   "class": "all_glass",
+   "label": "143 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 2'-6 1/2\" x 10'-0\" panel",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "2'-6.5\"",
+   "h": "10'-0\"",
+   "bays": 1,
+   "rows": 1,
+   "sf": 25.4,
+   "qty": 1,
+   "evidence": "A3.3 type 143 (text; dims from dimension strings); A1.2 tag 143 x1",
+   "flags": [
+    "Type drawing not snapped (open-ended U-channel panel) \u2014 size from dimension text; verify"
+   ],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "144",
+   "class": "all_glass",
+   "label": "144 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-0\" x 10'-0\", 2 panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-0\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 70.0,
+   "qty": 1,
+   "evidence": "A3.3 type 144 (text; dims from dimension strings); A1.2 tag 144 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "145",
+   "class": "all_glass",
+   "label": "145 \u2014 1 Thus",
+   "desc": "Consultation 105 \u2014 7'-0\" x 10'-0\", 2 panels",
+   "system": "1/2\" clear tempered, polished edges, CRL floating header / 2\" U-channel, patch fittings PC, concealed head closers",
+   "w": "7'-0\"",
+   "h": "10'-0\"",
+   "bays": 2,
+   "rows": 1,
+   "sf": 70.0,
+   "qty": 1,
+   "evidence": "A3.3 type 145 (text; dims from dimension strings); A1.2 tag 145 x1",
+   "flags": [],
+   "rule": "Frameless 1/2\" tempered partitions/doors = All Glass; 3M Fasara frost film to 36\" = implied scope (glass film)"
+  },
+  {
+   "id": "118",
+   "class": "glazing_only",
+   "label": "118 \u2014 1 Thus",
+   "desc": "Tech Parts 119 / Service Shop 124 \u2014 HM door vision lite 1/4\" tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.3 type 118; A1.2 tag x1",
+   "flags": [],
+   "rule": "Glass in HM = glazing only"
+  },
+  {
+   "id": "121",
+   "class": "glazing_only",
+   "label": "121 \u2014 1 Thus",
+   "desc": "Service Shop 124 / Break 123 \u2014 HM door vision lite 1/4\" tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.3 type 121; A1.2 tag x1",
+   "flags": [],
+   "rule": "Glass in HM = glazing only"
+  },
+  {
+   "id": "119",
+   "class": "glazing_only",
+   "label": "119 \u2014 1 Thus",
+   "desc": "Parts 121 / Tech Parts 119 \u2014 HM frame w/ sidelite 3'-8\" x 3'-10\" 1/4\" tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.3 type 119; A1.2 tag x1",
+   "flags": [],
+   "rule": "Glass in HM = glazing only"
+  },
+  {
+   "id": "120",
+   "class": "glazing_only",
+   "label": "120 \u2014 1 Thus",
+   "desc": "Parts 121 / Parts Mgr 120 \u2014 HM frame w/ sidelite 5'-0\" x 3'-10\" 1/4\" tempered (glass only)",
+   "qty": 1,
+   "evidence": "A3.3 type 120; A1.2 tag x1",
+   "flags": [],
+   "rule": "Glass in HM = glazing only"
+  },
+  {
+   "id": "117",
+   "class": "excluded",
+   "label": "117",
+   "desc": "OH security grille model 670 (Tech Parts/Service Shop) \u2014 by others",
+   "qty": 1,
+   "evidence": "A3.3 type 117; A1.2 tag",
+   "flags": [],
+   "rule": "Grilles by others (considered, excluded)"
+  },
+  {
+   "id": "130",
+   "class": "excluded",
+   "label": "130",
+   "desc": "OH security grille model 670 (Retail Parts 118) \u2014 by others",
+   "qty": 1,
+   "evidence": "A3.3 type 130; A1.2 tag",
+   "flags": [],
+   "rule": "Grilles by others (considered, excluded)"
+  },
+  {
+   "id": "107",
+   "class": "not_ours",
+   "label": "107",
+   "desc": "wood door, HM frame, no lite",
+   "qty": 1,
+   "evidence": "A3.3 type 107",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "108",
+   "class": "not_ours",
+   "label": "108",
+   "desc": "wood door",
+   "qty": 1,
+   "evidence": "A3.3 type 108",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "109",
+   "class": "not_ours",
+   "label": "109",
+   "desc": "wood door",
+   "qty": 1,
+   "evidence": "A3.3 type 109",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "115",
+   "class": "not_ours",
+   "label": "115",
+   "desc": "wood door",
+   "qty": 1,
+   "evidence": "A3.3 type 115",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "114",
+   "class": "not_ours",
+   "label": "114",
+   "desc": "HM door no lite",
+   "qty": 1,
+   "evidence": "A3.3 type 114",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "116",
+   "class": "not_ours",
+   "label": "116",
+   "desc": "HM door no lite",
+   "qty": 1,
+   "evidence": "A3.3 type 116",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "122",
+   "class": "not_ours",
+   "label": "122",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 122",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "123",
+   "class": "not_ours",
+   "label": "123",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 123",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "124",
+   "class": "not_ours",
+   "label": "124",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 124",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "125",
+   "class": "not_ours",
+   "label": "125",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 125",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "126",
+   "class": "not_ours",
+   "label": "126",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 126",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "127",
+   "class": "not_ours",
+   "label": "127",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 127",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "128",
+   "class": "not_ours",
+   "label": "128",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 128",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "129",
+   "class": "not_ours",
+   "label": "129",
+   "desc": "HM",
+   "qty": 1,
+   "evidence": "A3.3 type 129",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "146",
+   "class": "not_ours",
+   "label": "146",
+   "desc": "alum cable rail (by others)",
+   "qty": 1,
+   "evidence": "A3.3 type 146",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "147",
+   "class": "not_ours",
+   "label": "147",
+   "desc": "alum cable rail (by others)",
+   "qty": 1,
+   "evidence": "A3.3 type 147",
+   "flags": [],
+   "rule": "No glass: not marked"
+  },
+  {
+   "id": "GF-1",
+   "class": "glass_film",
+   "label": "GF-1 glass film",
+   "desc": "3M Fasara Illumina SH2FGIM-G gradient film (100% top \u2192 0% bottom) at Main Entry 03 upper band (elevation label GF-1).",
+   "qty": 1,
+   "evidence": "A2.0 legend GF-1; A2.0 west elevation label GF-1 at type 3; A3.2 type 3 note 'DF-1 glass film per ext finish sched sheet A2.0'",
+   "flags": [
+    "Schedule says DF-1, legend says GF-1 \u2014 same item, RFI to confirm extent (3 only?)"
+   ],
+   "rule": "Glass film = implied scope"
+  },
+  {
+   "id": "FROST",
+   "class": "glass_film",
+   "label": "3M Fasara frost film \u2014 all-glass partitions",
+   "desc": "Milky White (Milano) #SH2MAML frost film up to 36\" AFF on every frameless 1/2\" tempered panel and door (marks 103\u2013106, 110\u2013113, 131\u2013145).",
+   "qty": 23,
+   "evidence": "A3.3 type notes 'FROST GLASS UP TO 36\" H'",
+   "flags": [],
+   "rule": "Glass film = implied scope"
+  },
+  {
+   "id": "BM-1",
+   "class": "break_metal",
+   "label": "Alum closure trim to match storefront",
+   "desc": "'Anodized alum closure trim to match storefront' at types 30 / 31a (A3.2) and 'pre-fin mtl closure trim to match storefront' at plan detail 12/A4.3.",
+   "qty": "LF \u2014 to be measured in Frame Builder",
+   "evidence": "A3.2 types 30, 31a text; A4.3 detail 12",
+   "flags": [],
+   "rule": "Break metal that touches our frame and matches our finish = ours"
+  },
+  {
+   "id": "BM-2",
+   "class": "break_metal",
+   "label": "24 ga pre-fin metal sill flashing at curtain wall sills",
+   "desc": "'24 GA. PRE-FIN MTL SILL FLASHING \u2013 SET IN SEALANT' under curtain wall sill in wall sections A5.0-1, A5.1-1, A5.3-2, A5.5-2, A5.6-2, A5.8-4, A5.9-1.",
+   "qty": "LF of CW sills",
+   "evidence": "wall sections (keyword search)",
+   "flags": [
+    "24 ga steel, pre-finished \u2014 could be by EIFS/sheet-metal trade; Martin's rule: touches our frame \u2192 review"
+   ],
+   "rule": "Sill flashing at our sill = flag for review"
+  },
+  {
+   "id": "NOTE-10",
+   "class": "note",
+   "label": "Door & frame note 10 \u2014 slip connections at CW jambs",
+   "desc": "'Provide slip connections at curtain wall jambs as req'd for wind resistance. Refer to structural.'",
+   "qty": 1,
+   "evidence": "A3.2 Door & Frame Notes",
+   "flags": [],
+   "rule": "Scope note"
+  },
+  {
+   "id": "NOTE-12",
+   "class": "note",
+   "label": "Door & frame note 12 \u2014 push bars at frames 1, 3, 5, 32",
+   "desc": "Interior push bar / exterior pull at the entrance frames; coordinate with hardware sets.",
+   "qty": 1,
+   "evidence": "A3.2 Door & Frame Notes",
+   "flags": [],
+   "rule": "Scope note"
+  },
+  {
+   "id": "HW-GEN",
+   "class": "hardware",
+   "label": "General hardware schedule (A3.2)",
+   "desc": "Hinge McKinney TB2314; panic Von Duprin 8800; lockset Schlage ND; closer LCN 4040 w/ hold open; threshold National Guard 896V; weatherstrip NGP 5050; pull Rockwood 112; push plate Rockwood 70RCE; kick plates Rockwood K1050. Applies to our alum doors 1, 3, 5, 8, 30, 31a, 31b, 32, 101.",
+   "qty": 1,
+   "evidence": "A3.2 HARDWARE table + per-type HW tables",
+   "flags": [
+    "Hardware default = included (per Martin); uncheck items by others"
+   ],
+   "rule": "Storefront door hardware from schedule/specs, default included"
+  },
+  {
+   "id": "MIR",
+   "class": "mirror",
+   "label": "Mirrors \u2014 toilet accessory 8",
+   "desc": "18\" x 36\" x 1/4\" frameless plate glass mirror, no manufacturer listed, 1/4\" chrome or alum trim all edges. Tagged 6x on A6.0 interior toilet elevations.",
+   "qty": 6,
+   "evidence": "A3.0 toilet accessories schedule mark 8; A6.0 accessory tags (6)",
+   "flags": [
+    "Frameless plate glass mirror with no manufacturer \u2014 usually glazier; confirm vs accessory package",
+    "Count from interior elevations (corner views can duplicate) \u2014 verify on A3.0 enlarged plans"
+   ],
+   "rule": "Mirrors = glazing scope unless manufactured accessory (Bobrick)"
+  },
+  {
+   "id": "LEGEND",
+   "class": "note",
+   "label": "A2.0 exterior materials legend rows",
+   "desc": "SF-1 CURTAIN WALL = TMW 450 / TMW 450 EFG (black #63); SF-2 STOREFRONT = TMS center-glazed thermal; GF-1 glass film; D-1/D-4 Pittco narrow-stile center-hung doors; D-2 high-speed coiling; D-3 rolling parts door; D-5 rolling OH w/ single band of glass.",
+   "qty": 1,
+   "evidence": "A2.0 legend",
+   "flags": [
+    "Legend calls TMW 450 'curtain wall' and TMS 114 'storefront'; both are 10'-0\" tall framed walls \u2014 classification follows legend, flagged"
+   ],
+   "rule": "Legend decides class; flag when trade knowledge disagrees"
+  },
+  {
+   "id": "DETAILS",
+   "class": "detail",
+   "label": "Details referencing glazing \u2014 68 found on 16 sheets",
+   "desc": "Plan details A4.1\u2013A4.4 (storefront jambs, CW jambs, frameless glass partitions/doors), wall sections A5.0\u2013A5.9, A5.13 (CW per schedule, sill flashing, U-channel head/sill 9 & 10/A5.3), HM head/jamb 8 & 10/A5.8, mirror section 2/A6.1.",
+   "qty": 68,
+   "evidence": "title + keyword search inside each detail region",
+   "flags": [
+    "Sheets A5.4\u2013A5.9, A5.13, A6.1 are outside the 12-sheet bid set but contain glazing details"
+   ],
+   "rule": "Detail titles marked in system color; sections highlighted not counted"
+  }
+ ],
+ "review_flags": [
+  "No specifications in set",
+  "Pittco systems specified 'or equal' \u2014 Kawneer/Tubelite equivalents to be selected",
+  "Legend labels (SF-1 curtain wall = TMW 450, SF-2 storefront = TMS 114) conflict with trade usage \u2014 classification follows legend, flagged",
+  "Types 24/25/26: elevation 7'-0\" vs schedule 8'-0\"",
+  "Door stile: legend D-1 narrow stile vs schedule medium stile",
+  "Bi-fold doors at 1, 3, 5 \u2014 pass-thru sub",
+  "Mirrors (6) \u2014 glazier vs accessory package",
+  "24 ga sill flashing \u2014 trade to be confirmed",
+  "Plan opening boxes not drawn: plan highlights are tag hexagons only (reference plan has no clean glass line to snap)"
+ ],
+ "rfi_drafts": [
+  {
+   "to": "BCO+H Architects",
+   "subject": "Types 24, 25, 26 width",
+   "body": "A3.2 shows types 24\u201326 (Service Reception 117) at 8'-0\" x 10'-0\"; the north elevation scales 7'-0\". Please confirm."
+  },
+  {
+   "to": "BCO+H Architects",
+   "subject": "Entrance door stile",
+   "body": "A2.0 legend D-1/D-4 lists standard narrow stile center-hung doors; A3.2 types 1, 3, 5, 8, 30\u201332 call for medium stile. Please confirm stile width."
+  },
+  {
+   "to": "BCO+H Architects",
+   "subject": "Glass film extent",
+   "body": "A3.2 type 3 references 'DF-1 glass film per A2.0'; the A2.0 legend lists GF-1 (3M Fasara Illumina gradient). Please confirm GF-1 applies to the type 3 upper band only."
+  }
+ ],
+ "totals": {
+  "ext_frames_TMW450": 8,
+  "ext_frames_TMS114": 8,
+  "int_sf_frames": 3,
+  "all_glass_openings": 23,
+  "glazing_only": 10,
+  "excluded": 11,
+  "bifold_pairs": 3,
+  "plan_tags_found": 82,
+  "detail_hits": 68
+ },
+ "markups": [
+  {
+   "item": "1",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    486.0,
+    709.6,
+    501.1,
+    722.6
+   ],
+   "note": "plan tag 1 (hexagon, vector)"
+  },
+  {
+   "item": "1",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    145.9,
+    332.0,
+    397.9,
+    512.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "1",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    145.9,
+    97.8,
+    397.9,
+    313.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "1",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    145.9,
+    526.0
+   ],
+   "text": "1 \u2014 1 Thus"
+  },
+  {
+   "item": "1",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1849.8,
+    2334.6,
+    1979.2,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "1",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1849.8,
+    2334.6,
+    1979.2,
+    2424.6
+   ],
+   "text": "A = 136.2 sf\nW = 13'-7.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "1",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1849.8,
+    2217.5,
+    1979.2,
+    2325.5
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "1",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1849.8,
+    2217.5,
+    1979.2,
+    2325.5
+   ],
+   "text": "A = 163.5 sf\nW = 13'-7.5\"\nH = 12'-0\""
+  },
+  {
+   "item": "1",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1907.4,
+    2370.9,
+    1922.5,
+    2384.0
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "1",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Bifold/Auto Door",
+   "center": [
+    1914.5,
+    2379.6
+   ],
+   "r": 7
+  },
+  {
+   "item": "2",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    397.7,
+    827.9,
+    412.8,
+    840.9
+   ],
+   "note": "plan tag 2 (hexagon, vector)"
+  },
+  {
+   "item": "2",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    545.1,
+    332.0,
+    901.3,
+    512.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "2",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    545.1,
+    97.8,
+    901.7,
+    313.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "2",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    545.1,
+    526.0
+   ],
+   "text": "2 \u2014 1 Thus"
+  },
+  {
+   "item": "2",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    696.5,
+    384.2,
+    877.0,
+    474.2
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "2",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    696.5,
+    384.2,
+    877.0,
+    474.2
+   ],
+   "text": "A = 199.4 sf\nW = 19'-11.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "2",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    696.5,
+    267.1,
+    877.2,
+    375.1
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "2",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    696.5,
+    267.1,
+    877.2,
+    375.1
+   ],
+   "text": "A = 239.1 sf\nW = 19'-11\"\nH = 12'-0\""
+  },
+  {
+   "item": "2",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    798.3,
+    392.9,
+    813.4,
+    405.9
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "3",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    403.4,
+    1015.9,
+    418.5,
+    1028.9
+   ],
+   "note": "plan tag 3 (hexagon, vector)"
+  },
+  {
+   "item": "3",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1082.7,
+    332.0,
+    1320.3,
+    512.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "3",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1082.7,
+    97.8,
+    1320.7,
+    313.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "3",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    1082.7,
+    526.0
+   ],
+   "text": "3 \u2014 1 Thus"
+  },
+  {
+   "item": "3",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    885.2,
+    384.2,
+    1004.2,
+    474.2
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "3",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    885.2,
+    384.2,
+    1004.2,
+    474.2
+   ],
+   "text": "A = 127.8 sf\nW = 12'-9.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "3",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    885.2,
+    267.1,
+    1004.2,
+    375.1
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "3",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    885.2,
+    267.1,
+    1004.2,
+    375.1
+   ],
+   "text": "A = 153.3 sf\nW = 12'-9.5\"\nH = 12'-0\""
+  },
+  {
+   "item": "3",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    939.5,
+    392.9,
+    954.5,
+    405.9
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "3",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Bifold/Auto Door",
+   "center": [
+    944.7,
+    429.2
+   ],
+   "r": 7
+  },
+  {
+   "item": "4",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    402.5,
+    1206.2,
+    417.6,
+    1219.3
+   ],
+   "note": "plan tag 4 (hexagon, vector)"
+  },
+  {
+   "item": "4",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1504.8,
+    332.0,
+    1917.3,
+    512.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "4",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    1504.8,
+    526.0
+   ],
+   "text": "4 \u2014 1 Thus"
+  },
+  {
+   "item": "4",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1130.2,
+    384.2,
+    1336.5,
+    474.2
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "4",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1130.2,
+    384.2,
+    1336.5,
+    474.2
+   ],
+   "text": "A = 210.8 sf\nW = 21'-1\"\nH = 10'-0\""
+  },
+  {
+   "item": "4",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1205.8,
+    392.9,
+    1220.9,
+    405.9
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "5",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    558.5,
+    1413.9,
+    573.5,
+    1427.0
+   ],
+   "note": "plan tag 5 (hexagon, vector)"
+  },
+  {
+   "item": "5",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2044.8,
+    332.0,
+    2469.8,
+    512.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "5",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    2044.8,
+    526.0
+   ],
+   "text": "5 \u2014 1 Thus"
+  },
+  {
+   "item": "5",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    319.2,
+    1633.4,
+    532.1,
+    1723.4
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "5",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    319.2,
+    1633.4,
+    532.1,
+    1723.4
+   ],
+   "text": "A = 223.4 sf\nW = 22'-4\"\nH = 10'-0\""
+  },
+  {
+   "item": "5",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    446.5,
+    1664.4,
+    461.6,
+    1677.5
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "5",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Bifold/Auto Door",
+   "center": [
+    425.65,
+    1678.4
+   ],
+   "r": 7
+  },
+  {
+   "item": "6a",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    714.7,
+    1414.6,
+    729.8,
+    1427.6
+   ],
+   "note": "plan tag 6a (hexagon, vector)"
+  },
+  {
+   "item": "6a",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2596.7,
+    332.0,
+    2787.3,
+    512.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "6a",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    2596.7,
+    526.0
+   ],
+   "text": "6a \u2014 1 Thus"
+  },
+  {
+   "item": "6a",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    542.7,
+    1633.4,
+    637.6,
+    1723.4
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "6a",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    542.7,
+    1633.4,
+    637.6,
+    1723.4
+   ],
+   "text": "A = 94.6 sf\nW = 9'-5.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "6a",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    586.4,
+    1664.4,
+    601.5,
+    1677.5
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "6b",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    824.2,
+    1414.6,
+    839.3,
+    1427.6
+   ],
+   "note": "plan tag 6b (hexagon, vector)"
+  },
+  {
+   "item": "6b",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2937.6,
+    332.0,
+    3167.9,
+    512.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "6b",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    2937.6,
+    526.0
+   ],
+   "text": "6b \u2014 1 Thus"
+  },
+  {
+   "item": "6b",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    651.9,
+    1633.4,
+    767.4,
+    1723.4
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "6b",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    651.9,
+    1633.4,
+    767.4,
+    1723.4
+   ],
+   "text": "A = 111.7 sf\nW = 11'-2\"\nH = 10'-0\""
+  },
+  {
+   "item": "6b",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    694.0,
+    1664.4,
+    709.1,
+    1677.5
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "7",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    877.4,
+    1463.3,
+    892.4,
+    1476.3
+   ],
+   "note": "plan tag 7 (hexagon, vector)"
+  },
+  {
+   "item": "7",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    152.0,
+    883.4,
+    362.8,
+    1063.4
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "7",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    152.0,
+    1077.4
+   ],
+   "text": "7 \u2014 1 Thus"
+  },
+  {
+   "item": "7",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1363.7,
+    384.2,
+    1469.0,
+    474.2
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "7",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1363.7,
+    384.2,
+    1469.0,
+    474.2
+   ],
+   "text": "A = 103.0 sf\nW = 10'-3.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "7",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1406.4,
+    393.1,
+    1421.5,
+    406.2
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "8",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    917.4,
+    1537.0,
+    932.5,
+    1550.0
+   ],
+   "note": "plan tag 8 (hexagon, vector)"
+  },
+  {
+   "item": "8",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    558.9,
+    883.4,
+    620.2,
+    1063.4
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "8",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    558.9,
+    1077.4
+   ],
+   "text": "8 \u2014 1 Thus"
+  },
+  {
+   "item": "8",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    789.7,
+    1633.4,
+    813.1,
+    1723.4
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "8",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    789.7,
+    1633.4,
+    813.1,
+    1723.4
+   ],
+   "text": "A = 14.0 sf\nW = 1'-5\"\nH = 10'-0\""
+  },
+  {
+   "item": "8",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    790.0,
+    1676.8,
+    805.1,
+    1689.9
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "8",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Door",
+   "center": [
+    801.4000000000001,
+    1678.4
+   ],
+   "r": 7
+  },
+  {
+   "item": "24",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    965.8,
+    362.9,
+    980.8,
+    376.0
+   ],
+   "note": "plan tag 24 (hexagon, vector)"
+  },
+  {
+   "item": "24",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2342.1,
+    1498.0,
+    2486.6,
+    1678.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "24",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    2342.1,
+    1692.0
+   ],
+   "text": "24 \u2014 1 Thus"
+  },
+  {
+   "item": "24",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1406.8,
+    2334.6,
+    1470.3,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "24",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1406.8,
+    2334.6,
+    1470.3,
+    2424.6
+   ],
+   "text": "A = 69.4 sf\nW = 6'-11.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "24",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1414.6,
+    2355.7,
+    1429.7,
+    2368.8
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "25",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    845.7,
+    364.1,
+    860.8,
+    377.2
+   ],
+   "note": "plan tag 25 (hexagon, vector)"
+  },
+  {
+   "item": "25",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2342.1,
+    1498.0,
+    2486.6,
+    1678.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "25",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    2342.1,
+    1692.0
+   ],
+   "text": "25 \u2014 1 Thus"
+  },
+  {
+   "item": "25",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1519.8,
+    2334.6,
+    1582.8,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "25",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1519.8,
+    2334.6,
+    1582.8,
+    2424.6
+   ],
+   "text": "A = 70.0 sf\nW = 7'-0\"\nH = 10'-0\""
+  },
+  {
+   "item": "25",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1527.7,
+    2356.6,
+    1542.8,
+    2369.7
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "26",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    733.0,
+    360.3,
+    748.1,
+    373.4
+   ],
+   "note": "plan tag 26 (hexagon, vector)"
+  },
+  {
+   "item": "26",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2342.1,
+    1498.0,
+    2486.6,
+    1678.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "26",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    2342.1,
+    1692.0
+   ],
+   "text": "26 \u2014 1 Thus"
+  },
+  {
+   "item": "26",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1631.8,
+    2334.6,
+    1694.8,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "26",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1631.8,
+    2334.6,
+    1694.8,
+    2424.6
+   ],
+   "text": "A = 70.0 sf\nW = 7'-0\"\nH = 10'-0\""
+  },
+  {
+   "item": "26",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1636.7,
+    2356.3,
+    1651.8,
+    2369.4
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "30",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1291.4,
+    670.8,
+    1306.5,
+    683.9
+   ],
+   "note": "plan tag 30 (hexagon, vector)"
+  },
+  {
+   "item": "30",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    456.8,
+    2101.2,
+    704.6,
+    2281.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "30",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    456.8,
+    2295.2
+   ],
+   "text": "30 \u2014 1 Thus"
+  },
+  {
+   "item": "30",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1074.8,
+    2334.6,
+    1194.5,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "30",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1074.8,
+    2334.6,
+    1194.5,
+    2424.6
+   ],
+   "text": "A = 127.0 sf\nW = 12'-8.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "30",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1171.6,
+    2341.9,
+    1186.7,
+    2354.9
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "30",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Door",
+   "center": [
+    1134.65,
+    2379.6
+   ],
+   "r": 7
+  },
+  {
+   "item": "31a",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1185.7,
+    672.2,
+    1200.8,
+    685.2
+   ],
+   "note": "plan tag 31a (hexagon, vector)"
+  },
+  {
+   "item": "31a",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    945.7,
+    2101.2,
+    1116.3,
+    2281.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "31a",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    945.7,
+    2295.2
+   ],
+   "text": "31a \u2014 1 Thus"
+  },
+  {
+   "item": "31a",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1198.8,
+    2334.6,
+    1279.5,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "31a",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1198.8,
+    2334.6,
+    1279.5,
+    2424.6
+   ],
+   "text": "A = 70.3 sf\nW = 7'-0.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "31a",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1205.9,
+    2341.9,
+    1221.0,
+    2354.9
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "31a",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Door",
+   "center": [
+    1239.15,
+    2379.6
+   ],
+   "r": 7
+  },
+  {
+   "item": "31b",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1101.2,
+    672.2,
+    1116.3,
+    685.2
+   ],
+   "note": "plan tag 31b (hexagon, vector)"
+  },
+  {
+   "item": "31b",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1420.7,
+    2101.2,
+    1547.3,
+    2281.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "31b",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    1420.7,
+    2295.2
+   ],
+   "text": "31b \u2014 1 Thus"
+  },
+  {
+   "item": "31b",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1279.5,
+    2334.6,
+    1336.1,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "31b",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    1279.5,
+    2334.6,
+    1336.1,
+    2424.6
+   ],
+   "text": "A = 57.1 sf\nW = 5'-8.5\"\nH = 10'-0\""
+  },
+  {
+   "item": "31b",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1291.8,
+    2341.9,
+    1306.9,
+    2354.9
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "31b",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Door",
+   "center": [
+    1307.8,
+    2379.6
+   ],
+   "r": 7
+  },
+  {
+   "item": "32",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    992.6,
+    671.9,
+    1007.7,
+    685.0
+   ],
+   "note": "plan tag 32 (hexagon, vector)"
+  },
+  {
+   "item": "32",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1800.1,
+    2102.7,
+    2261.2,
+    2281.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "32",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    1800.1,
+    2295.2
+   ],
+   "text": "32 \u2014 1 Thus"
+  },
+  {
+   "item": "9",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1228.3,
+    1535.2,
+    1243.3,
+    1548.3
+   ],
+   "note": "plan tag 9 (hexagon, vector)"
+  },
+  {
+   "item": "9",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1014.3,
+    934.4,
+    1074.3,
+    1063.4
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "9",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    1014.3,
+    1077.4
+   ],
+   "text": "9 \u2014 1 Thus"
+  },
+  {
+   "item": "9",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1090.8,
+    1658.9,
+    1113.7,
+    1723.4
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "9",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1094.2,
+    1670.1,
+    1109.2,
+    1683.1
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "9",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing ONLY Door",
+   "center": [
+    1102.25,
+    1691.15
+   ],
+   "r": 7
+  },
+  {
+   "item": "12",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1846.9,
+    1536.7,
+    1862.0,
+    1549.8
+   ],
+   "note": "plan tag 12 (hexagon, vector)"
+  },
+  {
+   "item": "12",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    2176.2,
+    931.4,
+    2236.2,
+    1063.4
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "12",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    2176.2,
+    1077.4
+   ],
+   "text": "12 \u2014 1 Thus"
+  },
+  {
+   "item": "12",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1720.3,
+    1657.4,
+    1740.0,
+    1723.4
+   ],
+   "note": "elevation snap disagrees with schedule (err 0.379) \u2014 dashed, flagged for review",
+   "dashed": true
+  },
+  {
+   "item": "12",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1722.0,
+    1670.0,
+    1737.0,
+    1683.1
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "12",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing ONLY Door",
+   "center": [
+    1730.15,
+    1690.4
+   ],
+   "r": 7
+  },
+  {
+   "item": "16",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    2142.5,
+    1386.0,
+    2157.6,
+    1399.1
+   ],
+   "note": "plan tag 16 (hexagon, vector)"
+  },
+  {
+   "item": "16",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    165.7,
+    1546.0,
+    225.7,
+    1678.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "16",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    165.7,
+    1692.0
+   ],
+   "text": "16 \u2014 1 Thus"
+  },
+  {
+   "item": "16",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    470.4,
+    1010.0,
+    500.4,
+    1076.0
+   ],
+   "note": "elevation snap disagrees with schedule (err 0.45) \u2014 dashed, flagged for review",
+   "dashed": true
+  },
+  {
+   "item": "16",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    472.8,
+    1024.2,
+    487.9,
+    1037.2
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "16",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing ONLY Door",
+   "center": [
+    485.4,
+    1043.0
+   ],
+   "r": 7
+  },
+  {
+   "item": "22",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1849.0,
+    361.6,
+    1864.1,
+    374.7
+   ],
+   "note": "plan tag 22 (hexagon, vector)"
+  },
+  {
+   "item": "22",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1560.7,
+    1546.0,
+    1620.7,
+    1678.0
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "22",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    1560.7,
+    1692.0
+   ],
+   "text": "22 \u2014 1 Thus"
+  },
+  {
+   "item": "22",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    542.2,
+    2358.6,
+    562.8,
+    2424.6
+   ],
+   "note": "elevation snap disagrees with schedule (err 0.342) \u2014 dashed, flagged for review",
+   "dashed": true
+  },
+  {
+   "item": "22",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    545.0,
+    2368.8,
+    560.1,
+    2381.8
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "22",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing ONLY Door",
+   "center": [
+    552.5,
+    2391.6
+   ],
+   "r": 7
+  },
+  {
+   "item": "29",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1319.1,
+    651.5,
+    1334.1,
+    664.6
+   ],
+   "note": "plan tag 29 (hexagon, vector)"
+  },
+  {
+   "item": "29",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    229.9,
+    2149.2,
+    289.9,
+    2281.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "29",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    229.9,
+    2295.2
+   ],
+   "text": "29 \u2014 1 Thus"
+  },
+  {
+   "item": "21",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    2040.1,
+    362.3,
+    2055.2,
+    375.3
+   ],
+   "note": "plan tag 21 (hexagon, vector)"
+  },
+  {
+   "item": "21",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1188.1,
+    1546.1,
+    1440.1,
+    1618.1
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "21",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Qty Text Box",
+   "at": [
+    1188.1,
+    1632.1
+   ],
+   "text": "21 \u2014 1 Thus"
+  },
+  {
+   "item": "21",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    299.3,
+    2358.6,
+    425.3,
+    2394.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "21",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext. SF Area",
+   "rect": [
+    299.3,
+    2358.6,
+    425.3,
+    2394.6
+   ],
+   "text": "A = 56.0 sf\nW = 14'-0\"\nH = 4'-0\""
+  },
+  {
+   "item": "21",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    353.1,
+    2367.1,
+    368.2,
+    2380.2
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "10",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1286.5,
+    1534.0,
+    1301.6,
+    1547.0
+   ],
+   "note": "plan tag 10 (hexagon, vector)"
+  },
+  {
+   "item": "10",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1133.0,
+    1650.0,
+    1208.1,
+    1723.4
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "10",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1164.0,
+    1666.2,
+    1179.1,
+    1679.3
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "11",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1754.5,
+    1534.8,
+    1769.6,
+    1547.8
+   ],
+   "note": "plan tag 11 (hexagon, vector)"
+  },
+  {
+   "item": "11",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1582.0,
+    1615.4,
+    1689.8,
+    1723.4
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "11",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1627.2,
+    1648.0,
+    1642.2,
+    1661.1
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "17",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    2141.2,
+    1294.8,
+    2156.2,
+    1307.8
+   ],
+   "note": "plan tag 17 (hexagon, vector)"
+  },
+  {
+   "item": "17",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    530.4,
+    986.0,
+    620.4,
+    1076.0
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "17",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    566.4,
+    1024.2,
+    581.5,
+    1037.2
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "18",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    2142.4,
+    1159.7,
+    2157.5,
+    1172.8
+   ],
+   "note": "plan tag 18 (hexagon, vector)"
+  },
+  {
+   "item": "18",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    668.4,
+    986.0,
+    758.4,
+    1076.0
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "18",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    704.9,
+    1024.2,
+    719.9,
+    1037.2
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "19",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    2139.6,
+    1019.1,
+    2154.7,
+    1032.2
+   ],
+   "note": "plan tag 19 (hexagon, vector)"
+  },
+  {
+   "item": "19",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    806.4,
+    986.0,
+    896.4,
+    1076.0
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "19",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    843.6,
+    1024.2,
+    858.6,
+    1037.2
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "20",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    2182.3,
+    445.4,
+    2197.4,
+    458.5
+   ],
+   "note": "plan tag 20 (hexagon, vector)"
+  },
+  {
+   "item": "20",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1378.9,
+    986.0,
+    1468.9,
+    1076.0
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "20",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1416.3,
+    1024.2,
+    1431.4,
+    1037.2
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "23",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1748.9,
+    362.4,
+    1764.0,
+    375.4
+   ],
+   "note": "plan tag 23 (hexagon, vector)"
+  },
+  {
+   "item": "23",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    590.2,
+    2316.6,
+    697.9,
+    2424.6
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "23",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    636.1,
+    2339.4,
+    651.2,
+    2352.4
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "27",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1327.6,
+    456.6,
+    1342.7,
+    469.7
+   ],
+   "note": "plan tag 27 (hexagon, vector)"
+  },
+  {
+   "item": "27",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    390.0,
+    384.2,
+    490.4,
+    474.2
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "27",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    407.9,
+    405.6,
+    423.0,
+    418.7
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "28",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1328.4,
+    584.0,
+    1343.4,
+    597.1
+   ],
+   "note": "plan tag 28 (hexagon, vector)"
+  },
+  {
+   "item": "28",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    490.4,
+    384.2,
+    592.1,
+    474.2
+   ],
+   "note": "elevation frame (snapped)",
+   "dashed": false
+  },
+  {
+   "item": "28",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    534.0,
+    405.6,
+    549.1,
+    418.7
+   ],
+   "note": "elevation tag"
+  },
+  {
+   "item": "100",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Int SF Highlight",
+   "rect": [
+    457.7,
+    933.3,
+    472.8,
+    946.4
+   ],
+   "note": "plan tag 100 (hexagon, vector)"
+  },
+  {
+   "item": "100",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Int SF Highlight",
+   "rect": [
+    150.7,
+    176.2,
+    265.4,
+    356.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "100",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    150.7,
+    370.2
+   ],
+   "text": "100 \u2014 1 Thus"
+  },
+  {
+   "item": "101",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Int SF Highlight",
+   "rect": [
+    478.9,
+    986.8,
+    494.0,
+    999.8
+   ],
+   "note": "plan tag 101 (hexagon, vector)"
+  },
+  {
+   "item": "101",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Int SF Highlight",
+   "rect": [
+    350.3,
+    176.2,
+    647.3,
+    356.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "101",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    350.3,
+    370.2
+   ],
+   "text": "101 \u2014 1 Thus"
+  },
+  {
+   "item": "101",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Int SF Door",
+   "center": [
+    498.79999999999995,
+    306.2
+   ],
+   "r": 7
+  },
+  {
+   "item": "102",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Int SF Highlight",
+   "rect": [
+    461.5,
+    1068.3,
+    476.6,
+    1081.3
+   ],
+   "note": "plan tag 102 (hexagon, vector)"
+  },
+  {
+   "item": "102",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Int SF Highlight",
+   "rect": [
+    737.9,
+    176.2,
+    852.6,
+    356.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "102",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    737.9,
+    370.2
+   ],
+   "text": "102 \u2014 1 Thus"
+  },
+  {
+   "item": "103",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    932.2,
+    1452.5,
+    947.3,
+    1465.6
+   ],
+   "note": "plan tag 103 (hexagon, vector)"
+  },
+  {
+   "item": "103",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1082.6,
+    176.2,
+    1242.8,
+    356.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "103",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1082.6,
+    370.2
+   ],
+   "text": "103 \u2014 1 Thus"
+  },
+  {
+   "item": "104",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    932.2,
+    1361.4,
+    947.3,
+    1374.5
+   ],
+   "note": "plan tag 104 (hexagon, vector)"
+  },
+  {
+   "item": "104",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1574.6,
+    176.2,
+    1752.8,
+    356.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "104",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1574.6,
+    370.2
+   ],
+   "text": "104 \u2014 1 Thus"
+  },
+  {
+   "item": "105",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    932.9,
+    1265.0,
+    947.9,
+    1278.1
+   ],
+   "note": "plan tag 105 (hexagon, vector)"
+  },
+  {
+   "item": "105",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2066.6,
+    176.2,
+    2244.8,
+    356.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "105",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2066.6,
+    370.2
+   ],
+   "text": "105 \u2014 1 Thus"
+  },
+  {
+   "item": "106",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    931.3,
+    1130.7,
+    946.4,
+    1143.8
+   ],
+   "note": "plan tag 106 (hexagon, vector)"
+  },
+  {
+   "item": "106",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2573.7,
+    176.2,
+    3086.1,
+    356.2
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "106",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2573.7,
+    370.2
+   ],
+   "text": "106 \u2014 1 Thus"
+  },
+  {
+   "item": "110",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    804.5,
+    706.0,
+    819.6,
+    719.0
+   ],
+   "note": "plan tag 110 (hexagon, vector)"
+  },
+  {
+   "item": "110",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1240.3,
+    687.3,
+    1330.3,
+    867.3
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "110",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1240.3,
+    881.3
+   ],
+   "text": "110 \u2014 1 Thus"
+  },
+  {
+   "item": "111",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1109.9,
+    703.8,
+    1125.0,
+    716.8
+   ],
+   "note": "plan tag 111 (hexagon, vector)"
+  },
+  {
+   "item": "111",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1654.3,
+    687.3,
+    1865.8,
+    867.3
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "111",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1654.3,
+    881.3
+   ],
+   "text": "111 \u2014 1 Thus"
+  },
+  {
+   "item": "112",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1216.4,
+    707.1,
+    1231.5,
+    720.2
+   ],
+   "note": "plan tag 112 (hexagon, vector)"
+  },
+  {
+   "item": "112",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2202.9,
+    687.3,
+    2281.7,
+    867.3
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "112",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2202.9,
+    881.3
+   ],
+   "text": "112 \u2014 1 Thus"
+  },
+  {
+   "item": "113",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1230.8,
+    822.4,
+    1245.9,
+    835.5
+   ],
+   "note": "plan tag 113 (hexagon, vector)"
+  },
+  {
+   "item": "113",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2653.3,
+    687.3,
+    2743.3,
+    867.3
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "113",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2653.3,
+    881.3
+   ],
+   "text": "113 \u2014 1 Thus"
+  },
+  {
+   "item": "131",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    731.1,
+    983.0,
+    746.2,
+    996.0
+   ],
+   "note": "plan tag 131 (hexagon, vector)"
+  },
+  {
+   "item": "131",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1626.1,
+    1765.3,
+    1688.2,
+    1938.6
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "131",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1626.1,
+    1952.6
+   ],
+   "text": "131 \u2014 1 Thus"
+  },
+  {
+   "item": "132",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    872.9,
+    981.5,
+    887.9,
+    994.5
+   ],
+   "note": "plan tag 132 (hexagon, vector)"
+  },
+  {
+   "item": "132",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1928.2,
+    1765.3,
+    1990.3,
+    1938.6
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "132",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1928.2,
+    1952.6
+   ],
+   "text": "132 \u2014 1 Thus"
+  },
+  {
+   "item": "133",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    789.9,
+    1018.2,
+    805.0,
+    1031.3
+   ],
+   "note": "plan tag 133 (hexagon, vector)"
+  },
+  {
+   "item": "134",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    811.4,
+    1064.1,
+    826.5,
+    1077.2
+   ],
+   "note": "plan tag 134 (hexagon, vector)"
+  },
+  {
+   "item": "134",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2475.0,
+    1761.6,
+    2572.5,
+    1941.6
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "134",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2475.0,
+    1955.6
+   ],
+   "text": "134 \u2014 1 Thus"
+  },
+  {
+   "item": "135",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    739.7,
+    1068.5,
+    754.7,
+    1081.6
+   ],
+   "note": "plan tag 135 (hexagon, vector)"
+  },
+  {
+   "item": "135",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2746.7,
+    1765.7,
+    2816.6,
+    1938.6
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "135",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2746.7,
+    1952.6
+   ],
+   "text": "135 \u2014 1 Thus"
+  },
+  {
+   "item": "136",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    859.0,
+    1069.4,
+    874.1,
+    1082.5
+   ],
+   "note": "plan tag 136 (hexagon, vector)"
+  },
+  {
+   "item": "136",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    3122.9,
+    1765.7,
+    3192.7,
+    1938.6
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "136",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    3122.9,
+    1952.6
+   ],
+   "text": "136 \u2014 1 Thus"
+  },
+  {
+   "item": "137",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    789.7,
+    1178.2,
+    804.7,
+    1191.3
+   ],
+   "note": "plan tag 137 (hexagon, vector)"
+  },
+  {
+   "item": "137",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    151.2,
+    2285.8,
+    248.7,
+    2465.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "137",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    151.2,
+    2479.8
+   ],
+   "text": "137 \u2014 1 Thus"
+  },
+  {
+   "item": "138",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    738.8,
+    1153.5,
+    753.9,
+    1166.6
+   ],
+   "note": "plan tag 138 (hexagon, vector)"
+  },
+  {
+   "item": "138",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    423.0,
+    2289.9,
+    482.7,
+    2462.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "138",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    423.0,
+    2476.8
+   ],
+   "text": "138 \u2014 1 Thus"
+  },
+  {
+   "item": "139",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    855.8,
+    1153.8,
+    870.9,
+    1166.9
+   ],
+   "note": "plan tag 139 (hexagon, vector)"
+  },
+  {
+   "item": "139",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    799.1,
+    2289.9,
+    868.9,
+    2462.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "139",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    799.1,
+    2476.8
+   ],
+   "text": "139 \u2014 1 Thus"
+  },
+  {
+   "item": "140",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    790.8,
+    1231.7,
+    805.9,
+    1244.8
+   ],
+   "note": "plan tag 140 (hexagon, vector)"
+  },
+  {
+   "item": "140",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1015.2,
+    2285.8,
+    1112.7,
+    2465.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "140",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1015.2,
+    2479.8
+   ],
+   "text": "140 \u2014 1 Thus"
+  },
+  {
+   "item": "141",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    738.5,
+    1238.2,
+    753.6,
+    1251.2
+   ],
+   "note": "plan tag 141 (hexagon, vector)"
+  },
+  {
+   "item": "141",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1287.0,
+    2289.9,
+    1356.8,
+    2462.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "141",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1287.0,
+    2476.8
+   ],
+   "text": "141 \u2014 1 Thus"
+  },
+  {
+   "item": "142",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    860.2,
+    1237.9,
+    875.3,
+    1250.9
+   ],
+   "note": "plan tag 142 (hexagon, vector)"
+  },
+  {
+   "item": "142",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1663.1,
+    2289.9,
+    1732.9,
+    2462.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "142",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1663.1,
+    2476.8
+   ],
+   "text": "142 \u2014 1 Thus"
+  },
+  {
+   "item": "143",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    791.1,
+    1315.5,
+    806.2,
+    1328.6
+   ],
+   "note": "plan tag 143 (hexagon, vector)"
+  },
+  {
+   "item": "144",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    725.0,
+    1344.0,
+    740.0,
+    1357.1
+   ],
+   "note": "plan tag 144 (hexagon, vector)"
+  },
+  {
+   "item": "144",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2228.5,
+    2289.5,
+    2353.5,
+    2462.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "144",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2228.5,
+    2476.8
+   ],
+   "text": "144 \u2014 1 Thus"
+  },
+  {
+   "item": "145",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "All Glass Highlight",
+   "rect": [
+    872.6,
+    1344.9,
+    887.6,
+    1358.0
+   ],
+   "note": "plan tag 145 (hexagon, vector)"
+  },
+  {
+   "item": "145",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2507.7,
+    2289.5,
+    2632.8,
+    2462.8
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "145",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    2507.7,
+    2476.8
+   ],
+   "text": "145 \u2014 1 Thus"
+  },
+  {
+   "item": "118",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1258.0,
+    1020.7,
+    1273.1,
+    1033.8
+   ],
+   "note": "plan tag 118 (hexagon, vector)"
+  },
+  {
+   "item": "118",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1116.4,
+    1284.5,
+    1176.4,
+    1416.5
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "118",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1116.4,
+    1430.5
+   ],
+   "text": "118 \u2014 1 Thus"
+  },
+  {
+   "item": "121",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1300.6,
+    1085.4,
+    1315.6,
+    1098.5
+   ],
+   "note": "plan tag 121 (hexagon, vector)"
+  },
+  {
+   "item": "121",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1942.1,
+    1284.5,
+    2002.1,
+    1416.5
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "121",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1942.1,
+    1430.5
+   ],
+   "text": "121 \u2014 1 Thus"
+  },
+  {
+   "item": "119",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1185.4,
+    1005.7,
+    1200.5,
+    1018.7
+   ],
+   "note": "plan tag 119 (hexagon, vector)"
+  },
+  {
+   "item": "119",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1423.4,
+    1290.4,
+    1489.4,
+    1359.4
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "119",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1423.4,
+    1373.4
+   ],
+   "text": "119 \u2014 1 Thus"
+  },
+  {
+   "item": "120",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1132.7,
+    1067.2,
+    1147.8,
+    1080.3
+   ],
+   "note": "plan tag 120 (hexagon, vector)"
+  },
+  {
+   "item": "120",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1665.2,
+    1290.4,
+    1755.2,
+    1359.4
+   ],
+   "note": "type drawing (snapped)"
+  },
+  {
+   "item": "120",
+   "sheet": "A3.3",
+   "page": 11,
+   "subject": "Qty Text Box",
+   "at": [
+    1665.2,
+    1373.4
+   ],
+   "text": "120 \u2014 1 Thus"
+  },
+  {
+   "item": "117",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1288.6,
+    972.9,
+    1303.7,
+    985.9
+   ],
+   "note": "plan tag 117 (hexagon, vector)"
+  },
+  {
+   "item": "130",
+   "sheet": "A1.2",
+   "page": 2,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    1300.8,
+    883.1,
+    1315.9,
+    896.2
+   ],
+   "note": "plan tag 130 (hexagon, vector)"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    2002,
+    1000,
+    2560,
+    1026
+   ],
+   "note": "legend row SF-1"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2002,
+    1038,
+    2560,
+    1064
+   ],
+   "note": "legend row SF-2"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Glass Film",
+   "rect": [
+    2002,
+    725,
+    2830,
+    751
+   ],
+   "note": "legend row GF-1"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    2002,
+    270,
+    2560,
+    296
+   ],
+   "note": "legend row D-1"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    2002,
+    367,
+    2560,
+    393
+   ],
+   "note": "legend row D-4"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    2002,
+    309,
+    2560,
+    335
+   ],
+   "note": "legend row D-2"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    2002,
+    337,
+    2560,
+    363
+   ],
+   "note": "legend row D-3"
+  },
+  {
+   "item": "LEGEND",
+   "sheet": "A2.0",
+   "page": 7,
+   "subject": "Excluded by Binswanger",
+   "rect": [
+    2002,
+    400,
+    2600,
+    426
+   ],
+   "note": "legend row D-5"
+  },
+  {
+   "item": "NOTE-10",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Scope Note",
+   "rect": [
+    2430,
+    2130,
+    2830,
+    2535
+   ],
+   "note": "Door & frame notes block"
+  },
+  {
+   "item": "HW-GEN",
+   "sheet": "A3.2",
+   "page": 10,
+   "subject": "Hardware Set",
+   "rect": [
+    2870,
+    2255,
+    3255,
+    2512
+   ],
+   "note": "general hardware schedule"
+  },
+  {
+   "item": "MIR",
+   "sheet": "A3.0",
+   "page": 8,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1185,
+    658,
+    1860,
+    670
+   ],
+   "note": "toilet accessory 8 mirror row"
+  },
+  {
+   "item": "DET 4/A4.1",
+   "sheet": "A4.1",
+   "page": 13,
+   "subject": "All Glass Highlight",
+   "rect": [
+    142,
+    2498,
+    621,
+    2528
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION PER SCHEDULE | FRAMELESS GLASS PARTITION PER SCHEDULE"
+  },
+  {
+   "item": "DET 4/A4.1",
+   "sheet": "A4.1",
+   "page": 13,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1685,
+    2368,
+    1864,
+    2377
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A4.1",
+   "sheet": "A4.1",
+   "page": 13,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1054,
+    2488,
+    1233,
+    2497
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 11/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    96,
+    2500,
+    309,
+    2530
+   ],
+   "note": "detail title; keywords: CURTAIN WALL | CURTAIN WALL"
+  },
+  {
+   "item": "DET 11/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    631,
+    2202,
+    691,
+    2211
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 11/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    150,
+    2481,
+    209,
+    2490
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 12/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    798,
+    2500,
+    1011,
+    2530
+   ],
+   "note": "detail title; keywords: CURTAIN WALL"
+  },
+  {
+   "item": "DET 12/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    843,
+    2227,
+    903,
+    2236
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 13/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1671,
+    2500,
+    1884,
+    2530
+   ],
+   "note": "detail title; keywords: CURTAIN WALL | STOREFRONT  PER SCHEDULE | STOREFRONT  PER SCHEDULE | STOREFRONT  PER SCHEDULE"
+  },
+  {
+   "item": "DET 13/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1716,
+    2231,
+    1776,
+    2240
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 13/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    2067,
+    478,
+    2180,
+    487
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 13/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    2067,
+    506,
+    2180,
+    515
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 13/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1807,
+    486,
+    1920,
+    495
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    79,
+    655,
+    293,
+    685
+   ],
+   "note": "detail title; keywords: STOREFRONT PER SCHEDULE | STOREFRONT"
+  },
+  {
+   "item": "DET 1/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    156,
+    71,
+    268,
+    80
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    702,
+    477,
+    757,
+    486
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    79,
+    1312,
+    293,
+    1342
+   ],
+   "note": "detail title; keywords: STOREFRONT PER SCHEDULE | STOREFRONT"
+  },
+  {
+   "item": "DET 6/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    156,
+    728,
+    268,
+    737
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    701,
+    1131,
+    756,
+    1140
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    768,
+    619,
+    981,
+    649
+   ],
+   "note": "detail title; keywords: STOREFRONT  PER SCHEDULE | STOREFRONT  PER SCHEDULE"
+  },
+  {
+   "item": "DET 2/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    859,
+    484,
+    973,
+    493
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1221,
+    486,
+    1335,
+    495
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1416,
+    619,
+    1629,
+    649
+   ],
+   "note": "detail title; keywords: STOREFRONT  PER SCHEDULE | STOREFRONT  PER SCHEDULE"
+  },
+  {
+   "item": "DET 3/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1807,
+    486,
+    1920,
+    495
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1445,
+    484,
+    1558,
+    493
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2014,
+    619,
+    2228,
+    649
+   ],
+   "note": "detail title; keywords: STOREFRONT  PER SCHEDULE | STOREFRONT  PER SCHEDULE"
+  },
+  {
+   "item": "DET 4/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2067,
+    478,
+    2180,
+    487
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2067,
+    506,
+    2180,
+    515
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 5/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2617,
+    619,
+    2831,
+    649
+   ],
+   "note": "detail title; keywords: STOREFRONT  PER SCHEDULE"
+  },
+  {
+   "item": "DET 5/A4.2",
+   "sheet": "A4.2",
+   "page": 14,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2694,
+    179,
+    2808,
+    188
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    71,
+    620,
+    285,
+    650
+   ],
+   "note": "detail title; keywords: ALUM. STOREFRONT"
+  },
+  {
+   "item": "DET 1/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1381,
+    190,
+    1462,
+    199
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1484,
+    620,
+    1698,
+    650
+   ],
+   "note": "detail title; keywords: ALUM. STOREFRONT"
+  },
+  {
+   "item": "DET 2/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1984,
+    190,
+    2065,
+    199
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2087,
+    620,
+    2301,
+    650
+   ],
+   "note": "detail title; keywords: ALUM. STOREFRONT"
+  },
+  {
+   "item": "DET 3/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2272,
+    126,
+    2353,
+    135
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 5/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    770,
+    1179,
+    983,
+    1209
+   ],
+   "note": "detail title; keywords: ALUM. STOREFRONT"
+  },
+  {
+   "item": "DET 5/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1381,
+    190,
+    1462,
+    199
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1490,
+    1179,
+    1703,
+    1209
+   ],
+   "note": "detail title; keywords: GALV. HM FRAME AND GLAZING PER SCHEDULE"
+  },
+  {
+   "item": "DET 6/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1568,
+    957,
+    1749,
+    966
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 10/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    845,
+    1866,
+    1058,
+    1896
+   ],
+   "note": "detail title; keywords: STOREFRONT ENTRY PER SCHEDULE | FRAMELESS GLASS DOOR"
+  },
+  {
+   "item": "DET 10/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1506,
+    1256,
+    1646,
+    1265
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 10/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1506,
+    1488,
+    1610,
+    1497
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 11/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1664,
+    1866,
+    1877,
+    1896
+   ],
+   "note": "detail title; keywords: ALUM. STOREFRONT"
+  },
+  {
+   "item": "DET 11/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    2267,
+    1265,
+    2347,
+    1274
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 12/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2456,
+    1866,
+    2669,
+    1896
+   ],
+   "note": "detail title; keywords: PRE-FIN MTL CLOSURE TRMI TO MATCH STOREFRONT | STOREFRONT ENTRY PER SCHEDULE | FRAMELESS GLASS DOOR AND | STOREFRONT PER SCHEDULE"
+  },
+  {
+   "item": "DET 12/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2456,
+    1257,
+    2657,
+    1266
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 12/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2517,
+    1334,
+    2656,
+    1343
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 12/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2535,
+    1527,
+    2658,
+    1536
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 12/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2546,
+    1238,
+    2658,
+    1247
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 14/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    857,
+    2500,
+    1070,
+    2530
+   ],
+   "note": "detail title; keywords: STOREFRONT PER"
+  },
+  {
+   "item": "DET 14/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    898,
+    2196,
+    970,
+    2205
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2126,
+    2500,
+    2339,
+    2530
+   ],
+   "note": "detail title; keywords: PRE-FIN MTL CLOSURE TRMI TO MATCH STOREFRONT | STOREFRONT ENTRY PER SCHEDULE | FRAMELESS GLASS DOOR AND | STOREFRONT PER SCHEDULE | ALUM. STOREFRONT"
+  },
+  {
+   "item": "DET 16/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2456,
+    1257,
+    2657,
+    1266
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2517,
+    1334,
+    2656,
+    1343
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2535,
+    1527,
+    2658,
+    1536
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2546,
+    1238,
+    2658,
+    1247
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.3",
+   "sheet": "A4.3",
+   "page": 15,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2267,
+    1265,
+    2347,
+    1274
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    78,
+    1176,
+    291,
+    1206
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS DOOR"
+  },
+  {
+   "item": "DET 6/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    806,
+    1028,
+    910,
+    1037
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 8/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    769,
+    1947,
+    982,
+    1977
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS DOOR | FRAMELESS GLASS DOOR"
+  },
+  {
+   "item": "DET 8/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    806,
+    1397,
+    910,
+    1406
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 8/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    806,
+    1028,
+    910,
+    1037
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2087,
+    620,
+    2301,
+    650
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION | FRAMELESS GLASS PARTITION"
+  },
+  {
+   "item": "DET 4/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2188,
+    410,
+    2309,
+    419
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2541,
+    410,
+    2662,
+    419
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 5/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2681,
+    620,
+    2895,
+    650
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITIONS"
+  },
+  {
+   "item": "DET 5/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2747,
+    284,
+    2873,
+    293
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 9/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1435,
+    1947,
+    1648,
+    1977
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS DOOR | FRAMELESS GLASS PARTITION"
+  },
+  {
+   "item": "DET 9/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1472,
+    1397,
+    1576,
+    1406
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 9/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1454,
+    1028,
+    1577,
+    1037
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 7/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    83,
+    1797,
+    296,
+    1827
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS DOOR"
+  },
+  {
+   "item": "DET 7/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    806,
+    1397,
+    910,
+    1406
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 10/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2117,
+    1281,
+    2331,
+    1311
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION PER SCHEDULE | FRAMELESS GLASS PARTITION PER SCHEDULE"
+  },
+  {
+   "item": "DET 10/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2170,
+    985,
+    2350,
+    994
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 10/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2490,
+    829,
+    2669,
+    838
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 11/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2108,
+    1946,
+    2322,
+    1976
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION PER SCHEDULE | FRAMELESS GLASS DOOR PER SCHEDULE"
+  },
+  {
+   "item": "DET 11/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2628,
+    1433,
+    2807,
+    1442
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 11/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2136,
+    1878,
+    2297,
+    1887
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 14/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1342,
+    2504,
+    1555,
+    2534
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | CURTAIN WALL PER SCHEDULE | INTERIOR STOREFRONT PER SCHED."
+  },
+  {
+   "item": "DET 14/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1455,
+    2103,
+    1572,
+    2112
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 14/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1455,
+    2409,
+    1572,
+    2418
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 14/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1910,
+    2299,
+    2047,
+    2308
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 15/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "Int SF Highlight",
+   "rect": [
+    2125,
+    2504,
+    2338,
+    2534
+   ],
+   "note": "detail title; keywords: INTERIOR STOREFRONT PER SCHEDULE"
+  },
+  {
+   "item": "DET 15/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "Int SF Highlight",
+   "rect": [
+    2469,
+    2368,
+    2619,
+    2377
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2629,
+    2504,
+    2842,
+    2534
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION PER SCHEDULE | CURTAIN WALL PER SCHEDULE | CURTAIN WALL PER SCHEDULE"
+  },
+  {
+   "item": "DET 16/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2628,
+    1433,
+    2807,
+    1442
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2724,
+    2103,
+    2841,
+    2112
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 16/A4.4",
+   "sheet": "A4.4",
+   "page": 16,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2724,
+    2409,
+    2841,
+    2418
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    187,
+    2501,
+    361,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | CURTAIN WALL PER SCHEDULE | INTERIOR STOREFRONT BEYOND PER SCHEDULE | 24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT."
+  },
+  {
+   "item": "DET 1/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    368,
+    1187,
+    485,
+    1196
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    370,
+    1793,
+    486,
+    1802
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    303,
+    1887,
+    486,
+    1896
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    287,
+    2203,
+    491,
+    2212
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Int SF Highlight",
+   "rect": [
+    774,
+    610,
+    918,
+    640
+   ],
+   "note": "detail title; keywords: INTERIOR STOREFRONT PER SCHEDULE | INTERIOR STOREFRONT BEYOND"
+  },
+  {
+   "item": "DET 3/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Int SF Highlight",
+   "rect": [
+    1132,
+    402,
+    1282,
+    411
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Int SF Highlight",
+   "rect": [
+    1132,
+    542,
+    1256,
+    551
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    90,
+    610,
+    234,
+    640
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | CURTAIN WALL PER SCHEDULE | INTERIOR STOREFRONT BEYOND"
+  },
+  {
+   "item": "DET 2/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    204,
+    124,
+    320,
+    133
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    204,
+    408,
+    320,
+    417
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.0",
+   "sheet": "A5.0",
+   "page": 17,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    575,
+    460,
+    698,
+    469
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    187,
+    2501,
+    361,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | CURTAIN WALL PER SCHEDULE | 24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT. | TYPE \"F\" LIGHT FIXTURES AT THIS BEAM BETWEEN STOREFRONT"
+  },
+  {
+   "item": "DET 1/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    341,
+    1187,
+    458,
+    1196
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    343,
+    1793,
+    459,
+    1802
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    260,
+    2214,
+    464,
+    2223
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    882,
+    1620,
+    1127,
+    1629
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    90,
+    610,
+    234,
+    640
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | CURTAIN WALL PER SCHEDULE"
+  },
+  {
+   "item": "DET 2/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    204,
+    219,
+    320,
+    228
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    204,
+    489,
+    320,
+    498
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    769,
+    610,
+    913,
+    640
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE"
+  },
+  {
+   "item": "DET 3/A5.1",
+   "sheet": "A5.1",
+   "page": 18,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    863,
+    499,
+    979,
+    508
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    79,
+    2501,
+    329,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | CURTAIN WALL PER SCHEDULE"
+  },
+  {
+   "item": "DET 1/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    285,
+    1189,
+    401,
+    1198
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    284,
+    1747,
+    400,
+    1756
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Int SF Highlight",
+   "rect": [
+    1173,
+    2501,
+    1422,
+    2531
+   ],
+   "note": "detail title; keywords: INTERIOR STOREFRONT PER SCHED."
+  },
+  {
+   "item": "DET 2/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Int SF Highlight",
+   "rect": [
+    1268,
+    1874,
+    1405,
+    1883
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Int SF Highlight",
+   "rect": [
+    1821,
+    2501,
+    2070,
+    2531
+   ],
+   "note": "detail title; keywords: INTERIOR STOREFRONT PER SCHED."
+  },
+  {
+   "item": "DET 3/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Int SF Highlight",
+   "rect": [
+    2248,
+    1874,
+    2385,
+    1883
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    2523,
+    2501,
+    2772,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE"
+  },
+  {
+   "item": "DET 4/A5.2",
+   "sheet": "A5.2",
+   "page": 19,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    2953,
+    1821,
+    3069,
+    1830
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Int SF Highlight",
+   "rect": [
+    79,
+    2501,
+    329,
+    2531
+   ],
+   "note": "detail title; keywords: INTERIOR STOREFRONT BEYOND PER SCHEDULE | INTERIOR STOREFRONT PER SCHEDULE"
+  },
+  {
+   "item": "DET 1/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Int SF Highlight",
+   "rect": [
+    146,
+    1939,
+    330,
+    1948
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Int SF Highlight",
+   "rect": [
+    580,
+    644,
+    729,
+    653
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1128,
+    2501,
+    1377,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | 24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT. | INTERIOR STOREFRONT BEYOND PER SCHEDULE | STOREFRONT PER SCHEDULE | CURTAIN WALL BEYOND PER SCHEDULE | INTERIOR STOREFRONT BEYOND"
+  },
+  {
+   "item": "DET 2/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1310,
+    1850,
+    1427,
+    1859
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1228,
+    2200,
+    1432,
+    2209
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1246,
+    1895,
+    1429,
+    1904
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1559,
+    572,
+    1671,
+    581
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1282,
+    272,
+    1432,
+    281
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1278,
+    622,
+    1403,
+    631
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2523,
+    2501,
+    2772,
+    2531
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION PER SCHEDULE"
+  },
+  {
+   "item": "DET 4/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2609,
+    1828,
+    2788,
+    1837
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 7/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1435,
+    610,
+    1579,
+    640
+   ],
+   "note": "detail title; keywords: STOREFRONT PER SCHEDULE"
+  },
+  {
+   "item": "DET 7/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1559,
+    572,
+    1671,
+    581
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 5/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    85,
+    610,
+    229,
+    640
+   ],
+   "note": "detail title; keywords: CURTAIN WALL BEYOND PER SCHEDULE"
+  },
+  {
+   "item": "DET 5/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    580,
+    272,
+    730,
+    281
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    751,
+    610,
+    895,
+    640
+   ],
+   "note": "detail title; keywords: CURTAIN WALL BEYOND PER SCHEDULE | INTERIOR STOREFRONT BEYOND"
+  },
+  {
+   "item": "DET 6/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1282,
+    272,
+    1432,
+    281
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1278,
+    622,
+    1403,
+    631
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 10/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2681,
+    609,
+    2881,
+    639
+   ],
+   "note": "detail title; keywords: 1/2\" CLEAR, TEMPERED | 2\" 'U' CHANNEL"
+  },
+  {
+   "item": "DET 10/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "All Glass Highlight",
+   "rect": [
+    3119,
+    427,
+    3211,
+    436
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 10/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "All Glass Highlight",
+   "rect": [
+    3117,
+    530,
+    3174,
+    539
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 9/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2681,
+    295,
+    2899,
+    325
+   ],
+   "note": "detail title; keywords: 2\" 'U' CHANNEL"
+  },
+  {
+   "item": "DET 9/A5.3",
+   "sheet": "A5.3",
+   "page": 20,
+   "subject": "All Glass Highlight",
+   "rect": [
+    3119,
+    293,
+    3176,
+    302
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.4",
+   "sheet": "A5.4",
+   "page": 21,
+   "subject": "All Glass Highlight",
+   "rect": [
+    187,
+    2501,
+    361,
+    2531
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION BEYOND"
+  },
+  {
+   "item": "DET 1/A5.4",
+   "sheet": "A5.4",
+   "page": 21,
+   "subject": "All Glass Highlight",
+   "rect": [
+    970,
+    2176,
+    1123,
+    2185
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.4",
+   "sheet": "A5.4",
+   "page": 21,
+   "subject": "Int SF Highlight",
+   "rect": [
+    107,
+    861,
+    281,
+    891
+   ],
+   "note": "detail title; keywords: INTERIOR STOREFRONT BEYOND"
+  },
+  {
+   "item": "DET 2/A5.4",
+   "sheet": "A5.4",
+   "page": 21,
+   "subject": "Int SF Highlight",
+   "rect": [
+    1042,
+    662,
+    1165,
+    671
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A5.4",
+   "sheet": "A5.4",
+   "page": 21,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1873,
+    852,
+    2086,
+    882
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION PER SCHEDULE"
+  },
+  {
+   "item": "DET 4/A5.4",
+   "sheet": "A5.4",
+   "page": 21,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1958,
+    213,
+    2137,
+    222
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1173,
+    2501,
+    1422,
+    2531
+   ],
+   "note": "detail title; keywords: STOREFRONT PER SCHEDULE | 24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT. | FRAMELESS GLASS PARTITION"
+  },
+  {
+   "item": "DET 2/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1878,
+    1888,
+    1990,
+    1897
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1879,
+    2192,
+    2083,
+    2201
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1236,
+    1945,
+    1356,
+    1954
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    82,
+    610,
+    226,
+    640
+   ],
+   "note": "detail title; keywords: 'U' CHANNEL PER SCHEDULE | GLAZING PER SCHEDULE"
+  },
+  {
+   "item": "DET 4/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    426,
+    527,
+    533,
+    536
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    426,
+    559,
+    521,
+    568
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 5/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    566,
+    610,
+    710,
+    640
+   ],
+   "note": "detail title; keywords: STOREFRONT PER SCHEDULE"
+  },
+  {
+   "item": "DET 5/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "Ext SF Highlight",
+   "rect": [
+    1013,
+    527,
+    1124,
+    536
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1252,
+    610,
+    1396,
+    640
+   ],
+   "note": "detail title; keywords: 'U' CHANNEL PER SCHEDULE | GLAZING PER SCHEDULE"
+  },
+  {
+   "item": "DET 6/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1791,
+    548,
+    1898,
+    557
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 6/A5.5",
+   "sheet": "A5.5",
+   "page": 22,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1791,
+    568,
+    1886,
+    577
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.6",
+   "sheet": "A5.6",
+   "page": 23,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    903,
+    2501,
+    1152,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | 24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT."
+  },
+  {
+   "item": "DET 2/A5.6",
+   "sheet": "A5.6",
+   "page": 23,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1058,
+    2025,
+    1174,
+    2034
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.6",
+   "sheet": "A5.6",
+   "page": 23,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    973,
+    2304,
+    1177,
+    2313
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.6",
+   "sheet": "A5.6",
+   "page": 23,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1713,
+    2501,
+    1962,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | FRAMELESS GLASS DOOR AND"
+  },
+  {
+   "item": "DET 3/A5.6",
+   "sheet": "A5.6",
+   "page": 23,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2087,
+    2037,
+    2203,
+    2046
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.6",
+   "sheet": "A5.6",
+   "page": 23,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2084,
+    2100,
+    2204,
+    2109
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.7",
+   "sheet": "A5.7",
+   "page": 24,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    903,
+    2501,
+    1152,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE"
+  },
+  {
+   "item": "DET 2/A5.7",
+   "sheet": "A5.7",
+   "page": 24,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1073,
+    1929,
+    1190,
+    1938
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.7",
+   "sheet": "A5.7",
+   "page": 24,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2145,
+    2501,
+    2394,
+    2531
+   ],
+   "note": "detail title; keywords: FRAMELESS GLASS PARTITION | FRAMELESS GLASS PARTITION"
+  },
+  {
+   "item": "DET 3/A5.7",
+   "sheet": "A5.7",
+   "page": 24,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2256,
+    1985,
+    2377,
+    1994
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 3/A5.7",
+   "sheet": "A5.7",
+   "page": 24,
+   "subject": "All Glass Highlight",
+   "rect": [
+    2764,
+    1985,
+    2885,
+    1994
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 4/A5.8",
+   "sheet": "A5.8",
+   "page": 25,
+   "subject": "Break Metal Flashing & Trims",
+   "rect": [
+    1885,
+    2509,
+    2134,
+    2539
+   ],
+   "note": "detail title; keywords: 24 GA. PRE-FIN MTL SILL FLASHING. LIP OVER FRONT OF CMU"
+  },
+  {
+   "item": "DET 4/A5.8",
+   "sheet": "A5.8",
+   "page": 25,
+   "subject": "Break Metal Flashing & Trims",
+   "rect": [
+    2289,
+    2101,
+    2523,
+    2110
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 8/A5.8",
+   "sheet": "A5.8",
+   "page": 25,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    694,
+    327,
+    1082,
+    357
+   ],
+   "note": "detail title; keywords: HM FRAME and GLAZING PER SCHEDULE"
+  },
+  {
+   "item": "DET 8/A5.8",
+   "sheet": "A5.8",
+   "page": 25,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1106,
+    256,
+    1260,
+    265
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 10/A5.8",
+   "sheet": "A5.8",
+   "page": 25,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1324,
+    327,
+    1710,
+    357
+   ],
+   "note": "detail title; keywords: HM FRAME and GLAZING PER SCHEDULE"
+  },
+  {
+   "item": "DET 10/A5.8",
+   "sheet": "A5.8",
+   "page": 25,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1531,
+    258,
+    1685,
+    267
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.9",
+   "sheet": "A5.9",
+   "page": 26,
+   "subject": "All Glass Highlight",
+   "rect": [
+    79,
+    2501,
+    329,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE | FRAMELESS GLASS | 24 GA. PRE-FIN MTL SILL FLASHING-SET IN SEALANT."
+  },
+  {
+   "item": "DET 1/A5.9",
+   "sheet": "A5.9",
+   "page": 26,
+   "subject": "All Glass Highlight",
+   "rect": [
+    669,
+    1851,
+    786,
+    1860
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.9",
+   "sheet": "A5.9",
+   "page": 26,
+   "subject": "All Glass Highlight",
+   "rect": [
+    124,
+    1878,
+    204,
+    1887
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.9",
+   "sheet": "A5.9",
+   "page": 26,
+   "subject": "All Glass Highlight",
+   "rect": [
+    668,
+    2202,
+    873,
+    2211
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.9",
+   "sheet": "A5.9",
+   "page": 26,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    889,
+    2501,
+    1139,
+    2531
+   ],
+   "note": "detail title; keywords: CURTAIN WALL PER SCHEDULE"
+  },
+  {
+   "item": "DET 2/A5.9",
+   "sheet": "A5.9",
+   "page": 26,
+   "subject": "Ext CW Highlight",
+   "rect": [
+    1254,
+    1851,
+    1371,
+    1860
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.13",
+   "sheet": "A5.13",
+   "page": 30,
+   "subject": "All Glass Highlight",
+   "rect": [
+    79,
+    2501,
+    329,
+    2531
+   ],
+   "note": "detail title; keywords: FOR FRAMELESS GLASS PARTITION | FRAMELESS GLASS PARTITION PER SCHEDULE"
+  },
+  {
+   "item": "DET 1/A5.13",
+   "sheet": "A5.13",
+   "page": 30,
+   "subject": "All Glass Highlight",
+   "rect": [
+    475,
+    1554,
+    611,
+    1563
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 1/A5.13",
+   "sheet": "A5.13",
+   "page": 30,
+   "subject": "All Glass Highlight",
+   "rect": [
+    477,
+    1838,
+    656,
+    1847
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.13",
+   "sheet": "A5.13",
+   "page": 30,
+   "subject": "All Glass Highlight",
+   "rect": [
+    703,
+    2501,
+    952,
+    2531
+   ],
+   "note": "detail title; keywords: FOR FRAMELESS GLASS PARTITION | FRAMELESS GLASS PARTITION"
+  },
+  {
+   "item": "DET 2/A5.13",
+   "sheet": "A5.13",
+   "page": 30,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1096,
+    1554,
+    1232,
+    1563
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A5.13",
+   "sheet": "A5.13",
+   "page": 30,
+   "subject": "All Glass Highlight",
+   "rect": [
+    1172,
+    1838,
+    1294,
+    1847
+   ],
+   "note": "callout text"
+  },
+  {
+   "item": "DET 2/A6.1",
+   "sheet": "A6.1",
+   "page": 32,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    870,
+    898,
+    1277,
+    928
+   ],
+   "note": "detail title; keywords: MIRROR"
+  },
+  {
+   "item": "DET 2/A6.1",
+   "sheet": "A6.1",
+   "page": 32,
+   "subject": "Glazing Only Highlight",
+   "rect": [
+    1316,
+    570,
+    1347,
+    579
+   ],
+   "note": "callout text"
+  }
+ ]
+}

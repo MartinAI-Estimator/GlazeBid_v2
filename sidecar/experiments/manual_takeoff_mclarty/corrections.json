@@ -1,0 +1,45 @@
+{
+  "_note": "Added AFTER comparing with Martin's marked 12-sheet bid set (428 markups). Blind result hash before comparison: 5c6e4c…; two code bugs found by the comparison were fixed and are listed under fixes.",
+  "fixes": [
+    {"item":"1", "sheet":"A2.0", "page":7, "subject":"Ext CW Highlight", "rect":[1849.8,2334.6,1979.2,2424.6], "why":"Blind run snapped type 1 on the north elevation at 12'-3\" and raised a false 'elevation vs schedule' RFI. Cause: a rounding bug in my feet-inch formatter wrote the schedule width as 13'-12.0\", which parsed back as 12'-0\", so the elevation matcher preferred the wrong rectangle. Martin's Area reads 14'-4 1/2\"; after the fix the snap reads 14'-4.5\" (schedule 14'-0\"). The RFI was withdrawn.", "replaces":[1868.8,2334.6,1979.2,2424.6]},
+    {"item":"21", "sheet":"A3.2", "page":10, "subject":"Glazing Only Highlight", "rect":[1188.1,1546.1,1440.1,1618.1], "why":"I described the 14'-0\" x 4'-0\" HM window as 4 lites from a nearby '(4 EQUAL PANELS)' string that belongs to another type. The vector mullion count says 3 lites (4'-5\" / 4'-6\" / 4'-5\"); Martin drew 3. Text was wrong, geometry was right.", "replaces":[1188.1,1546.1,1440.1,1618.1]},
+    {"item":"DET 6/A4.2", "sheet":"A4.2", "page":14, "subject":"Ext SF Highlight", "rect":[79,1312,293,1342], "why":"Detail 6 (storefront jamb) was not found blind: my detail-region builder treated detail 7 (to the right) as 'above' and cut the region. Fixed the column test; detail 6 now hits 'STOREFRONT PER SCHEDULE'. Martin marked it."}
+  ],
+  "added": [
+    {"item":"A3.1 SF-3", "sheet":"A3.1", "page":9, "subject":"All Glass Highlight", "rect":[1673,134,3276,205], "why":"Interior finish legend row SF-3 INTERIOR GLAZING — full-height frameless panels, 3M Fasara frost 36\" AFF, black/clear silicone notes, 'local glass contractor'. I keyword-counted GLASS on A3.1 but never parsed the legend rows. Martin colored it."},
+    {"item":"A3.1 D-8", "sheet":"A3.1", "page":9, "subject":"All Glass Highlight", "rect":[79,1255,1682,1291], "why":"Finish legend row D-8 INTERIOR GLASS DOOR 36\" x 84\", frosted to 36\", polished chrome trim, by local glass contractor. Same miss as SF-3."},
+    {"item":"A3.0 note 13", "sheet":"A3.0", "page":8, "subject":"All Glass Highlight", "rect":[1939,841,2553,871], "why":"Finish note 13: 'All frameless glass hardware to be polished aluminum; top and bottom trim 2\" thick max.' A scope note for the all-glass package. Not in my keyword list."},
+    {"item":"HW tables", "sheet":"A3.2", "page":10, "subject":"Ext CW Highlight", "rect":[134,629,430,786], "why":"Martin highlights each door type's HARDWARE table in the system color (types 1, 3, 5, 8, 30, 31a, 31b, 32 on A3.2; 101 on A3.3). I marked only the general hardware schedule."},
+    {"item":"FROST area", "sheet":"A3.3", "page":11, "subject":"Glass Film", "rect":[1077,296,1248,362], "why":"Martin measures the 36\" frost band as an Area on every frameless type (24 areas, drawn with the Glass Handrail Area tool). I carried the film as one implied line item (qty 23) with no square footage."},
+    {"item":"Counts", "sheet":"A3.3", "page":11, "subject":"Scope Note", "rect":[1073,340,1095,358], "why":"Martin places count symbols on each frameless type: SSG Caulk Count (76 silicone joints), Polished Edge Count (58 exposed edges), All Glass Doors (8). I had the door count only inside the descriptions and did not count joints or edges."},
+    {"item":"21 callout", "sheet":"A1.2", "page":2, "subject":"Scope Note", "rect":[2046,291,2188,366], "why":"Martin adds a 'Hollow Metal' callout at the type 21 window on the plan so the estimator knows the frame is by others."}
+  ],
+  "convention_differences": [
+    "Plan A1.2: Martin highlights the tag hexagon (same as me) AND draws a Polylength along the opening with its length (Ext SF / Ext CW / Int SF / All Glass Wall Polylength). I drew tag highlights only — I could not snap opening boxes on this reference plan.",
+    "Elevations A2.0: Martin places one Area per frame; at 30/31a/31b he drew a single 29'-0\" x 10'-4\" Area across the three types. I drew one per type.",
+    "Schedule A3.2/A3.3: Martin highlights the whole type drawing in the system color, plus the hardware table; one Qty box ('3 Thus' at 24–26); Length Measurements on 30/31a/31b/32. I used Qty boxes on every type.",
+    "Martin leaves overhead doors, Rytec doors, grilles and HM-only doors blank; I marked them red (considered and excluded) on plan and elevation.",
+    "Martin used Ext SF for type 8 (TMW 450 door frame); I classed every TMW 450 as Ext CW because the A2.0 legend calls SF-1 'curtain wall'. Every other TMW 450 type he also marked Ext CW, so the legend rule held except for the single door frame.",
+    "Martin measured the frost band with the Glass Handrail Area tool; the subject map should treat that as film area on this job.",
+    "Martin marked 15 detail titles on the 6 detail/section sheets in his set; I marked 70 titles/callouts across 19 sheets, 7 of which (A5.4–A5.9, A5.13, A6.1) are not in his set."
+  ],
+  "mine_only_judgment": [
+    "Bi-fold door pairs at types 1, 3, 5 carried as pass-thru items (bifold/auto-door sub) with frame prep by us.",
+    "Mirrors: 6 x 18\" x 36\" frameless plate glass (toilet accessory 8, no manufacturer) — flagged glazier vs accessory package.",
+    "GF-1 gradient film at the type 3 upper band — marked at A3.2 and in the A2.0 legend; RFI on DF-1/GF-1 naming.",
+    "24 ga pre-finished sill flashing under curtain wall sills (7 wall sections) — flagged for trade.",
+    "Door & frame note 12 (push bars at 1, 3, 5, 32) and the general hardware schedule.",
+    "RFIs: types 24–26 width 8'-0\" (schedule) vs 7'-0\" (elevation); narrow vs medium stile (legend vs schedule); film extent.",
+    "Glazing details on A5.4–A5.9, A5.13 and the mirror section on A6.1 (outside the 12-sheet bid set)."
+  ],
+  "scorecard": {
+    "objects_martin_marked": 91,
+    "found_blind": 86,
+    "found_pct": 94.5,
+    "false_scope": 0,
+    "classification_diffs": 1,
+    "size_errors_blind": 1,
+    "misses": ["A3.1 legend rows SF-3 and D-8", "A3.0 finish note 13", "SSG caulk joint count", "polished edge count"],
+    "partial": ["frost film: found as implied item, not measured (24 areas)", "all-glass door count: in descriptions, not as count symbols", "plan opening lengths (Polylength): not drawn"]
+  }
+}
