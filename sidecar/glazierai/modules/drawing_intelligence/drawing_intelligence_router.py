@@ -598,3 +598,31 @@ async def drawing_intelligence_health():
         "status": "ok",
         "anthropic_configured": bool(os.environ.get("ANTHROPIC_API_KEY")),
     }
+
+
+# ── Deterministic auto-takeoff (no model calls) ──────────────────────────────
+# Built from the Valvoline / McLarty manual takeoffs (2026-10-05).  Text layer
+# and vector geometry find, size and count the scope; rules.json classifies;
+# everything uncertain is flagged with a reason.  Runs in ~30 s on a 35-sheet set.
+
+class AutoTakeoffRequest(BaseModel):
+    pdf_path: str
+    project_name: str = ""
+    sheets: Optional[list[str]] = None          # limit to these sheet numbers
+    marked_pdf_path: Optional[str] = None       # when set, also write the markups into a copy of the set
+
+
+@router.post("/autotakeoff")
+async def run_autotakeoff_endpoint(req: AutoTakeoffRequest):
+    from glazierai.modules.drawing_intelligence.autotakeoff import run_autotakeoff, write_markups
+    if not os.path.exists(req.pdf_path):
+        raise HTTPException(status_code=404, detail=f"PDF not found: {req.pdf_path}")
+    try:
+        result = await run_in_threadpool(run_autotakeoff, req.pdf_path, req.project_name, req.sheets)
+        if req.marked_pdf_path:
+            n = await run_in_threadpool(write_markups, req.pdf_path, result, req.marked_pdf_path)
+            result["marked_pdf"] = {"path": req.marked_pdf_path, "annotations": n}
+        return result
+    except Exception as exc:
+        logger.exception(f"[DI] autotakeoff failed: {exc}")
+        raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}")

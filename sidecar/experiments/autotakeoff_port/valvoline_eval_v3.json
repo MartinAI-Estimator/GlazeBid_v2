@@ -1,0 +1,178 @@
+[
+ {
+  "mode": "ledger",
+  "objects": 9,
+  "found": 9,
+  "found_pct": 100.0,
+  "classified": 9,
+  "counted": 9,
+  "sized": "4/4",
+  "extra_scope_items": [
+   "GC#3"
+  ],
+  "misses": [],
+  "misclassified": [],
+  "miscounted": [],
+  "key": "experiments/manual_takeoff_valvoline/takeoff_blind.json"
+ },
+ {
+  "mode": "markups",
+  "objects": 44,
+  "found": 32,
+  "found_pct": 72.7,
+  "classified": 28,
+  "by_class": {
+   "ext_sf": {
+    "n": 26,
+    "found": 20
+   },
+   "int_sf": {
+    "n": 9,
+    "found": 6
+   },
+   "ext_sf_door": {
+    "n": 2,
+    "found": 2
+   },
+   "int_sf_door": {
+    "n": 1,
+    "found": 1
+   },
+   "glazing_only_door": {
+    "n": 2,
+    "found": 2
+   },
+   "glazing_only": {
+    "n": 3,
+    "found": 0
+   },
+   "break_metal": {
+    "n": 1,
+    "found": 1
+   }
+  },
+  "misses": [
+   [
+    "A-1.2",
+    "Ext SF Highlight",
+    [
+     1927,
+     1421,
+     2129,
+     1439
+    ]
+   ],
+   [
+    "A-1.2",
+    "Ext SF Highlight",
+    [
+     2143,
+     1295,
+     2159,
+     1411
+    ]
+   ],
+   [
+    "A-1.2",
+    "Int SF Highlight",
+    [
+     1904,
+     1282,
+     1921,
+     1422
+    ]
+   ],
+   [
+    "A-1.2",
+    "Ext SF Highlight",
+    [
+     1819,
+     883,
+     1888,
+     899
+    ]
+   ],
+   [
+    "A-5.2",
+    "Ext SF Highlight",
+    [
+     715,
+     1579,
+     1175,
+     1661
+    ]
+   ],
+   [
+    "A-6.1",
+    "Ext SF Highlight",
+    [
+     230,
+     848,
+     263,
+     880
+    ]
+   ],
+   [
+    "A-6.1",
+    "Ext SF Highlight",
+    [
+     1177,
+     850,
+     1210,
+     882
+    ]
+   ],
+   [
+    "A-6.1",
+    "Int SF Highlight",
+    [
+     894,
+     849,
+     925,
+     880
+    ]
+   ],
+   [
+    "A-6.1",
+    "Int SF Highlight",
+    [
+     1452,
+     846,
+     1483,
+     877
+    ]
+   ],
+   [
+    "A-6.1",
+    "Glazing Only Highlight",
+    [
+     69,
+     206,
+     365,
+     229
+    ]
+   ],
+   [
+    "A-6.1",
+    "Glazing Only Highlight",
+    [
+     69,
+     245,
+     365,
+     268
+    ]
+   ],
+   [
+    "A-6.1",
+    "Glazing Only Highlight",
+    [
+     1273,
+     355,
+     1334,
+     404
+    ]
+   ]
+  ],
+  "key": "experiments/manual_takeoff_valvoline/martin_markups.json"
+ }
+]

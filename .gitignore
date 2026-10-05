@@ -50,3 +50,7 @@ release/
 
 # Bundled sidecar Python runtime (built by npm run sidecar:bundle-python, ~120 MB)
 python-embed/
+
+# auto-takeoff scratch runs (large PDFs)
+_autotakeoff_runs/
+_to_delete/

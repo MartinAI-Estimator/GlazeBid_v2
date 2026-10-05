@@ -1,0 +1,894 @@
+[
+ {
+  "mode": "ledger",
+  "objects": 85,
+  "found": 85,
+  "found_pct": 100.0,
+  "classified": 85,
+  "counted": 85,
+  "sized": "16/42",
+  "extra_scope_items": [],
+  "misses": [],
+  "misclassified": [],
+  "miscounted": [],
+  "key": "experiments/manual_takeoff_mclarty/takeoff_blind.json"
+ },
+ {
+  "mode": "markups",
+  "objects": 283,
+  "found": 200,
+  "found_pct": 70.7,
+  "classified": 169,
+  "by_class": {
+   "ext_sf": {
+    "n": 44,
+    "found": 39
+   },
+   "ext_sf_door": {
+    "n": 1,
+    "found": 1
+   },
+   "ext_cw": {
+    "n": 41,
+    "found": 36
+   },
+   "int_sf": {
+    "n": 11,
+    "found": 9
+   },
+   "all_glass_wall": {
+    "n": 125,
+    "found": 73
+   },
+   "glazing_only": {
+    "n": 25,
+    "found": 18
+   },
+   "break_metal": {
+    "n": 4,
+    "found": 0
+   },
+   "all_glass_door": {
+    "n": 8,
+    "found": 0
+   },
+   "glass_handrail": {
+    "n": 24,
+    "found": 24
+   }
+  },
+  "misses": [
+   [
+    "A1.2",
+    "Ext SF Polylength",
+    [
+     441,
+     1398,
+     670,
+     1415
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext SF Polylength",
+    [
+     903,
+     1519,
+     950,
+     1536
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext SF Polylength",
+    [
+     933,
+     372,
+     1013,
+     390
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext SF Polylength",
+    [
+     820,
+     373,
+     900,
+     390
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext SF Polylength",
+    [
+     708,
+     372,
+     787,
+     390
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext CW Polylength",
+    [
+     428,
+     730,
+     570,
+     747
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext CW Polylength",
+    [
+     417,
+     928,
+     434,
+     1060
+    ]
+   ],
+   [
+    "A1.2",
+    "Int SF Polylength",
+    [
+     428,
+     1076,
+     501,
+     1092
+    ]
+   ],
+   [
+    "A1.2",
+    "Int SF Polylength",
+    [
+     428,
+     922,
+     501,
+     939
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext CW Polylength",
+    [
+     818,
+     681,
+     1064,
+     698
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext CW Polylength",
+    [
+     1059,
+     681,
+     1135,
+     698
+    ]
+   ],
+   [
+    "A1.2",
+    "Ext CW Polylength",
+    [
+     1122,
+     681,
+     1219,
+     698
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     942,
+     1427,
+     959,
+     1524
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     942,
+     1334,
+     959,
+     1441
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     942,
+     1242,
+     959,
+     1348
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     942,
+     982,
+     959,
+     1254
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     815,
+     685,
+     832,
+     747
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     1120,
+     684,
+     1137,
+     807
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     1207,
+     811,
+     1269,
+     828
+    ]
+   ],
+   [
+    "A1.2",
+    "All Glass Wall Polylength",
+    [
+     800,
+     1136,
+     817,
+     1202
+    ]
+   ],
+   [
+    "A1.2",
+    "Glazing Only Highlight",
+    [
+     1146,
+     1088,
+     1159,
+     1143
+    ]
+   ],
+   [
+    "A1.2",
+    "Glazing Only Highlight",
+    [
+     1195,
+     1018,
+     1208,
+     1061
+    ]
+   ],
+   [
+    "A1.2",
+    "Glazing Only Highlight",
+    [
+     1983,
+     373,
+     2033,
+     386
+    ]
+   ],
+   [
+    "A1.2",
+    "Glazing Only Highlight",
+    [
+     2025,
+     373,
+     2074,
+     386
+    ]
+   ],
+   [
+    "A1.2",
+    "Glazing Only Highlight",
+    [
+     2066,
+     373,
+     2116,
+     386
+    ]
+   ],
+   [
+    "A3.2",
+    "Break Metal Flashing & Trims",
+    [
+     763,
+     2123,
+     844,
+     2183
+    ]
+   ],
+   [
+    "A3.2",
+    "Break Metal Flashing & Trims",
+    [
+     691,
+     2096,
+     709,
+     2286
+    ]
+   ],
+   [
+    "A3.2",
+    "Break Metal Flashing & Trims",
+    [
+     1416,
+     2096,
+     1434,
+     2286
+    ]
+   ],
+   [
+    "A3.2",
+    "Break Metal Flashing & Trims",
+    [
+     941,
+     2096,
+     960,
+     2286
+    ]
+   ],
+   [
+    "A3.3",
+    "Glazing Only Highlight",
+    [
+     1419,
+     1286,
+     1494,
+     1364
+    ]
+   ],
+   [
+    "A3.3",
+    "Glazing Only Highlight",
+    [
+     1660,
+     1286,
+     1760,
+     1364
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1074,
+     168,
+     1091,
+     365
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1234,
+     168,
+     1251,
+     361
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1566,
+     172,
+     1583,
+     361
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1743,
+     171,
+     1760,
+     362
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2058,
+     172,
+     2075,
+     361
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2235,
+     171,
+     2252,
+     362
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2566,
+     171,
+     2583,
+     362
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     3076,
+     171,
+     3094,
+     362
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1233,
+     682,
+     1250,
+     873
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1322,
+     682,
+     1339,
+     872
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1647,
+     682,
+     1664,
+     873
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1856,
+     682,
+     1873,
+     873
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2196,
+     682,
+     2213,
+     873
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2273,
+     683,
+     2290,
+     873
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2646,
+     682,
+     2663,
+     873
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2734,
+     682,
+     2751,
+     873
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1680,
+     1757,
+     1697,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1921,
+     1757,
+     1938,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2220,
+     1757,
+     2237,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2258,
+     1757,
+     2275,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2468,
+     1757,
+     2485,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2564,
+     1757,
+     2581,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2738,
+     1757,
+     2755,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2875,
+     1756,
+     2892,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     3046,
+     1757,
+     3063,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     3184,
+     1757,
+     3201,
+     1947
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     144,
+     2281,
+     161,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     239,
+     2281,
+     256,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     414,
+     2281,
+     432,
+     2472
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     552,
+     2281,
+     569,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     723,
+     2281,
+     740,
+     2472
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     860,
+     2281,
+     878,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1008,
+     2281,
+     1025,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1103,
+     2281,
+     1120,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1278,
+     2281,
+     1296,
+     2472
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1416,
+     2281,
+     1433,
+     2472
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1587,
+     2280,
+     1604,
+     2472
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1724,
+     2281,
+     1742,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1900,
+     2281,
+     1917,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     1943,
+     2281,
+     1960,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2220,
+     2281,
+     2237,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2344,
+     2281,
+     2361,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2500,
+     2281,
+     2517,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Wall Polylength",
+    [
+     2624,
+     2281,
+     2641,
+     2471
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     1103,
+     353,
+     1130,
+     380
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     1600,
+     351,
+     1627,
+     378
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     2090,
+     352,
+     2117,
+     379
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     2597,
+     353,
+     2624,
+     380
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     3038,
+     352,
+     3066,
+     379
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     2680,
+     864,
+     2707,
+     891
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     1676,
+     863,
+     1703,
+     890
+    ]
+   ],
+   [
+    "A3.3",
+    "All Glass Doors",
+    [
+     1265,
+     862,
+     1292,
+     889
+    ]
+   ]
+  ],
+  "key": "experiments/manual_takeoff_mclarty/martin_markups.json"
+ }
+]

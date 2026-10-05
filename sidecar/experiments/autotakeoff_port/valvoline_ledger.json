@@ -1,0 +1,2398 @@
+{
+ "project": "Valvoline",
+ "pages": 75,
+ "read": [
+  {
+   "sheet": "G-3.1",
+   "page": 3,
+   "step": "schedule",
+   "items": 3
+  },
+  {
+   "sheet": "A-6.1",
+   "page": 44,
+   "step": "schedule",
+   "items": 15
+  },
+  {
+   "step": "legend",
+   "rows": 13,
+   "codes": []
+  },
+  {
+   "sheet": "A-1.1",
+   "page": 35,
+   "step": "plan",
+   "kind": "rect",
+   "tags": 0,
+   "unmatched": {
+    "UP": 1,
+    "12": 1,
+    "P13": 3,
+    "HW": 1,
+    "CW": 1
+   }
+  },
+  {
+   "sheet": "A-1.2",
+   "page": 36,
+   "step": "plan",
+   "kind": "rect",
+   "tags": 4,
+   "unmatched": {
+    "DN": 1,
+    "10": 2,
+    "17": 1,
+    "18": 1,
+    "20": 1,
+    "19": 1,
+    "15": 1,
+    "14": 1,
+    "16": 1,
+    "13": 1,
+    "11": 2,
+    "12": 1,
+    "FD": 4,
+    "24": 1,
+    "21": 1,
+    "22": 1,
+    "23": 1
+   }
+  },
+  {
+   "sheet": "A-3.1",
+   "page": 38,
+   "step": "elevation",
+   "snaps": 5,
+   "unsure": 0
+  },
+  {
+   "sheet": "A-3.2",
+   "page": 39,
+   "step": "elevation",
+   "snaps": 2,
+   "unsure": 0
+  },
+  {
+   "sheet": "A-7.1",
+   "page": 46,
+   "step": "elevation",
+   "snaps": 0,
+   "unsure": 0
+  },
+  {
+   "sheet": "A-7.2",
+   "page": 47,
+   "step": "elevation",
+   "snaps": 0,
+   "unsure": 0
+  },
+  {
+   "sheet": "A-2.1",
+   "page": 37,
+   "step": "details",
+   "hits": 1
+  },
+  {
+   "sheet": "A-6.1",
+   "page": 44,
+   "step": "details",
+   "hits": 7
+  },
+  {
+   "sheet": "A-6.2",
+   "page": 45,
+   "step": "details",
+   "hits": 9
+  },
+  {
+   "sheet": "A-7.1",
+   "page": 46,
+   "step": "details",
+   "hits": 1
+  },
+  {
+   "sheet": "A-5.2",
+   "page": 43,
+   "step": "details",
+   "hits": 1
+  },
+  {
+   "sheet": "A-3.1",
+   "page": 38,
+   "step": "details",
+   "hits": 2
+  },
+  {
+   "sheet": "A-3.2",
+   "page": 39,
+   "step": "details",
+   "hits": 1
+  },
+  {
+   "sheet": "A-7.2",
+   "page": 47,
+   "step": "details",
+   "hits": 2
+  },
+  {
+   "sheet": "G-3.1",
+   "page": 3,
+   "step": "details",
+   "hits": 2
+  }
+ ],
+ "skipped": [
+  "CS-1",
+  "C-0.0",
+  "C-0.1",
+  "C-1.0",
+  "C-1.1",
+  "C-1.01",
+  "C-2.0",
+  "C-3.0",
+  "C-3.1",
+  "C-4.0",
+  "C-4.1",
+  "C-4.2",
+  "C-5.0",
+  "C-5.1",
+  "C-5.5",
+  "C-5.6",
+  "C-6.0",
+  "C-7.0",
+  "C-7.1",
+  "C-7.2",
+  "C-8.0",
+  "L-1.0",
+  "L-1.1",
+  "L-1.2",
+  "",
+  "",
+  "",
+  "S-1.1",
+  "S-1.2",
+  "S-1.3",
+  "S-2.1",
+  "S-3.1",
+  "S-3.2",
+  "S-4.1",
+  "S-5.1",
+  "S-5.2",
+  "M-1.1",
+  "M-2.1",
+  "M-3.1",
+  "P-1.1",
+  "P-1.2",
+  "P-2.1",
+  "P-2.2",
+  "PP-4",
+  "E-1.1",
+  "E-2.1",
+  "E-2.2",
+  "E-3.1",
+  "E-4.1"
+ ],
+ "mark_symbol": {
+  "G-3.1|pictorial|": null,
+  "A-6.1|tabular|DOOR": "pill",
+  "A-6.1|tabular|STOREFRONT OPENING SCHEDULE": "rect"
+ },
+ "legend_classes": {},
+ "items": [
+  {
+   "id": "GC#3",
+   "cls": "mirror",
+   "kind": "scope",
+   "label": "GC#3 \u2014 1 Thus",
+   "desc": "WIRING BY GC, VIBRATION ISOLATION DAMPERS ON COMPESSOR SHALL BE INSTALLED BY 01/30/2025 100% SET ZONES (AIR COMPRESSOR SUPPLIED WITH OPTIONAL SIMPLEX CONTROL PANEL) 07/30/2025 REVISION #2 INSTALL ON BOTTOM OF AIR COMPRESSOR (1) STAND; ALL OTHERS WALL MOUNTED; PEX PIPING 100' HOSE SECURE TO WALL PER MANUFACTURER'S RECOMMENDATIONS SECURE TO WALL PER MANUFACTURER'S RECOMMENDATIONS MIRRORS TO BE INSTALLED ONLY IN STORES THAT ARE PROVIDING INSPECTION SERVICES.",
+   "location": null,
+   "w_in": 275.13,
+   "h_in": 32.2,
+   "frames": [
+    {
+     "rect": [
+      1945.2,
+      502.1,
+      2357.9,
+      526.3
+     ],
+     "w_in": 275.13,
+     "h_in": 16.13,
+     "bays": 2,
+     "rows": 1,
+     "mullions_x": [
+      1998.2
+     ],
+     "mullions_y": []
+    },
+    {
+     "rect": [
+      1945.2,
+      464.9,
+      2357.9,
+      489.0
+     ],
+     "w_in": 275.13,
+     "h_in": 16.07,
+     "bays": 2,
+     "rows": 1,
+     "mullions_x": [
+      1998.2
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 2,
+   "rows": 2,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 61.52,
+   "sf_total": 61.5,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "mirror: glazier vs toilet-accessory package \u2014 confirm",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "mirror: Frameless mirror \u2014 ours; flag glazier vs accessory package"
+   ],
+   "citations": [
+    "G-3.1 pictorial schedule type GC#3"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D1",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "D1 \u2014 1 Thus",
+   "desc": "NO.: D1 | ROOM NAME: CHANGING ROOM | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H6 SEE NOTES 1 & 12",
+   "location": null,
+   "w_in": 36.0,
+   "h_in": 84.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D1",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D2",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "D2 \u2014 1 Thus",
+   "desc": "NO.: D2 | ROOM NAME: WAITING | WIDTH: 3' - 0\" | HEIGHT: 7' - 10\" | TYPE MATERIAL: A AL/GL F1 ALUM. | FINISH: SEE SCHEDULE A-3.1 SEE SCHEDULE A-3.1 | HEAD: 4/A-6.2 | JAMB: 3/A-6.2 | THRESHOLD: 1/A-6.2 -- | COMMENTS: H1 SEE NOTES 1, 2, 3, 4, 5, 8, 9 & 11",
+   "location": null,
+   "w_in": 36.0,
+   "h_in": 93.87,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 23.47,
+   "sf_total": 23.5,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "elevation located by size only on A-3.1 \u2014 confirm"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name",
+    "size from A-3.1 elevation snap (schedule 3'-0\" x 7'-10\")"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D2",
+    "plan tags \u00d71",
+    "A-3.1 elevation \u00d71 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D3",
+   "cls": "int_sf_door",
+   "kind": "scope",
+   "label": "D3 \u2014 1 Thus",
+   "desc": "NO.: D3 | ROOM NAME: WAITING | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: A AL/GL -- ALUM. | FINISH: MATCH EXT. FINISH MATCH EXT. FINISH | HEAD: 18/A-6.2 | JAMB: 16/A-6.2 | THRESHOLD: 15/A-6.2 -- | COMMENTS: H2 SEE NOTES 1 & 8",
+   "location": "interior",
+   "w_in": 36.0,
+   "h_in": 83.93,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 20.98,
+   "sf_total": 21.0,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "elevation located by size only on A-3.1 \u2014 confirm"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name",
+    "size from A-3.1 elevation snap (schedule 3'-0\" x 7'-0\")",
+    "elevation shows 3 tag(s), plan 1"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D3",
+    "plan tags \u00d71",
+    "A-3.1 elevation \u00d73 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D4",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "D4 \u2014 1 Thus",
+   "desc": "NO.: D4 | ROOM NAME: UNISEX RESTROOM | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H6 SEE NOTES 1 & 12",
+   "location": null,
+   "w_in": 36.0,
+   "h_in": 84.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D4",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D5",
+   "cls": "glazing_only_door",
+   "kind": "scope",
+   "label": "D5 \u2014 1 Thus",
+   "desc": "NO.: D5 | ROOM NAME: OFFICE | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: C HM/GL F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H5 SEE NOTES 1, 11, & 12",
+   "location": null,
+   "w_in": 36.0,
+   "h_in": 84.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 21.0,
+   "sf_total": 21.0,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D5",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D6",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "D6 \u2014 1 Thus",
+   "desc": "NO.: D6 | ROOM NAME: ACCESS CHASE | WIDTH: 1' - 6\" | HEIGHT: 1' - 6\" | TYPE MATERIAL: E S. STEEL -- S. STEEL | FINISH: STAINLESS STEEL STAINLESS STEEL | HEAD: 10/A-6.2 | JAMB: 10/A-6.2 | THRESHOLD: 10/A-6.2 -- | COMMENTS: -- SEE NOTES 4,5,7,9,& 11",
+   "location": null,
+   "w_in": 18.0,
+   "h_in": 18.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D6",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D7",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "D7 \u2014 1 Thus",
+   "desc": "NO.: D7 | ROOM NAME: MECHANICAL | WIDTH: 6' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F3 HM | FINISH: PT-2 PT-2 | HEAD: 8/A-6.2 | JAMB: 7/A-6.2 | THRESHOLD: 6/A-6.2 -- | COMMENTS: H3 SEE NOTES 1, 2, 4, 5, 8, 9, & 11",
+   "location": null,
+   "w_in": 72.0,
+   "h_in": 84.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D7",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D8",
+   "cls": "glazing_only_door",
+   "kind": "scope",
+   "label": "D8 \u2014 1 Thus",
+   "desc": "NO.: D8 | ROOM NAME: UTILITY | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: C HM/GL F2 HM/GL | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H4 SEE NOTES 1 & 12",
+   "location": null,
+   "w_in": 36.0,
+   "h_in": 84.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 21.0,
+   "sf_total": 21.0,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D8",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D9",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "D9 \u2014 1 Thus",
+   "desc": "NO.: D9 | ROOM NAME: SERVICE BAYS | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: A AL/GL F3 ALUM. | FINISH: SEE SCHEDULE A-3.1 SEE SCHEDULE A-3.1 | HEAD: 5/A-6.2 | JAMB: 2/A-6.2 | THRESHOLD: 1/A-6.2 -- | COMMENTS: H1 SEE NOTES 1, 2, 3, 4, 5, 8, 9 & 11",
+   "location": null,
+   "w_in": 36.0,
+   "h_in": 84.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 21.0,
+   "sf_total": 21.0,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D9",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D10",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "D10 \u2014 1 Thus",
+   "desc": "NO.: D10 | ROOM NAME: DRUM TRANSFER STATION | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H8 SEE NOTES 1 & 12",
+   "location": null,
+   "w_in": 36.0,
+   "h_in": 84.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D10",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D12",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "D12 \u2014 4 Thus",
+   "desc": "NO.: D12 | ROOM NAME: SERVICE BAYS | WIDTH: 10' - 0\" | HEIGHT: 12' - 0\" | TYPE MATERIAL: D -- -- -- | FINISH: SEE SCHEDULE A-3.1 SEE SCHEDULE A-3.1 | HEAD: 13/A-6.2 | JAMB: 12/A-6.2 | THRESHOLD: 11/A-6.2 -- | COMMENTS: H7 SEE NOTES 6 & 9",
+   "location": null,
+   "w_in": 120.0,
+   "h_in": 144.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 4,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "no classification rule matched \u2014 review",
+    "door type D: no material named; drawing reads as a sectional overhead door (1 panels, 10'-0\" x 12'-0\") \u2014 excluded, confirm"
+   ],
+   "notes": [
+    "door type D drawing: 3x1 panels, looks divided"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D12",
+    "plan tags \u00d74"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "A \u2014 1 Thus",
+   "desc": "SIZE WXH: 10'-8\" x 10'-0\" | MARK: A | JAMB: 3/A-6.2 | SILL: 1/A-6.2 | FRAME TYPE: F1 | HEAD: 4/A-6.2 | GLAZING: 1\" INSULATING GLASS | FRAME: 2\"x4 1/2\" EXTRUDED ALUM. | FINISH: SEE SCHEDULE A-3.1 | REMARKS: \"KAWNEER\" TRI-FAB VG 451T",
+   "location": null,
+   "w_in": 128.0,
+   "h_in": 120.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 106.67,
+   "sf_total": 106.7,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "TRIFAB VG 451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type A",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "B \u2014 1 Thus",
+   "desc": "SIZE WXH: 5'-10\" x 6'-0\" | MARK: B | HEAD: 4/A-6.2 SIM | FRAME TYPE: F5 | REMARKS: \"KAWNEER\" TRI-FAB VG 451T | SILL: 2/A-6.1 | JAMB: 3/A-6.2 SIM | GLAZING: 1\" INSULATING GLASS | FRAME: 2\"x4 1/2\" EXTRUDED ALUM. | FINISH: SEE SCHEDULE A-3.1",
+   "location": null,
+   "w_in": 70.53,
+   "h_in": 71.93,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 35.23,
+   "sf_total": 35.2,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "TRIFAB VG 451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior",
+    "elevation located by size only on A-3.1 \u2014 confirm"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "size from A-3.1 elevation snap (schedule 5'-10\" x 6'-0\")",
+    "elevation shows 3 tag(s), plan 1"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type B",
+    "plan tags \u00d71",
+    "A-3.1 elevation \u00d73 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "C",
+   "cls": "int_sf",
+   "kind": "scope",
+   "label": "C \u2014 1 Thus",
+   "desc": "SIZE WXH: 7'-3\" x 7'-2\" | MARK: C | FRAME TYPE: F4 | HEAD: 4/A-6.1 | REMARKS: \"KAWNEER\" TRI-FAB VG 451T | JAMB: 16/A-6.2 | SILL: 1/A-6.1 | GLAZING: 1\" INSULATING GLASS | FRAME: 2\"x4 1/2\" EXTRUDED ALUM. | FINISH: MATCH EXTERIOR FINISH",
+   "location": "interior",
+   "w_in": 87.0,
+   "h_in": 86.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 51.96,
+   "sf_total": 52.0,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "TRIFAB VG 451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type C",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D",
+   "cls": "int_sf",
+   "kind": "scope",
+   "label": "D \u2014 1 Thus",
+   "desc": "SIZE WXH: 5'-4\" x 3'-8\" | MARK: D | FRAME TYPE: F6 | HEAD: 4/A-6.1 | JAMB: 4/A-6.1 | SILL: 3/A-6.1 | REMARKS: \"KAWNEER\" TRI-FAB VG 451T | GLAZING: 1\" INSULATING GLASS | FRAME: 2\"x4 1/2\" EXTRUDED ALUM. | FINISH: MATCH EXTERIOR FINISH",
+   "location": "interior",
+   "w_in": 64.0,
+   "h_in": 44.0,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 19.56,
+   "sf_total": 19.6,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "TRIFAB VG 451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A-6.1 tabular schedule type D",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "G-3.1 note 2",
+   "cls": "mirror",
+   "kind": "scope",
+   "label": "2 (G-3.1)",
+   "desc": "GRAINGER 1CYZ1 OWNER GC MIRRORS TO BE INSTALLED ONLY IN STORES THAT ARE PROVIDING INSPECTION SERVICES.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ],
+   "notes": [
+    "mirror: Frameless mirror \u2014 ours; flag glazier vs accessory package"
+   ],
+   "citations": [
+    "G-3.1 note row 2"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 1",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "1 (A-6.1)",
+   "desc": "THRESHOLD KAWNEER 4\"x 1/2\" OFFSET (FINISH TO MATCH DOOR) PUSH/PULL KAWNEER CLASSIC CP-II, CO-12 (FINISH TO MATCH DOOR)",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "manufacturer named (KAWNEER), no series match \u2192 ext_sf"
+   ],
+   "citations": [
+    "A-6.1 note row 1"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 1",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "1 (A-6.1)",
+   "desc": "RIM EXIT DEVICE KAWNEER 1786 RIM EXIT DEVICE 1",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "manufacturer named (KAWNEER), no series match \u2192 ext_sf"
+   ],
+   "citations": [
+    "A-6.1 note row 1"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 1",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "1 (A-6.1)",
+   "desc": "THRESHOLD KAWNEER 4\" x 1/2\" OFFSET (FINISH TO MATCH DOOR) PUSH/PULL KAWNEER CLASSIC CP-II, CO-12 (FINISH TO MATCH DOOR)",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "manufacturer named (KAWNEER), no series match \u2192 ext_sf"
+   ],
+   "citations": [
+    "A-6.1 note row 1"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 1",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "1 (A-6.1)",
+   "desc": "DOOR STOP KAWNEER FLOOR MOUNTED (FINISH TO MATCH DOOR) HINGES HAGER BB1279 4.5 x 4.5 US26D",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "manufacturer named (KAWNEER), no series match \u2192 ext_sf"
+   ],
+   "citations": [
+    "A-6.1 note row 1"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 8",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "8 (A-6.1)",
+   "desc": "8. STOREFRONT DOORS TYPE \"A\" SHALL BE KAWNEER MEDIUM STILE OR EQUAL W/FINISH TO MATCH ADJACENT.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.1 note row 8"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 1",
+   "cls": "glazing_only",
+   "kind": "scope",
+   "label": "1 (A-6.1)",
+   "desc": "1. PROVIDE TEMPERED OR SAFETY GLAZING FOR GLAZING IN HAZARDOUS LOCATIONS SUCH AS: GLASS DOORS,",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "notes": [
+    "glass_generic: Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "citations": [
+    "A-6.1 note row 1"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 2",
+   "cls": "glazing_only",
+   "kind": "scope",
+   "label": "2 (A-6.1)",
+   "desc": "2. GLAZING ADJACENT A DOOR WHERE THE NEAREST VERTICAL EDGE IS WITHIN A  24\" RADIUS OF THE DOOR IN A",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "notes": [
+    "glass_generic: Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "citations": [
+    "A-6.1 note row 2"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 5",
+   "cls": "all_glass_wall",
+   "kind": "scope",
+   "label": "5 (A-6.1)",
+   "desc": "5. ALL GLASS SHALL BE CLEAR UNLESS OTHERWISE NOTED OR SPECIFIED.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "all_glass: Frameless / all-glass \u2014 All Glass Wall; film, SSG joints and polished edges implied"
+   ],
+   "citations": [
+    "A-6.1 note row 5"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 6",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "6 (A-6.1)",
+   "desc": "6. VERIFY WIND SPEED AND IMPACT REQUIREMENTS PRIOR TO STOREFRONT AND DOOR PROCUREMENT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.1 note row 6"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 7",
+   "cls": "all_glass_wall",
+   "kind": "scope",
+   "label": "7 (A-6.1)",
+   "desc": "7. ALL GLASS SHALL BE 1\" INSULATED WITH VALUES AS NOTED IN THE ENVELOPE COMPLIANCE CERTIFICATE.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "all_glass: Frameless / all-glass \u2014 All Glass Wall; film, SSG joints and polished edges implied"
+   ],
+   "citations": [
+    "A-6.1 note row 7"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 note 8",
+   "cls": "unclassified",
+   "kind": "note",
+   "label": "8 (A-6.1)",
+   "desc": "8. SPANDREL PANEL/FILM TO BE BLACK.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ],
+   "notes": [],
+   "citations": [
+    "A-6.1 note row 8"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A-1.2 legend SS-1",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "SS-1 (A-1.2)",
+   "desc": "BAJA MELANGE #9030 ML WILSONART GIBRALTER (WINDOW SILLS )",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "solid_surface_sill: Solid-surface / stone window sill \u2014 by others (finish legend)"
+   ],
+   "citations": [
+    "A-1.2 legend row SS-1"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "legend",
+   "allglass": null
+  },
+  {
+   "id": "A-2.1 det 4",
+   "cls": "unclassified",
+   "kind": "detail",
+   "label": "4/A-2.1 GUTTER/ EAVE DETAIL",
+   "desc": "BRAKE METAL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ],
+   "notes": [],
+   "citations": [
+    "A-2.1 detail 4 (GUTTER/ EAVE DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 det ?",
+   "cls": "glazing_only",
+   "kind": "detail",
+   "label": "?/A-6.1 DOOR HARDWARE",
+   "desc": "GLASS; GLAZING; TEMPERED",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "notes": [
+    "glass_generic: Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "citations": [
+    "A-6.1 detail ? (DOOR HARDWARE)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 det ?",
+   "cls": "glazing_only",
+   "kind": "detail",
+   "label": "?/A-6.1 STOREFRONT OPENING SCHEDULE",
+   "desc": "GLAZING; TEMPERED",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "notes": [
+    "glass_generic: Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
+   "citations": [
+    "A-6.1 detail ? (STOREFRONT OPENING SCHEDULE)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 det 4",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "4/A-6.1 INTERIOR S.F. HEAD/ JAMB DETAIL",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.1 detail 4 (INTERIOR S.F. HEAD/ JAMB DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 det 1",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "1/A-6.1 STOREFRONT OPENING SILL DETAIL",
+   "desc": "GLASS; STOREFRONT; TEMPERED",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.1 detail 1 (STOREFRONT OPENING SILL DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 det 2",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "2/A-6.1 STOREFRONT OPENING SILL DETAIL",
+   "desc": "ALUM. FRAME; ALUM. SILL; ALUMINUM SILL; BRAKE METAL; GLASS; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Sill flashing / pan under our frame \u2014 flag for trade (24 ga pre-finished is often the GC's)",
+     "rule": "sill_flashing"
+    },
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [
+    "Sill flashing / pan under our frame \u2014 flag for trade (24 ga pre-finished is often the GC's)"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.1 detail 2 (STOREFRONT OPENING SILL DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 det 3",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "3/A-6.1 INTERIOR S.F. SILL DETAIL",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.1 detail 3 (INTERIOR S.F. SILL DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.1 det 5",
+   "cls": "all_glass_wall",
+   "kind": "detail",
+   "label": "5/A-6.1 PIER DETAIL",
+   "desc": "BRAKE METAL; GLASS; GLAZING; SPANDREL; STOREFRONT; TEMPERED",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "all_glass: Frameless / all-glass \u2014 All Glass Wall; film, SSG joints and polished edges implied"
+   ],
+   "citations": [
+    "A-6.1 detail 5 (PIER DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 4",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "4/A-6.2 STOREFRONT DOOR TRANSOM DETAIL",
+   "desc": "BRAKE METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 4 (STOREFRONT DOOR TRANSOM DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 3",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "3/A-6.2 STOREFRONT JAMB / SIDELITE DETAIL",
+   "desc": "BREAK METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 3 (STOREFRONT JAMB / SIDELITE DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 2",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "2/A-6.2 STOREFRONT DOOR JAMB DETAIL",
+   "desc": "BREAK METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 2 (STOREFRONT DOOR JAMB DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 1",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "1/A-6.2 STOREFRONT DOOR THRESHOLD DETAIL",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 1 (STOREFRONT DOOR THRESHOLD DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 10",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "10/A-6.2 ACCESS DOOR HEAD / JAMB DETAIL",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 10 (ACCESS DOOR HEAD / JAMB DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 5",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "5/A-6.2 STOREFRONT DOOR HEAD DETAIL",
+   "desc": "DBL. ALUM; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 5 (STOREFRONT DOOR HEAD DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 18",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "18/A-6.2 INTERIOR STOREFRONT DOOR HEAD DETAIL",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 18 (INTERIOR STOREFRONT DOOR HEAD DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 16",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "16/A-6.2 INTERIOR DOOR JAMB DETAIL",
+   "desc": "BREAK METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 16 (INTERIOR DOOR JAMB DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-6.2 det 14",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "14/A-6.2 CANOPY DETAIL",
+   "desc": "ALUMINUM FRAME",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-6.2 detail 14 (CANOPY DETAIL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-7.1 det 15",
+   "cls": "mirror",
+   "kind": "detail",
+   "label": "15/A-7.1 UNISEX TOILET",
+   "desc": "MIRROR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ],
+   "notes": [
+    "mirror: Frameless mirror \u2014 ours; flag glazier vs accessory package"
+   ],
+   "citations": [
+    "A-7.1 detail 15 (UNISEX TOILET)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-5.2 det 1",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "1/A-5.2 WALL SECTION @ WINDOW",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-5.2 detail 1 (WALL SECTION @ WINDOW)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-3.1 det 2",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "2/A-3.1 EXTERIOR ELEVATION (OVERALL RIGHT)",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-3.1 detail 2 (EXTERIOR ELEVATION (OVERALL RIGHT))"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-3.1 det ?",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "?/A-3.1 SIGNAGE SCHEDULE",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-3.1 detail ? (SIGNAGE SCHEDULE)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-3.2 det ?",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "?/A-3.2 SIGNAGE SCHEDULE",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-3.2 detail ? (SIGNAGE SCHEDULE)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-7.2 det 6",
+   "cls": "mirror",
+   "kind": "detail",
+   "label": "6/A-7.2 SERVICE BAYS",
+   "desc": "MIRROR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ],
+   "notes": [
+    "mirror: Frameless mirror \u2014 ours; flag glazier vs accessory package"
+   ],
+   "citations": [
+    "A-7.2 detail 6 (SERVICE BAYS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A-7.2 det 7",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "7/A-7.2 SERVICE BAYS",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A-7.2 detail 7 (SERVICE BAYS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "G-3.1 det 2",
+   "cls": "mirror",
+   "kind": "detail",
+   "label": "2/G-3.1 OPERATIONS PLAN - UPPER LEVEL",
+   "desc": "MIRROR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ],
+   "notes": [
+    "mirror: Frameless mirror \u2014 ours; flag glazier vs accessory package"
+   ],
+   "citations": [
+    "G-3.1 detail 2 (OPERATIONS PLAN - UPPER LEVEL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "G-3.1 det ?",
+   "cls": "mirror",
+   "kind": "detail",
+   "label": "?/G-3.1 PREFERRED VENDORS",
+   "desc": "MIRROR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ],
+   "notes": [
+    "mirror: Frameless mirror \u2014 ours; flag glazier vs accessory package"
+   ],
+   "citations": [
+    "G-3.1 detail ? (PREFERRED VENDORS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  }
+ ],
+ "flags": [
+  {
+   "item": "GC#3",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "mirror: glazier vs toilet-accessory package \u2014 confirm",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "D2",
+   "flags": [
+    "elevation located by size only on A-3.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "D3",
+   "flags": [
+    "elevation located by size only on A-3.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "D12",
+   "flags": [
+    "no classification rule matched \u2014 review",
+    "door type D: no material named; drawing reads as a sectional overhead door (1 panels, 10'-0\" x 12'-0\") \u2014 excluded, confirm"
+   ]
+  },
+  {
+   "item": "A",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "B",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior",
+    "elevation located by size only on A-3.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "G-3.1 note 2",
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ]
+  },
+  {
+   "item": "A-6.1 note 1",
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A-6.1 note 1",
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A-6.1 note 1",
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A-6.1 note 1",
+   "flags": [
+    "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A-6.1 note 8",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A-6.1 note 1",
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ]
+  },
+  {
+   "item": "A-6.1 note 2",
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ]
+  },
+  {
+   "item": "A-6.1 note 6",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A-6.1 note 8",
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ]
+  },
+  {
+   "item": "A-2.1 det 4",
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ]
+  },
+  {
+   "item": "A-6.1 det ?",
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ]
+  },
+  {
+   "item": "A-6.1 det ?",
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ]
+  },
+  {
+   "item": "A-6.1 det 2",
+   "flags": [
+    "Sill flashing / pan under our frame \u2014 flag for trade (24 ga pre-finished is often the GC's)"
+   ]
+  },
+  {
+   "item": "A-7.1 det 15",
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ]
+  },
+  {
+   "item": "A-7.2 det 6",
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ]
+  },
+  {
+   "item": "G-3.1 det 2",
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ]
+  },
+  {
+   "item": "G-3.1 det ?",
+   "flags": [
+    "mirror: glazier vs toilet-accessory package \u2014 confirm"
+   ]
+  }
+ ],
+ "totals": {
+  "mirror": {
+   "items": 1,
+   "qty": 1,
+   "sf": 61.5
+  },
+  "ext_sf_door": {
+   "items": 2,
+   "qty": 2,
+   "sf": 44.5
+  },
+  "int_sf_door": {
+   "items": 1,
+   "qty": 1,
+   "sf": 21.0
+  },
+  "glazing_only_door": {
+   "items": 2,
+   "qty": 2,
+   "sf": 42.0
+  },
+  "ext_sf": {
+   "items": 2,
+   "qty": 2,
+   "sf": 141.9
+  },
+  "int_sf": {
+   "items": 2,
+   "qty": 2,
+   "sf": 71.6
+  }
+ },
+ "elapsed_s": 33.2,
+ "model_calls": 0,
+ "markups_count": 196
+}

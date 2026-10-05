@@ -1,0 +1,506 @@
+"""
+pipeline.py — the deterministic auto-takeoff.
+
+    result = run_autotakeoff(pdf_path, project_name="")   -> dict (JSON-safe)
+
+Order (Martin's): sheet index → schedules → legends on every legend/schedule/
+elevation sheet → floor-plan tag census (the count) → elevation snap (W×H,
+bays/rows) → details by keyword → classification → ledger + markups + flags.
+
+Every item carries: mark, class, Bluebeam subject, W/H in inches, bays/rows,
+qty (plan count; schedule when no plan), sf, flags with reasons, and the
+markups (sheet, page, rect, subject, role, text) that cite it.  No model
+calls anywhere in this module.
+"""
+from __future__ import annotations
+
+import json
+import logging
+import re
+import time
+from dataclasses import dataclass, field, asdict
+
+try:
+    import pymupdf as fitz
+except ImportError:  # PyMuPDF < 1.24.3
+    import fitz
+
+from .sheet_index import build_index, SheetInfo
+from .schedules import read_schedule_sheet, ScheduleEntry
+from .legend import legend_rows, legend_classes, LegendRow
+from .plans import plan_census, merge_counts, PlanCensus
+from .elevations import snap_elevation, sched_sizes, ElevSnap
+from .details import find_details, Detail
+from .classify import classify, detail_keywords, class_kind, Classification
+from .subjects import subject_for, FLAG, EXCLUDED
+from .units import fmt_in, sf as sqft, page_ppf
+from .pdfgeom import clear_cache, text_lines, segments
+
+logger = logging.getLogger(__name__)
+
+READ_ORDER = ("schedule", "legend", "plan", "elevation", "enlarged", "section", "detail")
+DEFAULT_PPF = {"schedule": 18.0, "plan": 9.0, "elevation": 9.0, "enlarged": 18.0, "section": 18.0, "detail": 72.0}
+
+
+@dataclass
+class Markup:
+    item: str
+    sheet: str
+    page: int
+    subject: str
+    role: str                 # region | area | linear | door | count | label | flag
+    rect: list | None = None
+    points: list | None = None
+    text: str = ""
+    stroke: str = ""
+    fill: str = ""
+    opacity: float | None = None
+    dashed: bool = False
+    note: str = ""
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
+class Item:
+    id: str
+    cls: str
+    kind: str
+    label: str
+    desc: str = ""
+    location: str | None = None
+    w_in: float | None = None
+    h_in: float | None = None
+    frames: list = field(default_factory=list)
+    bays: int | None = None
+    rows: int | None = None
+    qty: int | None = None
+    qty_source: str = ""
+    sf_each: float | None = None
+    sf_total: float | None = None
+    series: list = field(default_factory=list)
+    hardware: list = field(default_factory=list)
+    implied: list = field(default_factory=list)
+    flags: list = field(default_factory=list)
+    notes: list = field(default_factory=list)
+    citations: list = field(default_factory=list)   # "A3.2 type 1", "A1.2 tag ×1", "A2.0 elev snapped"
+    pair: bool = False
+    stile: str | None = None
+    is_door: bool = False
+    source: str = "schedule"      # schedule | legend | note | detail
+    allglass: dict | None = None  # frameless measures (panels, joints, edges, doors, film)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+def _loc_hint(sheet: SheetInfo) -> str | None:
+    t = sheet.title.upper()
+    if "EXTERIOR" in t:
+        return "exterior"
+    if "INTERIOR" in t:
+        return "interior"
+    return None
+
+
+def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[str] | None = None) -> dict:
+    t0 = time.time()
+    clear_cache()
+    doc = fitz.open(pdf_path)
+    index = build_index(doc)
+    arch = [s for s in index if s.discipline.upper().startswith(("A", "G", "I")) and s.category != "cover"]
+    if sheets_limit:
+        arch = [s for s in arch if s.sheet in sheets_limit]
+    by_cat: dict[str, list[SheetInfo]] = {}
+    for s in arch:
+        for c in s.categories:
+            by_cat.setdefault(c, []).append(s)
+
+    out: dict = {"project": project_name, "pdf": pdf_path, "pages": len(doc),
+                 "sheets": [s.to_dict() for s in index], "read": [], "skipped": []}
+
+    # ── 1. schedules ────────────────────────────────────────────────────────
+    entries: list[ScheduleEntry] = []
+    for s in by_cat.get("schedule", []):
+        es = read_schedule_sheet(doc[s.page], s.sheet, DEFAULT_PPF["schedule"])
+        entries += es
+        out["read"].append({"sheet": s.sheet, "page": s.page, "step": "schedule", "items": len(es)})
+    # elevation sheets sometimes carry the pictorial schedule (storefront types)
+    for s in by_cat.get("elevation", []):
+        if s in by_cat.get("schedule", []):
+            continue
+        from .classify import is_glazing_text
+        es = [e for e in read_schedule_sheet(doc[s.page], s.sheet, DEFAULT_PPF["schedule"])
+              if (e.frames or e.layout == "tabular") and is_glazing_text(e.desc)]
+        if es:
+            entries += es
+            out["read"].append({"sheet": s.sheet, "page": s.page, "step": "schedule(on elevation sheet)", "items": len(es)})
+    # one entry per mark: when two schedule sheets carry the same mark, keep the
+    # one with a drawing / size; the other is a stray (detail bubble, enlarged plan)
+    best: dict[str, ScheduleEntry] = {}
+    for e in entries:
+        cur = best.get(e.mark)
+        if cur is None or (not cur.frames and not cur.w_in and (e.frames or e.w_in)):
+            best[e.mark] = e
+    entries = list(best.values())
+    # a pictorial "type" with neither a drawing nor a size is not an opening we can carry
+    dropped = [e for e in entries if e.layout == "pictorial" and not e.frames and not e.w_in]
+    entries = [e for e in entries if e not in dropped]
+    out["skipped_entries"] = [{"sheet": e.sheet, "mark": e.mark, "text": e.desc[:80]} for e in dropped]
+    marks = {e.mark for e in entries}
+    sched, alias = sched_sizes(entries)
+    sched_marks = set(sched.keys()) | marks
+
+    # ── 2. legends / notes on every legend, schedule, elevation and plan sheet ──
+    rows: list[LegendRow] = []
+    seen_rows: set[tuple] = set()
+    for cat in ("legend", "schedule", "elevation", "plan"):
+        for s in by_cat.get(cat, []):
+            for r in legend_rows(doc[s.page], s.sheet):
+                k = (r.page, r.code, round(r.rect[1] / 5))
+                if k in seen_rows:
+                    continue
+                seen_rows.add(k)
+                rows.append(r)
+    # drop legend "rows" that are really schedule-table cells
+    table_rects = [(e.page, fitz.Rect(e.label_rect)) for e in entries if e.layout == "tabular" and e.label_rect]
+    rows = [r for r in rows if not any(p == r.page and R.intersects(fitz.Rect(r.rect)) and R.width > 300 for p, R in table_rects)]
+    lclasses = legend_classes(rows)
+    out["read"].append({"step": "legend", "rows": len(rows), "codes": sorted(lclasses.keys())})
+
+    # ── 3. plan census (the count) ──────────────────────────────────────────
+    censuses: list[PlanCensus] = []
+    plan_sheets = by_cat.get("plan", [])
+    # Each schedule FAMILY (a table, or a pictorial sheet) uses one callout symbol
+    # on the plans: door marks in pills, window marks in rectangles, etc.  The
+    # family's symbol is the kind that matches the most distinct marks on any plan.
+    from .elevations import mark_kind
+    from collections import Counter
+    families: dict[str, set] = {}
+    for e in entries:
+        fam = f"{e.sheet}|{e.layout}|{e.table}"
+        families.setdefault(fam, set()).add(e.mark)
+    fam_kind: dict[str, str | None] = {}
+    for fam, fmarks in families.items():
+        cnt: Counter = Counter()
+        for s in plan_sheets:
+            k = mark_kind(doc[s.page], fmarks, alias)
+            if k:
+                pc0 = plan_census(doc[s.page], s.sheet, fmarks, alias, kind=k)
+                cnt[k] += len(pc0.counts)
+        fam_kind[fam] = cnt.most_common(1)[0][0] if cnt else None
+    out["mark_symbol"] = {fam: k for fam, k in fam_kind.items()}
+    for s in plan_sheets:
+        merged = PlanCensus(s.sheet, s.page, None)
+        for fam, fmarks in families.items():
+            if not fam_kind[fam]:
+                continue
+            pc = plan_census(doc[s.page], s.sheet, fmarks, alias, kind=fam_kind[fam])
+            for m, n in pc.counts.items():
+                merged.counts[m] = merged.counts.get(m, 0) + n
+                merged.tags.setdefault(m, []).extend(pc.tags.get(m, []))
+            for m, n in pc.unmatched.items():
+                if m not in sched_marks:
+                    merged.unmatched[m] = max(merged.unmatched.get(m, 0), n)
+            merged.kind = fam_kind[fam] if merged.kind is None else merged.kind
+        censuses.append(merged)
+        out["read"].append({"sheet": s.sheet, "page": s.page, "step": "plan", "kind": pc.kind,
+                            "tags": sum(pc.counts.values()), "unmatched": pc.unmatched})
+    plan_counts = merge_counts(censuses, {s.sheet: s.title for s in index})
+
+    # ── 3b. classify schedule entries (needed to decide what to snap) ──────
+    sheet_of = {s.page: s for s in index}
+
+    def legend_for(text: str):
+        for code, lc in lclasses.items():
+            if re.search(r"(?<![A-Z0-9])" + re.escape(code) + r"(?![A-Z0-9])", text, re.I):
+                return code, lc["cls"]
+        return None, None
+
+    cls_of: dict[int, Classification] = {}
+    from .schedules import type_drawings
+    tdraw: dict[int, dict] = {}
+    for e in entries:
+        s = sheet_of[e.page]
+        txt = e.desc if e.layout == "tabular" else " ".join(e.text)
+        is_door = e.layout == "tabular" and "DOOR" in (e.table or "").upper()
+        code, lcls = legend_for(txt)
+        c = classify(txt, location=_loc_hint(s), legend_class=lcls, is_door=is_door, legend_code=code)
+        # tabular door with a TYPE letter: read the door-type drawing's geometry
+        if e.layout == "tabular" and c.cls == "unclassified":
+            cells = {k.upper(): v for k, v in e.cells.items()}
+            typ = (cells.get("TYPE") or cells.get("TYPE MATERIAL") or "").split()
+            letter = typ[0] if typ and re.fullmatch(r"[A-Z]\d?", typ[0]) else None
+            if letter:
+                if e.page not in tdraw:
+                    tdraw[e.page] = type_drawings(doc[e.page])
+                td = tdraw[e.page].get(letter)
+                if td:
+                    c.notes.append(f"door type {letter} drawing: {td['bays']}x{td['rows']} panels, looks {td['look']}")
+                    if td["look"] == "sectional" or (e.w_in and e.h_in and e.w_in >= 96 and e.h_in >= 96):
+                        c.cls, c.kind = "excluded", "excluded"
+                        c.flags.append(f"door type {letter}: no material named; drawing reads as a sectional overhead door ({td['rows']} panels, {fmt_in(e.w_in)} x {fmt_in(e.h_in)}) — excluded, confirm")
+        cls_of[id(e)] = c
+    scope_sched = {m: v for m, v in sched.items() if any(cls_of[id(e)].kind in ("scope", "pass_thru") for e in entries if e.mark == m)}
+
+    # ── 4. elevation snap (scope marks only — nobody measures an HM door) ──
+    snaps: list[ElevSnap] = []
+    from .elevations import size_search
+    for s in by_cat.get("elevation", []):
+        ss = snap_elevation(doc[s.page], s.sheet, scope_sched, alias, DEFAULT_PPF["elevation"])
+        tagged = {x.mark for x in ss}
+        untagged = {m: v for m, v in scope_sched.items() if m not in tagged}
+        if untagged and "INTERIOR" not in s.title.upper():
+            ss += size_search(doc[s.page], s.sheet, untagged, default_ppf=DEFAULT_PPF["elevation"])
+        snaps += ss
+        out["read"].append({"sheet": s.sheet, "page": s.page, "step": "elevation", "snaps": len(ss),
+                            "unsure": sum(1 for x in ss if x.unsure)})
+
+    # ── 5. details ──────────────────────────────────────────────────────────
+    KW = detail_keywords()
+    details: list[Detail] = []
+    for cat in ("detail", "section", "enlarged", "elevation", "schedule"):
+        for s in by_cat.get(cat, []):
+            if any(d.page == s.page for d in details):
+                continue
+            ds = [d for d in find_details(doc[s.page], s.sheet, KW) if d.hits]
+            details += ds
+            if ds:
+                out["read"].append({"sheet": s.sheet, "page": s.page, "step": "details", "hits": len(ds)})
+
+    # ── 6. classify + ledger ────────────────────────────────────────────────
+    items: list[Item] = []
+    markups: list[Markup] = []
+
+    for e in entries:
+        s = sheet_of[e.page]
+        txt = e.desc if e.layout == "tabular" else " ".join(e.text)
+        is_door = e.layout == "tabular" and "DOOR" in (e.table or "").upper()
+        c = cls_of[id(e)]
+        it = Item(id=e.mark, cls=c.cls, kind=c.kind, label=e.mark, desc=txt, location=c.location,
+                  w_in=e.w_in, h_in=e.h_in, frames=e.frames, series=c.series, hardware=e.hardware,
+                  implied=c.implied, flags=list(e.flags) + c.flags, notes=c.notes, pair=c.pair, stile=c.stile, is_door=is_door)
+        if e.frames:
+            it.bays = e.frames[0]["bays"]
+            it.rows = sum(f["rows"] for f in e.frames) if len(e.frames) > 1 else e.frames[0]["rows"]
+        it.citations.append(f"{e.sheet} {e.layout} schedule type {e.mark}" + (f" ({', '.join(e.marks)})" if len(e.marks) > 1 else ""))
+        # qty: plan count across all marks in the group
+        n = plan_counts.get(e.mark, 0) + sum(plan_counts.get(m, 0) for m in (e.marks or []) if m != e.mark)
+        if n:
+            it.qty, it.qty_source = n, "plan tags"
+            it.citations.append(f"plan tags ×{n}")
+        else:
+            it.qty, it.qty_source = 1, "schedule (no plan tag found)"
+            if c.kind in ("scope", "pass_thru"):
+                it.flags.append("no plan tag found for this mark — count assumed 1")
+        # elevation snaps for this mark
+        esn = [x for x in snaps if x.mark == e.mark]
+        if esn:
+            good = [x for x in esn if x.frames and not x.unsure]
+            if all(x.tag_kind == "size" for x in esn):
+                it.flags.append(f"elevation located by size only on {esn[0].sheet} — confirm")
+            it.citations.append(f"{esn[0].sheet} elevation ×{len(esn)}" + (" (snapped)" if good else " (tag only)"))
+            if good and c.kind == "scope":
+                g = good[0]
+                it.w_in = g.frames[0]["w_in"]
+                it.h_in = sum(f["h_in"] for f in g.frames) if len(g.frames) > 1 else g.frames[0]["h_in"]
+                it.notes.append(f"size from {g.sheet} elevation snap (schedule {fmt_in(e.w_in)} x {fmt_in(e.h_in)})")
+                if e.w_in and abs(it.w_in - e.w_in) > max(6, 0.05 * e.w_in):
+                    it.flags.append(f"elevation width {fmt_in(it.w_in)} vs schedule {fmt_in(e.w_in)} — confirm (RFI?)")
+            if len(esn) != it.qty and it.qty_source == "plan tags" and c.kind == "scope":
+                it.notes.append(f"elevation shows {len(esn)} tag(s), plan {it.qty}")
+        if it.w_in and it.h_in and c.kind in ("scope", "pass_thru"):
+            it.sf_each = sqft(it.w_in, it.h_in)
+            it.sf_total = round(it.sf_each * (it.qty or 1), 1)
+        it.label = f"{e.mark} — {it.qty} Thus" if it.qty else e.mark
+        if c.cls in ("all_glass_wall", "all_glass_door"):
+            from .allglass import all_glass_measures
+            it.allglass = all_glass_measures(txt, it.w_in, it.h_in, it.bays, it.rows,
+                                             has_film=any(i["cls"] == "glass_film" for i in c.implied))
+        items.append(it)
+        markups += _schedule_markups(it, e, s)
+        for pc in censuses:
+            for m in (e.marks or [e.mark]):
+                for tg in pc.tags.get(m, []):
+                    markups += _tag_markup(it, pc.sheet, pc.page, tg, doc[pc.page], e)
+        for x in esn:
+            markups += _elev_markups(it, x, e)
+
+    # legend rows and notes as items
+    for r in rows:
+        c = classify(r.text)
+        if c.cls == "glazing_only" and any(i["cls"] == "glass_film" for i in c.implied):
+            c.cls = "glass_film"
+        iid = f"{r.sheet} {r.kind} {r.code}"
+        it = Item(id=iid, cls=c.cls, kind=c.kind if c.cls != "unclassified" else "note", label=f"{r.code} ({r.sheet})",
+                  desc=r.text, flags=c.flags, notes=c.notes, implied=c.implied, series=c.series, source=r.kind)
+        it.citations.append(f"{r.sheet} {r.kind} row {r.code}")
+        items.append(it)
+        sub = subject_for(c.cls, "region") or subject_for("note", "label")
+        markups.append(_mk(iid, r.sheet, r.page, sub, "region", r.rect, note=f"{r.kind} row {r.code}: {r.keyword}"))
+
+    # details
+    for d in details:
+        kws = sorted({h["kw"] for h in d.hits})
+        c = classify(" ".join(h["text"] for h in d.hits))
+        iid = f"{d.sheet} det {d.num}"
+        it = Item(id=iid, cls=c.cls, kind="detail", label=f"{d.num}/{d.sheet} {d.title}", desc="; ".join(kws),
+                  flags=[f for f in c.flags if "assumed exterior" not in f], notes=c.notes, implied=c.implied, source="detail")
+        it.citations.append(f"{d.sheet} detail {d.num} ({d.title})")
+        items.append(it)
+        sub = subject_for(c.cls if c.kind != "excluded" else "excluded", "region") or subject_for("ext_sf", "region")
+        markups.append(_mk(iid, d.sheet, d.page, sub, "region", d.title_rect, note=f"detail title; keywords {', '.join(kws)}"))
+        for h in d.hits[:6]:
+            markups.append(_mk(iid, d.sheet, d.page, sub, "region", h["rect"], note=f"keyword {h['kw']}"))
+
+    # flags → yellow flag markups at the item's first citation markup
+    for it in items:
+        if it.flags:
+            first = next((m for m in markups if m.item == it.id and m.rect), None)
+            if first:
+                markups.append(Markup(it.id, first.sheet, first.page, FLAG[0], "flag", first.rect, text="; ".join(it.flags),
+                                      stroke=FLAG[1], fill=FLAG[2], note="needs review"))
+
+    # ── 7. summary ──────────────────────────────────────────────────────────
+    out["schedule_entries"] = [e.to_dict() for e in entries]
+    out["legend_rows"] = [r.to_dict() for r in rows]
+    out["legend_classes"] = lclasses
+    out["plan_census"] = [pc.to_dict() for pc in censuses]
+    out["elevation_snaps"] = [x.to_dict() for x in snaps]
+    out["details"] = [d.to_dict() for d in details]
+    out["items"] = [i.to_dict() for i in items]
+    out["markups"] = [m.to_dict() for m in markups]
+    out["flags"] = [{"item": i.id, "flags": i.flags} for i in items if i.flags]
+    out["totals"] = _totals(items)
+    out["skipped"] = [s.sheet for s in index if s not in arch]
+    out["elapsed_s"] = round(time.time() - t0, 2)
+    out["model_calls"] = 0
+    return out
+
+
+def _mk(item: str, sheet: str, page: int, sub, role: str, rect, text: str = "", note: str = "", dashed: bool = False) -> Markup:
+    subj, stroke, fill, op = sub if sub else ("Needs Review", "#FFFF00", "#FFFF00", None)
+    return Markup(item, sheet, page, subj, role, [round(float(v), 1) for v in rect] if rect else None, None, text,
+                  stroke, fill, op, dashed, note)
+
+
+def _schedule_markups(it: Item, e: ScheduleEntry, s: SheetInfo) -> list[Markup]:
+    cls = it.cls if it.kind != "excluded" else "excluded"
+    region = subject_for(cls, "region") or subject_for("excluded", "region")
+    ms: list[Markup] = []
+    if e.mark_rect:
+        ms.append(_mk(it.id, e.sheet, e.page, region, "region", e.mark_rect, note="schedule mark"))
+    if e.frames:
+        for f in e.frames:
+            ms.append(_mk(it.id, e.sheet, e.page, region, "region", f["rect"], note="type drawing (snapped to vector lines)"))
+        r = e.frames[0]["rect"]
+        if it.kind in ("scope", "pass_thru"):
+            ms.append(Markup(it.id, e.sheet, e.page, "Qty Text Box", "label", [r[0], r[3] + 6, r[0] + 90, r[3] + 26],
+                             text=it.label, stroke="#FFFFFF", note="count"))
+    elif e.label_rect:
+        ms.append(_mk(it.id, e.sheet, e.page, region, "region", e.label_rect, note="schedule row"))
+    if it.allglass and e.frames:
+        f0 = e.frames[0]["rect"]
+        ppf = e.ppf or 18.0
+        ag = it.allglass
+        if ag.get("film_h_in"):
+            band = [f0[0], f0[3] - ag["film_h_in"] / 12 * ppf, f0[2], f0[3]]
+            film = subject_for("glass_film", "area") or ("Glass Film Area", "#FF00FF", "#FF00FF", None)
+            ms.append(Markup(it.id, e.sheet, e.page, film[0], "area", [round(v, 1) for v in band],
+                             text=f"A = {ag['film_sf']} sf\nW = {fmt_in(it.w_in)}\nH = {fmt_in(ag['film_h_in'])}",
+                             stroke=film[1] or "#FF00FF", fill=film[2] or "#FF00FF", note="frost / film band"))
+        area = subject_for("all_glass_wall", "area")
+        if area and ag.get("area_sf"):
+            ms.append(Markup(it.id, e.sheet, e.page, area[0], "area", list(f0),
+                             text=f"A = {ag['area_sf']} sf\nW = {fmt_in(it.w_in)}\nH = {fmt_in(it.h_in)}",
+                             stroke=area[1], fill=area[2], note="all-glass opening area"))
+        ssg = subject_for("ssg_caulk", "count")
+        pe = subject_for("polished_edge", "count")
+        dr = subject_for("all_glass_door", "door")
+        y = f0[3] + 30
+        for sub, n, label in ((ssg, ag["ssg_joints"], "SSG joints"), (pe, ag["polished_edges"], "polished edges"), (dr, ag["doors"], "all-glass doors")):
+            if sub and n:
+                ms.append(Markup(it.id, e.sheet, e.page, sub[0], "count", [f0[0], y, f0[0] + 14, y + 14],
+                                 text=f"{n} {label}", stroke=sub[1], fill=sub[2], note=f"{label}: {n} (derived — verify)"))
+                y += 18
+    if e.hardware_rect and it.kind in ("scope", "pass_thru"):
+        ms.append(_mk(it.id, e.sheet, e.page, region, "region", e.hardware_rect, note="hardware table (included by default)"))
+    if e.label_rect and e.frames:
+        ms.append(_mk(it.id, e.sheet, e.page, region, "region", e.label_rect, note="type description"))
+    return ms
+
+
+def _tag_markup(it: Item, sheet: str, page: int, tg: dict, pg: fitz.Page, e: ScheduleEntry) -> list[Markup]:
+    cls = it.cls if it.kind != "excluded" else "excluded"
+    region = subject_for(cls, "region") or subject_for("excluded", "region")
+    ms = [_mk(it.id, sheet, page, region, "region", tg["shape"], note=f"plan tag {tg['text']} ({tg['kind']})")]
+    # Polylength along the opening (Martin's plan convention) when the width is known
+    lin = subject_for(cls, "linear")
+    if lin and it.kind in ("scope", "pass_thru") and (it.w_in or e.w_in):
+        from .plans import opening_runs
+        from .units import page_ppf
+        ppf = page_ppf(pg, DEFAULT_PPF["plan"]) or DEFAULT_PPF["plan"]
+        sh = tg["shape"]
+        c = ((sh[0] + sh[2]) / 2, (sh[1] + sh[3]) / 2)
+        runs = opening_runs(pg, c, e.w_in or it.w_in, ppf)
+        if runs:
+            p0, p1, ln, d = runs[0]
+            ms.append(Markup(it.id, sheet, page, lin[0], "linear",
+                             [round(min(p0[0], p1[0]) - 2, 1), round(min(p0[1], p1[1]) - 2, 1), round(max(p0[0], p1[0]) + 2, 1), round(max(p0[1], p1[1]) + 2, 1)],
+                             [[round(p0[0], 1), round(p0[1], 1)], [round(p1[0], 1), round(p1[1], 1)]],
+                             text=f"{lin[0]}\n{fmt_in(ln)}", stroke=lin[1], fill=lin[2], opacity=lin[3],
+                             note=f"opening extent on plan, {fmt_in(ln)} (run {d:.0f} pt from tag)"))
+        else:
+            ms[0].note += "; opening extent not located on plan"
+    return ms
+
+
+def _elev_markups(it: Item, x: ElevSnap, e: ScheduleEntry) -> list[Markup]:
+    cls = it.cls if it.kind != "excluded" else "excluded"
+    region = subject_for(cls, "region") or subject_for("excluded", "region")
+    area = subject_for(cls, "area")
+    ms: list[Markup] = [_mk(it.id, x.sheet, x.page, region, "region", x.tag_rect, note="elevation tag")]
+    for f in x.frames:
+        bad = x.unsure or f["err"] > 0.2
+        ms.append(_mk(it.id, x.sheet, x.page, region, "region", f["rect"], dashed=bad,
+                      note="elevation frame (snapped)" if not bad else x.note or "snap disagrees with schedule — dashed"))
+        if area and not bad and it.kind == "scope":
+            ms.append(_mk(it.id, x.sheet, x.page, area, "area", f["rect"],
+                          text=f"A = {sqft(f['w_in'], f['h_in'])} sf\nW = {fmt_in(f['w_in'])}\nH = {fmt_in(f['h_in'])}"))
+    return ms
+
+
+def _totals(items: list[Item]) -> dict:
+    t: dict[str, dict] = {}
+    for i in items:
+        if i.kind not in ("scope", "pass_thru") or i.source != "schedule":
+            continue
+        d = t.setdefault(i.cls, {"items": 0, "qty": 0, "sf": 0.0})
+        d["items"] += 1
+        d["qty"] += i.qty or 0
+        d["sf"] += i.sf_total or 0.0
+    for d in t.values():
+        d["sf"] = round(d["sf"], 1)
+    return t
+
+
+def main(argv=None):
+    import argparse
+    ap = argparse.ArgumentParser(description="GlazeBid deterministic auto-takeoff")
+    ap.add_argument("pdf")
+    ap.add_argument("-o", "--out", default=None)
+    ap.add_argument("--project", default="")
+    ap.add_argument("--sheets", default=None, help="comma-separated sheet numbers to limit to")
+    a = ap.parse_args(argv)
+    res = run_autotakeoff(a.pdf, a.project, a.sheets.split(",") if a.sheets else None)
+    js = json.dumps(res, indent=1, default=str)
+    if a.out:
+        open(a.out, "w", encoding="utf-8").write(js)
+    print(f"{len(res['items'])} items, {len(res['markups'])} markups, {len(res['flags'])} flagged, {res['elapsed_s']}s, 0 model calls")
+    for cls, d in res["totals"].items():
+        print(f"  {cls:<20} {d['items']:>3} types  qty {d['qty']:>3}  {d['sf']:>9.1f} sf")
+
+
+if __name__ == "__main__":
+    main()
