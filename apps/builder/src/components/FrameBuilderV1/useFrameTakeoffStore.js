@@ -15,6 +15,7 @@ import { create } from 'zustand';
 import {
   createTakeoff, createFrame, variantOf, normalizeSpec, TAKEOFF_SCHEMA, defaultGlassTypes,
   importJob, resyncFrame, acceptDrawingValue, combineSources, findImported, markKey,
+  applyNonFrames, setGlassOnly, setBidLine,
 } from '@glazebid/frame-engine/core';
 
 const KEY = (projectName) => `glazebid:frameTakeoff:${projectName || '__scratch__'}`;
@@ -62,8 +63,18 @@ export function mergeScheduleIncoming(prev, doc) {
     jobDefaults: prev?.jobDefaults ?? doc.jobDefaults ?? null,
     doorTypes: prev?.doorTypes?.length ? prev.doorTypes : doc.doorTypes ?? [],
     nonFrames: prev?.nonFrames?.length ? prev.nonFrames : doc.nonFrames ?? [],
+    nonFramesApplied: prev?.nonFrames?.length ? prev?.nonFramesApplied ?? false : false,
     frames: combineSources(studio, doc.frames ?? [], { scheduleFile: doc.fileName }),
     focus: null,
+  };
+}
+
+function summarizeOther(o) {
+  return {
+    glassOnly: o.glassOnly.added + o.glassOnly.updated + o.glassOnly.kept,
+    bidLines: o.bidLines.added + o.bidLines.updated + o.bidLines.kept,
+    kept: o.glassOnly.kept + o.bidLines.kept,
+    brake: o.brake, notes: o.notes,
   };
 }
 
@@ -310,10 +321,68 @@ const useFrameTakeoffStore = create((set, get) => ({
     }
     const built = new Set(pick.map((p) => p.itemId));
     const left = inc.frames.filter((p) => !built.has(p.itemId));
-    get()._commit({ ...tp, glassTypes, frames, frameSets: sets,
-      incoming: { ...inc, frames: left, built: [...(inc.built ?? []), ...built] } });
+    let next = { ...tp, glassTypes, frames, frameSets: sets,
+      incoming: { ...inc, frames: left, built: [...(inc.built ?? []), ...built] } };
+    // Build all also files the other lines (glass-only, bid cart lines) — decision 7
+    let other = null;
+    if (!itemIds && inc.nonFrames?.length && !inc.nonFramesApplied) {
+      other = applyNonFrames(next, inc.nonFrames, { glassTypeIdFor: job.glassTypeIdFor, source: inc.source ?? 'studio' });
+      next = { ...other.takeoff, incoming: { ...next.incoming, nonFramesApplied: inc.receivedAt ?? true } };
+    }
+    get()._commit(next);
     if (firstId) set({ selectedFrameId: firstId, selection: null });
-    return { added, updated, kept, glassTypes: job.glassTypes.length };
+    return { added, updated, kept, glassTypes: job.glassTypes.length, other: other && summarizeOther(other) };
+  },
+
+  /** File the incoming non-frame lines: glass-only → glass report, the rest → bid cart lines. */
+  applyIncomingNonFrames() {
+    const tp = get().takeoff;
+    const inc = tp?.incoming;
+    if (!inc?.nonFrames?.length) return null;
+    const job = importJob({ frames: [], jobDefaults: inc.jobDefaults }, tp, { source: inc.source ?? 'studio' });
+    const glassTypes = [...(tp.glassTypes?.length ? tp.glassTypes : defaultGlassTypes()), ...job.glassTypes];
+    const other = applyNonFrames({ ...tp, glassTypes }, inc.nonFrames, { glassTypeIdFor: job.glassTypeIdFor, source: inc.source ?? 'studio' });
+    get()._commit({ ...other.takeoff, incoming: { ...inc, nonFramesApplied: inc.receivedAt ?? true } });
+    return summarizeOther(other);
+  },
+
+  // ── Glass-only lites and bid cart lines (non-frame takeoff) ──
+  updateGlassOnly(id, patch) {
+    const tp = get().takeoff;
+    get()._commit({ ...tp, glassOnly: (tp.glassOnly ?? []).map((g) => (g.id === id ? setGlassOnly(g, patch) : g)) });
+  },
+  removeGlassOnly(id) {
+    const tp = get().takeoff;
+    get()._commit({ ...tp, glassOnly: (tp.glassOnly ?? []).filter((g) => g.id !== id) });
+  },
+  addGlassOnly() {
+    const tp = get().takeoff;
+    const n = (tp.glassOnly ?? []).length + 1;
+    const row = { id: `GO-new-${Date.now()}`, itemId: `GO-new-${Date.now()}`, mark: `GO-${n}`, description: '', glassTypeId: null,
+      width: null, height: null, sizeIs: null, qty: 1, tempered: null, needs: [], flags: [], citations: [], source: 'manual', edited: true };
+    get()._commit({ ...tp, glassOnly: [...(tp.glassOnly ?? []), row] });
+  },
+  acceptGlassOnlyDrawing(id) {
+    const tp = get().takeoff;
+    get()._commit({ ...tp, glassOnly: (tp.glassOnly ?? []).map((g) => {
+      if (g.id !== id || !g.drawingSays?.length) return g;
+      const patch = Object.fromEntries(g.drawingSays.map((d) => [d.field, d.drawing]));
+      return { ...setGlassOnly(g, patch), drawingSays: [] };
+    }) });
+  },
+  updateBidLine(id, patch) {
+    const tp = get().takeoff;
+    get()._commit({ ...tp, bidLines: (tp.bidLines ?? []).map((b) => (b.id === id ? setBidLine(b, patch) : b)) });
+  },
+  removeBidLine(id) {
+    const tp = get().takeoff;
+    get()._commit({ ...tp, bidLines: (tp.bidLines ?? []).filter((b) => b.id !== id) });
+  },
+  addBidLine(group = 'Other') {
+    const tp = get().takeoff;
+    const id = `BL-new-${Date.now()}`;
+    get()._commit({ ...tp, bidLines: [...(tp.bidLines ?? []), { id, itemId: id, group, description: '', quantity: null, unit: 'EA',
+      flags: [], citations: [], source: 'manual', edited: true }] });
   },
 
   /** Drop incoming frames without building them. */

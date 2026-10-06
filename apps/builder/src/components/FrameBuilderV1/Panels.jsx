@@ -526,13 +526,14 @@ export function BrakePanel({ spec, update, frameResult }) {
             <Field label="Description" wide><TextInput value={b.description} onChange={(v) => set(i, { description: v })} /></Field>
             <Field label="Edge"><Select value={b.edge ?? ''} onChange={(v) => set(i, { edge: v || null })} options={[{ value: '', label: 'Typed length' }, { value: 'sill', label: 'Sill' }, { value: 'head', label: 'Head' }, { value: 'jambs', label: 'Both jambs' }, { value: 'jambL', label: 'Left jamb' }, { value: 'jambR', label: 'Right jamb' }, { value: 'perimeter', label: 'Perimeter' }]} /></Field>
             <Field label="Length"><DimInput allowEq placeholder={resolved[i] ? formatFeetInches(resolved[i].length) : 'from edge'} value={b.length} onChange={(v) => set(i, { length: v })} /></Field>
-            <Field label="Girth"><DimInput feet={false} value={b.girth} onChange={(v) => set(i, { girth: v })} /></Field>
+            <Field label="Girth"><DimInput feet={false} value={b.girth} onChange={(v) => set(i, { girth: v, fromDrawing: false })} /></Field>
             <Field label="Qty"><NumInput min={0} value={b.qty} onChange={(v) => set(i, { qty: v })} /></Field>
             <Field label="Brakes"><NumInput min={0} value={b.bends} onChange={(v) => set(i, { bends: v })} /></Field>
             <Field label="Hems"><NumInput min={0} value={b.hems} onChange={(v) => set(i, { hems: v })} /></Field>
             <Field label="Gauge"><TextInput value={b.gauge} onChange={(v) => set(i, { gauge: v })} /></Field>
             <Field label="Finish"><TextInput value={b.finish} placeholder={spec.finish} onChange={(v) => set(i, { finish: v })} /></Field>
           </div>
+          {b.fromDrawing && <div className="fbv1-meta fbv1-warn-text">⚑ From the drawings{b.details?.length ? ` (detail ${b.details.join(', ')})` : ''} — girth, brakes and hems are assumed; set them from the detail.</div>}
           <button type="button" className="fbv1-btn ghost danger" onClick={() => update((s) => ({ ...s, brakeMetal: s.brakeMetal.filter((_, k) => k !== i) }))}>Remove</button>
         </div>
       ))}

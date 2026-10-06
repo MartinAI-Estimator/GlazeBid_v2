@@ -122,6 +122,18 @@ export function glassPdf(t, project) {
       { label: 'Locations (frame lite)', w: 220, get: (s) => s.locations.join(', ') },
     ], g.sizes);
   }
+  const unsized = t.glassOnly?.unsized ?? [];
+  if (unsized.length) {
+    if (y > PAGE.h - 140) { doc.addPage(); y = header(doc, doc.__title, doc.__meta) + 6; }
+    y = table(doc, y + 8, [
+      { label: 'Mark', w: 70, key: 'mark' },
+      { label: 'Qty', w: 36, align: 'right', key: 'qty' },
+      { label: 'Size on drawing', w: 110, get: (g) => (g.width && g.height ? `${formatInches(g.width)} × ${formatInches(g.height)}` : '—') },
+      { label: 'Glass', w: 120, get: (g) => g.glassText ?? '' },
+      { label: 'Why not ordered', w: 200, get: (g) => (g.needs ?? []).find((n) => n.field === 'size')?.reason ?? 'no lite size' },
+      { label: 'Description', w: 184, get: (g) => String(g.description ?? '').slice(0, 70) },
+    ], unsized, { title: `Glass only — ${unsized.length} lite row(s) waiting for a lite size (not in the totals above)` });
+  }
   y = Math.min(y, PAGE.h - 60);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
   doc.text(`Total: ${t.totals.lites} lites · ${r2(t.totals.glassSf)} SF actual · ${r2(t.totals.billingSf)} SF billed`, PAGE.m, y + 6);
@@ -410,6 +422,31 @@ export function hardwarePdf(t, project) {
   save(doc, 'Hardware_Schedule', project);
 }
 
+// ── Other lines (bid cart) ──────────────────────────────────────────────────
+
+export function otherLinesPdf(t, project) {
+  const { doc, y } = start('Other Lines — not frames', project);
+  const rows = (t.bidLines ?? []).slice().sort((a, b) => String(a.group).localeCompare(String(b.group)));
+  let yy = table(doc, y + 6, [
+    { label: 'Group', w: 130, key: 'group' },
+    { label: 'Item', w: 90, key: 'itemId' },
+    { label: 'Qty', w: 50, align: 'right', get: (b) => (b.quantity == null ? '—' : r2(b.quantity)) },
+    { label: 'Unit', w: 36, key: 'unit' },
+    { label: 'Description', w: 280, get: (b) => String(b.description ?? '').slice(0, 110) },
+    { label: 'Flags', w: 134, get: (b) => (b.flags ?? []).join(' ').slice(0, 60) },
+  ], rows, { title: 'Bid cart lines' });
+  const go = t.glassOnly?.rows ?? [];
+  if (go.length) {
+    table(doc, yy, [
+      { label: 'Mark', w: 90, key: 'mark' }, { label: 'Qty', w: 40, align: 'right', key: 'qty' },
+      { label: 'Width', w: 70, get: (g) => (g.width ? formatInches(g.width) : '—') }, { label: 'Height', w: 70, get: (g) => (g.height ? formatInches(g.height) : '—') },
+      { label: 'Size is', w: 80, get: (g) => (g.sizeIs === 'opening' ? 'opening (TBD)' : g.sizeIs === 'lite' ? 'lite' : '—') },
+      { label: 'Description', w: 370, get: (g) => String(g.description ?? '').slice(0, 140) },
+    ], go, { title: 'Glass only (glass into frames / doors by others)' });
+  }
+  save(doc, 'Other_Lines', project);
+}
+
 // ── Excel ────────────────────────────────────────────────────────────────────
 
 export function exportExcel(t, project) {
@@ -425,6 +462,10 @@ export function exportExcel(t, project) {
     ...t.glassRfq.flatMap((g) => g.sizes.map((s) => [g.key, g.description, g.makeup, g.heat, s.qty, s.orderW, s.orderH, s.widthDisplay, s.heightDisplay, s.blockW, s.blockH, s.actualSf, s.billingSf, s.totalBillingSf, s.weightLb, s.shape, s.locations.join(', ')]))]);
   add('Accessories', [['Make', 'Part', 'Item', 'Qty', 'Unit', 'Frames'], ...t.accessoriesRfq.map((a) => [a.manufacturer, a.part ?? '', a.label, a.qty, a.unit, a.marks.join(', ')])]);
   add('Brake Metal', [['Frame', 'Description', 'Girth', 'Length in', 'Qty', 'Brakes', 'Hems', 'Gauge', 'Finish'], ...t.brakeRows.map((b) => [b.frame, b.description, b.girth, b.length, b.qtyTotal, b.bends, b.hems, b.gauge, b.finish])]);
+  add('Glass Only', [['Mark', 'Qty', 'Width in', 'Height in', 'Size is', 'Glass type', 'Glass on drawing', 'Description', 'Needs'],
+    ...(t.glassOnly?.rows ?? []).map((g) => [g.mark, g.qty, g.width ?? '', g.height ?? '', g.sizeIs ?? '', g.glassTypeId ?? '', g.glassText ?? '', g.description ?? '', (g.needs ?? []).map((n) => n.reason).join(' | ')])]);
+  add('Other Lines', [['Group', 'Item', 'Qty', 'Unit', 'Description', 'Flags'],
+    ...(t.bidLines ?? []).map((b) => [b.group, b.itemId, b.quantity ?? '', b.unit, b.description, (b.flags ?? []).join(' | ')])]);
   add('Doors', [['Mark', 'Frame', 'Qty', 'Type', 'Opening W', 'Opening H', 'Leaf W', 'Leaf H', 'Stile', 'Top rail', 'Bottom rail', 'Mid rail', 'Handing', 'Finish', 'Glass', 'Hardware', 'Threshold', 'Notes'],
     ...t.doorSchedule.map((d) => [d.mark, d.frame, d.qty, d.type, d.openingW, d.openingH, d.leafW, d.leafH, d.stile, d.topRail, d.bottomRail, d.midRail, d.handing, d.finish, d.glass, d.hardwareSet, d.threshold ? 'Y' : 'N', d.notes])]);
   add('Hardware', [['Door', 'Frame', 'Set', 'Item', 'Frequency', 'Per opening', 'Total'], ...t.hardwareSchedule.flatMap((h) => h.items.map((it) => [h.mark, h.frame, h.set, it.item, it.frequency, it.qtyPerOpening, it.qtyTotal]))]);
@@ -440,6 +481,7 @@ export const REPORTS = [
   { key: 'metal', label: 'Metal RFQ by die + cut list (PDF)', run: (t, p) => metalPdf(t, p) },
   { key: 'acc', label: 'Accessories & brake metal RFQ (PDF)', run: (t, p) => accessoriesPdf(t, p) },
   { key: 'labor', label: 'Labor summary (PDF)', run: (t, p) => laborPdf(t, p) },
+  { key: 'other', label: 'Other lines — bid cart + glass only (PDF)', run: (t, p) => otherLinesPdf(t, p) },
   { key: 'elev', label: 'Frame elevations (PDF)', run: (t, p, c) => elevationsPdf(t, p, c) },
   { key: 'doors', label: 'Door drawings (PDF)', run: (t, p) => doorsPdf(t, p) },
   { key: 'dsched', label: 'Door schedule (PDF)', run: (t, p) => doorSchedulePdf(t, p) },

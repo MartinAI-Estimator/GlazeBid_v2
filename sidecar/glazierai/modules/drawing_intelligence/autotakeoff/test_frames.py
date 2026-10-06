@@ -147,6 +147,27 @@ def test_schedule_upload_flags_the_count():
     assert b["needs"] == [] and b["provenance"]["quantity"]["source"] == "plan"
 
 
+def test_brake_metal_goes_on_the_frames_it_touches():
+    base = {"project": "t", "sheets": [], "schedule_entries": [], "elevation_snaps": [],
+            "break_metal_details": [{"sheet": "A8.1", "num": "4", "edges": ["sill"], "systems": ["sf"]},
+                                    {"sheet": "A8.1", "num": "5", "edges": ["jamb"], "systems": ["sf"]}]}
+    items = [
+        {"id": "SF1", "cls": "ext_sf", "kind": "scope", "w_in": 100, "h_in": 96, "qty": 2, "desc": "MARK: SF1", "series": [], "notes": [], "citations": [], "flags": []},
+        {"id": "SF2", "cls": "int_sf", "kind": "scope", "w_in": 60, "h_in": 96, "qty": 1, "desc": "MARK: SF2", "series": [], "notes": [], "citations": [], "flags": []},
+        {"id": "BREAK METAL", "cls": "break_metal", "kind": "scope", "qty": 80.0, "qty_source": "LF on elevations"},
+    ]
+    # no markers on the type elevations: every exterior frame of the system
+    out = frame_payloads({**base, "items": items}, None, None)
+    f1, f2 = out["frames"]
+    assert [p["edge"] for p in f1["brakeMetal"]] == ["sill", "jambs"] and f1["brakeMetal"][0]["details"] == ["4/A8.1"]
+    assert "brakeMetal" not in f2
+    assert next(n for n in out["nonFrames"] if n["itemId"] == "BREAK METAL")["placedOn"] == ["SF1"]
+    # markers: only the edges of the details marked on that type
+    out = frame_payloads({**base, "items": items, "break_metal_by_type": {"SF2": ["sill"]}}, None, None)
+    f1, f2 = out["frames"]
+    assert "brakeMetal" not in f1 and [p["edge"] for p in f2["brakeMetal"]] == ["sill"]
+
+
 if __name__ == "__main__":
     import inspect
     n = 0

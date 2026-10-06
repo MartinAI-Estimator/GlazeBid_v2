@@ -186,3 +186,7 @@
 .fbv1-upload { display: inline-flex; align-items: center; gap: 4px; max-width: 420px; }
 .fbv1-upload .fbv1-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fbv1-err { color: #fca5a5; }
+
+/* other lines (step 6) */
+.fbv1-flag-row td { background: rgba(245,158,11,.07); }
+.fbv1-warn-text { color: var(--warn); }

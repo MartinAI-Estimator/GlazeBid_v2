@@ -23,9 +23,15 @@ import {
 } from './Panels';
 import { REPORTS } from './reports';
 import IncomingPanel, { FromStudioBox, ScheduleUpload } from './IncomingPanel';
+import OtherLinesPanel, { otherLinesCount } from './OtherLinesPanel';
 import { laborDeps, syncToBid } from './builderBridge';
 import useProductionRatesStore from '../../store/useProductionRatesStore';
 import './frameBuilderV1.css';
+
+function otherText(o) {
+  return [o.glassOnly && `${o.glassOnly} glass-only lite row(s)`, o.bidLines && `${o.bidLines} bid cart line(s)`, o.kept && `${o.kept} you edited kept`]
+    .filter(Boolean).join(', ') + ' in Other lines';
+}
 
 const TOOLS = [
   { key: 'select', label: 'Select', hint: 'Click a lite, member or door to inspect it. Drag to pan, wheel to zoom.' },
@@ -55,6 +61,7 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
   const [importOpen, setImportOpen] = useState(false);
   const [reportsOpen, setReportsOpen] = useState(false);
   const [incomingOpen, setIncomingOpen] = useState(false);
+  const [otherOpen, setOtherOpen] = useState(false);
   const incomingCount = takeoff?.incoming?.frames?.length ?? 0;
   // open the Incoming list when a new hand-off arrives
   useEffect(() => { if (incomingCount) setIncomingOpen(true); }, [takeoff?.incoming?.receivedAt]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -176,6 +183,8 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
           <button type="button" className="fbv1-btn ghost" disabled={!store.future.length} onClick={store.redo} title="Redo (Ctrl+Y)">↷</button>
           <button type="button" className={`fbv1-btn ${incomingCount ? 'primary' : 'ghost'}`} onClick={() => setIncomingOpen(true)}
             title="Frames sent from Studio / read from a window schedule, waiting to be built">Incoming{incomingCount ? ` (${incomingCount})` : ''}</button>
+          <button type="button" className="fbv1-btn ghost" onClick={() => setOtherOpen(true)}
+            title="Glass-only lites, bid cart lines (mirrors, translucent, pass-thru…) and the brake metal check">Other lines{otherLinesCount(takeoff) ? ` (${otherLinesCount(takeoff)})` : ''}</button>
           <ScheduleUpload store={store} projectName={projectName} className="fbv1-btn ghost"
             onDone={(r) => setToast({ kind: 'ok', text: r.text })} />
           <button type="button" className="fbv1-btn ghost" onClick={() => setImportOpen(true)}>Import</button>
@@ -196,7 +205,7 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
           </div>
           <button type="button" className="fbv1-btn primary" onClick={() => {
             const s = syncToBid(result);
-            setToast({ kind: 'ok', text: `Sent ${s.synced} frame${s.synced === 1 ? '' : 's'} to the bid cart.` });
+            setToast({ kind: 'ok', text: `Sent ${s.synced} frame${s.synced === 1 ? '' : 's'} to the bid cart${s.lines ? ` and ${s.lines} other line(s) in ${s.lineGroups} scope(s)` : ''}.` });
           }}>Send to Bid Cart</button>
         </div>
       </header>
@@ -295,8 +304,9 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
 
       {incomingOpen && <IncomingPanel takeoff={takeoff} store={store} projectName={projectName} onClose={() => setIncomingOpen(false)} onBuilt={(r) => {
         setIncomingOpen(false); setTab('Frame');
-        setToast({ kind: r.kept ? 'warn' : 'ok', text: `Built ${r.added} new frame(s), updated ${r.updated}${r.kept ? `; ${r.kept} frame(s) you edited have drawing changes to review (⚑)` : ''}${r.glassTypes ? `; ${r.glassTypes} glass type(s) added from the specs` : ''}.` });
-      }} />}
+        setToast({ kind: r.kept ? 'warn' : 'ok', text: `Built ${r.added} new frame(s), updated ${r.updated}${r.kept ? `; ${r.kept} frame(s) you edited have drawing changes to review (⚑)` : ''}${r.glassTypes ? `; ${r.glassTypes} glass type(s) added from the specs` : ''}${r.other ? `; ${otherText(r.other)}` : ''}.` });
+      }} onOther={(o) => { if (o) setToast({ kind: o.kept ? 'warn' : 'ok', text: `${otherText(o)}.` }); }} />}
+      {otherOpen && <OtherLinesPanel takeoff={takeoff} result={result} store={store} onClose={() => setOtherOpen(false)} />}
       {importOpen && <ImportDialog takeoff={takeoff} onClose={() => setImportOpen(false)} onFrames={(specs, notes) => {
         store.addFrames(specs); setImportOpen(false);
         setToast({ kind: notes.length ? 'warn' : 'ok', text: `Imported ${specs.length} frame(s).${notes.length ? ` ${notes.length} field(s) need your input — see each frame's notes.` : ''}` });

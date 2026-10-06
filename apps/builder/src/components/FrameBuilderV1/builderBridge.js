@@ -3,6 +3,9 @@
  *   - labor: injects laborCalcEngine + the production-rates store
  *   - bid cart: pushes each frame into useBidStore in its existing payload
  *     shape (bom totals + engine hours + rfq), replacing earlier syncs
+ *   - other lines (decision 7): bid cart lines and glass-only lites become one
+ *     material scope per group on the bid ("Mirrors — from takeoff"); prices the
+ *     estimator entered there are kept on every re-send
  */
 
 import { calcFrameMH } from '../../utils/laborCalcEngine';
@@ -83,5 +86,65 @@ export function syncToBid(takeoffResult) {
   const keep = store.frames.filter((f) => f.source !== SOURCE);
   const mine = takeoffResult.frames.filter((f) => f.bom).map(toBidFrame);
   store.loadBid([...keep, ...mine]);
-  return { synced: mine.length, kept: keep.length };
+  const lines = syncLinesToBid(takeoffResult);
+  return { synced: mine.length, kept: keep.length, lineGroups: lines.groups, lines: lines.lines };
+}
+
+export const LINES_SOURCE = 'frame-builder-v1-lines';
+export const GLASS_ONLY_GROUP = 'Glass only (glass into frames / doors by others)';
+const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const fmtIn = (v) => (v ? `${Math.round(v * 16) / 16}"` : '?');
+
+/** Bid lines + glass-only lites → material scopes for the bid (pure; `prev` keeps prices). */
+export function toBidCards(takeoffResult, prev = []) {
+  const groups = new Map();
+  const add = (group, line) => { if (!groups.has(group)) groups.set(group, []); groups.get(group).push(line); };
+  for (const b of takeoffResult.bidLines ?? []) {
+    add(b.group, {
+      id: b.id, quantity: b.quantity, unit: b.unit, flags: b.flags ?? [], itemId: b.itemId,
+      description: `${b.quantity ?? '?'} ${b.unit} — ${b.itemId}: ${b.description}${b.alternate ? ` [${b.alternate}]` : ''}`,
+    });
+  }
+  const types = new Map((takeoffResult.glassTypes ?? []).map((g) => [g.id, g]));
+  for (const g of takeoffResult.glassOnly?.rows ?? []) {
+    const sized = g.sizeIs === 'lite' || (g.sizeIs == null && g.width && g.height);
+    const gt = types.get(g.glassTypeId);
+    add(GLASS_ONLY_GROUP, {
+      id: g.id, quantity: g.qty, unit: 'EA', itemId: g.itemId,
+      flags: sized ? [] : ['lite size not entered — opening size shown'],
+      description: `${g.qty} EA — ${g.mark}: ${fmtIn(g.width)} × ${fmtIn(g.height)}${sized ? '' : ' (opening — lite size TBD)'} ${gt ? gt.mark : 'project glass'} — ${g.description ?? ''}`.trim(),
+    });
+  }
+  const prevById = new Map(prev.map((c) => [c.id, c]));
+  return [...groups.entries()].map(([group, lines]) => {
+    const id = `fbv1-lines-${slug(group)}`;
+    const old = prevById.get(id);
+    const oldMat = new Map((old?.materials ?? []).map((m) => [m.id, m]));
+    const materials = lines.map((l) => {
+      const o = oldMat.get(l.id);
+      return { id: l.id, category: o?.category ?? '', vendor: o?.vendor ?? '', cost: o?.cost ?? 0, ...(o?.totalCost != null ? { totalCost: o.totalCost } : {}),
+        description: l.description, takeoff: { itemId: l.itemId, quantity: l.quantity, unit: l.unit, flags: l.flags } };
+    });
+    const cost = materials.reduce((t, m) => t + (Number(m.cost) || 0), 0);
+    return {
+      ...(old ?? {}),
+      id, type: 'material-only', source: LINES_SOURCE,
+      name: `${group} — from takeoff`, shortName: group.length > 10 ? `${group.slice(0, 10)}…` : group,
+      description: `${lines.length} line(s) from the Frame Builder takeoff — price each line`,
+      frames: [], materials, laborTasks: old?.laborTasks ?? [],
+      status: lines.some((l) => l.flags.length) ? 'needs-review' : 'imported',
+      totals: { ...(old?.totals ?? {}), totalFrames: 0, totalQuantity: lines.length, totalSF: 0, shopMHs: old?.totals?.shopMHs ?? 0,
+        distMHs: old?.totals?.distMHs ?? 0, fieldMHs: old?.totals?.fieldMHs ?? 0, totalCost: cost },
+      lastModified: new Date().toISOString(),
+    };
+  });
+}
+
+/** Replace this module's material scopes on the bid; other scopes are untouched. */
+export function syncLinesToBid(takeoffResult) {
+  const store = useBidStore.getState();
+  const prev = (store.workspaceSystems ?? []).filter((s) => s.source === LINES_SOURCE);
+  const cards = toBidCards(takeoffResult, prev);
+  store.setWorkspaceSystems((all) => [...(all ?? []).filter((s) => s.source !== LINES_SOURCE), ...cards]);
+  return { groups: cards.length, lines: cards.reduce((t, c) => t + c.materials.length, 0) };
 }

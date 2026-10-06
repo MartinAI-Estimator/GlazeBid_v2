@@ -10,7 +10,7 @@
  * needs input, and "drawing now says …" values to accept (re-sync, decision 5).
  */
 import React, { useMemo, useState } from 'react';
-import { formatFeetInches, resyncFrame, findImported } from '@glazebid/frame-engine/core';
+import { formatFeetInches, resyncFrame, findImported, routeNonFrame } from '@glazebid/frame-engine/core';
 import { readScheduleFile } from './scheduleIntake';
 
 const ft = (v) => (v ? formatFeetInches(v) : '—');
@@ -26,6 +26,20 @@ export function incomingStatus(takeoff, p) {
   } catch {
     return { key: 'update', label: 'Will update', existing };
   }
+}
+
+const ROUTE_LABEL = {
+  brake: (r, n) => `brake metal on ${n.placedOn?.length ?? 0} frame type(s)`,
+  glass: () => 'glass report (glass only)',
+  bid: (r) => `bid cart — ${r.group}`,
+  note: () => 'note only',
+};
+
+function routeSummary(lines) {
+  const c = { brake: 0, glass: 0, bid: 0, note: 0 };
+  for (const n of lines) c[routeNonFrame(n).route]++;
+  return [c.brake && `${c.brake} brake metal (on frames)`, c.glass && `${c.glass} glass-only`, c.bid && `${c.bid} bid cart`, c.note && `${c.note} notes`]
+    .filter(Boolean).join(' · ');
 }
 
 const SOURCE_TAG = { studio: 'Studio', schedule: 'Schedule', 'studio+schedule': 'Studio + schedule' };
@@ -74,7 +88,7 @@ export function ScheduleUpload({ store, projectName, onDone, className = 'fbv1-b
   );
 }
 
-export default function IncomingPanel({ takeoff, store, projectName, onClose, onBuilt }) {
+export default function IncomingPanel({ takeoff, store, projectName, onClose, onBuilt, onOther }) {
   const inc = takeoff.incoming ?? { frames: [] };
   const rows = useMemo(() => inc.frames.map((p) => ({ p, st: incomingStatus(takeoff, p) })), [inc.frames, takeoff]);
   const [sel, setSel] = useState(() => new Set(inc.focus ? [inc.focus] : []));
@@ -137,15 +151,31 @@ export default function IncomingPanel({ takeoff, store, projectName, onClose, on
         )}
         {inc.nonFrames?.length > 0 && (
           <div className="fbv1-card">
-            <button type="button" className="fbv1-btn ghost small" onClick={() => setShowNon((v) => !v)}>
-              {showNon ? '▾' : '▸'} {inc.nonFrames.length} other line(s) — brake metal, glass-only, mirrors, translucent, pass-thru
-            </button>
+            <div className="fbv1-row">
+              <button type="button" className="fbv1-btn ghost small" onClick={() => setShowNon((v) => !v)}>
+                {showNon ? '▾' : '▸'} {inc.nonFrames.length} other line(s) — {routeSummary(inc.nonFrames)}
+              </button>
+              <span style={{ flex: 1 }} />
+              {inc.nonFramesApplied
+                ? <span className="fbv1-meta">Added to the takeoff ✓</span>
+                : <span className="fbv1-meta">Added with Build all, or </span>}
+              <button type="button" className="fbv1-btn small" onClick={() => onOther?.(store.applyIncomingNonFrames())}
+                title="Glass-only lites → glass report (Other lines); mirrors, translucent, pass-thru and the rest → bid cart lines">
+                {inc.nonFramesApplied ? 'Add again' : 'Add other lines now'}
+              </button>
+            </div>
             {showNon && (
               <table className="fbv1-table compact">
-                <tbody>{inc.nonFrames.map((n, i) => (
-                  <tr key={i}><td>{n.itemId}</td><td className="fbv1-meta">{n.kind}</td><td>{n.quantity ?? '—'} {n.unit}</td>
-                    <td className="fbv1-meta">{String(n.description ?? '').slice(0, 120)}</td></tr>
-                ))}</tbody>
+                <thead><tr><th>Item</th><th>Goes to</th><th>Qty</th><th>Description</th></tr></thead>
+                <tbody>{inc.nonFrames.map((n, i) => {
+                  const r = routeNonFrame(n);
+                  return (
+                    <tr key={i} className={r.route === 'note' ? 'muted' : ''}><td>{n.itemId}</td>
+                      <td className="fbv1-meta">{ROUTE_LABEL[r.route](r, n)}</td>
+                      <td>{n.quantity ?? '—'} {n.unit}</td>
+                      <td className="fbv1-meta">{String(n.description ?? '').slice(0, 120)}</td></tr>
+                  );
+                })}</tbody>
               </table>
             )}
           </div>

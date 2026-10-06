@@ -24,6 +24,7 @@ import { frameLabor, liftEquipment } from './labor.js';
 import { defaultGlassTypes, glassGroupKey } from './glass.js';
 import { METAL_ROLES, DEFAULT_RULES } from './library.js';
 import { createFrame, newId } from './model.js';
+import { glassOnlySizes } from './nonframes.js';
 
 export const TAKEOFF_SCHEMA = 'glazebid.takeoff/1';
 
@@ -42,6 +43,8 @@ export function createTakeoff(over = {}) {
     labor: { jobDifficulty: 1, liftFactor: 1.25, liftType: 'scissor', crew: 2, hoursPerDay: 8 },
     brakeSheet: { ...DEFAULT_SHEET },
     customSystems: [],
+    glassOnly: [],
+    bidLines: [],
     updatedAt: new Date().toISOString(),
     ...over,
   };
@@ -132,6 +135,19 @@ export function buildTakeoff(tp, labor = {}, cache = null) {
       s.locations.push(`${f.spec.mark}${f.spec.quantity > 1 ? `×${f.spec.quantity}` : ''} ${g.tag}`);
     }
   }
+  // glass-only lites (no frame — glass into HM frames / doors by others), decision 7
+  const glassOnly = glassOnlySizes(tp);
+  for (const g of glassOnly.sized) {
+    if (!glassGroups.has(g.key)) glassGroups.set(g.key, { key: g.key, mark: g.mark, description: g.description, makeup: g.makeup, heat: g.heat, kind: g.kind, sizes: new Map() });
+    const grp = glassGroups.get(g.key);
+    const sk = `${g.size.orderW}x${g.size.orderH}xrectx""`;
+    if (!grp.sizes.has(sk)) grp.sizes.set(sk, { ...g.size, qty: 0, locations: [] });
+    const sz = grp.sizes.get(sk);
+    sz.qty += g.qty;
+    sz.locations.push(`${g.location}${g.qty > 1 ? `×${g.qty}` : ''}`);
+  }
+  const glassOnlyLites = glassOnly.sized.reduce((t, g) => t + g.qty, 0);
+  const glassOnlySf = r4(glassOnly.sized.reduce((t, g) => t + g.qty * g.size.actualSf, 0));
   const glassRfq = [...glassGroups.values()].map((grp) => {
     const sizes = [...grp.sizes.values()].sort((a, b) => b.orderW * b.orderH - a.orderW * a.orderH)
       .map((s) => ({ ...s, widthDisplay: formatInches(s.orderW), heightDisplay: formatInches(s.orderH),
@@ -230,10 +246,13 @@ export function buildTakeoff(tp, labor = {}, cache = null) {
   return {
     frames, warnings, metalRfq, glassRfq, accessoriesRfq, sealantLF: r4(sealantLF), doorSchedule, hardwareSchedule,
     brakeRows, brakeSheets, laborSummary, recap, recapByFrameSet,
+    glassOnly: { rows: tp.glassOnly ?? [], unsized: glassOnly.unsized, lites: glassOnlyLites, sf: glassOnlySf },
+    bidLines: tp.bidLines ?? [], brakeMeasured: tp.brakeMeasured ?? [], glassTypes: tp.glassTypes ?? [],
     totals: {
       frames: ok.length, units: ok.reduce((s, f) => s + f.spec.quantity, 0),
       totalSf: sumBy(recap, 'totalSf'), metalLF: sumBy(recap, 'metalLF'), bars: metalRfq.reduce((s, m) => s + m.bars, 0),
-      lites: recap.reduce((s, r) => s + r.lites, 0), glassSf: sumBy(recap, 'glassSf'),
+      lites: recap.reduce((s, r) => s + r.lites, 0) + glassOnlyLites, glassSf: r4(sumBy(recap, 'glassSf') + glassOnlySf),
+      glassOnlyLites,
       billingSf: r4(glassRfq.reduce((s, g) => s + g.billingSf, 0)), doors: doorSchedule.reduce((s, d) => s + d.qty, 0),
       hours: laborSummary.totals.total,
     },

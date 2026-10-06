@@ -310,7 +310,11 @@ def frame_payloads(result: dict, spec_check: dict | None = None, pdf_path: str |
     for d in standalone:
         frames.append(_door_frame(d, spec_series))
 
+    placed = _place_brake_metal(frames, result)
     non_frames = _non_frames(items, frame_items, door_items, door_type_ids | note_ids)
+    for n in non_frames:
+        if n["kind"] == "brake_metal" and n["itemId"] == "BREAK METAL":
+            n["placedOn"] = placed
     seen_notes = set()
     for i in note_items:
         key = (i["id"], (i.get("desc") or "")[:80])
@@ -541,6 +545,49 @@ def _door_frame(d: dict, spec_series: dict) -> dict:
         "needs": needs, "flaggedFields": sorted({n["field"] for n in needs}),
         "notes": "", "description": "", "citations": [], "confidence": 0.6,
     }
+
+
+_BM_EDGE = {"head": "head", "sill": "sill", "jamb": "jambs"}
+
+
+def _place_brake_metal(frames: list[dict], result: dict) -> list[str]:
+    """Break metal onto the frames it touches (decision 7).  With detail markers on the
+    type elevations, a frame type gets the edges of the details marked on it; without
+    them, every exterior frame of a system gets the edges its details show.  Girth /
+    bends / hems are never on the drawing in a readable form — the Frame Builder flags them."""
+    details = result.get("break_metal_details") or []
+    if not details:
+        return []
+    by_type = {_norm_mark(k): set(v) for k, v in (result.get("break_metal_by_type") or {}).items()}
+    placed = []
+    for f in frames:
+        if f.get("standaloneDoor"):
+            continue
+        cls = str(f.get("cls") or "")
+        sysk = "cw" if "cw" in cls else "sf"
+        if by_type:
+            edges = by_type.get(_norm_mark(f["mark"]), set())
+            how = "detail markers on this type's elevation"
+        else:
+            if not cls.startswith("ext_"):
+                continue
+            ds_ = [d for d in details if sysk in (d.get("systems") or [])]
+            edges = set().union(*[set(d.get("edges") or []) for d in ds_]) if ds_ else set()
+            how = f"break metal details at exterior {sysk.upper()} (no markers on the type elevations — every exterior frame)"
+        if not edges:
+            continue
+        pieces = []
+        for e in ("head", "sill", "jamb"):
+            if e not in edges:
+                continue
+            refs = [f"{d.get('num')}/{d.get('sheet')}" for d in details
+                    if e in (d.get("edges") or []) and (not d.get("systems") or sysk in d["systems"])][:4]
+            pieces.append({"edge": _BM_EDGE[e], "details": refs, "source": how,
+                           "description": f"{e.title()} brake metal" + (f" — detail {', '.join(refs)}" if refs else "")})
+        f["brakeMetal"] = pieces
+        f.setdefault("provenance", {})["brakeMetal"] = {"source": "details", "note": how}
+        placed.append(f["mark"])
+    return placed
 
 
 def _non_frames(items, frame_items, door_items, door_type_ids) -> list[dict]:

@@ -24,8 +24,10 @@
 
 import { num } from './units.js';
 import { createFrame, normalizeSpec, defaultDoor, newId } from './model.js';
+import { newBrakePiece } from './brakeMetal.js';
 import { getSystem, listSystems } from './library.js';
 import { effectiveSystem } from './geometry.js';
+import { brakeFromPayload, BRAKE_ASSUMED } from './nonframes.js';
 
 const r4 = (v) => Math.round(v * 10000) / 10000;
 const r16 = (v) => Math.round(v * 16) / 16;
@@ -428,7 +430,12 @@ export function importFrame(p = {}, opts = {}) {
     sillAFF: num(p.sillAFF, 0),
     columns, rows, bayRows,
     glass: { frameDefault: glassId, lites: {}, temper: {}, hazards: {} },
+    brakeMetal: brakeFromPayload(p.brakeMetal),
   }));
+  if (spec.brakeMetal.length) {
+    const refs = [...new Set((p.brakeMetal ?? []).flatMap((b) => b.details ?? []))];
+    need('brakeMetal', `Brake metal at the ${spec.brakeMetal.map((b) => b.edge).join(' / ')} from ${refs.length ? `detail ${refs.join(', ')}` : 'the details'} — girth ${BRAKE_ASSUMED.girth}", ${BRAKE_ASSUMED.bends} brakes, ${BRAKE_ASSUMED.hems} hem assumed. Confirm from the detail.`);
+  }
   if (!(W > 0 && H > 0)) need('size', 'No size — enter it before building.');
   if (p.sillAFF == null && !p.standaloneDoor) need('sillAFF', 'Sill AFF not given — 0" used.');
 
@@ -466,6 +473,7 @@ export function snapshot(spec) {
     columns: spec.columns.map((c) => ({ kind: c.kind, dlo: c.dlo, doorMark: c.door?.mark ?? null, doorHeight: c.door?.height ?? null })),
     rows: spec.rows.map((r) => r.dlo),
     bayRows: Object.fromEntries(Object.entries(spec.bayRows ?? {}).map(([k, v]) => [k, v.map((r) => r.dlo)])),
+    brakeMetal: (spec.brakeMetal ?? []).map((b) => ({ edge: b.edge ?? null, description: b.description, girth: b.girth, bends: b.bends, hems: b.hems, length: b.length ?? null })),
   };
 }
 
@@ -525,7 +533,7 @@ export function importJob(doc = {}, takeoff = {}, opts = {}) {
 
 // ── Re-sync (decision 5) ─────────────────────────────────────────────────────
 
-const FIELDS = ['quantity', 'size', 'systemId', 'finish', 'glass', 'columns', 'rows', 'bayRows'];
+const FIELDS = ['quantity', 'size', 'systemId', 'finish', 'glass', 'columns', 'rows', 'bayRows', 'brakeMetal'];
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 /**
@@ -544,10 +552,11 @@ export function resyncFrame(current, payload, opts = {}) {
   const updated = []; const kept = [];
   for (const f of FIELDS) {
     if (same(cur[f], nxt[f])) continue;                     // nothing changed on the drawing side
-    if (same(cur[f], before[f])) {                          // untouched by the estimator → update
+    const was = before[f] === undefined ? cur[f] : before[f];   // a field added after this frame was imported
+    if (same(cur[f], was)) {                                // untouched by the estimator → update
       applyField(out, fresh, f);
       updated.push(f);
-    } else if (!same(before[f], nxt[f])) {                  // edited AND the drawing changed → ask
+    } else if (!same(was, nxt[f])) {                        // edited AND the drawing changed → ask
       kept.push({ field: f, now: cur[f], drawing: nxt[f] });
     }
   }
@@ -572,6 +581,7 @@ function applyField(out, fresh, f) {
   else if (f === 'columns') { out.columns = structuredClone(fresh.columns); out.bayRows = structuredClone(fresh.bayRows); }
   else if (f === 'rows') out.rows = structuredClone(fresh.rows);
   else if (f === 'bayRows') out.bayRows = structuredClone(fresh.bayRows);
+  else if (f === 'brakeMetal') out.brakeMetal = structuredClone(fresh.brakeMetal);
   else out[f] = structuredClone(fresh[f]);
 }
 
@@ -585,6 +595,7 @@ export function acceptDrawingValue(spec, field, opts = {}) {
   else if (field === 'glass') out.glass = { ...out.glass, frameDefault: v };
   else if (field === 'columns') out.columns = v.map((c, i) => ({ ...(out.columns[i] ?? {}), kind: c.kind, dlo: c.dlo }));
   else if (field === 'rows') out.rows = v.map((dlo) => ({ dlo }));
+  else if (field === 'brakeMetal') out.brakeMetal = v.map((b) => ({ ...newBrakePiece(), ...b }));
   else if (field === 'bayRows') out.bayRows = Object.fromEntries(Object.entries(v).map(([c, rs]) => [c, rs.map((dlo) => ({ dlo }))]));
   else out[field] = v;
   out.importMeta = { ...out.importMeta, drawingSays: out.importMeta.drawingSays.filter((x) => x.field !== field),
