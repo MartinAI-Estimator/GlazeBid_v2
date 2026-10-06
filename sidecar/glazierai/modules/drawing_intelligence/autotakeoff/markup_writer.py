@@ -43,6 +43,14 @@ def write_markups(pdf_in: str, result: dict, pdf_out: str, author: str = "GlazeB
         if page is None or page >= len(doc) or not (m.get("rect") or m.get("points")):
             continue
         pg = doc[page]
+        # engine coordinates are in the rotated (as-viewed) page space;
+        # annotations are placed in unrotated PDF space
+        D = pg.derotation_matrix
+
+        def R(v):
+            q = fitz.Rect(*v) * D
+            q.normalize()
+            return q
         role = m.get("role", "region")
         stroke = _rgb(m.get("stroke") or "#FFFF00")
         fill = _rgb(m.get("fill") or m.get("stroke") or "#FFFF00")
@@ -50,7 +58,7 @@ def write_markups(pdf_in: str, result: dict, pdf_out: str, author: str = "GlazeB
         content = m.get("text") or m.get("note") or ""
         annot = None
         if role in ("region", "flag", "area"):
-            r = fitz.Rect(*m["rect"])
+            r = R(m["rect"])
             if r.is_empty or r.width < 1 or r.height < 1:
                 r = fitz.Rect(r.x0 - 2, r.y0 - 2, r.x0 + max(4, r.width), r.y0 + max(4, r.height))
             if role == "region":
@@ -70,18 +78,18 @@ def write_markups(pdf_in: str, result: dict, pdf_out: str, author: str = "GlazeB
                 annot.set_opacity(0.35)
                 annot.set_border(width=2, dashes=[3, 3])
         elif role == "label":
-            r = fitz.Rect(*m["rect"])
-            annot = pg.add_freetext_annot(r, content, fontsize=9, text_color=(0, 0, 0), fill_color=(1, 1, 1))
+            r = R(m["rect"])
+            annot = pg.add_freetext_annot(r, content, fontsize=9, text_color=(0, 0, 0), fill_color=(1, 1, 1), rotate=pg.rotation)
             content = m.get("text", "")
         elif role == "linear":
-            pts = [fitz.Point(*p) for p in (m.get("points") or [])]
+            pts = [fitz.Point(*p) * D for p in (m.get("points") or [])]
             if len(pts) < 2:
                 continue
             annot = pg.add_polyline_annot(pts)
             annot.set_colors(stroke=stroke)
             annot.set_border(width=2)
         elif role in ("door", "count"):
-            r = fitz.Rect(*m["rect"])
+            r = R(m["rect"])
             annot = pg.add_circle_annot(r)
             annot.set_colors(stroke=stroke, fill=fill)
             annot.set_opacity(0.5)
@@ -116,5 +124,5 @@ def read_back(pdf_path: str, author: str = "GlazeBid") -> list[dict]:
             if not nm.startswith("gb:") and info.get("title") != author:
                 continue
             out.append({"page": pg.number, "nm": nm, "subject": info.get("subject"), "content": info.get("content"),
-                        "rect": [round(v, 1) for v in a.rect], "type": a.type[1], "author": info.get("title")})
+                        "rect": [round(v, 1) for v in (fitz.Rect(a.rect) * pg.rotation_matrix).normalize()], "type": a.type[1], "author": info.get("title")})
     return out
