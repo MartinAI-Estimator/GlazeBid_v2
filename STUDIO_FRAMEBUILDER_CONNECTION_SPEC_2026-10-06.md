@@ -39,3 +39,8 @@ Builds on GlazeBid_Frame_Builder_Interview_Spec_2026-10-03.md (Frame Builder V1)
 8. **Retire** G4 inbox math and G3 Frame Builder once the above is accepted.
 
 Each step tested on Hope / Curtis / McLarty / Valvoline / Tricity.
+
+## Build status
+- **Step 1 done** (6234518): `frames.py` + `elevation_grid.py`, `POST /drawing-intelligence/frames/payload`, 6 tests. The grid reader reads each type elevation's vector lines (member faces → centerlines, mullions, per-bay horizontals, door bays, pairs, door height) and ignores tags / callouts by pen weight and colour. Results: Hope 21/21 sized frames with grids, 6 door bays, 10 doors tied to frame types; Curtis 31/52 with grids, 15 door bays; McLarty 17/17, 11 door bays; Valvoline 1/7 (elevations not matched); Tricity none (its storefronts are only elevation notes — engine gap). Checked by eye: Curtis SAF/SAW/SAS/SAB, McLarty 4/5/30/101, Hope types 5/8/12.
+- Fixed on the way: the page-drawing cache was keyed by document memory id (stale lines when a new PDF reuses the id) — cleared around each payload build.
+- Known limits: engine frame rectangles that include wall below a raised sill (Hope K / type 12) shift door / row heights; doors whose schedule names no frame type stay standalone door frames; every read is flagged "confirm DLOs".
