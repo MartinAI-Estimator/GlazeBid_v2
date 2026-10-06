@@ -228,6 +228,26 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                             "tags": sum(merged.counts.values()), "unmatched": merged.unmatched})
     plan_counts = merge_counts(censuses, {s.sheet: s.title for s in index})
 
+    # ── 3a. compound door tags: "A103 / A | 11 | 15" → door type, frame type, hardware ──
+    # Some architects tie a door to a glazed frame type only through the plan tag.
+    from .door_tags import tag_cells, cell_roles
+    door_marks_tab = {e.mark for e in entries if e.layout == "tabular" and _is_door(e)}
+    plan_cells: dict[str, list[str]] = {}
+    for pc in censuses:
+        for m, tgs in pc.tags.items():
+            if m in door_marks_tab and m not in plan_cells:
+                for tg in tgs:
+                    cl = tag_cells(doc[pc.page], tg)
+                    if cl:
+                        plan_cells[m] = cl
+                        break
+    frame_words: dict[str, str] = {}
+    for e in entries:
+        mu = e.mark.upper()
+        if mu.startswith("FRAME TYPE "):
+            frame_words[mu.split()[-1]] = " ".join(e.text) if e.layout != "tabular" else e.desc
+    door_type_marks = {e.mark.upper().split()[-1] for e in entries if e.mark.upper().startswith("DOOR TYPE ")}
+
     # ── 3b. classify schedule entries (needed to decide what to snap) ──────
     sheet_of = {s.page: s for s in index}
 
@@ -281,14 +301,29 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
     # compass elevations "NORTHWEST ELEVATION", "SOUTH ELEVATION", "BUILDING ELEVATIONS")
     _ext = re.compile(r"EXTERIOR|(NORTH|SOUTH|EAST|WEST)\w*\s+ELEVATION|BUILDING ELEVATION", re.I)
     job_interior = not any(_ext.search(s.title) for s in index)
+    tag_roles: dict[int, str] = {}
+    if plan_cells and frame_words:
+        tag_roles = cell_roles(plan_cells, set(frame_words), door_type_marks | set(type_info), set())
+        out["read"].append({"step": "door tag cells", "tags": len(plan_cells), "roles": {str(k): v for k, v in tag_roles.items()}})
     from .classify import rules as _rules
     fire_cols = [c.upper() for c in _rules().get("fire_rating_columns", [])]
     for e in entries:
         s = sheet_of[e.page]
         txt = e.desc if e.layout == "tabular" else " ".join(e.text)
         is_door = _is_door(e)
-        if e.layout == "tabular" and (type_info or code_tabs or detail_titles):
-            extra = describe_row(e.cells, type_info, code_tabs, hm_frame_codes=hm_frames, detail_titles=detail_titles)
+        if e.layout == "tabular" and is_door and e.mark in plan_cells and tag_roles:
+            cl = plan_cells[e.mark]
+            have = " ".join(e.cells).upper()
+            for i, role in tag_roles.items():
+                if i < len(cl) and role in ("frame", "door"):
+                    col = "FRAME TYPE (PLAN TAG)" if role == "frame" else "DOOR TYPE (PLAN TAG)"
+                    if (role == "frame" and "FRAME" in have) or (role == "door" and re.search(r"\bTYPE\b", have) and "FRAME" not in have):
+                        continue
+                    e.cells[col] = cl[i]
+            txt = e.desc
+        if e.layout == "tabular" and (type_info or code_tabs or detail_titles or frame_words):
+            extra = describe_row(e.cells, type_info, code_tabs, hm_frame_codes=hm_frames, detail_titles=detail_titles,
+                                 frame_words=frame_words)
             if extra:
                 e.extra = extra
                 txt = e.desc
@@ -366,6 +401,14 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
         if n:
             it.qty, it.qty_source = n, "plan tags"
             it.citations.append(f"plan tags ×{n}")
+        elif e.mark.upper().startswith("FRAME TYPE ") and tag_roles and any(
+                r == "frame" and i < len(cl) and cl[i] == e.mark.split()[-1]
+                for cl in plan_cells.values() for i, r in tag_roles.items()):
+            fi = [i for i, r in tag_roles.items() if r == "frame"][0]
+            refs = sorted(m for m, cl in plan_cells.items() if fi < len(cl) and cl[fi] == e.mark.split()[-1])
+            it.qty, it.qty_source = len(refs), "door tags on plans"
+            it.citations.append(f"door tags {', '.join(refs)}")
+            it.flags.append(f"count = doors whose plan tag names frame type {e.mark.split()[-1]} ({len(refs)}) — confirm")
         else:
             it.qty, it.qty_source = 1, "schedule (no plan tag found)"
             if c.kind in ("scope", "pass_thru"):

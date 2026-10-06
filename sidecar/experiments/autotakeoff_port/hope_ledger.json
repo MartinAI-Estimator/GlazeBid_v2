@@ -1,5 +1,5 @@
 {
- "project": "hope",
+ "project": "Hope",
  "pages": 19,
  "read": [
   {
@@ -135,6 +135,14 @@
     "3": 3,
     "5": 2,
     "4": 1
+   }
+  },
+  {
+   "step": "door tag cells",
+   "tags": 32,
+   "roles": {
+    "0": "door",
+    "1": "frame"
    }
   },
   {
@@ -333,10 +341,10 @@
   },
   {
    "id": "A102",
-   "cls": "excluded",
-   "kind": "excluded",
+   "cls": "glazing_only_door",
+   "kind": "scope",
    "label": "A102 \u2014 1 Thus",
-   "desc": "MARK: A102 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "desc": "MARK: A102 | HEAD: 2/A3.8 | JAMB: 3/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 11 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only) | FRAME TYPE 11: HOLLOW METAL FRAME, PAINTED WITH 1/4\" CLEAR GLASS",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -352,7 +360,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
    ],
    "citations": [
     "A3.1 tabular schedule type A102",
@@ -366,10 +374,10 @@
   },
   {
    "id": "A103",
-   "cls": "excluded",
-   "kind": "excluded",
+   "cls": "glazing_only_door",
+   "kind": "scope",
    "label": "A103 \u2014 1 Thus",
-   "desc": "MARK: A103 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "desc": "MARK: A103 | HEAD: 2/A3.8 | JAMB: 3/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 11 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only) | FRAME TYPE 11: HOLLOW METAL FRAME, PAINTED WITH 1/4\" CLEAR GLASS",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -385,7 +393,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
    ],
    "citations": [
     "A3.1 tabular schedule type A103",
@@ -399,10 +407,10 @@
   },
   {
    "id": "A104",
-   "cls": "excluded",
-   "kind": "excluded",
+   "cls": "glazing_only_door",
+   "kind": "scope",
    "label": "A104 \u2014 1 Thus",
-   "desc": "MARK: A104 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "desc": "MARK: A104 | HEAD: 2/A3.8 | JAMB: 3/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 11 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only) | FRAME TYPE 11: HOLLOW METAL FRAME, PAINTED WITH 1/4\" CLEAR GLASS",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -418,7 +426,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
    ],
    "citations": [
     "A3.1 tabular schedule type A104",
@@ -435,7 +443,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "A105 \u2014 1 Thus",
-   "desc": "MARK: A105 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "desc": "MARK: A105 | HEAD: 2/A3.8 | JAMB: 3/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 1 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -468,7 +476,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "A106A \u2014 1 Thus",
-   "desc": "MARK: A106A | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "desc": "MARK: A106A | HEAD: 2/A3.8 | JAMB: 3/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 1 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -501,7 +509,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "A106B \u2014 1 Thus",
-   "desc": "MARK: A106B | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "desc": "MARK: A106B | HEAD: 1/A3.8 | JAMB: 4/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 2 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -534,7 +542,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "A106C \u2014 1 Thus",
-   "desc": "MARK: A106C | HEAD: 13/A3.8 | JAMB: 14/A3.8 | SILL: 12/A3.8 || HEAD DETAIL 13/A3.8: HEAD DETAIL - COILING COUNTER | JAMB DETAIL 14/A3.8: JAMB DETAIL - COILING COUNTER | SILL DETAIL 12/A3.8: SILL DETAIL - COILING COUNTER DOOR",
+   "desc": "MARK: A106C | HEAD: 13/A3.8 | JAMB: 14/A3.8 | SILL: 12/A3.8 | DOOR TYPE (PLAN TAG): 6'- | FRAME TYPE (PLAN TAG): G || HEAD DETAIL 13/A3.8: HEAD DETAIL - COILING COUNTER | JAMB DETAIL 14/A3.8: JAMB DETAIL - COILING COUNTER | SILL DETAIL 12/A3.8: SILL DETAIL - COILING COUNTER DOOR",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -564,10 +572,10 @@
   },
   {
    "id": "A107A",
-   "cls": "excluded",
-   "kind": "excluded",
+   "cls": "glazing_only_door",
+   "kind": "scope",
    "label": "A107A \u2014 1 Thus",
-   "desc": "MARK: A107A | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "desc": "MARK: A107A | HEAD: 2/A3.8 | JAMB: 3/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 11 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only) | FRAME TYPE 11: HOLLOW METAL FRAME, PAINTED WITH 1/4\" CLEAR GLASS",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -583,7 +591,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
    ],
    "citations": [
     "A3.1 tabular schedule type A107A",
@@ -600,7 +608,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "A107B \u2014 1 Thus",
-   "desc": "MARK: A107B | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "desc": "MARK: A107B | HEAD: 1/A3.8 | JAMB: 4/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 2 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -665,7 +673,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "A107D \u2014 1 Thus",
-   "desc": "MARK: A107D | HEAD: 13/A3.8 | JAMB: 14/A3.8 | SILL: 12/A3.8 || HEAD DETAIL 13/A3.8: HEAD DETAIL - COILING COUNTER | JAMB DETAIL 14/A3.8: JAMB DETAIL - COILING COUNTER | SILL DETAIL 12/A3.8: SILL DETAIL - COILING COUNTER DOOR",
+   "desc": "MARK: A107D | HEAD: 13/A3.8 | JAMB: 14/A3.8 | SILL: 12/A3.8 | DOOR TYPE (PLAN TAG): 6'- | FRAME TYPE (PLAN TAG): G || HEAD DETAIL 13/A3.8: HEAD DETAIL - COILING COUNTER | JAMB DETAIL 14/A3.8: JAMB DETAIL - COILING COUNTER | SILL DETAIL 12/A3.8: SILL DETAIL - COILING COUNTER DOOR",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -698,8 +706,8 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "A109A \u2014 1 Thus",
-   "desc": "MARK: A109A | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
-   "location": null,
+   "desc": "MARK: A109A | HEAD: 6/A3.8 | JAMB: 7/A3.8 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 9 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU | FRAME TYPE 9: 450T KAWNEER STOREFRONT FRAME AT INTERIOR, 451T KAWNEER AT EXTERIOR",
+   "location": "exterior",
    "w_in": null,
    "h_in": null,
    "frames": [],
@@ -709,12 +717,21 @@
    "qty_source": "plan tags",
    "sf_each": null,
    "sf_total": null,
-   "series": [],
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
    "hardware": [],
    "implied": [],
    "flags": [],
    "notes": [
-    "storefront: Aluminum storefront / entrance by name"
+    "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
     "A3.1 tabular schedule type A109A",
@@ -731,8 +748,8 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "A109B \u2014 1 Thus",
-   "desc": "MARK: A109B | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
-   "location": null,
+   "desc": "MARK: A109B | HEAD: 6/A3.8 | JAMB: 7/A3.8 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 9 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU | FRAME TYPE 9: 450T KAWNEER STOREFRONT FRAME AT INTERIOR, 451T KAWNEER AT EXTERIOR",
+   "location": "exterior",
    "w_in": null,
    "h_in": null,
    "frames": [],
@@ -742,12 +759,21 @@
    "qty_source": "plan tags",
    "sf_each": null,
    "sf_total": null,
-   "series": [],
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
    "hardware": [],
    "implied": [],
    "flags": [],
    "notes": [
-    "storefront: Aluminum storefront / entrance by name"
+    "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
     "A3.1 tabular schedule type A109B",
@@ -764,8 +790,8 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "A109C \u2014 1 Thus",
-   "desc": "MARK: A109C | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
-   "location": null,
+   "desc": "MARK: A109C | HEAD: 6/A3.8 | JAMB: 7/A3.8 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 9 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU | FRAME TYPE 9: 450T KAWNEER STOREFRONT FRAME AT INTERIOR, 451T KAWNEER AT EXTERIOR",
+   "location": "exterior",
    "w_in": null,
    "h_in": null,
    "frames": [],
@@ -775,12 +801,21 @@
    "qty_source": "plan tags",
    "sf_each": null,
    "sf_total": null,
-   "series": [],
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
    "hardware": [],
    "implied": [],
    "flags": [],
    "notes": [
-    "storefront: Aluminum storefront / entrance by name"
+    "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
     "A3.1 tabular schedule type A109C",
@@ -1021,7 +1056,7 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "B101A \u2014 1 Thus",
-   "desc": "MARK: B101A | HEAD: 4/A3.11 | JAMB: 2/A3.9 | SILL: 5/A3.11 || HEAD DETAIL 4/A3.11: HEAD DETAIL - VESTIBULE | JAMB DETAIL 2/A3.9: JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT] | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "desc": "MARK: B101A | HEAD: 4/A3.11 | JAMB: 2/A3.9 | SILL: 5/A3.11 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 7 || HEAD DETAIL 4/A3.11: HEAD DETAIL - VESTIBULE | JAMB DETAIL 2/A3.9: JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT] | SILL DETAIL 5/A3.11: SILL DETAIL - SF | FRAME TYPE 7: 451T KAWNEER CENTER GLAZED STOREFRONT FRAME WITH 1\" INSULATED TINTED GLASS.",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1032,12 +1067,21 @@
    "qty_source": "plan tags",
    "sf_each": null,
    "sf_total": null,
-   "series": [],
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
    "hardware": [],
    "implied": [],
    "flags": [],
    "notes": [
-    "storefront: Aluminum storefront / entrance by name"
+    "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
     "A3.1 tabular schedule type B101A",
@@ -1054,7 +1098,7 @@
    "cls": "int_cw_door",
    "kind": "scope",
    "label": "B101B \u2014 1 Thus",
-   "desc": "MARK: B101B | HEAD: 2/A3.11 | JAMB: 2/A3.9 || HEAD DETAIL 2/A3.11: HEAD DETAIL - VESITBULE INT. [CURTAINWALL] | JAMB DETAIL 2/A3.9: JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT]",
+   "desc": "MARK: B101B | HEAD: 2/A3.11 | JAMB: 2/A3.9 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 8 || HEAD DETAIL 2/A3.11: HEAD DETAIL - VESITBULE INT. [CURTAINWALL] | JAMB DETAIL 2/A3.9: JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT] | FRAME TYPE 8: 450T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1/4\" CLEAR GLASS. 8'-8\" 1'-0\" 6'-0\" 2\" 1'-0\"",
    "location": "interior",
    "w_in": null,
    "h_in": null,
@@ -1121,7 +1165,7 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "B106B \u2014 1 Thus",
-   "desc": "MARK: B106B | HEAD: 8/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 8/A3.8: HEAD DETAIL - SF IN CMU - TRANSOM | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "desc": "MARK: B106B | HEAD: 8/A3.8 | JAMB: 7/A3.8 | DOOR TYPE (PLAN TAG): B | FRAME TYPE (PLAN TAG): 1 || HEAD DETAIL 8/A3.8: HEAD DETAIL - SF IN CMU - TRANSOM | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1154,7 +1198,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B112 \u2014 1 Thus",
-   "desc": "MARK: B112 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "desc": "MARK: B112 | HEAD: 1/A3.8 | JAMB: 4/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 2 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1187,7 +1231,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B113 \u2014 1 Thus",
-   "desc": "MARK: B113 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "desc": "MARK: B113 | HEAD: 1/A3.8 | JAMB: 4/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 2 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1354,8 +1398,8 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "B120B \u2014 1 Thus",
-   "desc": "MARK: B120B | HEAD: 6/A3.9 | JAMB: 6/A3.11 | SILL: 5/A3.11 || HEAD DETAIL 6/A3.9: HEAD DETAIL - ACM AT ACM SOFFIT [STOREFRONT] | JAMB DETAIL 6/A3.11: JAMB DETAIL - SF AT ACM | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
-   "location": null,
+   "desc": "MARK: B120B | HEAD: 6/A3.9 | JAMB: 6/A3.11 | SILL: 5/A3.11 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 9 || HEAD DETAIL 6/A3.9: HEAD DETAIL - ACM AT ACM SOFFIT [STOREFRONT] | JAMB DETAIL 6/A3.11: JAMB DETAIL - SF AT ACM | SILL DETAIL 5/A3.11: SILL DETAIL - SF | FRAME TYPE 9: 450T KAWNEER STOREFRONT FRAME AT INTERIOR, 451T KAWNEER AT EXTERIOR",
+   "location": "exterior",
    "w_in": null,
    "h_in": null,
    "frames": [],
@@ -1365,12 +1409,21 @@
    "qty_source": "plan tags",
    "sf_each": null,
    "sf_total": null,
-   "series": [],
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
    "hardware": [],
    "implied": [],
    "flags": [],
    "notes": [
-    "storefront: Aluminum storefront / entrance by name"
+    "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
     "A3.1 tabular schedule type B120B",
@@ -1387,7 +1440,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B120C \u2014 1 Thus",
-   "desc": "MARK: B120C | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "desc": "MARK: B120C | HEAD: 1/A3.8 | JAMB: 4/A3.8 | DOOR TYPE (PLAN TAG): H | FRAME TYPE (PLAN TAG): 4 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1484,7 +1537,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B122B \u2014 1 Thus",
-   "desc": "MARK: B122B | HEAD: 18/A3.8 | JAMB: 19/A3.8 || HEAD DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | JAMB DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
+   "desc": "MARK: B122B | HEAD: 18/A3.8 | JAMB: 19/A3.8 | DOOR TYPE (PLAN TAG): E | FRAME TYPE (PLAN TAG): 4 || HEAD DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | JAMB DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1517,7 +1570,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B123 \u2014 1 Thus",
-   "desc": "MARK: B123 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "desc": "MARK: B123 | HEAD: 1/A3.8 | JAMB: 4/A3.8 | DOOR TYPE (PLAN TAG): A | FRAME TYPE (PLAN TAG): 2 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU | DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1618,8 +1671,8 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "B126C \u2014 1 Thus",
-   "desc": "MARK: B126C | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
-   "location": null,
+   "desc": "MARK: B126C | HEAD: 6/A3.8 | JAMB: 7/A3.8 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 9 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU | FRAME TYPE 9: 450T KAWNEER STOREFRONT FRAME AT INTERIOR, 451T KAWNEER AT EXTERIOR",
+   "location": "exterior",
    "w_in": null,
    "h_in": null,
    "frames": [],
@@ -1629,12 +1682,21 @@
    "qty_source": "plan tags",
    "sf_each": null,
    "sf_total": null,
-   "series": [],
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
    "hardware": [],
    "implied": [],
    "flags": [],
    "notes": [
-    "storefront: Aluminum storefront / entrance by name"
+    "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
     "A3.1 tabular schedule type B126C",
@@ -1651,7 +1713,7 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "B126D \u2014 1 Thus",
-   "desc": "MARK: B126D | HEAD: 7/A3.11 | JAMB: 8/A3.11 | SILL: 5/A3.11 || HEAD DETAIL 7/A3.11: HEAD DETAIL - SF AT METAL PANEL | JAMB DETAIL 8/A3.11: HEAD DETAIL - SF AT CANOPY | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "desc": "MARK: B126D | HEAD: 7/A3.11 | JAMB: 8/A3.11 | SILL: 5/A3.11 | DOOR TYPE (PLAN TAG): B | FRAME TYPE (PLAN TAG): 8 || HEAD DETAIL 7/A3.11: HEAD DETAIL - SF AT METAL PANEL | JAMB DETAIL 8/A3.11: HEAD DETAIL - SF AT CANOPY | SILL DETAIL 5/A3.11: SILL DETAIL - SF | FRAME TYPE 8: 450T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1/4\" CLEAR GLASS. 8'-8\" 1'-0\" 6'-0\" 2\" 1'-0\"",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1684,7 +1746,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B126E \u2014 1 Thus",
-   "desc": "MARK: B126E | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "desc": "MARK: B126E | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 | DOOR TYPE (PLAN TAG): F || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL | DOOR TYPE F; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1717,7 +1779,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B126F \u2014 1 Thus",
-   "desc": "MARK: B126F | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "desc": "MARK: B126F | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 | DOOR TYPE (PLAN TAG): F || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL | DOOR TYPE F; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1784,7 +1846,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B126H \u2014 1 Thus",
-   "desc": "MARK: B126H | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "desc": "MARK: B126H | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 | DOOR TYPE (PLAN TAG): F || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL | DOOR TYPE F; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1817,7 +1879,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B126J \u2014 1 Thus",
-   "desc": "MARK: B126J | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "desc": "MARK: B126J | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 | DOOR TYPE (PLAN TAG): F || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL | DOOR TYPE F; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1850,7 +1912,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B126K \u2014 1 Thus",
-   "desc": "MARK: B126K | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "desc": "MARK: B126K | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 | DOOR TYPE (PLAN TAG): F || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL | DOOR TYPE F; NO DOOR LEAF DRAWN (opening / frame only)",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1883,7 +1945,7 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "B126L \u2014 1 Thus",
-   "desc": "MARK: B126L | HEAD: 7/A3.11 | JAMB: 8/A3.11 | SILL: 5/A3.11 || HEAD DETAIL 7/A3.11: HEAD DETAIL - SF AT METAL PANEL | JAMB DETAIL 8/A3.11: HEAD DETAIL - SF AT CANOPY | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "desc": "MARK: B126L | HEAD: 7/A3.11 | JAMB: 8/A3.11 | SILL: 5/A3.11 | DOOR TYPE (PLAN TAG): B | FRAME TYPE (PLAN TAG): 6 || HEAD DETAIL 7/A3.11: HEAD DETAIL - SF AT METAL PANEL | JAMB DETAIL 8/A3.11: HEAD DETAIL - SF AT CANOPY | SILL DETAIL 5/A3.11: SILL DETAIL - SF | FRAME TYPE 6: 451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. 12'-0\" 4'-2\" 3'-0\" 4'-2\"",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1894,12 +1956,21 @@
    "qty_source": "plan tags",
    "sf_each": null,
    "sf_total": null,
-   "series": [],
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
    "hardware": [],
    "implied": [],
    "flags": [],
    "notes": [
-    "storefront: Aluminum storefront / entrance by name"
+    "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
     "A3.1 tabular schedule type B126L",
@@ -1916,7 +1987,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "B127 \u2014 1 Thus",
-   "desc": "MARK: B127 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "desc": "MARK: B127 | HEAD: 1/A3.8 | JAMB: 4/A3.8 | DOOR TYPE (PLAN TAG): D | FRAME TYPE (PLAN TAG): 2 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -1949,7 +2020,7 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "B201 \u2014 1 Thus",
-   "desc": "MARK: B201 | HEAD: 10/A3.8 | JAMB: 9/A3.8 || HEAD DETAIL 10/A3.8: HEAD DETAIL - SF IN STUDS | JAMB DETAIL 9/A3.8: JAMB DETAIL - SF IN STUDS",
+   "desc": "MARK: B201 | HEAD: 10/A3.8 | JAMB: 9/A3.8 | DOOR TYPE (PLAN TAG): C | FRAME TYPE (PLAN TAG): 12 || HEAD DETAIL 10/A3.8: HEAD DETAIL - SF IN STUDS | JAMB DETAIL 9/A3.8: JAMB DETAIL - SF IN STUDS | FRAME TYPE 12: 450T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1/4\" CLEAR GLASS.",
    "location": null,
    "w_in": null,
    "h_in": null,
@@ -2432,7 +2503,7 @@
    "id": "FRAME TYPE 9",
    "cls": "ext_sf",
    "kind": "scope",
-   "label": "FRAME TYPE 9 \u2014 1 Thus",
+   "label": "FRAME TYPE 9 \u2014 5 Thus",
    "desc": "450T KAWNEER STOREFRONT FRAME AT INTERIOR, 451T KAWNEER AT EXTERIOR",
    "location": "exterior",
    "w_in": 72.93,
@@ -2458,10 +2529,10 @@
    ],
    "bays": 1,
    "rows": 3,
-   "qty": 1,
-   "qty_source": "schedule (no plan tag found)",
+   "qty": 5,
+   "qty_source": "door tags on plans",
    "sf_each": 53.35,
-   "sf_total": 53.4,
+   "sf_total": 266.8,
    "series": [
     {
      "id": "kawneer-451t",
@@ -2477,7 +2548,7 @@
    "flags": [
     "drawn size does not match any dimension string \u2014 check scale",
     "width 6'-0\" from dimension string (drawing measured 6'-4 1/16\")",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 9 (5) \u2014 confirm",
     "elevation located by size only on A3.3 \u2014 confirm"
    ],
    "notes": [
@@ -2486,6 +2557,7 @@
    ],
    "citations": [
     "A3.1 captioned schedule type FRAME TYPE 9",
+    "door tags A109A, A109B, A109C, B120B, B126C",
     "A3.3 elevation \u00d71 (snapped)"
    ],
    "pair": false,
@@ -2498,7 +2570,7 @@
    "id": "FRAME TYPE 11",
    "cls": "glazing_only",
    "kind": "scope",
-   "label": "FRAME TYPE 11 \u2014 1 Thus",
+   "label": "FRAME TYPE 11 \u2014 4 Thus",
    "desc": "HOLLOW METAL FRAME, PAINTED WITH 1/4\" CLEAR GLASS",
    "location": null,
    "w_in": 64.07,
@@ -2526,16 +2598,16 @@
    ],
    "bays": 3,
    "rows": 2,
-   "qty": 1,
-   "qty_source": "schedule (no plan tag found)",
+   "qty": 4,
+   "qty_source": "door tags on plans",
    "sf_each": 38.3,
-   "sf_total": 38.3,
+   "sf_total": 153.2,
    "series": [],
    "hardware": [],
    "implied": [],
    "flags": [
     "height 7'-0\" from dimension string (drawing measured 7'-2 1/8\")",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 11 (4) \u2014 confirm",
     "elevation located by size only on A3.1 \u2014 confirm"
    ],
    "notes": [
@@ -2544,6 +2616,7 @@
    ],
    "citations": [
     "A3.1 captioned schedule type FRAME TYPE 11",
+    "door tags A102, A103, A104, A107A",
     "A3.1 elevation \u00d71 (snapped)"
    ],
    "pair": false,
@@ -2580,7 +2653,7 @@
    "bays": 1,
    "rows": 1,
    "qty": 1,
-   "qty_source": "schedule (no plan tag found)",
+   "qty_source": "door tags on plans",
    "sf_each": 49.1,
    "sf_total": 49.1,
    "series": [
@@ -2599,7 +2672,7 @@
     "drawn size does not match any dimension string \u2014 check scale",
     "width 8'-0\" from dimension string (drawing measured 8'-6 1/16\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 6 (1) \u2014 confirm",
     "elevation located by size only on A4.1 \u2014 confirm"
    ],
    "notes": [
@@ -2608,6 +2681,7 @@
    ],
    "citations": [
     "A3.1 captioned schedule type FRAME TYPE 6",
+    "door tags B126L",
     "A4.1 elevation \u00d72 (snapped)"
    ],
    "pair": false,
@@ -2649,7 +2723,7 @@
    "bays": 5,
    "rows": 1,
    "qty": 1,
-   "qty_source": "schedule (no plan tag found)",
+   "qty_source": "door tags on plans",
    "sf_each": 144.88,
    "sf_total": 144.9,
    "series": [
@@ -2667,13 +2741,14 @@
    "flags": [
     "width 14'-5 3/4\" from dimension string (drawing measured 15'-6 5/16\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1"
+    "count = doors whose plan tag names frame type 7 (1) \u2014 confirm"
    ],
    "notes": [
     "series Kawneer 451T \u2192 ext_sf"
    ],
    "citations": [
-    "A3.1 captioned schedule type FRAME TYPE 7"
+    "A3.1 captioned schedule type FRAME TYPE 7",
+    "door tags B101A"
    ],
    "pair": false,
    "stile": null,
@@ -2685,7 +2760,7 @@
    "id": "FRAME TYPE 8",
    "cls": "ext_sf",
    "kind": "scope",
-   "label": "FRAME TYPE 8 \u2014 1 Thus",
+   "label": "FRAME TYPE 8 \u2014 2 Thus",
    "desc": "450T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1/4\" CLEAR GLASS. 8'-8\" 1'-0\" 6'-0\" 2\" 1'-0\"",
    "location": null,
    "w_in": 182.375,
@@ -2713,10 +2788,10 @@
    ],
    "bays": 5,
    "rows": 1,
-   "qty": 1,
-   "qty_source": "schedule (no plan tag found)",
+   "qty": 2,
+   "qty_source": "door tags on plans",
    "sf_each": 152.07,
-   "sf_total": 152.1,
+   "sf_total": 304.1,
    "series": [],
    "hardware": [],
    "implied": [],
@@ -2725,13 +2800,14 @@
     "drawn size does not match any dimension string \u2014 check scale",
     "width 15'-2 3/8\" from dimension string (drawing measured 14'-10 1/16\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1"
+    "count = doors whose plan tag names frame type 8 (2) \u2014 confirm"
    ],
    "notes": [
     "storefront: Aluminum storefront / entrance by name"
    ],
    "citations": [
-    "A3.1 captioned schedule type FRAME TYPE 8"
+    "A3.1 captioned schedule type FRAME TYPE 8",
+    "door tags B101B, B126D"
    ],
    "pair": false,
    "stile": null,
@@ -2838,7 +2914,7 @@
    "bays": 6,
    "rows": 2,
    "qty": 1,
-   "qty_source": "schedule (no plan tag found)",
+   "qty_source": "door tags on plans",
    "sf_each": 98.82,
    "sf_total": 98.8,
    "series": [],
@@ -2847,7 +2923,7 @@
    "flags": [
     "width 10'-0\" from dimension string (drawing measured 10'-2 7/8\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 12 (1) \u2014 confirm",
     "elevation located by size only on A4.1 \u2014 confirm"
    ],
    "notes": [
@@ -2856,6 +2932,7 @@
    ],
    "citations": [
     "A3.1 captioned schedule type FRAME TYPE 12",
+    "door tags B201",
     "A4.1 elevation \u00d71 (snapped)"
    ],
    "pair": false,
@@ -6410,7 +6487,7 @@
    "flags": [
     "drawn size does not match any dimension string \u2014 check scale",
     "width 6'-0\" from dimension string (drawing measured 6'-4 1/16\")",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 9 (5) \u2014 confirm",
     "elevation located by size only on A3.3 \u2014 confirm"
    ]
   },
@@ -6418,7 +6495,7 @@
    "item": "FRAME TYPE 11",
    "flags": [
     "height 7'-0\" from dimension string (drawing measured 7'-2 1/8\")",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 11 (4) \u2014 confirm",
     "elevation located by size only on A3.1 \u2014 confirm"
    ]
   },
@@ -6428,7 +6505,7 @@
     "drawn size does not match any dimension string \u2014 check scale",
     "width 8'-0\" from dimension string (drawing measured 8'-6 1/16\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 6 (1) \u2014 confirm",
     "elevation located by size only on A4.1 \u2014 confirm"
    ]
   },
@@ -6437,7 +6514,7 @@
    "flags": [
     "width 14'-5 3/4\" from dimension string (drawing measured 15'-6 5/16\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1"
+    "count = doors whose plan tag names frame type 7 (1) \u2014 confirm"
    ]
   },
   {
@@ -6447,7 +6524,7 @@
     "drawn size does not match any dimension string \u2014 check scale",
     "width 15'-2 3/8\" from dimension string (drawing measured 14'-10 1/16\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1"
+    "count = doors whose plan tag names frame type 8 (2) \u2014 confirm"
    ]
   },
   {
@@ -6464,7 +6541,7 @@
    "flags": [
     "width 10'-0\" from dimension string (drawing measured 10'-2 7/8\")",
     "exterior / interior not stated \u2014 assumed exterior",
-    "no plan tag found for this mark \u2014 count assumed 1",
+    "count = doors whose plan tag names frame type 12 (1) \u2014 confirm",
     "elevation located by size only on A4.1 \u2014 confirm"
    ]
   },
@@ -6675,6 +6752,11 @@
    "qty": 20,
    "sf": 0.0
   },
+  "glazing_only_door": {
+   "items": 4,
+   "qty": 4,
+   "sf": 0.0
+  },
   "int_cw_door": {
    "items": 1,
    "qty": 1,
@@ -6682,8 +6764,8 @@
   },
   "glazing_only": {
    "items": 2,
-   "qty": 2,
-   "sf": 59.4
+   "qty": 5,
+   "sf": 174.3
   },
   "int_sf": {
    "items": 1,
@@ -6692,8 +6774,8 @@
   },
   "ext_sf": {
    "items": 22,
-   "qty": 60,
-   "sf": 2520.9
+   "qty": 65,
+   "sf": 2886.3
   },
   "ext_cw": {
    "items": 5,
@@ -6701,216 +6783,5 @@
    "sf": 213.1
   }
  },
- "elapsed_s": 87.6,
- "model_calls": 0,
- "type_drawings": {
-  "A": {
-   "code": "A",
-   "sheet": "A3.1",
-   "page": 5,
-   "section": "DOOR FRAME TYPES",
-   "rect": null,
-   "label_rect": [
-    2475.6,
-    426.4,
-    2508.7,
-    448.7
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": true,
-   "words": "DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)"
-  },
-  "R": {
-   "code": "R",
-   "sheet": "A3.1",
-   "page": 5,
-   "section": "DOOR FRAME TYPES",
-   "rect": null,
-   "label_rect": [
-    2478.2,
-    418.4,
-    2516.9,
-    448.7
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": true,
-   "words": "DOOR TYPE R; NO DOOR LEAF DRAWN (opening / frame only)"
-  },
-  "K": {
-   "code": "K",
-   "sheet": "A3.1",
-   "page": 5,
-   "section": "DOOR FRAME TYPES",
-   "rect": null,
-   "label_rect": [
-    2487.8,
-    418.4,
-    2524.3,
-    448.7
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": true,
-   "words": "DOOR TYPE K; NO DOOR LEAF DRAWN (opening / frame only)"
-  },
-  "S": {
-   "code": "S",
-   "sheet": "A3.1",
-   "page": 5,
-   "section": "DOOR FRAME TYPES",
-   "rect": null,
-   "label_rect": [
-    2506.8,
-    401.1,
-    2543.2,
-    430.8
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": true,
-   "words": "DOOR TYPE S; NO DOOR LEAF DRAWN (opening / frame only)"
-  },
-  "F": {
-   "code": "F",
-   "sheet": "A3.1",
-   "page": 5,
-   "section": "DOOR FRAME TYPES",
-   "rect": null,
-   "label_rect": [
-    2463.7,
-    420.7,
-    2495.6,
-    448.7
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": true,
-   "words": "DOOR TYPE F; NO DOOR LEAF DRAWN (opening / frame only)"
-  },
-  "O": {
-   "code": "O",
-   "sheet": "A3.1",
-   "page": 5,
-   "section": "DOOR FRAME TYPES",
-   "rect": null,
-   "label_rect": [
-    2457.3,
-    415.9,
-    2478.2,
-    445.9
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": true,
-   "words": "DOOR TYPE O; NO DOOR LEAF DRAWN (opening / frame only)"
-  },
-  "T": {
-   "code": "T",
-   "sheet": "A3.1",
-   "page": 5,
-   "section": "DOOR FRAME TYPES",
-   "rect": null,
-   "label_rect": [
-    2442.6,
-    410.3,
-    2481.7,
-    445.9
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": true,
-   "words": "DOOR TYPE T; NO DOOR LEAF DRAWN (opening / frame only)"
-  }
- },
- "code_tables": {},
- "detail_titles": {
-  "2/A2.19": "INTERIOR ELEVATION - POOL OBSERVATION SEATING",
-  "1/A2.19": "ENLARGED POOL OBSERVATION FLOOR PLAN",
-  "3/A2.19": "CEILING DETAIL - CMU WALL",
-  "4/A2.19": "CEILING DETAIL - SLANTED STUD WALL",
-  "1/A3.8": "HEAD DETAIL - HM FRAME IN CMU",
-  "4/A3.8": "JAMB DETAIL - HM FRAME IN CMU",
-  "5/A3.8": "JAMB DETAIL - HM FRAME IN CMU",
-  "2/A3.8": "HEAD DETAIL - HM FRAME IN STUDS",
-  "3/A3.8": "JAMB DETAIL - HM FRAME IN STUDS",
-  "6/A3.8": "HEAD DETAIL - SF FRAME IN CMU",
-  "7/A3.8": "JAMB DETAIL - SF FRAME IN CMU",
-  "8/A3.8": "HEAD DETAIL - SF IN CMU - TRANSOM",
-  "9/A3.8": "JAMB DETAIL - SF IN STUDS",
-  "10/A3.8": "HEAD DETAIL - SF IN STUDS",
-  "11/A3.8": "JAMB DETAIL - SF IN CMU SIDELITE",
-  "12/A3.8": "SILL DETAIL - COILING COUNTER DOOR",
-  "13/A3.8": "HEAD DETAIL - COILING COUNTER",
-  "14/A3.8": "JAMB DETAIL - COILING COUNTER",
-  "15/A3.8": "OVERHEAD DOOR HEAD DETAIL",
-  "16/A3.8": "OVERHEAD DOOR SILL DETAIL",
-  "17/A3.8": "HEAD DETAIL AT HM DOOR",
-  "18/A3.8": "JAMB DETAIL - HM FRAME IN CMU/BRICK",
-  "19/A3.8": "SILL DETAIL - HM DOOR",
-  "1/A3.9": "JAMB DETAIL AT OVERHEAD DOOR",
-  "2/A3.9": "JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT]",
-  "3/A3.9": "JAMB DETAIL AT VESTIBULE CORNER [STOREFRONT]",
-  "4/A3.9": "JAMB DETAIL - BRAKE METAL BETWEEN STOREFRONT",
-  "5/A3.9": "JAMB DETAIL AT BRAKE METAL CORNER [STOREFRONT]",
-  "7/A3.9": "SILL DETAIL - EGRESS STAIR HIGH CLERESTORY [STOREFRONT]",
-  "11/A3.9": "SILL DETAIL - CLERESTORY AT METAL ROOF [STOREFRONT]",
-  "12/A3.9": "SILL DETAIL AT VESTIBULE ROOF [STOREFRONT]",
-  "8/A3.9": "HEAD DETAIL - CLERESTORY AT BRICK INSET [STOREFRONT]",
-  "6/A3.9": "HEAD DETAIL - ACM AT ACM SOFFIT [STOREFRONT]",
-  "9/A3.9": "HEAD DETAIL - BRICK/STUD [STOREFRONT]",
-  "10/A3.9": "SILL DETAIL - BRICK AT STUD [STOREFRONT]",
-  "1/A3.10": "SILL DETAIL AT STAIR STRINGER [STOREFRONT]",
-  "2/A3.10": "WINDOW DETAIL - EGRESS STAIRS [STOREFRONT]",
-  "3/A3.10": "SILL DETAIL - PF METAL WALL PANEL [STOREFRONT]",
-  "4/A3.10": "DETAIL - BRAKE METAL WRAP AT TRANSLUCENT PANEL [STOREFRONT]",
-  "5/A3.10": "HEAD DETAIL - TRANSLUCENT PANEL",
-  "6/A3.10": "DETAIL - TALL LOBBY WINDOW AT 2ND FLOOR [CURTAINWALL]",
-  "7/A3.10": "SILL DETAIL - SLANTED LOBBY WALL WINDOW [CURTAINWALL]",
-  "10/A3.10": "SILL DETAIL - LOBBY CLERESTORY [STOREFRONT]",
-  "9/A3.10": "SILL DETAIL - CMU BRICK [STOREFRONT]",
-  "8/A3.10": "SILL DETAIL - BULL NOSE CMU [STOREFRONT]",
-  "11/A3.10": "JAMB DETAIL - TRANSLUCENT PANEL",
-  "12/A3.10": "JAMB DETAIL - SLANTED LOBBY WALL WINDOW [CURTAINWALL]",
-  "13/A3.10": "DETAIL - BRAKE METAL WRAP AT CURTAINWALL",
-  "1/A3.11": "PLAN DETAIL - BRICK PILASTER - STUDS [CURTAINWALL]",
-  "2/A3.11": "HEAD DETAIL - VESITBULE INT. [CURTAINWALL]",
-  "3/A3.11": "HEAD DETAIL - LOBBY CEILING [CURTAINWALL]",
-  "4/A3.11": "HEAD DETAIL - VESTIBULE",
-  "5/A3.11": "SILL DETAIL - SF",
-  "6/A3.11": "JAMB DETAIL - SF AT ACM",
-  "8/A3.11": "HEAD DETAIL - SF AT CANOPY",
-  "9/A3.11": "JAMB DETAIL - BRICK SF",
-  "7/A3.11": "HEAD DETAIL - SF AT METAL PANEL",
-  "10/A3.11": "JAMB DETAIL - THIN BRICK PILASTER [STOREFRONT]",
-  "11/A3.11": "SILL DETAIL - EGRESS STAIR CANOPY [STOREFRONT]",
-  "1/A3.12": "SILL DETAIL - SF AT 8\" STUD",
-  "2/A3.12": "JAMB DETAIL - BRAKE METAL AT SF",
-  "3/A3.12": "JAMB DETAIL - BRAKE METAL AT TRANSLUCENT PANEL",
-  "4/A3.12": "JAMB DETAIL - SF AT CLERESTORY",
-  "5/A3.12": "SILL DETAIL - SF AT CMU",
-  "6/A3.12": "SILL DETAIL - SF AT ACM",
-  "7/A3.12": "SILL DETAIL - CLASSROOM SF",
-  "8/A3.12": "JAMB DETAIL - SF AT CMU / BRICK",
-  "1/A5.13": "SECTION - POOL OBSERVATION SEATING - SEATING",
-  "2/A5.13": "SECTION - POOL OBSERVATION SEATING - STAIRS",
-  "3/A5.13": "SECTION - POOL OBSERVATION SEATING - ADA SEATING",
-  "4/A5.13": "DETAIL - GLASS RAILING",
-  "5/A5.13": "SECTION - POOL OBSERVATION SEATING - SIDE RAILING [STOREFRONT]",
-  "6/A5.13": "DETAIL - LOW RAILING",
-  "1/A4.4": "ENLARGED ELEVATION - LOUVERS",
-  "1/A4.1": "NORTHEAST ELEVATION [CURTAINWALL, STOREFRONT]",
-  "2/A4.1": "NORTHWEST ELEVATION",
-  "1/A4.2": "SOUTHWEST ELEVATION [STOREFRONT]",
-  "2/A4.2": "SOUTHEAST ELEVATION [STOREFRONT]"
- },
- "markups_count": 994
+ "elapsed_s": 84.34
 }

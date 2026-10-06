@@ -171,7 +171,8 @@ _DREF = re.compile(r"(\d{1,2}[A-Z]?)\s*/\s*([A-Z]{1,2}-?\d{1,2}(?:\.\d{1,2})?[A-
 
 
 def describe_row(cells: dict[str, str], types: dict[str, TypeInfo], tables: dict[str, dict[str, str]],
-                 hm_frame_codes: bool = False, detail_titles: dict | None = None) -> str:
+                 hm_frame_codes: bool = False, detail_titles: dict | None = None,
+                 frame_words: dict | None = None) -> str:
     """Words for a code-only schedule row: type drawing meaning + looked-up codes + referenced detail titles."""
     parts: list[str] = []
     for col, val in cells.items():
@@ -197,6 +198,8 @@ def describe_row(cells: dict[str, str], types: dict[str, TypeInfo], tables: dict
             c = codes[0]
             if c.upper() in ("EX", "EXIST", "EXISTING"):
                 parts.append("EXISTING FRAME")
+            elif frame_words and c in frame_words:
+                parts.append(f"FRAME TYPE {c}: {frame_words[c]}")
             elif c in types and "FRAME" in types[c].section:
                 parts.append(types[c].words)
             elif re.fullmatch(r"\d{1,2}[A-Z]?", c) and hm_frame_codes:
