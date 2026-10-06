@@ -51,3 +51,10 @@ STUDIO_REVIEW_SPEC_2026-10-06.md.
 4. **Annotate / compare / search** — P8, P9, P10, P11, R8.
 5. **Beyond Bluebeam** — R7, R9.
 Each step is tested on the Hope / Curtis / McLarty / Valvoline sets.
+
+## Build status (2026-10-06)
+- **Step 1 done** (425f2dc): undo/redo, edit handles, Polylength, Tool Chest (Martin's ToolBox), live labels, Ghost/Wand/Rake/Box&Snap retired.
+- **Step 2 done** (9f6933e, 25a8af5): Run Auto-Takeoff in Studio, engine markups as editable shapes, Summary, Markups list (+CSV), typed quantities (apply-to-all prompt), reclassify, delete reasons, decision log → `_autotakeoff_runs/<project>/decisions.jsonl`.
+- **Step 3 done** (7a08172): Bluebeam round-trip (measurement annotations with /Measure at sheet scale; others' markups preserved, shown locked, toggle), sheet labels/scales/hyperlinked callouts on open, Alt+←/→ views, PgUp/PgDn, Shift+Alt+L/N/A/C, Finalize (accept → Builder inbox → marked set).
+- Needs Martin on screen: feel of handles / labels / shortcuts; Bluebeam opening our marked set as measurements.
+- Next: step 4 (text / cloud / callout annotations, text search, revision compare + overlay, split view), step 5 (click item → all sheets, Spec Reader cross-check, bid-day + scope checklists, glossary).
