@@ -2,19 +2,10 @@ import { useRef, useEffect } from 'react';
 import { useCanvasEngine, CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useStudioStore } from '../../store/useStudioStore';
 import { useParametricTool } from '../../hooks/useParametricTool';
-import { useRakeTool }       from '../../hooks/useRakeTool';
 import { useCountTool }      from '../../hooks/useCountTool';
-import { useWandTool }       from '../../hooks/useWandTool';
-import { useAIAutoScan }     from '../../hooks/useAIAutoScan';
-import { useGhostTool }      from '../../hooks/useGhostTool';
-import { useBoxSnapTool }    from '../../hooks/useBoxSnapTool';
-import { BoxSnapOverlay }    from './BoxSnapOverlay';
-import { useGhostDetector }  from '../../hooks/useGhostDetector';
 import FrameOverlay          from '../parametric/FrameOverlay';
-import GhostOverlay          from './GhostOverlay';
 import CitationCaptureLayer   from './CitationCaptureLayer';
 import { DrawingIntelligenceOverlay } from './DrawingIntelligenceOverlay';
-import RakeOverlay           from '../parametric/RakeOverlay';
 import { CountOverlay }      from '../parametric/CountOverlay';
 import { GridEditor }        from '../parametric/GridEditor';
 import type { ScanResult }   from '../../hooks/useAIAutoScan';
@@ -51,7 +42,7 @@ interface StudioCanvasProps {
  * All rendering and event handling lives in the hook; this component only
  * provides the DOM refs and lifts the stable engine API to the layout.
  */
-export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, onContextMenu, diCandidates, onDIConfirm, onDIReject, sessionLearner }: StudioCanvasProps) {
+export default function StudioCanvas({ onEngine, onContextMenu, diCandidates, onDIConfirm, onDIReject }: StudioCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef    = useRef<HTMLCanvasElement>(null);
 
@@ -67,36 +58,17 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
   // ── Plugin: Parametric Frame Highlight tool (Task 4.3) ──────────────────
   const { framePreview, calibrationRequired } = useParametricTool(canvasRef, engine);
 
-  // ── Plugin: Raked Frame tool ─────────────────────────────────────────────
-  const { rakePreview, calibrationRequired: rakeCal } = useRakeTool(canvasRef, engine);
-
   // ── Plugin: Count Marker tool ────────────────────────────────────────────
   const { activeGroupId } = useCountTool(canvasRef, engine);
 
-  // ── Plugin: Magic Wand auto-detect tool ─────────────────────────────────
-  const { isScanning } = useWandTool(canvasRef, engine);
-
-  // ── Plugin: AI Auto-Scan (Phase 6.2) ─────────────────────────────────────
-  const { runScan } = useAIAutoScan(canvasRef, engine, onScanComplete ?? (() => { /* no-op */ }));
-
-  // ── Plugin: Ghost Highlighter (Phase 6.3) ───────────────────────────────
-  const ghostDetector = useGhostDetector(canvasRef, engine, sessionLearner);
-  const { drawPreview: ghostDrawPreview } = useGhostTool(canvasRef, ghostDetector.runDetection);
-
-  // ── Plugin: Box & Snap — AiQ vision region takeoff ──────────────────────
-  const boxSnap = useBoxSnapTool(canvasRef, engine);
-  const activeTool   = useStudioStore(s => s.activeTool);
-  const activePageId = useStudioStore(s => s.activePageId);
+  // Ghost / Wand / Rake / Box & Snap / AI auto-scan were retired 2026-10-06:
+  // the auto-takeoff engine does that work now (code kept in git history).
 
   // Lift the engine API on mount
   useEffect(() => {
     onEngine(engine);
   }, [engine, onEngine]);
 
-  // Lift runScan so StudioLayout can wire it to the Toolbar button
-  useEffect(() => {
-    onScanReady?.(runScan);
-  }, [runScan, onScanReady]);
 
   return (
     <div
@@ -118,48 +90,12 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
         calibrationRequired={calibrationRequired}
       />
 
-      {/* ── Task 5.x: Raked Frame preview overlay ───────────────────────── */}
-      <RakeOverlay
-        rakePreview={rakePreview}
-        calibrationRequired={rakeCal}
-        engine={engine}
-      />
 
       {/* ── Task 5.x: Count Marker overlay + legend ─────────────────────── */}
       <CountOverlay engine={engine} activeGroupId={activeGroupId} />
 
       {/* ── Task 5.x: Grid Editor (opens after frame assignment) ────────── */}
       <GridEditor engine={engine} />
-
-      {/* ── Phase 6.3: Ghost Highlighter overlay ────────────────────────── */}
-      <GhostOverlay
-        detections={ghostDetector.detections}
-        anchorBox={ghostDetector.anchorBox}
-        drawPreview={ghostDrawPreview}
-        isDetecting={ghostDetector.isDetecting}
-        threshold={ghostDetector.threshold}
-        positiveCount={ghostDetector.positiveCount}
-        negativeCount={ghostDetector.negativeCount}
-        onCommit={ghostDetector.commitDetection}
-        onReject={ghostDetector.rejectDetection}
-        onAcceptAll={ghostDetector.acceptAll}
-        onClear={ghostDetector.clearDetections}
-      />
-
-      {/* ── Box & Snap: AiQ vision detections in page space ─────────────── */}
-      <BoxSnapOverlay
-        engine={engine}
-        active={activeTool === 'boxsnap'}
-        activePageId={activePageId}
-        dragPreview={boxSnap.dragPreview}
-        detections={boxSnap.detections}
-        isRunning={boxSnap.isRunning}
-        error={boxSnap.error}
-        onAccept={boxSnap.accept}
-        onReject={boxSnap.reject}
-        onClear={boxSnap.clear}
-        onDismissError={boxSnap.dismissError}
-      />
 
       {/* ── Citation capture layer (observer + modal + highlight overlay) ── */}
       {engine && (
@@ -180,14 +116,6 @@ export default function StudioCanvas({ onEngine, onScanReady, onScanComplete, on
         />
       )}
 
-      {/* ── Wand scanning indicator ─────────────────────────────────────── */}
-      {isScanning && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 20 }}>
-          <div className="px-4 py-2 rounded-lg bg-slate-900/90 border border-slate-700 text-xs text-sky-400 font-semibold shadow-xl">
-            Scanning boundary…
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -7,7 +7,8 @@
  */
 
 import type { Camera } from './Camera';
-import type { PageCalibration } from './coordinateSystem';
+import { DEFAULT_PDF_PPI, type PageCalibration } from './coordinateSystem';
+import { handlesOf, measureLabel } from './shapeGeometry';
 import type { SnapResult, SnapType } from './snapEngine';
 import type { DrawnShape, InProgressShape } from '../types/shapes';
 import type { PageState } from '../store/useStudioStore';
@@ -160,8 +161,9 @@ export function renderFrame(rc: RenderContext): void {
       }
 
       const pageShapes = rc.shapes.filter(s => s.pageId === page.id);
+      const ppiP = cal?.pixelsPerInch ?? DEFAULT_PDF_PPI;
       for (const shape of pageShapes) {
-        drawShape(ctx, shape, camera.scale, rc.selectedId === shape.id);
+        drawShape(ctx, shape, camera.scale, rc.selectedId === shape.id, ppiP);
       }
 
       // Draw type-count dots for this page
@@ -204,8 +206,9 @@ export function renderFrame(rc: RenderContext): void {
 
     // 6 — Committed shapes (filter to active page only)
     const pageShapes = rc.shapes.filter(s => s.pageId === rc.activePageId);
+    const ppiA = rc.calibration?.pixelsPerInch ?? DEFAULT_PDF_PPI;
     for (const shape of pageShapes) {
-      drawShape(ctx, shape, camera.scale, rc.selectedId === shape.id);
+      drawShape(ctx, shape, camera.scale, rc.selectedId === shape.id, ppiA);
     }
 
     // 6b — Type-count dots (filter to active page only)
@@ -348,12 +351,110 @@ function drawCalibrationRef(
 
 // ── Committed Shape Drawing ───────────────────────────────────────────────────
 
+function hexA(hex: string, a: number): string {
+  const h = hex.replace('#', '');
+  if (h.length !== 6) return hex;
+  const n = parseInt(h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+
+/** Tool Chest markups: Toolbox colours, live measurement label, handles when selected. */
+function drawSubjectShape(
+  ctx: CanvasRenderingContext2D, shape: DrawnShape, scale: number, selected: boolean, ppi: number,
+): void {
+  const stroke = shape.color ?? '#FFFF00';
+  const fillA  = hexA(shape.fill ?? stroke, shape.subjectRole === 'highlight' ? 0.35 : (shape.opacity ?? 0.25));
+  const lw     = (shape.subjectRole === 'polylength' ? 3 : 2) / scale;
+  ctx.save();
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = lw;
+  ctx.strokeStyle = stroke;
+  let labelAt: { x: number; y: number } | null = null;
+  if (shape.type === 'rect') {
+    const { origin: o, widthPx: w, heightPx: h } = shape;
+    ctx.fillStyle = fillA; ctx.fillRect(o.x, o.y, w, h); ctx.strokeRect(o.x, o.y, w, h);
+    labelAt = { x: o.x + w / 2, y: o.y + h / 2 };
+  } else if (shape.type === 'polygon' && shape.points.length >= 2) {
+    ctx.beginPath(); ctx.moveTo(shape.points[0].x, shape.points[0].y);
+    for (const q of shape.points.slice(1)) ctx.lineTo(q.x, q.y);
+    ctx.closePath(); ctx.fillStyle = fillA; ctx.fill(); ctx.stroke();
+    const n = shape.points.length;
+    labelAt = { x: shape.points.reduce((a, q) => a + q.x, 0) / n, y: shape.points.reduce((a, q) => a + q.y, 0) / n };
+  } else if (shape.type === 'polyline' && shape.points.length >= 2) {
+    ctx.beginPath(); ctx.moveTo(shape.points[0].x, shape.points[0].y);
+    for (const q of shape.points.slice(1)) ctx.lineTo(q.x, q.y);
+    ctx.stroke();
+    // label at the middle of the longest segment
+    let best = 0, bi = 1;
+    for (let i = 1; i < shape.points.length; i++) {
+      const L = Math.hypot(shape.points[i].x - shape.points[i - 1].x, shape.points[i].y - shape.points[i - 1].y);
+      if (L > best) { best = L; bi = i; }
+    }
+    const a = shape.points[bi - 1], b = shape.points[bi];
+    labelAt = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - 8 / scale };
+  } else if (shape.type === 'line') {
+    ctx.beginPath(); ctx.moveTo(shape.start.x, shape.start.y); ctx.lineTo(shape.end.x, shape.end.y); ctx.stroke();
+    labelAt = { x: (shape.start.x + shape.end.x) / 2, y: (shape.start.y + shape.end.y) / 2 - 8 / scale };
+  } else if (shape.type === 'marker') {
+    const r = 7 / scale;
+    ctx.beginPath(); ctx.arc(shape.position.x, shape.position.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = hexA(stroke, 0.55); ctx.fill(); ctx.stroke();
+    if (shape.qtyOverride != null) labelAt = { x: shape.position.x, y: shape.position.y - r - 8 / scale };
+  }
+  if (labelAt) {
+    const lines = measureLabel(shape, ppi);
+    if (lines.length) drawTag(ctx, lines, labelAt.x, labelAt.y, scale, stroke);
+  }
+  // engine markup not yet reviewed → small badge
+  if (shape.author === 'engine' && labelAt) {
+    dot(ctx, { x: labelAt.x - 10 / scale, y: labelAt.y - 10 / scale }, 3.5 / scale, '#facc15');
+  }
+  if (selected) drawHandles(ctx, shape, scale);
+  ctx.restore();
+}
+
+function drawHandles(ctx: CanvasRenderingContext2D, shape: DrawnShape, scale: number): void {
+  const hs = 7 / scale;
+  ctx.save();
+  ctx.lineWidth = 1 / scale;
+  for (const h of handlesOf(shape)) {
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#0ea5e9';
+    ctx.fillRect(h.at.x - hs / 2, h.at.y - hs / 2, hs, hs);
+    ctx.strokeRect(h.at.x - hs / 2, h.at.y - hs / 2, hs, hs);
+  }
+  ctx.restore();
+}
+
+/** Measurement tag: dark rounded box with one line per value (Bluebeam-like). */
+function drawTag(ctx: CanvasRenderingContext2D, lines: string[], x: number, y: number, scale: number, accent: string): void {
+  const fs = 10 / scale, pad = 3 / scale, lh = fs * 1.25;
+  ctx.save();
+  ctx.font = `600 ${fs}px system-ui,-apple-system,sans-serif`;
+  const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + pad * 2;
+  const h = lh * lines.length + pad * 2;
+  ctx.fillStyle = 'rgba(15,23,42,0.82)';
+  ctx.fillRect(x - w / 2, y - h / 2, w, h);
+  ctx.fillStyle = accent;
+  ctx.fillRect(x - w / 2, y - h / 2, 2 / scale, h);
+  ctx.fillStyle = '#f8fafc';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  lines.forEach((l, i) => ctx.fillText(l, x, y - h / 2 + pad + lh * (i + 0.5)));
+  ctx.restore();
+}
+
 function drawShape(
   ctx:      CanvasRenderingContext2D,
   shape:    DrawnShape,
   scale:    number,
   selected: boolean,
+  ppi:      number = DEFAULT_PDF_PPI,
 ): void {
+  if (shape.subject || shape.type === 'polyline') {
+    drawSubjectShape(ctx, shape, scale, selected, ppi);
+    return;
+  }
   const lw    = 2 / scale;
   const color = selected ? C.selected : (shape.color ?? (shape.type === 'polygon' ? C.polygon : C.rect));
 
@@ -390,14 +491,7 @@ function drawShape(
     if (shape.label) {
       drawLabel(ctx, shape.label, o.x + w / 2, o.y + h / 2, scale, '#f1f5f9');
     }
-    // Corner handles on selection
-    if (selected) {
-      const hs = 5 / scale;
-      for (const corner of [o, {x:o.x+w,y:o.y}, {x:o.x+w,y:o.y+h}, {x:o.x,y:o.y+h}]) {
-        ctx.fillStyle = C.handle;
-        ctx.fillRect(corner.x - hs / 2, corner.y - hs / 2, hs, hs);
-      }
-    }
+    if (selected) drawHandles(ctx, shape, scale);
 
   } else if (shape.type === 'polygon') {
     if (shape.points.length < 2) { ctx.restore(); return; }
@@ -416,6 +510,7 @@ function drawShape(
   }
 
   ctx.restore();
+  if (selected && shape.type !== 'rect') drawHandles(ctx, shape, scale);
 }
 
 // ── In-Progress Drawing ───────────────────────────────────────────────────────
@@ -453,6 +548,16 @@ function drawInProgress(
     for (let i = 1; i < ip.points.length; i++) {
       ctx.lineTo(ip.points[i].x, ip.points[i].y);
     }
+    if (ip.cursor) ctx.lineTo(ip.cursor.x, ip.cursor.y);
+    ctx.stroke();
+    for (const pt of ip.points) dot(ctx, pt, 3 / scale, C.inProgress);
+
+  } else if (ip.type === 'polyline' && ip.points.length > 0) {
+    ctx.setLineDash([]);
+    ctx.lineWidth = 3 / scale;
+    ctx.beginPath();
+    ctx.moveTo(ip.points[0].x, ip.points[0].y);
+    for (let i = 1; i < ip.points.length; i++) ctx.lineTo(ip.points[i].x, ip.points[i].y);
     if (ip.cursor) ctx.lineTo(ip.cursor.x, ip.cursor.y);
     ctx.stroke();
     for (const pt of ip.points) dot(ctx, pt, 3 / scale, C.inProgress);

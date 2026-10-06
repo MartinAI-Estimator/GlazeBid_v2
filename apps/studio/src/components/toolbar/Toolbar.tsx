@@ -61,17 +61,13 @@ type Props = {
 
 function LineIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4 20l16-16" /></svg>; }
 function RectIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5" /></svg>; }
+function PolylineIcon()  { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 17l5-8 5 5 8-9" /><circle cx="3" cy="17" r="1.2" fill="currentColor" /><circle cx="21" cy="5" r="1.2" fill="currentColor" /></svg>; }
 function PolygonIcon()   { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 18l5-13 7 4 3-5 3 14H3z" /></svg>; }
 function CalibrateIcon() { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4 12h16M9 7l-5 5 5 5M15 7l5 5-5 5" /></svg>; }
 function FrameIcon()     { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" /><rect x="7" y="7" width="10" height="10" rx="1" strokeDasharray="2 1.5" /></svg>; }
 function OpenPdfIcon()   { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>; }
-function RakeIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 19.5L7 5.5l10 2L21 19.5H3z" /></svg>; }
 function CountIcon()     { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><circle cx="8" cy="8" r="2.5" /><circle cx="16" cy="8" r="2.5" /><circle cx="8" cy="16" r="2.5" /><circle cx="16" cy="16" r="2.5" /></svg>; }
-function WandIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>; }
-function GhostIcon()     { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 2C8.134 2 5 5.134 5 9v7l2-2 2 2 2-2 2 2 2-2 2 2V9c0-3.866-3.134-7-7-7z" /><circle cx="9.5" cy="9.5" r="1" fill="currentColor" stroke="none" /><circle cx="14.5" cy="9.5" r="1" fill="currentColor" stroke="none" /></svg>; }
 
-/** Box & Snap — marquee + sparkle: drag a region, AI reads the glazing in it. */
-function BoxSnapIcon()   { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeDasharray="3 2" d="M3.5 3.5h17v17h-17z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.2 8.4l.7 2.2 2.2.7-2.2.7-.7 2.2-.7-2.2-2.2-.7 2.2-.7z" /></svg>; }
 
 // ── Tool definitions ──────────────────────────────────────────────────────────
 
@@ -86,10 +82,9 @@ const TOOLS: ToolDef[] = [
   { id: 'line',      label: 'Line',            icon: <LineIcon />,      shortcut: 'L' },
   { id: 'rect',      label: 'Rectangle',       icon: <RectIcon />,      shortcut: 'B' },
   { id: 'polygon',   label: 'Polygon',         icon: <PolygonIcon />,   shortcut: 'P' },
+  { id: 'polyline',  label: 'Polylength',      icon: <PolylineIcon />,  shortcut: 'N' },
   { id: 'calibrate', label: 'Calibrate',       icon: <CalibrateIcon />, shortcut: 'A' },
   { id: 'frame',     label: 'Frame Highlight', icon: <FrameIcon />,     shortcut: 'F' },
-  { id: 'rake',      label: 'Raked Frame',     icon: <RakeIcon />,      shortcut: 'R' },
-  { id: 'boxsnap',   label: 'Box & Snap (AI)', icon: <BoxSnapIcon />,   shortcut: 'S' },
 ];
 
 // ── Toolbar ────────────────────────────────────────────────────────────────────

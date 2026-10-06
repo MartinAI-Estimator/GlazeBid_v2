@@ -37,6 +37,8 @@ export type ToolType =
   | 'line'
   | 'rect'
   | 'polygon'
+  | 'polyline' // Polylength (multi-segment measured line)
+  | 'tcount'   // Tool Chest count / door marker
   | 'calibrate'
   | 'frame'   // Task 4.3: Parametric Frame Highlight tool
   | 'rake'    // Task 5.x: Raked Frame (4-point polygon)
@@ -135,6 +137,16 @@ type State = {
   shapes:          DrawnShape[];
   selectedShapeId: string | null;
 
+  // ── Undo / redo (shape edits) ─────────────────────────────────────────────
+  past:   DrawnShape[][];
+  future: DrawnShape[][];
+  /** True between beginEdit() and endEdit() — a drag records ONE undo step. */
+  editing: boolean;
+
+  // ── Tool Chest ────────────────────────────────────────────────────────────
+  /** Active Tool Chest subject; new markups take its subject, role and colours. */
+  activeSubject: import('../constants/toolChest').ToolChestItem | null;
+
   // ── Type Library — active type for the Click Counter ─────────────────────
   /** The FrameType.id selected in the Type Library sidebar for dot placement. */
   activeFrameTypeId: string | null;
@@ -189,6 +201,14 @@ type State = {
   updateShape: (id: string, patch: Partial<DrawnShape>) => void;
   removeShape: (id: string) => void;
   selectShape: (id: string | null) => void;
+  /** Start a continuous edit (drag): snapshot once for undo. */
+  beginEdit:   () => void;
+  /** Replace a shape without recording history (inside beginEdit/endEdit). */
+  replaceShapeLive: (shape: DrawnShape) => void;
+  endEdit:     () => void;
+  undo:        () => void;
+  redo:        () => void;
+  setActiveSubject: (item: import('../constants/toolChest').ToolChestItem | null) => void;
 
   // ── Actions: Type Library ─────────────────────────────────────────────────
   setActiveFrameTypeId: (id: string | null) => void;
@@ -240,6 +260,16 @@ const DEFAULT_PAGE: PageState = {
   pdfPageIndex: 0,
 };
 
+// ── Undo history helper ──────────────────────────────────────────────────────
+
+const HISTORY_MAX = 200;
+
+/** Snapshot the current shapes before a discrete change (no-op inside a drag). */
+function pushHistory(s: { shapes: DrawnShape[]; past: DrawnShape[][]; editing: boolean }) {
+  if (s.editing) return {};
+  return { past: [...s.past, s.shapes].slice(-HISTORY_MAX), future: [] as DrawnShape[][] };
+}
+
 // ── Store ─────────────────────────────────────────────────────────────────────
 
 export const useStudioStore = create<State>()((set, get) => ({
@@ -261,6 +291,10 @@ export const useStudioStore = create<State>()((set, get) => ({
   pendingGridEdit:        null,
   pendingCitation:        null,
   shapes:                 [],
+  past:                   [],
+  future:                 [],
+  editing:                false,
+  activeSubject:          null,
   selectedShapeId:        null,
   activeFrameTypeId:      null,
   bookmarkedPageIds:      new Set<string>(),
@@ -292,6 +326,8 @@ export const useStudioStore = create<State>()((set, get) => ({
         // Reset calibrations — they were for the previous document's page IDs.
         calibrations:  {},
         shapes:        [],
+        past:          [],
+        future:        [],
         selectedShapeId: null,
       };
     }),
@@ -441,10 +477,11 @@ export const useStudioStore = create<State>()((set, get) => ({
 
   // ── Shape actions ─────────────────────────────────────────────────────────
   addShape: (shape) =>
-    set(s => ({ shapes: [...s.shapes, shape] })),
+    set(s => ({ ...pushHistory(s), shapes: [...s.shapes, shape] })),
 
   updateShape: (id, patch) =>
     set(s => ({
+      ...pushHistory(s),
       shapes: s.shapes.map(sh =>
         sh.id === id ? ({ ...sh, ...patch } as DrawnShape) : sh,
       ),
@@ -452,9 +489,46 @@ export const useStudioStore = create<State>()((set, get) => ({
 
   removeShape: (id) =>
     set(s => ({
+      ...pushHistory(s),
       shapes:          s.shapes.filter(sh => sh.id !== id),
       selectedShapeId: s.selectedShapeId === id ? null : s.selectedShapeId,
     })),
+
+  beginEdit: () =>
+    set(s => (s.editing ? {} : { past: [...s.past, s.shapes].slice(-HISTORY_MAX), future: [], editing: true })),
+
+  replaceShapeLive: (shape) =>
+    set(s => ({ shapes: s.shapes.map(sh => (sh.id === shape.id ? shape : sh)) })),
+
+  endEdit: () => set({ editing: false }),
+
+  undo: () =>
+    set(s => {
+      if (!s.past.length) return {};
+      const prev = s.past[s.past.length - 1];
+      return {
+        past: s.past.slice(0, -1),
+        future: [s.shapes, ...s.future].slice(0, HISTORY_MAX),
+        shapes: prev,
+        editing: false,
+        selectedShapeId: prev.some(x => x.id === s.selectedShapeId) ? s.selectedShapeId : null,
+      };
+    }),
+
+  redo: () =>
+    set(s => {
+      if (!s.future.length) return {};
+      const next = s.future[0];
+      return {
+        past: [...s.past, s.shapes].slice(-HISTORY_MAX),
+        future: s.future.slice(1),
+        shapes: next,
+        editing: false,
+        selectedShapeId: next.some(x => x.id === s.selectedShapeId) ? s.selectedShapeId : null,
+      };
+    }),
+
+  setActiveSubject: (item) => set({ activeSubject: item }),
 
   selectShape: (id) => set({ selectedShapeId: id }),
 

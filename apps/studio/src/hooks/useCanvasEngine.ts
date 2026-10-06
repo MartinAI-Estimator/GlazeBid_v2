@@ -27,7 +27,11 @@ import { distancePx, DEFAULT_PDF_PPI, type PagePoint } from '../engine/coordinat
 import { calibrateFromLine } from '../engine/coordinateSystem';
 import { PdfTileManager } from '../engine/pdfTileManager';
 import { loadPdfFromBuffer, THUMB_SCALE } from '../engine/pdfLoader';
-import type { InProgressShape, DrawnShape, RectShape, LineShape, PolygonShape } from '../types/shapes';
+import type { InProgressShape, DrawnShape, RectShape, LineShape, PolygonShape, PolylineShape, MarkerShape } from '../types/shapes';
+import type { ToolChestItem } from '../constants/toolChest';
+import {
+  hitHandle, applyHandleDrag, translate, hitEdge, insertVertex, removeVertex, polylineLengthPx, type Handle,
+} from '../engine/shapeGeometry';
 import type { ContextMenuTarget } from '../components/canvas/ShapeContextMenu';
 import { getClipboard, setClipboard } from '../utils/clipboard';
 import {
@@ -53,6 +57,7 @@ type EngineState = {
   activePageId:     string;
   pages:            PageState[];
   continuousScroll: boolean;
+  activeSubject:    ToolChestItem | null;
 };
 
 const SNAP_NONE: SnapResult = { snapped: false, point: { x: 0, y: 0 }, snapType: 'none' };
@@ -64,6 +69,8 @@ const CURSOR: Record<ToolType | 'panning', string> = {
   line:      'crosshair',
   rect:      'crosshair',
   polygon:   'crosshair',
+  polyline:  'crosshair',
+  tcount:    'cell',
   calibrate: 'crosshair',
   frame:     'crosshair',
   rake:      'crosshair',
@@ -130,8 +137,18 @@ export function useCanvasEngine(
     activePageId:     'default-page',
     pages:            [],
     continuousScroll: false,
+    activeSubject:    null,
   });
   const inProgressRef      = useRef<InProgressShape | null>(null);
+  // Select-tool drag: move a whole shape, or drag one handle (corner / edge / vertex)
+  const dragRef = useRef<{
+    mode: 'move' | 'handle';
+    shapeId: string;
+    handle: Handle | null;
+    start: PagePoint;
+    orig: DrawnShape;
+    started: boolean;
+  } | null>(null);
   const snapRef             = useRef<SnapResult>(SNAP_NONE);
   const rafRef              = useRef(0);
   // Keep latest onContextMenu in a ref to avoid stale closure inside the useEffect
@@ -399,6 +416,7 @@ export function useCanvasEngine(
         activePageId:     s.activePageId,
         pages:            s.pages,
         continuousScroll: s.continuousScroll,
+        activeSubject:    s.activeSubject,
       };
     }
 
@@ -418,6 +436,7 @@ export function useCanvasEngine(
         activePageId:     s.activePageId,
         pages:            s.pages,
         continuousScroll: s.continuousScroll,
+        activeSubject:    s.activeSubject,
       };
       scheduleRedraw();
     });
@@ -584,10 +603,43 @@ export function useCanvasEngine(
 
       switch (s.activeTool) {
         case 'select': {
-          // Hit-test: find topmost shape covering the click
-          const hit = hitTest(pt, s.shapes.filter(sh => sh.pageId === s.activePageId));
-          console.log('[select] click at', pt, 'shapes on page:', s.shapes.filter(sh => sh.pageId === s.activePageId).length, 'hit:', hit?.id, hit?.type);
+          const raw  = resolveLocalPageXY(pageXY(e));
+          const tol  = 7 / cameraRef.current.scale;
+          const ppi  = getPpi(s);
+          const sel  = s.selectedId ? s.shapes.find(sh => sh.id === s.selectedId && sh.pageId === s.activePageId) : undefined;
+          // 1. a handle of the selected shape (Alt-click a vertex removes it)
+          if (sel && !sel.locked) {
+            const h = hitHandle(sel, raw, tol);
+            if (h) {
+              if (e.altKey && h.kind === 'vertex') {
+                useStudioStore.getState().updateShape(sel.id, removeVertex(sel, h.index, ppi));
+                break;
+              }
+              dragRef.current = { mode: 'handle', shapeId: sel.id, handle: h, start: raw, orig: sel, started: false };
+              break;
+            }
+          }
+          // 2. a shape body → select it and get ready to move it
+          const hit = hitTest(raw, s.shapes.filter(sh => sh.pageId === s.activePageId), tol);
           useStudioStore.getState().selectShape(hit?.id ?? null);
+          if (hit && !hit.locked) {
+            dragRef.current = { mode: 'move', shapeId: hit.id, handle: null, start: raw, orig: hit, started: false };
+          }
+          break;
+        }
+        case 'polyline': {
+          const ip = inProgressRef.current;
+          if (!ip || ip.type !== 'polyline') {
+            inProgressRef.current = { type: 'polyline', points: [pt], cursor: pt };
+          } else {
+            const last = ip.points[ip.points.length - 1];
+            const next = e.shiftKey ? constrainAngle(last, pt) : pt;
+            inProgressRef.current = { type: 'polyline', points: [...ip.points, next], cursor: next };
+          }
+          break;
+        }
+        case 'tcount': {
+          commitMarker(pt, s);
           break;
         }
         case 'line': {
@@ -652,6 +704,28 @@ export function useCanvasEngine(
         return;
       }
 
+      // Select-tool drag (move / reshape) — one undo step per drag
+      const dr = dragRef.current;
+      if (dr) {
+        const s0  = stateRef.current;
+        const raw = resolveLocalPageXY(pageXY(e));
+        const movedPx = Math.hypot(e.clientX - ptrRef.current.downX, e.clientY - ptrRef.current.downY);
+        if (!dr.started && movedPx < 3) return;
+        const store = useStudioStore.getState();
+        if (!dr.started) { store.beginEdit(); dr.started = true; }
+        const ppi = getPpi(s0);
+        let next: DrawnShape;
+        if (dr.mode === 'move') {
+          next = translate(dr.orig, raw.x - dr.start.x, raw.y - dr.start.y, ppi);
+        } else {
+          const tgt = getSnappedPage(e);
+          next = applyHandleDrag(dr.orig, dr.handle!, tgt, ppi);
+        }
+        store.replaceShapeLive(next);
+        scheduleRedraw();
+        return;
+      }
+
       const pt = getSnappedPage(e);
 
       const ip = inProgressRef.current;
@@ -659,6 +733,10 @@ export function useCanvasEngine(
         if (ip.type === 'line'      && ip.start)         ip.cursor = e.shiftKey ? constrainAngle(ip.start, pt) : pt;
         if (ip.type === 'rect'      && ip.start)         ip.cursor = pt;
         if (ip.type === 'polygon')                       ip.cursor = pt;
+        if (ip.type === 'polyline') {
+          const last = ip.points[ip.points.length - 1];
+          ip.cursor = e.shiftKey && last ? constrainAngle(last, pt) : pt;
+        }
         if (ip.type === 'calibrate' && ip.start)         ip.cursor = e.shiftKey ? constrainAngle(ip.start, pt) : pt;
       }
 
@@ -678,8 +756,30 @@ export function useCanvasEngine(
       }
 
       if (e.button !== 0) return;
+      if (dragRef.current) {
+        if (dragRef.current.started) useStudioStore.getState().endEdit();
+        dragRef.current = null;
+        snapRef.current = SNAP_NONE;
+        scheduleRedraw();
+        return;
+      }
       const s  = stateRef.current;
       const pt = getSnappedPage(e);
+
+      // Area tool: press-drag-release draws a rectangle area (clicks still draw a polygon)
+      if (s.activeTool === 'polygon') {
+        const ip = inProgressRef.current;
+        if (ip?.type === 'polygon' && ip.points.length === 1 && ptrRef.current.hasMoved) {
+          const a = ip.points[0];
+          if (Math.abs(pt.x - a.x) * cameraRef.current.scale > 4 && Math.abs(pt.y - a.y) * cameraRef.current.scale > 4) {
+            commitPolygon([a, { x: pt.x, y: a.y }, pt, { x: a.x, y: pt.y }], s);
+            inProgressRef.current = null;
+            snapRef.current = SNAP_NONE;
+            scheduleRedraw();
+            return;
+          }
+        }
+      }
 
       if (s.activeTool === 'rect') {
         const ip = inProgressRef.current;
@@ -711,9 +811,30 @@ export function useCanvasEngine(
     }
 
     // ── Double Click (close polygon) ──────────────────────────────────────────
-    function handleDblClick(_e: MouseEvent): void {
+    function handleDblClick(e: MouseEvent): void {
       const ip = inProgressRef.current;
       const s  = stateRef.current;
+      if (ip?.type === 'polyline') {
+        // the dblclick's second mousedown already added a duplicate final point
+        const pts = dedupeTail(ip.points);
+        if (pts.length >= 2) commitPolyline(pts, s);
+        inProgressRef.current = null;
+        snapRef.current = SNAP_NONE;
+        scheduleRedraw();
+        return;
+      }
+      if (s.activeTool === 'select' && s.selectedId) {
+        // double-click an edge of the selected polygon / polylength → add a vertex there
+        const sel = s.shapes.find(sh => sh.id === s.selectedId);
+        if (sel && !sel.locked) {
+          const raw = resolveLocalPageXY(pageXY(e));
+          const ed  = hitEdge(sel, raw, 7 / cameraRef.current.scale);
+          if (ed) {
+            useStudioStore.getState().updateShape(sel.id, insertVertex(sel, ed.index, ed.at, getPpi(s)));
+            return;
+          }
+        }
+      }
       if (ip?.type === 'polygon' && ip.points.length >= 3) {
         commitPolygon(ip.points, s);
         inProgressRef.current = null;
@@ -734,9 +855,57 @@ export function useCanvasEngine(
         return;
       }
 
+      // Ignore typing in inputs (Tool Chest search, properties, …)
+      const tgt = e.target as HTMLElement | null;
+      if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.isContentEditable)) return;
+
+      // Undo / redo
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        store.undo(); e.preventDefault(); return;
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) {
+        store.redo(); e.preventDefault(); return;
+      }
+
+      // Polylength in progress: Enter finishes, Backspace drops the last point
+      const ipk = inProgressRef.current;
+      if (ipk?.type === 'polyline') {
+        if (e.key === 'Enter') {
+          if (ipk.points.length >= 2) commitPolyline(ipk.points, stateRef.current);
+          inProgressRef.current = null; snapRef.current = SNAP_NONE; scheduleRedraw(); e.preventDefault(); return;
+        }
+        if (e.key === 'Backspace') {
+          const pts = ipk.points.slice(0, -1);
+          inProgressRef.current = pts.length ? { ...ipk, points: pts } : null;
+          scheduleRedraw(); e.preventDefault(); return;
+        }
+      }
+      if (ipk?.type === 'polygon' && e.key === 'Enter' && ipk.points.length >= 3) {
+        commitPolygon(ipk.points, stateRef.current);
+        inProgressRef.current = null; snapRef.current = SNAP_NONE; scheduleRedraw(); e.preventDefault(); return;
+      }
+
+      // Arrow keys nudge the selected markup (Shift = 10×)
+      if (e.key.startsWith('Arrow') && stateRef.current.selectedId && !inProgressRef.current) {
+        const sel = stateRef.current.shapes.find(x => x.id === stateRef.current.selectedId);
+        if (sel && !sel.locked) {
+          const step = (e.shiftKey ? 10 : 1) / cameraRef.current.scale;
+          const dx = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
+          const dy = e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
+          store.updateShape(sel.id, translate(sel, dx, dy, getPpi(stateRef.current)));
+          e.preventDefault(); return;
+        }
+      }
+
       // Escape = cancel current drawing
       if (e.key === 'Escape') {
+        if (!inProgressRef.current && !stateRef.current.selectedId && stateRef.current.activeTool !== 'select') {
+          // nothing in progress: Esc puts the tool down (Bluebeam behaviour)
+          store.setActiveSubject(null);
+          store.setActiveTool('select');
+        }
         inProgressRef.current = null;
+        dragRef.current = null;
         snapRef.current = SNAP_NONE;
         store.selectShape(null);
         scheduleRedraw();
@@ -804,11 +973,13 @@ export function useCanvasEngine(
       // Rect is now 'b' (box), calibrate is 'a'.
       const shortcuts: Record<string, ToolType> = {
         v: 'select',  h: 'pan',   l: 'line',
-        b: 'rect',    p: 'polygon',
+        b: 'rect',    p: 'polygon', n: 'polyline',
         a: 'calibrate', f: 'frame',
-        r: 'rake',    c: 'count', w: 'wand',
+        c: 'count',
       };
-      if (!e.ctrlKey && !e.metaKey && e.key.toLowerCase() in shortcuts) {
+      if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() in shortcuts) {
+        // a plain tool shortcut drops the Tool Chest subject (back to plain markups)
+        store.setActiveSubject(null);
         store.setActiveTool(shortcuts[e.key.toLowerCase()]);
       }
 
@@ -840,7 +1011,7 @@ export function useCanvasEngine(
       const cb = onContextMenuRef.current;
       const rect    = canvas.getBoundingClientRect();
       const pagePt  = cameraRef.current.screenToPage(e.clientX - rect.left, e.clientY - rect.top);
-      const hit     = hitTest(pagePt, stateRef.current.shapes);
+      const hit     = hitTest(pagePt, stateRef.current.shapes, 7 / cameraRef.current.scale);
       console.log('[contextMenu] right-click at', { clientX: e.clientX, clientY: e.clientY, pagePt }, 'hit:', hit?.id, hit?.type, 'callback:', !!cb);
       if (!cb) return;
       if (hit && (hit.type === 'rect' || hit.type === 'polygon')) {
@@ -883,6 +1054,41 @@ function getPpi(s: EngineState): number {
   return s.calibrations[s.activePageId]?.pixelsPerInch ?? DEFAULT_PDF_PPI;
 }
 
+/** Tool Chest stamp: subject, role and colours for a new markup. */
+function stamp(s: EngineState): Partial<DrawnShape> {
+  const t = s.activeSubject;
+  if (!t) return { author: 'user' };
+  return { subject: t.subject, subjectRole: t.role, color: t.stroke, fill: t.fill, opacity: t.opacity, author: 'user' };
+}
+
+function dedupeTail(pts: { x: number; y: number }[]): { x: number; y: number }[] {
+  const out = pts.slice();
+  while (out.length >= 2) {
+    const a = out[out.length - 1], b = out[out.length - 2];
+    if (Math.hypot(a.x - b.x, a.y - b.y) < 0.5) out.pop(); else break;
+  }
+  return out;
+}
+
+function commitPolyline(points: { x: number; y: number }[], s: EngineState): void {
+  const ppi = getPpi(s);
+  const L   = polylineLengthPx(points);
+  if (L < 1) return;
+  const shape: PolylineShape = {
+    id: crypto.randomUUID(), pageId: s.activePageId, type: 'polyline',
+    points, lengthPx: L, lengthInches: L / ppi, ...stamp(s),
+  } as PolylineShape;
+  useStudioStore.getState().addShape(shape);
+}
+
+function commitMarker(pt: { x: number; y: number }, s: EngineState): void {
+  const shape: MarkerShape = {
+    id: crypto.randomUUID(), pageId: s.activePageId, type: 'marker',
+    position: pt, countGroupId: s.activeSubject?.subject ?? 'count', ...stamp(s),
+  } as MarkerShape;
+  useStudioStore.getState().addShape(shape);
+}
+
 function commitLine(
   start: { x: number; y: number },
   end:   { x: number; y: number },
@@ -898,7 +1104,8 @@ function commitLine(
     end,
     lengthPx:     lenPx,
     lengthInches: lenPx / ppi,
-  };
+    ...stamp(s),
+  } as LineShape;
   useStudioStore.getState().addShape(shape);
 }
 
@@ -923,7 +1130,8 @@ function commitRect(
     heightPx:     hPx,
     widthInches:  wPx / ppi,
     heightInches: hPx / ppi,
-  };
+    ...stamp(s),
+  } as RectShape;
   useStudioStore.getState().addShape(shape);
 }
 
@@ -946,7 +1154,8 @@ function commitPolygon(
     bbHeightPx:     bbH,
     bbWidthInches:  bbW / ppi,
     bbHeightInches: bbH / ppi,
-  };
+    ...stamp(s),
+  } as PolygonShape;
   useStudioStore.getState().addShape(shape);
 }
 
@@ -955,6 +1164,7 @@ function commitPolygon(
 function hitTest(
   pt:     { x: number; y: number },
   shapes: DrawnShape[],
+  tol     = 8,
 ): DrawnShape | null {
   // Iterate in reverse so topmost (last drawn) wins
   for (let i = shapes.length - 1; i >= 0; i--) {
@@ -965,9 +1175,18 @@ function hitTest(
         pt.y >= s.origin.y && pt.y <= s.origin.y + s.heightPx
       ) return s;
     } else if (s.type === 'line') {
-      if (pointNearLine(pt, s.start, s.end, 8)) return s;
+      if (pointNearLine(pt, s.start, s.end, tol)) return s;
     } else if (s.type === 'polygon') {
       if (pointInPolygon(pt, s.points)) return s;
+      for (let k = 0; k < s.points.length; k++) {
+        if (pointNearLine(pt, s.points[k], s.points[(k + 1) % s.points.length], tol)) return s;
+      }
+    } else if (s.type === 'polyline') {
+      for (let k = 1; k < s.points.length; k++) {
+        if (pointNearLine(pt, s.points[k - 1], s.points[k], tol)) return s;
+      }
+    } else if (s.type === 'marker' && s.subject) {
+      if (Math.hypot(pt.x - s.position.x, pt.y - s.position.y) <= tol * 1.6) return s;
     }
   }
   return null;

@@ -7,10 +7,14 @@ export type InProgressShape =
   | { type: 'line';      start: PagePoint | null;  cursor: PagePoint | null }
   | { type: 'rect';      start: PagePoint | null;  cursor: PagePoint | null }
   | { type: 'polygon';   points: PagePoint[];      cursor: PagePoint | null }
+  | { type: 'polyline';  points: PagePoint[];      cursor: PagePoint | null }
   | { type: 'calibrate'; start: PagePoint | null;  cursor: PagePoint | null }
   | { type: 'rake';      points: PagePoint[];      cursor: PagePoint | null };
 
 // ── Committed shapes (stored in useStudioStore) ───────────────────────────────
+
+/** How a Tool Chest markup measures (Bluebeam Estimating ToolBox roles). */
+export type SubjectRole = 'area' | 'polylength' | 'count' | 'highlight' | 'line';
 
 type ShapeBase = {
   id:      string;
@@ -18,6 +22,16 @@ type ShapeBase = {
   label?:  string;
   color?:  string;
   locked?: boolean;
+  /** Tool Chest subject, e.g. "Ext. SF Area" — the takeoff class of this markup. */
+  subject?:     string;
+  subjectRole?: SubjectRole;
+  /** Fill colour / opacity from the Tool Chest (stroke = color). */
+  fill?:        string;
+  opacity?:     number | null;
+  /** Who made it: the estimator, or the auto-takeoff engine. */
+  author?:      'user' | 'engine';
+  /** Estimator's quantity override ("Thus" count, or a typed length / area). */
+  qtyOverride?: number | null;
 };
 
 export type LineShape = ShapeBase & {
@@ -57,6 +71,14 @@ export type PolygonShape = ShapeBase & {
   headSlopeDeg?:    number;
 };
 
+/** Multi-segment measured line (Bluebeam Polylength). */
+export type PolylineShape = ShapeBase & {
+  type:         'polyline';
+  points:       PagePoint[];
+  lengthPx:     number;
+  lengthInches: number;
+};
+
 /**
  * A single point-based count marker (Count Tool).
  * Rendered as a coloured circle on the HTML overlay — not on the canvas.
@@ -67,7 +89,7 @@ export type MarkerShape = ShapeBase & {
   countGroupId: string;
 };
 
-export type DrawnShape = LineShape | RectShape | PolygonShape | MarkerShape;
+export type DrawnShape = LineShape | RectShape | PolygonShape | PolylineShape | MarkerShape;
 
 // ── Builder Bridge ────────────────────────────────────────────────────────────
 
@@ -104,6 +126,16 @@ export function shapeToFrameBridge(shape: DrawnShape): FrameBridgeData | null {
       pageId:   shape.pageId,
       width:    shape.bbWidthInches,
       height:   shape.bbHeightInches,
+      quantity: 1,
+      label:    shape.label,
+    };
+  }
+  if (shape.type === 'polyline') {
+    return {
+      shapeId:  shape.id,
+      pageId:   shape.pageId,
+      width:    shape.lengthInches,
+      height:   0,
       quantity: 1,
       label:    shape.label,
     };

@@ -144,8 +144,8 @@ export default function StudioTitleBar() {
           onHover={() => activeMenu && setActiveMenu('Edit')} />
         {activeMenu === 'Edit' && (
           <Dropdown left={68}>
-            <MenuItem label="Undo"       shortcut="Ctrl+Z" onClick={() => exec(() => document.execCommand('undo'))} />
-            <MenuItem label="Redo"       shortcut="Ctrl+Y" onClick={() => exec(() => document.execCommand('redo'))} />
+            <MenuItem label="Undo"       shortcut="Ctrl+Z" onClick={() => exec(() => useStudioStore.getState().undo())} />
+            <MenuItem label="Redo"       shortcut="Ctrl+Y" onClick={() => exec(() => useStudioStore.getState().redo())} />
             <Separator />
             <MenuItem label="Cut"        shortcut="Ctrl+X" onClick={() => exec(() => document.execCommand('cut'))} />
             <MenuItem label="Copy"       shortcut="Ctrl+C" onClick={() => exec(() => document.execCommand('copy'))} />
