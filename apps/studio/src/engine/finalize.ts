@@ -34,7 +34,7 @@ function systemOf(subjectOrCls: string | undefined): string | undefined {
 }
 
 function bbox(s: DrawnShape) {
-  const pts = s.type === 'rect' ? [s.origin, { x: s.origin.x + s.widthPx, y: s.origin.y + s.heightPx }]
+  const pts = s.type === 'rect' || s.type === 'text' ? [s.origin, { x: s.origin.x + s.widthPx, y: s.origin.y + s.heightPx }]
     : s.type === 'line' ? [s.start, s.end] : s.type === 'marker' ? [s.position] : s.points;
   const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
   return { x: Math.min(...xs), y: Math.min(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) };
@@ -103,16 +103,23 @@ export function markupsForPdf(shapes: DrawnShape[], pages: Pg[], cals: Cal, auth
     const pg = pages.find(p => p.id === s.pageId);
     if (!pg) continue;
     const ppi = cals[s.pageId]?.pixelsPerInch;
-    const role = s.subjectRole ?? (s.type === 'polyline' || s.type === 'line' ? 'polylength' : s.type === 'marker' ? 'count' : 'highlight');
-    const pts = s.type === 'rect' ? null : s.type === 'line' ? [[s.start.x, s.start.y], [s.end.x, s.end.y]]
+    const role = s.type === 'text' || s.style ? 'note'
+      : s.subjectRole ?? (s.type === 'polyline' || s.type === 'line' ? 'polylength' : s.type === 'marker' ? 'count' : 'highlight');
+    const pts = s.type === 'rect' || s.type === 'text' ? null : s.type === 'line' ? [[s.start.x, s.start.y], [s.end.x, s.end.y]]
       : s.type === 'marker' ? null : s.points.map(p => [p.x, p.y]);
-    const rect = s.type === 'rect' ? [s.origin.x, s.origin.y, s.origin.x + s.widthPx, s.origin.y + s.heightPx]
+    const rect = s.type === 'rect' || s.type === 'text' ? [s.origin.x, s.origin.y, s.origin.x + s.widthPx, s.origin.y + s.heightPx]
       : s.type === 'marker' ? [s.position.x - 4, s.position.y - 4, s.position.x + 4, s.position.y + 4] : null;
-    const label = [s.subject, ...(ppi ? measureLabel(s, ppi) : []), s.subjectRole === 'flag' ? s.note : null].filter(Boolean).join('\n');
+    const label = s.type === 'text' ? s.text
+      : s.style ? (s.label ?? '')
+      : [s.subject, ...(ppi ? measureLabel(s, ppi) : []), s.subjectRole === 'flag' ? s.note : null].filter(Boolean).join('\n');
     out.push({
       id: s.id, page: pg.pdfPageIndex, type: s.type, role, subject: s.subject ?? '', author: s.author === 'engine' ? 'GlazeBid' : author,
       rect, points: pts, stroke: s.color, fill: s.fill, opacity: s.opacity, label, ppf: ppi ? ppi * 12 : null,
-      meta: { author: s.author ?? 'user', itemId: s.itemId, reviewState: s.reviewState, qtyOverride: s.qtyOverride ?? undefined, note: s.note },
+      style: s.style, leader: s.type === 'text' && s.leader ? [s.leader.x, s.leader.y] : null,
+      font_size: s.type === 'text' ? s.fontSize : null,
+      meta: { author: s.author ?? 'user', itemId: s.itemId, reviewState: s.reviewState, qtyOverride: s.qtyOverride ?? undefined, note: s.note,
+              style: s.style, fontSize: s.type === 'text' ? s.fontSize : undefined,
+              leader: s.type === 'text' && s.leader ? [s.leader.x, s.leader.y] : undefined },
     });
   }
   return out;

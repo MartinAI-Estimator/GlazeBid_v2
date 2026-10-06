@@ -5,6 +5,7 @@ import { useParametricTool } from '../../hooks/useParametricTool';
 import { useCountTool }      from '../../hooks/useCountTool';
 import FrameOverlay          from '../parametric/FrameOverlay';
 import CitationCaptureLayer   from './CitationCaptureLayer';
+import TextEditor             from './TextEditor';
 import { DrawingIntelligenceOverlay } from './DrawingIntelligenceOverlay';
 import { CountOverlay }      from '../parametric/CountOverlay';
 import { GridEditor }        from '../parametric/GridEditor';
@@ -96,6 +97,9 @@ export default function StudioCanvas({ onEngine, onContextMenu, diCandidates, on
 
       {/* ── Task 5.x: Grid Editor (opens after frame assignment) ────────── */}
       <GridEditor engine={engine} />
+
+      {/* ── Text box / callout editor ───────────────────────────────────── */}
+      {engine && <TextEditor engine={engine} />}
 
       {/* ── Citation capture layer (observer + modal + highlight overlay) ── */}
       {engine && (

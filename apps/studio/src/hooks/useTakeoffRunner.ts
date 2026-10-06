@@ -99,6 +99,7 @@ export function startDecisionLogger(flushEveryMs = 4000): () => void {
       const b = before.get(id);
       if (!b) {
         if (a.author === 'external') continue;
+        if (a.author !== 'engine' && !a.subject) continue;   // notes, clouds, arrows aren't takeoff
         if (a.author !== 'engine') {
           tk.record({ action: 'add', shapeId: id, subject: a.subject, page: pageLabel(a.pageId), after: a });
         } else {

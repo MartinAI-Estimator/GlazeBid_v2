@@ -14,12 +14,28 @@ export type SheetLink = {
 
 export type View = { pageId: string; scale: number; tx: number; ty: number };
 
+export type SearchHit = { page: number; rect: [number, number, number, number]; context: string };
+
+/** Revision overlay on a page: red = removed, green = added; boxes around the changes. */
+export type Overlay = { pageId: string; bitmap: ImageBitmap; size: [number, number]; boxes: [number, number, number, number][]; label: string };
+
 type State = {
   links: SheetLink[];
   hoverLink: SheetLink | null;
   back: View[];
   forward: View[];
   showExternal: boolean;
+  showSearch: boolean;
+  searchQuery: string;
+  searchHits: SearchHit[];
+  activeHit: number;
+  overlay: Overlay | null;
+  splitPageId: string | null;
+  setShowSearch: (v: boolean) => void;
+  setSearch: (q: string, hits: SearchHit[]) => void;
+  setActiveHit: (i: number) => void;
+  setOverlay: (o: Overlay | null) => void;
+  setSplitPage: (id: string | null) => void;
   setLinks: (l: SheetLink[]) => void;
   setHoverLink: (l: SheetLink | null) => void;
   pushView: (v: View) => void;
@@ -30,6 +46,12 @@ type State = {
 
 export const useNavStore = create<State>()((set, get) => ({
   links: [], hoverLink: null, back: [], forward: [], showExternal: true,
+  showSearch: false, searchQuery: '', searchHits: [], activeHit: -1, overlay: null, splitPageId: null,
+  setShowSearch: (showSearch) => set({ showSearch }),
+  setSearch: (searchQuery, searchHits) => set({ searchQuery, searchHits, activeHit: -1 }),
+  setActiveHit: (activeHit) => set({ activeHit }),
+  setOverlay: (overlay) => { get().overlay?.bitmap.close(); set({ overlay }); },
+  setSplitPage: (splitPageId) => set({ splitPageId }),
   setLinks: (links) => set({ links, hoverLink: null }),
   setHoverLink: (hoverLink) => { if (get().hoverLink !== hoverLink) set({ hoverLink }); },
   pushView: (v) => set(s => ({ back: [...s.back, v].slice(-50), forward: [] })),

@@ -724,3 +724,81 @@ async def markups_write_endpoint(req: MarkupsWriteRequest):
     with open(out, "rb") as f:
         data = _b64.b64encode(f.read()).decode()
     return {"path": out, "pdf_base64": data, **stats}
+
+
+
+# ── Search, revisions / addenda ──────────────────────────────────────────────
+
+class SearchRequest(SetRequest):
+    query: str
+
+
+@router.post("/search")
+async def search_endpoint(req: SearchRequest):
+    """Text search across the set (hits in Studio page space, with the line for context)."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.links import search_text
+    path = _set_path(req)
+    return {"hits": await run_in_threadpool(search_text, path, req.query)}
+
+
+class CompareRequest(BaseModel):
+    project_name: str                     # the current (old) set
+    new_pdf_base64: Optional[str] = None  # the revision / addendum set
+    new_project_name: Optional[str] = None
+
+
+def _rev_name(req: CompareRequest) -> str:
+    return req.new_project_name or f"{req.project_name} (revision)"
+
+
+@router.post("/compare/sheets")
+async def compare_sheets_endpoint(req: CompareRequest):
+    """Match sheets by number between the current set and a revision; how much each one changed."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.compare import match_sheets, sheet_changes
+    old = os.path.join(_runs_dir(req.project_name), "set.pdf")
+    new = os.path.join(_runs_dir(_rev_name(req)), "set.pdf")
+    if req.new_pdf_base64:
+        with open(new, "wb") as f:
+            f.write(_b64.b64decode(req.new_pdf_base64))
+    if not os.path.exists(old) or not os.path.exists(new):
+        raise HTTPException(status_code=400, detail="Both sets are needed (open the current set; send the revision)")
+    m = await run_in_threadpool(match_sheets, old, new)
+    m["pairs"] = await run_in_threadpool(sheet_changes, old, new, m["pairs"])
+    m["new_project_name"] = _rev_name(req)
+    return m
+
+
+class OverlayRequest(CompareRequest):
+    old_page: int
+    new_page: int
+    dpi: float = 72
+
+
+@router.post("/compare/overlay")
+async def compare_overlay_endpoint(req: OverlayRequest):
+    """Red = only in the current set (removed), green = only in the revision (added), boxes around changes."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.compare import overlay
+    old = os.path.join(_runs_dir(req.project_name), "set.pdf")
+    new = os.path.join(_runs_dir(_rev_name(req)), "set.pdf")
+    return await run_in_threadpool(overlay, old, new, req.old_page, req.new_page, req.dpi)
+
+
+@router.post("/autotakeoff/diff")
+async def autotakeoff_diff_endpoint(req: CompareRequest):
+    """Items added / removed / changed between the two sets' auto-takeoffs (runs the revision if needed)."""
+    from glazierai.modules.drawing_intelligence.autotakeoff import run_autotakeoff
+    from glazierai.modules.drawing_intelligence.autotakeoff.compare import diff_takeoffs
+    old_j = os.path.join(_runs_dir(req.project_name), "autotakeoff.json")
+    new_dir = _runs_dir(_rev_name(req))
+    new_j = os.path.join(new_dir, "autotakeoff.json")
+    if not os.path.exists(old_j):
+        raise HTTPException(status_code=400, detail="Run the auto-takeoff on the current set first")
+    if not os.path.exists(new_j):
+        res = await run_in_threadpool(run_autotakeoff, os.path.join(new_dir, "set.pdf"), _rev_name(req), None)
+        with open(new_j, "w", encoding="utf-8") as f:
+            _json.dump(res, f, default=str)
+    with open(old_j, encoding="utf-8") as f:
+        old = _json.load(f)
+    with open(new_j, encoding="utf-8") as f:
+        new = _json.load(f)
+    return {"changes": diff_takeoffs(old, new), "new_result": new}

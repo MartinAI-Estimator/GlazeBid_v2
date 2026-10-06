@@ -95,3 +95,32 @@ def sheets_and_links(pdf_path: str) -> dict:
                                   "target_rect": detail_rect(tgt, pre.group(1)) if pre else None})
     doc.close()
     return {"sheets": sheets, "links": links}
+
+
+def search_text(pdf_path: str, query: str, max_hits: int = 500) -> list[dict]:
+    """Case-insensitive text search across the set, in Studio page space (rotation applied)."""
+    q = (query or "").strip()
+    if not q:
+        return []
+    doc = fitz.open(pdf_path)
+    hits: list[dict] = []
+    try:
+        for pg in doc:
+            M = pg.rotation_matrix
+            found = pg.search_for(q)
+            if not found:
+                continue
+            lines = [(fitz.Rect(l["bbox"]), "".join(sp["text"] for sp in l["spans"]).strip())
+                     for b in pg.get_text("dict")["blocks"] for l in b.get("lines", [])]
+            for r in found:
+                R = fitz.Rect(r) * M
+                R.normalize()
+                cands = [t for bb, t in lines if bb.intersects(r) and q.lower() in t.lower()] or \
+                        [t for bb, t in lines if bb.intersects(r)]
+                line = max(cands, key=len) if cands else q
+                hits.append({"page": pg.number, "rect": [round(v, 1) for v in R], "context": line[:120]})
+                if len(hits) >= max_hits:
+                    return hits
+    finally:
+        doc.close()
+    return hits

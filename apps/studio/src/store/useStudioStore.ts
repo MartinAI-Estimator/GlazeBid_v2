@@ -39,6 +39,10 @@ export type ToolType =
   | 'polygon'
   | 'polyline' // Polylength (multi-segment measured line)
   | 'tcount'   // Tool Chest count / door marker
+  | 'text'     // text box (drag a box, type)
+  | 'callout'  // callout: click the point, drag the box
+  | 'cloud'    // revision cloud (click points, or drag a rectangle)
+  | 'arrow'    // arrow
   | 'calibrate'
   | 'frame'   // Task 4.3: Parametric Frame Highlight tool
   | 'rake'    // Task 5.x: Raked Frame (4-point polygon)
@@ -214,6 +218,9 @@ type State = {
   /** Double-click on a markup → inline quantity editor at the cursor. */
   pendingQtyEdit: { shapeId: string; screenX: number; screenY: number } | null;
   setPendingQtyEdit: (v: { shapeId: string; screenX: number; screenY: number } | null) => void;
+  /** Text box / callout being typed in. */
+  pendingTextEdit: string | null;
+  setPendingTextEdit: (id: string | null) => void;
 
   // ── Actions: Type Library ─────────────────────────────────────────────────
   setActiveFrameTypeId: (id: string | null) => void;
@@ -301,6 +308,7 @@ export const useStudioStore = create<State>()((set, get) => ({
   editing:                false,
   activeSubject:          null,
   pendingQtyEdit:         null,
+  pendingTextEdit:        null,
   selectedShapeId:        null,
   activeFrameTypeId:      null,
   bookmarkedPageIds:      new Set<string>(),
@@ -544,6 +552,7 @@ export const useStudioStore = create<State>()((set, get) => ({
     })),
 
   setPendingQtyEdit: (v) => set({ pendingQtyEdit: v }),
+  setPendingTextEdit: (id) => set({ pendingTextEdit: id }),
 
   selectShape: (id) => set({ selectedShapeId: id }),
 

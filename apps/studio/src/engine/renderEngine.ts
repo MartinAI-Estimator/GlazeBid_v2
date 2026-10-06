@@ -90,6 +90,11 @@ type RenderContext = {
   frameTypeMarks:   Record<string, string>;
   /** Hyperlinked callout under the cursor (active page) — highlighted like Bluebeam. */
   hoverLinkRect?:   [number, number, number, number] | null;
+  /** Text search hits on the active page; the current one stronger. */
+  searchRects?:     [number, number, number, number][];
+  activeSearchRect?: [number, number, number, number] | null;
+  /** Revision overlay (red removed / green added) with change boxes. */
+  overlay?:         { bitmap: ImageBitmap; size: [number, number]; boxes: [number, number, number, number][] } | null;
 };
 
 // ── Palette ───────────────────────────────────────────────────────────────────
@@ -199,6 +204,29 @@ export function renderFrame(rc: RenderContext): void {
     // 4 — Grid (only above 2× zoom)
     if (rc.showGrid && camera.scale > 2) {
       drawGrid(ctx, camera, rc.pageWidth, rc.pageHeight);
+    }
+
+    // 4b — revision overlay: red = removed, green = added (drawn over the sheet, under markups)
+    if (rc.overlay) {
+      ctx.save();
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(rc.overlay.bitmap, 0, 0, rc.overlay.size[0], rc.overlay.size[1]);
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 2 / camera.scale;
+      ctx.setLineDash([6 / camera.scale, 4 / camera.scale]);
+      for (const [x0, y0, x1, y1] of rc.overlay.boxes) ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+      ctx.restore();
+    }
+
+    // 4c — search hits
+    if (rc.searchRects?.length) {
+      ctx.save();
+      for (const r of rc.searchRects) {
+        const on = rc.activeSearchRect && r[0] === rc.activeSearchRect[0] && r[1] === rc.activeSearchRect[1];
+        ctx.fillStyle = on ? 'rgba(249,115,22,0.45)' : 'rgba(250,204,21,0.40)';
+        ctx.fillRect(r[0] - 1, r[1] - 1, r[2] - r[0] + 2, r[3] - r[1] + 2);
+      }
+      ctx.restore();
     }
 
     // 5 — Calibration reference lines
@@ -452,6 +480,92 @@ function drawHandles(ctx: CanvasRenderingContext2D, shape: DrawnShape, scale: nu
   ctx.restore();
 }
 
+// ── Annotations: text box / callout, revision cloud, arrow ───────────────────
+
+function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxW: number): string[] {
+  const out: string[] = [];
+  for (const para of text.split('\n')) {
+    let line = '';
+    for (const w of para.split(' ')) {
+      const t = line ? `${line} ${w}` : w;
+      if (ctx.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t;
+    }
+    out.push(line);
+  }
+  return out;
+}
+
+function drawText(ctx: CanvasRenderingContext2D, sh: import('../types/shapes').TextShape, scale: number, selected: boolean): void {
+  const c = sh.color ?? '#FF0000';
+  const { origin: o, widthPx: w, heightPx: h } = sh;
+  ctx.save();
+  if (sh.leader) drawArrow(ctx, { x: o.x + w / 2, y: o.y + h / 2 }, sh.leader, c, scale, { x: o.x, y: o.y, w, h });
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.fillRect(o.x, o.y, w, h);
+  ctx.strokeStyle = c;
+  ctx.lineWidth = 1.2 / scale;
+  ctx.strokeRect(o.x, o.y, w, h);
+  const fs = sh.fontSize, pad = fs * 0.3;
+  ctx.font = `${fs}px Arial, Helvetica, sans-serif`;
+  ctx.fillStyle = c;
+  ctx.textBaseline = 'top';
+  ctx.beginPath(); ctx.rect(o.x, o.y, w, h); ctx.clip();
+  wrapLines(ctx, sh.text || (selected ? '' : ' '), w - 2 * pad).forEach((l, i) => ctx.fillText(l, o.x + pad, o.y + pad + i * fs * 1.2));
+  ctx.restore();
+  if (selected) drawHandles(ctx, sh, scale);
+}
+
+function drawCloud(ctx: CanvasRenderingContext2D, pts: { x: number; y: number }[], color: string, scale: number, selected: boolean): void {
+  if (pts.length < 2) return;
+  const r = 9 / scale;                         // scallop radius (screen-constant)
+  ctx.save();
+  ctx.strokeStyle = selected ? '#fb923c' : color;
+  ctx.lineWidth = 1.6 / scale;
+  const gx = pts.reduce((t, p) => t + p.x, 0) / pts.length, gy = pts.reduce((t, p) => t + p.y, 0) / pts.length;
+  ctx.beginPath();
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    const L = Math.hypot(b.x - a.x, b.y - a.y);
+    if (L < 1e-6) continue;
+    const n = Math.max(1, Math.round(L / (2 * r)));
+    const ang = Math.atan2(b.y - a.y, b.x - a.x);
+    // bulge away from the centre (same rule as the PDF writer)
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const out = Math.hypot(mx + Math.cos(ang - Math.PI / 2) - gx, my + Math.sin(ang - Math.PI / 2) - gy) >
+                Math.hypot(mx - Math.cos(ang - Math.PI / 2) - gx, my - Math.sin(ang - Math.PI / 2) - gy);
+    for (let k = 0; k < n; k++) {
+      const cx = a.x + (b.x - a.x) * (k + 0.5) / n, cy = a.y + (b.y - a.y) * (k + 0.5) / n;
+      const rr = L / n / 2;
+      ctx.moveTo(cx + Math.cos(ang + Math.PI) * rr, cy + Math.sin(ang + Math.PI) * rr);
+      ctx.arc(cx, cy, rr, ang + Math.PI, ang, !out);
+    }
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawArrow(ctx: CanvasRenderingContext2D, from: { x: number; y: number }, to: { x: number; y: number }, color: string, scale: number,
+                   clipBox?: { x: number; y: number; w: number; h: number }): void {
+  let a = from;
+  if (clipBox) {
+    // start the leader at the box edge, not its centre
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const tx = dx ? (clipBox.w / 2) / Math.abs(dx) : Infinity, ty = dy ? (clipBox.h / 2) / Math.abs(dy) : Infinity;
+    const t = Math.min(tx, ty, 1);
+    a = { x: from.x + dx * t, y: from.y + dy * t };
+  }
+  const ang = Math.atan2(to.y - a.y, to.x - a.x), hl = 10 / scale;
+  ctx.save();
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.6 / scale;
+  ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(to.x, to.y); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(to.x, to.y);
+  ctx.lineTo(to.x - hl * Math.cos(ang - 0.4), to.y - hl * Math.sin(ang - 0.4));
+  ctx.lineTo(to.x - hl * Math.cos(ang + 0.4), to.y - hl * Math.sin(ang + 0.4));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
 /** Measurement tag: dark rounded box with one line per value (Bluebeam-like). */
 function drawTag(ctx: CanvasRenderingContext2D, lines: string[], x: number, y: number, scale: number, accent: string): void {
   const fs = 10 / scale, pad = 3 / scale, lh = fs * 1.25;
@@ -470,13 +584,16 @@ function drawTag(ctx: CanvasRenderingContext2D, lines: string[], x: number, y: n
   ctx.restore();
 }
 
-function drawShape(
+export function drawShape(
   ctx:      CanvasRenderingContext2D,
   shape:    DrawnShape,
   scale:    number,
   selected: boolean,
   ppi:      number = DEFAULT_PDF_PPI,
 ): void {
+  if (shape.type === 'text') { drawText(ctx, shape, scale, selected); return; }
+  if (shape.style === 'cloud' && shape.type === 'polygon') { drawCloud(ctx, shape.points, shape.color ?? '#FF0000', scale, selected); if (selected) drawHandles(ctx, shape, scale); return; }
+  if (shape.style === 'arrow' && shape.type === 'line') { drawArrow(ctx, shape.start, shape.end, shape.color ?? '#FF0000', scale); if (selected) drawHandles(ctx, shape, scale); return; }
   if (shape.subject || shape.type === 'polyline') {
     drawSubjectShape(ctx, shape, scale, selected, ppi);
     return;
@@ -577,6 +694,18 @@ function drawInProgress(
     if (ip.cursor) ctx.lineTo(ip.cursor.x, ip.cursor.y);
     ctx.stroke();
     for (const pt of ip.points) dot(ctx, pt, 3 / scale, C.inProgress);
+
+  } else if (ip.type === 'text') {
+    ctx.setLineDash([]);
+    if (ip.leader && ip.cursor && !ip.start) {
+      ctx.strokeStyle = '#FF0000'; ctx.beginPath(); ctx.moveTo(ip.leader.x, ip.leader.y); ctx.lineTo(ip.cursor.x, ip.cursor.y); ctx.stroke();
+    }
+    if (ip.start && ip.cursor) {
+      const x = Math.min(ip.start.x, ip.cursor.x), y = Math.min(ip.start.y, ip.cursor.y);
+      ctx.strokeStyle = '#FF0000';
+      ctx.strokeRect(x, y, Math.abs(ip.cursor.x - ip.start.x), Math.abs(ip.cursor.y - ip.start.y));
+      if (ip.leader) { ctx.beginPath(); ctx.moveTo(ip.leader.x, ip.leader.y); ctx.lineTo(x, y); ctx.stroke(); }
+    }
 
   } else if (ip.type === 'polyline' && ip.points.length > 0) {
     ctx.setLineDash([]);

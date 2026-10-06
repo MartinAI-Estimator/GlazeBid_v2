@@ -13,13 +13,14 @@
  *   insertVertex / removeVertex
  *   fmtFtIn(inches)             → 12'-3 1/2"
  */
-import type { DrawnShape, RectShape, PolygonShape, PolylineShape, LineShape } from '../types/shapes';
+import type { DrawnShape, RectShape, PolygonShape, PolylineShape, LineShape, TextShape } from '../types/shapes';
 import type { PagePoint } from './coordinateSystem';
 
 export type Handle =
   | { kind: 'rect'; pos: 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w'; at: PagePoint }
   | { kind: 'vertex'; index: number; at: PagePoint }
-  | { kind: 'end'; which: 'start' | 'end'; at: PagePoint };
+  | { kind: 'end'; which: 'start' | 'end'; at: PagePoint }
+  | { kind: 'leader'; at: PagePoint };
 
 const dist = (a: PagePoint, b: PagePoint) => Math.hypot(a.x - b.x, a.y - b.y);
 
@@ -73,6 +74,7 @@ export function measure(shape: DrawnShape, ppi: number): Measure {
   }
   if (shape.type === 'polyline') return { lengthIn: polylineLengthPx(shape.points) / ppi };
   if (shape.type === 'line') return { lengthIn: dist(shape.start, shape.end) / ppi };
+  if (shape.type === 'text') return {};
   return { count: 1 };
 }
 
@@ -117,6 +119,10 @@ export function measureLabel(shape: DrawnShape, ppi: number): string[] {
 // ── Handles ────────────────────────────────────────────────────────────────────
 
 export function handlesOf(shape: DrawnShape): Handle[] {
+  if (shape.type === 'text') {
+    const box = handlesOf({ ...shape, type: 'rect', widthInches: 0, heightInches: 0 } as unknown as RectShape);
+    return shape.leader ? [...box, { kind: 'leader', at: shape.leader }] : box;
+  }
   if (shape.type === 'rect') {
     const { x, y } = shape.origin, w = shape.widthPx, h = shape.heightPx;
     return [
@@ -145,6 +151,11 @@ export function hitHandle(shape: DrawnShape, pt: PagePoint, tol: number): Handle
 }
 
 export function applyHandleDrag(shape: DrawnShape, h: Handle, pt: PagePoint, ppi: number): DrawnShape {
+  if (shape.type === 'text') {
+    if (h.kind === 'leader') return { ...shape, leader: { x: pt.x, y: pt.y } };
+    const r = applyHandleDrag({ ...shape, type: 'rect', widthInches: 0, heightInches: 0 } as unknown as RectShape, h, pt, ppi) as RectShape;
+    return { ...shape, origin: r.origin, widthPx: r.widthPx, heightPx: r.heightPx } as TextShape;
+  }
   if (shape.type === 'rect' && h.kind === 'rect') {
     let x0 = shape.origin.x, y0 = shape.origin.y, x1 = x0 + shape.widthPx, y1 = y0 + shape.heightPx;
     if (h.pos.includes('w')) x0 = pt.x;
@@ -179,6 +190,7 @@ export function translate(shape: DrawnShape, dx: number, dy: number, ppi: number
     case 'polyline': return recompute({ ...shape, points: shape.points.map(mv) }, ppi);
     case 'line': return { ...shape, start: mv(shape.start), end: mv(shape.end) };
     case 'marker': return { ...shape, position: mv(shape.position) };
+    case 'text': return { ...shape, origin: mv(shape.origin) };   // the leader point stays where it points
   }
 }
 

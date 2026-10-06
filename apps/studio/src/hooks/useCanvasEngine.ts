@@ -27,7 +27,7 @@ import { distancePx, DEFAULT_PDF_PPI, type PagePoint } from '../engine/coordinat
 import { calibrateFromLine } from '../engine/coordinateSystem';
 import { PdfTileManager } from '../engine/pdfTileManager';
 import { loadPdfFromBuffer, THUMB_SCALE } from '../engine/pdfLoader';
-import type { InProgressShape, DrawnShape, RectShape, LineShape, PolygonShape, PolylineShape, MarkerShape } from '../types/shapes';
+import type { InProgressShape, DrawnShape, RectShape, LineShape, PolygonShape, PolylineShape, MarkerShape, TextShape } from '../types/shapes';
 import type { ToolChestItem } from '../constants/toolChest';
 import {
   hitHandle, applyHandleDrag, translate, hitEdge, insertVertex, removeVertex, polylineLengthPx, type Handle,
@@ -72,6 +72,10 @@ const CURSOR: Record<ToolType | 'panning', string> = {
   polygon:   'crosshair',
   polyline:  'crosshair',
   tcount:    'cell',
+  text:      'text',
+  callout:   'crosshair',
+  cloud:     'crosshair',
+  arrow:     'crosshair',
   calibrate: 'crosshair',
   frame:     'crosshair',
   rake:      'crosshair',
@@ -117,6 +121,10 @@ export type CanvasEngineAPI = {
   focusShape: (id: string) => void;
   /** Paint PDF annotations into the page image (true) or leave them to Studio (false). */
   setBakeAnnotations: (bake: boolean) => void;
+  /** Go to a region of a page (search hits, change boxes). */
+  focusRect: (pageId: string, rect: [number, number, number, number], fill?: number) => void;
+  /** Render a whole page to a bitmap (split view). */
+  renderPageBitmap: (pageId: string, scale: number) => Promise<ImageBitmap | null>;
   /** Tool cursors for new plugin tools. */
   rake:  never; count: never; wand: never; ghost: never;  // presence check only, not used directly
 };
@@ -215,6 +223,9 @@ export function useCanvasEngine(
         pageHeight: pg?.heightPx ?? DEFAULT_PAGE_H,
         shapes:     visibleShapes(s.shapes),   // renderEngine filters by pageId in continuous mode
         hoverLinkRect: hl && pg && hl.page === pg.pdfPageIndex ? hl.rect : null,
+        searchRects: pg ? nav.searchHits.filter(h => h.page === pg.pdfPageIndex).map(h => h.rect) : [],
+        activeSearchRect: pg && nav.activeHit >= 0 && nav.searchHits[nav.activeHit]?.page === pg.pdfPageIndex ? nav.searchHits[nav.activeHit].rect : null,
+        overlay: nav.overlay && nav.overlay.pageId === s.activePageId ? nav.overlay : null,
         selectedId: s.selectedId,
         inProgress: inProgressRef.current,
         snapResult: snapRef.current,
@@ -408,14 +419,33 @@ export function useCanvasEngine(
     scheduleRedraw();
   }, [canvasRef, scheduleRedraw]);
 
+  const focusRect = useCallback((pageId: string, rect: [number, number, number, number], fill = 0.35) => {
+    const st = useStudioStore.getState();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    useNavStore.getState().pushView({ pageId: st.activePageId, scale: cameraRef.current.scale, tx: cameraRef.current.tx, ty: cameraRef.current.ty });
+    if (st.activePageId !== pageId) st.setActivePage(pageId);
+    const [x0, y0, x1, y1] = rect;
+    const cw = canvas.clientWidth, ch = canvas.clientHeight, cam = cameraRef.current;
+    cam.scale = Math.max(0.05, Math.min((cw * fill) / Math.max(x1 - x0, 30), (ch * fill) / Math.max(y1 - y0, 30), 6));
+    let oy = 0;
+    if (st.continuousScroll && st.pages.length > 1) oy = computePageLayout(st.pages).find(l => l.page.id === pageId)?.yOffset ?? 0;
+    cam.tx = cw / 2 - ((x0 + x1) / 2) * cam.scale;
+    cam.ty = ch / 2 - ((y0 + y1) / 2 + oy) * cam.scale;
+    st.setCameraScale(cam.scale);
+    scheduleRedraw();
+  }, [canvasRef, scheduleRedraw]);
+
+  const renderPageBitmap = useCallback((pageId: string, scale: number) => tileManagerRef.current.renderPageBitmap(pageId, scale), []);
+
   const setBakeAnnotations = useCallback((bake: boolean) => {
     tileManagerRef.current.setBakeAnnotations(bake);
     scheduleRedraw();
   }, [scheduleRedraw]);
 
   const api = useMemo<CanvasEngineAPI>(
-    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, getPdfBuffer: () => pdfBufferRef.current, focusShape, setBakeAnnotations, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
-    [fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, focusShape, setBakeAnnotations],
+    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, getPdfBuffer: () => pdfBufferRef.current, focusShape, setBakeAnnotations, focusRect, renderPageBitmap, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
+    [fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, focusShape, setBakeAnnotations, focusRect, renderPageBitmap],
   );
 
   // ── Safety kick: re-draw when active page changes (e.g. PDF just loaded) ─────
@@ -482,7 +512,8 @@ export function useCanvasEngine(
       scheduleRedraw();
     });
     const unsubNav = useNavStore.subscribe((n, o) => {
-      if (n.hoverLink !== o.hoverLink || n.showExternal !== o.showExternal) scheduleRedraw();
+      if (n.hoverLink !== o.hoverLink || n.showExternal !== o.showExternal || n.searchHits !== o.searchHits ||
+          n.activeHit !== o.activeHit || n.overlay !== o.overlay) scheduleRedraw();
     });
 
     // ── ResizeObserver: keep canvas buffer in sync with CSS size ─────────────
@@ -735,7 +766,23 @@ export function useCanvasEngine(
           commitMarker(pt, s);
           break;
         }
-        case 'line': {
+        case 'text': {
+          inProgressRef.current = { type: 'text', start: pt, cursor: pt, leader: null };
+          break;
+        }
+        case 'callout': {
+          const ip = inProgressRef.current;
+          if (!ip || ip.type !== 'text' || !ip.leader) {
+            // first click: the point the callout points at
+            inProgressRef.current = { type: 'text', start: null, cursor: pt, leader: pt };
+          } else if (!ip.start) {
+            // then press-drag the text box
+            inProgressRef.current = { ...ip, start: pt, cursor: pt };
+          }
+          break;
+        }
+        case 'line':
+        case 'arrow': {
           const ip = inProgressRef.current;
           if (!ip || ip.type !== 'line' || !ip.start) {
             inProgressRef.current = { type: 'line', start: pt, cursor: pt };
@@ -752,7 +799,8 @@ export function useCanvasEngine(
           inProgressRef.current = { type: 'rect', start: pt, cursor: pt };
           break;
         }
-        case 'polygon': {
+        case 'polygon':
+        case 'cloud': {
           const ip = inProgressRef.current;
           if (!ip || ip.type !== 'polygon') {
             inProgressRef.current = { type: 'polygon', points: [pt], cursor: pt };
@@ -831,6 +879,7 @@ export function useCanvasEngine(
       if (ip) {
         if (ip.type === 'line'      && ip.start)         ip.cursor = e.shiftKey ? constrainAngle(ip.start, pt) : pt;
         if (ip.type === 'rect'      && ip.start)         ip.cursor = pt;
+        if (ip.type === 'text')                          ip.cursor = pt;
         if (ip.type === 'polygon')                       ip.cursor = pt;
         if (ip.type === 'polyline') {
           const last = ip.points[ip.points.length - 1];
@@ -865,8 +914,27 @@ export function useCanvasEngine(
       const s  = stateRef.current;
       const pt = getSnappedPage(e);
 
+      // Text box / callout box
+      if (s.activeTool === 'text' || s.activeTool === 'callout') {
+        const ip = inProgressRef.current;
+        if (ip?.type === 'text' && ip.start) {
+          const sc = cameraRef.current.scale;
+          const a = ip.start;
+          let b = pt;
+          if (!ptrRef.current.hasMoved || (Math.abs(b.x - a.x) * sc < 6 && Math.abs(b.y - a.y) * sc < 6)) {
+            b = { x: a.x + 180 / sc, y: a.y + 40 / sc };    // a click makes a default-size box
+          }
+          const id = commitText(a, b, ip.leader ?? null, s, sc);
+          inProgressRef.current = null;
+          snapRef.current = SNAP_NONE;
+          useStudioStore.getState().setPendingTextEdit(id);
+          scheduleRedraw();
+          return;
+        }
+      }
+
       // Area tool: press-drag-release draws a rectangle area (clicks still draw a polygon)
-      if (s.activeTool === 'polygon') {
+      if (s.activeTool === 'polygon' || s.activeTool === 'cloud') {
         const ip = inProgressRef.current;
         if (ip?.type === 'polygon' && ip.points.length === 1 && ptrRef.current.hasMoved) {
           const a = ip.points[0];
@@ -938,6 +1006,11 @@ export function useCanvasEngine(
         // double-click a markup → type its quantity (Bluebeam: edit the measurement label)
         const raw = resolveLocalPageXY(pageXY(e));
         const hit = hitTest(raw, visibleShapes(s.shapes).filter(sh => sh.pageId === s.activePageId), 7 / cameraRef.current.scale);
+        if (hit && !hit.locked && hit.type === 'text') {
+          useStudioStore.getState().selectShape(hit.id);
+          useStudioStore.getState().setPendingTextEdit(hit.id);
+          return;
+        }
         if (hit && !hit.locked && (hit.subject || hit.type === 'polyline')) {
           useStudioStore.getState().selectShape(hit.id);
           useStudioStore.getState().setPendingQtyEdit({ shapeId: hit.id, screenX: e.clientX, screenY: e.clientY });
@@ -967,6 +1040,11 @@ export function useCanvasEngine(
       // Ignore typing in inputs (Tool Chest search, properties, …)
       const tgt = e.target as HTMLElement | null;
       if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.isContentEditable)) return;
+
+      // Ctrl+F — search the set
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        useNavStore.getState().setShowSearch(true); e.preventDefault(); return;
+      }
 
       // Undo / redo
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
@@ -1105,11 +1183,13 @@ export function useCanvasEngine(
       // Tool shortcuts
       // Note: 'r'→rake, 'c'→count, 'w'→wand take priority over old rect/calibrate.
       // Rect is now 'b' (box), calibrate is 'a'.
+      // Bluebeam single-key tools: V select, L line, A arrow, R rectangle, P polygon, N polyline,
+      // C cloud, T text box, Q callout.  (Toolbox counts: Shift+Alt+C.  Calibrate: K.)
       const shortcuts: Record<string, ToolType> = {
-        v: 'select',  h: 'pan',   l: 'line',
-        b: 'rect',    p: 'polygon', n: 'polyline',
-        a: 'calibrate', f: 'frame',
-        c: 'count',
+        v: 'select',  h: 'pan',   l: 'line',  a: 'arrow',
+        r: 'rect',    b: 'rect',  p: 'polygon', n: 'polyline',
+        c: 'cloud',   t: 'text',  q: 'callout',
+        k: 'calibrate', f: 'frame',
       };
       if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() in shortcuts) {
         // a plain tool shortcut drops the Tool Chest subject (back to plain markups)
@@ -1191,6 +1271,9 @@ function getPpi(s: EngineState): number {
 
 /** Tool Chest stamp: subject, role and colours for a new markup. */
 function stamp(s: EngineState): Partial<DrawnShape> {
+  // annotation tools are markups, not takeoff: red like Bluebeam, no Tool Chest subject
+  if (s.activeTool === 'cloud') return { author: 'user', style: 'cloud', color: '#FF0000' };
+  if (s.activeTool === 'arrow') return { author: 'user', style: 'arrow', color: '#FF0000' };
   const t = s.activeSubject;
   if (!t) return { author: 'user' };
   return { subject: t.subject, subjectRole: t.role, color: t.stroke, fill: t.fill, opacity: t.opacity, author: 'user' };
@@ -1214,6 +1297,17 @@ function commitPolyline(points: { x: number; y: number }[], s: EngineState): voi
     points, lengthPx: L, lengthInches: L / ppi, ...stamp(s),
   } as PolylineShape;
   useStudioStore.getState().addShape(shape);
+}
+
+function commitText(a: { x: number; y: number }, b: { x: number; y: number }, leader: { x: number; y: number } | null, s: EngineState, scale: number): string {
+  const shape: TextShape = {
+    id: crypto.randomUUID(), pageId: s.activePageId, type: 'text',
+    origin: { x: Math.min(a.x, b.x), y: Math.min(a.y, b.y) },
+    widthPx: Math.max(Math.abs(b.x - a.x), 20 / scale), heightPx: Math.max(Math.abs(b.y - a.y), 14 / scale),
+    text: '', fontSize: 12 / Math.max(scale, 0.05), leader, author: 'user', color: '#FF0000',
+  };
+  useStudioStore.getState().addShape(shape);
+  return shape.id;
 }
 
 function commitMarker(pt: { x: number; y: number }, s: EngineState): void {
@@ -1300,7 +1394,7 @@ function visibleShapes(shapes: DrawnShape[]): DrawnShape[] {
 }
 
 function shapeBounds(sh: DrawnShape): { x: number; y: number; w: number; h: number } {
-  const pts = sh.type === 'rect' ? [sh.origin, { x: sh.origin.x + sh.widthPx, y: sh.origin.y + sh.heightPx }]
+  const pts = sh.type === 'rect' || sh.type === 'text' ? [sh.origin, { x: sh.origin.x + sh.widthPx, y: sh.origin.y + sh.heightPx }]
     : sh.type === 'line' ? [sh.start, sh.end]
     : sh.type === 'marker' ? [sh.position]
     : sh.points;
@@ -1334,6 +1428,12 @@ function hitTest(
     } else if (s.type === 'polyline') {
       for (let k = 1; k < s.points.length; k++) {
         if (pointNearLine(pt, s.points[k - 1], s.points[k], tol)) return s;
+      }
+    } else if (s.type === 'text') {
+      if (pt.x >= s.origin.x && pt.x <= s.origin.x + s.widthPx && pt.y >= s.origin.y && pt.y <= s.origin.y + s.heightPx) return s;
+      if (s.leader) {
+        const c = { x: s.origin.x + s.widthPx / 2, y: s.origin.y + s.heightPx / 2 };
+        if (pointNearLine(pt, s.leader, c, tol)) return s;
       }
     } else if (s.type === 'marker' && s.subject) {
       if (Math.hypot(pt.x - s.position.x, pt.y - s.position.y) <= tol * 1.6) return s;

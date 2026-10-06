@@ -8,6 +8,7 @@ export type InProgressShape =
   | { type: 'rect';      start: PagePoint | null;  cursor: PagePoint | null }
   | { type: 'polygon';   points: PagePoint[];      cursor: PagePoint | null }
   | { type: 'polyline';  points: PagePoint[];      cursor: PagePoint | null }
+  | { type: 'text';      start: PagePoint | null;  cursor: PagePoint | null; leader?: PagePoint | null }
   | { type: 'calibrate'; start: PagePoint | null;  cursor: PagePoint | null }
   | { type: 'rake';      points: PagePoint[];      cursor: PagePoint | null };
 
@@ -40,6 +41,8 @@ type ShapeBase = {
   note?:        string;
   /** Engine markups: unreviewed until finalized, edited once the estimator changes it. */
   reviewState?: 'unreviewed' | 'edited' | 'accepted';
+  /** Annotation style: a revision cloud (polygon) or an arrow (line). */
+  style?:       'cloud' | 'arrow';
 };
 
 export type LineShape = ShapeBase & {
@@ -79,6 +82,17 @@ export type PolygonShape = ShapeBase & {
   headSlopeDeg?:    number;
 };
 
+/** Text box; with a leader point it is a callout (Bluebeam Text Box / Callout). */
+export type TextShape = ShapeBase & {
+  type:     'text';
+  origin:   PagePoint;
+  widthPx:  number;
+  heightPx: number;
+  text:     string;
+  fontSize: number;          // page points
+  leader?:  PagePoint | null;
+};
+
 /** Multi-segment measured line (Bluebeam Polylength). */
 export type PolylineShape = ShapeBase & {
   type:         'polyline';
@@ -97,7 +111,7 @@ export type MarkerShape = ShapeBase & {
   countGroupId: string;
 };
 
-export type DrawnShape = LineShape | RectShape | PolygonShape | PolylineShape | MarkerShape;
+export type DrawnShape = LineShape | RectShape | PolygonShape | PolylineShape | MarkerShape | TextShape;
 
 // ── Builder Bridge ────────────────────────────────────────────────────────────
 

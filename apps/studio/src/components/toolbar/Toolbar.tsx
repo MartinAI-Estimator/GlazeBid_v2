@@ -61,6 +61,10 @@ type Props = {
 
 function LineIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4 20l16-16" /></svg>; }
 function RectIcon()      { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5" /></svg>; }
+function TextIcon()     { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" d="M5 6h14M12 6v13" /></svg>; }
+function CalloutIcon()  { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><rect x="9" y="3" width="12" height="8" rx="1" /><path strokeLinecap="round" d="M9 9L3 20" /></svg>; }
+function CloudIcon()    { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" d="M6 17a3 3 0 010-6 4 4 0 017.5-2A3.5 3.5 0 0118 12a2.5 2.5 0 010 5H6z" /></svg>; }
+function ArrowIcon()    { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 19L19 5M19 5h-7M19 5v7" /></svg>; }
 function PolylineIcon()  { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 17l5-8 5 5 8-9" /><circle cx="3" cy="17" r="1.2" fill="currentColor" /><circle cx="21" cy="5" r="1.2" fill="currentColor" /></svg>; }
 function PolygonIcon()   { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 18l5-13 7 4 3-5 3 14H3z" /></svg>; }
 function CalibrateIcon() { return <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4 12h16M9 7l-5 5 5 5M15 7l5 5-5 5" /></svg>; }
@@ -80,10 +84,14 @@ type ToolDef = {
 
 const TOOLS: ToolDef[] = [
   { id: 'line',      label: 'Line',            icon: <LineIcon />,      shortcut: 'L' },
-  { id: 'rect',      label: 'Rectangle',       icon: <RectIcon />,      shortcut: 'B' },
+  { id: 'rect',      label: 'Rectangle',       icon: <RectIcon />,      shortcut: 'R' },
   { id: 'polygon',   label: 'Polygon',         icon: <PolygonIcon />,   shortcut: 'P' },
   { id: 'polyline',  label: 'Polylength',      icon: <PolylineIcon />,  shortcut: 'N' },
-  { id: 'calibrate', label: 'Calibrate',       icon: <CalibrateIcon />, shortcut: 'A' },
+  { id: 'text',      label: 'Text Box',        icon: <TextIcon />,      shortcut: 'T' },
+  { id: 'callout',   label: 'Callout',         icon: <CalloutIcon />,   shortcut: 'Q' },
+  { id: 'cloud',     label: 'Cloud',           icon: <CloudIcon />,     shortcut: 'C' },
+  { id: 'arrow',     label: 'Arrow',           icon: <ArrowIcon />,     shortcut: 'A' },
+  { id: 'calibrate', label: 'Calibrate',       icon: <CalibrateIcon />, shortcut: 'K' },
   { id: 'frame',     label: 'Frame Highlight', icon: <FrameIcon />,     shortcut: 'F' },
 ];
 

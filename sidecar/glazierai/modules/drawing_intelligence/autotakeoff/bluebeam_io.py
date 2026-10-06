@@ -96,6 +96,33 @@ def _poly_len(pts) -> float:
     return sum(math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]) for i in range(1, len(pts)))
 
 
+def _scallops(P: list, r: float = 9.0) -> list:
+    """Cloud outline: a row of half-circle bumps along each edge, bulging away from the centre."""
+    out = []
+    n = len(P)
+    gx, gy = sum(p.x for p in P) / n, sum(p.y for p in P) / n
+    for i in range(n):
+        a, b = P[i], P[(i + 1) % n]
+        L = math.hypot(b.x - a.x, b.y - a.y)
+        if L < 1e-6:
+            continue
+        k = max(1, round(L / (2 * r)))
+        ang = math.atan2(b.y - a.y, b.x - a.x)
+        rr = L / k / 2
+        # which way is "out" for this edge: the normal pointing away from the centre
+        mx, my = (a.x + b.x) / 2, (a.y + b.y) / 2
+        nx, ny = math.cos(ang + math.pi / 2), math.sin(ang + math.pi / 2)
+        sgn = 1 if (mx + nx - gx) ** 2 + (my + ny - gy) ** 2 > (mx - nx - gx) ** 2 + (my - ny - gy) ** 2 else -1
+        for j in range(k):
+            cx = a.x + (b.x - a.x) * (j + 0.5) / k
+            cy = a.y + (b.y - a.y) * (j + 0.5) / k
+            for t in range(9):
+                th = ang + math.pi + sgn * math.pi * t / 8
+                out.append(fitz.Point(cx + rr * math.cos(th), cy + rr * math.sin(th)))
+    out.append(out[0])
+    return out
+
+
 def _is_ours(doc: fitz.Document, a) -> bool:
     try:
         nm = doc.xref_get_key(a.xref, "NM")[1].strip("()")
@@ -137,7 +164,41 @@ def write_studio_markups(pdf_in: str, markups: list[dict], pdf_out: str) -> dict
         contents = m.get("label") or m.get("subject") or ""
         annot = None
         measure = None
-        if role == "flag":
+        style = m.get("style")
+        if typ == "text":
+            # text box / callout (FreeText); a leader point makes it a callout (/CL)
+            x0, y0, x1, y1 = m["rect"]
+            box = fitz.Rect(fitz.Point(x0, y0) * D, fitz.Point(x1, y1) * D)
+            box.normalize()
+            fs = float(m.get("font_size") or 10)
+            kw = dict(fontsize=fs, text_color=stroke, fill_color=(1, 1, 1), border_width=1, rotate=pg.rotation)
+            ld = m.get("leader")
+            if ld:
+                tip = fitz.Point(*ld) * D
+                # the leader leaves the side of the box facing the point
+                if tip.x < box.x0 or tip.x > box.x1:
+                    knee = fitz.Point(box.x0 if tip.x < box.x0 else box.x1, (box.y0 + box.y1) / 2)
+                else:
+                    knee = fitz.Point((box.x0 + box.x1) / 2, box.y0 if tip.y < box.y0 else box.y1)
+                try:
+                    annot = pg.add_freetext_annot(box, contents or "", callout=(tip, knee), line_end=fitz.PDF_ANNOT_LE_OPEN_ARROW, **kw)
+                except TypeError:          # older PyMuPDF: no callout support → plain text box
+                    annot = pg.add_freetext_annot(box, contents or "", **kw)
+            else:
+                annot = pg.add_freetext_annot(box, contents or "", **kw)
+        elif style == "cloud":
+            # scallops written into the outline so every viewer shows a cloud; Studio keeps the
+            # original corners in GBMeta and edits it as a simple polygon
+            annot = pg.add_polygon_annot(_scallops(P))
+            annot.set_colors(stroke=stroke)
+            annot.set_border(width=1.5)
+            m.setdefault("meta", {})["points"] = [list(p) for p in pts]
+        elif style == "arrow" and len(P) >= 2:
+            annot = pg.add_line_annot(P[0], P[-1])
+            annot.set_colors(stroke=stroke, fill=stroke)
+            annot.set_border(width=1.5)
+            annot.set_line_ends(fitz.PDF_ANNOT_LE_NONE, fitz.PDF_ANNOT_LE_CLOSED_ARROW)
+        elif role == "flag":
             xs, ys = [p.x for p in P], [p.y for p in P]
             r = fitz.Rect(min(xs) - 8, min(ys) - 8, max(xs) + 8, max(ys) + 8)
             annot = pg.add_rect_annot(r)
@@ -172,11 +233,13 @@ def write_studio_markups(pdf_in: str, markups: list[dict], pdf_out: str) -> dict
         annot.update()
         x = annot.xref
         doc.xref_set_key(x, "NM", _pdf_str(f"{GB_PREFIX}{m.get('id', n)}"))
+        if style == "cloud" and typ != "text":
+            doc.xref_set_key(x, "BE", "<</S/C/I 1>>")      # Bluebeam / Acrobat cloud border
         if measure:
             doc.xref_set_key(x, "IT", f"/{measure[0]}")
             doc.xref_set_key(x, "Measure", measure[1])
         meta = m.get("meta") or {}
-        meta = {k: v for k, v in dict(meta, role=role, type=typ).items() if v is not None}
+        meta = {k: v for k, v in dict(meta, role=role, type=typ, style=style).items() if v is not None}
         doc.xref_set_key(x, "GBMeta", _pdf_str(json.dumps(meta, separators=(",", ":"))))
         n += 1
     doc.save(pdf_out, garbage=1, deflate=True)
@@ -222,13 +285,67 @@ def read_annotations(pdf_path: str) -> list[dict]:
                     verts = verts[:-1]                                # closing vertex
             colors = a.colors or {}
             ours = nm.startswith(GB_PREFIX)
+            style = None
+            leader = None
+            text_rect = None
+            font_size = None
+            try:
+                be = doc.xref_get_key(a.xref, "BE")[1]
+                if "/S/C" in be.replace(" ", ""):
+                    style = "cloud"
+            except Exception:
+                pass
+            if t == "Line":
+                try:
+                    if any(e not in (0, None) for e in (a.line_ends or ())):
+                        style = "arrow"
+                except Exception:
+                    pass
+            if t == "FreeText":
+                try:
+                    cl = doc.xref_get_key(a.xref, "CL")
+                    if cl[0] == "array":
+                        nums = [float(v) for v in cl[1].strip("[]").split()]
+                        if len(nums) >= 2:
+                            q = fitz.Point(nums[0], nums[1])
+                            # /CL is in PDF (bottom-up) space; convert to MuPDF's top-down
+                            q = fitz.Point(q.x, pg.mediabox.height - q.y) if pg.mediabox else q
+                            q = q * M
+                            inside_page = 0 <= q.x <= pg.rect.width + 1 and 0 <= q.y <= pg.rect.height + 1 if pg.rotation % 180 == 0 \
+                                else 0 <= q.x <= pg.rect.height + 1 and 0 <= q.y <= pg.rect.width + 1
+                            if inside_page:
+                                leader = [round(q.x, 2), round(q.y, 2)]
+                except Exception:
+                    pass
+                box = fitz.Rect(a.rect)
+                try:
+                    rd = doc.xref_get_key(a.xref, "RD")
+                    if rd[0] == "array":
+                        l_, t_, r_, b_ = [float(v) for v in rd[1].strip("[]").split()]
+                        box = fitz.Rect(box.x0 + l_, box.y0 + t_, box.x1 - r_, box.y1 - b_)
+                except Exception:
+                    pass
+                B = box * M
+                B.normalize()
+                text_rect = [round(v, 2) for v in B]
+                try:
+                    import re as _re
+                    da = doc.xref_get_key(a.xref, "DA")[1]
+                    mm = _re.search(r"([\d.]+)\s+Tf", da)
+                    font_size = float(mm.group(1)) if mm else None
+                except Exception:
+                    pass
             role = meta.get("role") or _TYPE_ROLE.get(t, "highlight")
             out.append({
                 "id": nm[len(GB_PREFIX):] if ours else (nm or f"x{pg.number}-{a.xref}"),
                 "page": pg.number,
                 "annot_type": t,
                 "type": meta.get("type") or {"Polygon": "polygon", "PolyLine": "polyline", "Line": "line",
-                                             "Circle": "marker"}.get(t, "rect"),
+                                             "Circle": "marker", "FreeText": "text"}.get(t, "rect"),
+                "style": meta.get("style") or style,
+                "leader": leader,
+                "text_rect": text_rect,
+                "font_size": font_size,
                 "role": role,
                 "subject": info.get("subject") or "",
                 "author": info.get("title") or "",
@@ -237,7 +354,7 @@ def read_annotations(pdf_path: str) -> list[dict]:
                 "fill": _hex(colors.get("fill")),
                 "opacity": a.opacity if a.opacity is not None and a.opacity >= 0 else None,
                 "rect": [round(v, 2) for v in R],
-                "points": verts,
+                "points": meta.get("points") or verts,
                 "ours": ours,
                 "meta": meta,
             })

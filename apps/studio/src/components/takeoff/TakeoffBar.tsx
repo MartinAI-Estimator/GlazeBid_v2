@@ -4,6 +4,7 @@
  */
 import { useMemo, useState } from 'react';
 import FinalizeDialog from './FinalizeDialog';
+import ComparePanel from './ComparePanel';
 import { useNavStore } from '../../store/useNavStore';
 import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useTakeoffRunner } from '../../hooks/useTakeoffRunner';
@@ -27,6 +28,12 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
   const engineCount = useMemo(() => shapes.filter(s => s.author === 'engine' && s.subjectRole !== 'flag').length, [shapes]);
   const flagIdx = flags.findIndex(f => f.id === selectedId);
   const [finalizing, setFinalizing] = useState(false);
+  const [comparing, setComparing] = useState(false);
+  const overlay = useNavStore(s => s.overlay);
+  const splitPageId = useNavStore(s => s.splitPageId);
+  const showSearch = useNavStore(s => s.showSearch);
+  const activePageId = useStudioStore(s => s.activePageId);
+  const pages = useStudioStore(s => s.pages);
   const showExternal = useNavStore(s => s.showExternal);
   const toggleExternal = useNavStore(s => s.toggleExternal);
   const externalCount = useMemo(() => shapes.filter(s => s.author === 'external').length, [shapes]);
@@ -39,7 +46,7 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
 
   const btn = 'px-2.5 py-1 rounded text-[11px] font-medium border transition-colors';
   return (
-    <div className="flex items-center gap-2 px-3 h-9 bg-slate-900 border-b border-slate-800 text-xs flex-shrink-0">
+    <div className="relative flex items-center gap-2 px-3 h-9 bg-slate-900 border-b border-slate-800 text-xs flex-shrink-0">
       <button
         disabled={!pdfFileName || status === 'running'}
         onClick={() => void run()}
@@ -71,6 +78,19 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
           {showExternal ? 'Hide' : 'Show'} others' markups ({externalCount})
         </button>
       )}
+      <button disabled={!pdfFileName} onClick={() => useNavStore.getState().setShowSearch(!showSearch)} title="Search text across the set (Ctrl+F)"
+              className={`${btn} ${showSearch ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'} disabled:opacity-40`}>Search</button>
+      <button disabled={!pdfFileName} title="Show a second sheet beside this one"
+              onClick={() => {
+                if (splitPageId) { useNavStore.getState().setSplitPage(null); return; }
+                const i = pages.findIndex(p => p.id === activePageId);
+                useNavStore.getState().setSplitPage((pages[i + 1] ?? pages[i] ?? pages[0])?.id ?? null);
+              }}
+              className={`${btn} ${splitPageId ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'} disabled:opacity-40`}>Split</button>
+      <button disabled={!pdfFileName} onClick={() => setComparing(v => !v)} title="Compare against a revision / addendum"
+              className={`${btn} ${comparing || overlay ? 'border-purple-500 text-purple-100 bg-purple-900/40' : 'border-slate-700 text-slate-300 hover:bg-slate-800'} disabled:opacity-40`}>
+        Compare{overlay ? ` · ${overlay.label}` : ''}
+      </button>
       <button onClick={toggleSummary} className={`${btn} ${showSummary ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'}`}>Summary</button>
       <button onClick={toggleMarkups} className={`${btn} ${showMarkups ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'}`}>Markups List</button>
       <button
@@ -80,6 +100,7 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
         title="Accept, send to the estimate, write the marked set"
       >Finalize</button>
       {finalizing && <FinalizeDialog onClose={() => setFinalizing(false)} />}
+      <ComparePanel engine={engine} open={comparing} onClose={() => setComparing(false)} />
     </div>
   );
 }

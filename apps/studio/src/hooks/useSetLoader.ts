@@ -16,7 +16,7 @@ import type { DrawnShape, SubjectRole } from '../types/shapes';
 
 const SIDECAR_URL = 'http://localhost:8100';
 
-function b64(buf: Uint8Array): string {
+export function b64(buf: Uint8Array): string {
   let s = '';
   for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode(...buf.subarray(i, i + 0x8000));
   return btoa(s);
@@ -30,6 +30,7 @@ type Annot = {
   id: string; page: number; annot_type: string; type: string; role: string; subject: string; author: string;
   label: string; stroke: string | null; fill: string | null; opacity: number | null;
   rect: number[]; points: number[][] | null; ours: boolean; meta: Record<string, unknown>;
+  style?: string; leader?: number[] | null; text_rect?: number[] | null; font_size?: number | null;
 };
 
 export function useSetLoader(engine: CanvasEngineAPI | null): void {
@@ -94,6 +95,22 @@ export function annotToShape(a: Annot, pages: { id: string; pdfPageIndex: number
   };
   const pts = (a.points || []).map(([x, y]) => ({ x, y }));
   const [x0, y0, x1, y1] = a.rect;
+  const style = (meta.style as 'cloud' | 'arrow' | undefined) ?? (a.style as 'cloud' | 'arrow' | undefined);
+  if (a.type === 'text') {
+    const ld = (meta.leader as number[] | undefined) ?? a.leader ?? null;
+    const box = (a.text_rect as number[] | undefined) ?? a.rect;
+    return { ...base, subject: undefined, subjectRole: undefined, style: undefined, type: 'text',
+             origin: { x: box[0], y: box[1] }, widthPx: box[2] - box[0], heightPx: box[3] - box[1],
+             text: a.label, fontSize: Number(meta.fontSize ?? a.font_size ?? 10), leader: ld ? { x: ld[0], y: ld[1] } : null };
+  }
+  if (style === 'arrow' && pts.length >= 2) {
+    return { ...base, subject: undefined, subjectRole: undefined, style, type: 'line', start: pts[0], end: pts[pts.length - 1],
+             lengthPx: 0, lengthInches: 0 };
+  }
+  if (style === 'cloud' && pts.length >= 3) {
+    return recompute({ ...base, subject: undefined, subjectRole: undefined, style, type: 'polygon', points: pts,
+                       bbWidthPx: 0, bbHeightPx: 0, bbWidthInches: 0, bbHeightInches: 0 }, ppi);
+  }
   if ((a.type === 'polygon') && pts.length >= 3) {
     return recompute({ ...base, type: 'polygon', points: pts, bbWidthPx: 0, bbHeightPx: 0, bbWidthInches: 0, bbHeightInches: 0 }, ppi);
   }

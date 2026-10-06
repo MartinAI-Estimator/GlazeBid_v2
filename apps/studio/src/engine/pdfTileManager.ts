@@ -354,6 +354,27 @@ export class PdfTileManager {
     this.onReady?.();
   }
 
+  /**
+   * Render a whole page to a bitmap at `scale` (split view, previews).  Not
+   * cached — the caller owns the bitmap and closes it when done.  The scale is
+   * capped so the bitmap stays under MAX_TILE_DIM on its long side.
+   */
+  async renderPageBitmap(pageId: string, scale: number): Promise<ImageBitmap | null> {
+    const proxy = this.proxies.get(pageId);
+    if (!proxy) return null;
+    const base = proxy.getViewport({ scale: 1 });
+    const s = Math.max(0.05, Math.min(scale, MAX_TILE_DIM / Math.max(base.width, base.height)));
+    const vp = proxy.getViewport({ scale: s });
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.ceil(vp.width);
+    canvas.height = Math.ceil(vp.height);
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    await proxy.render({ canvasContext: ctx, viewport: vp, annotationMode: this.bakeAnnotations ? 1 : 0 }).promise;
+    return createImageBitmap(canvas);
+  }
+
   /** Evict all tiles for a page (e.g., when navigating pages). */
   clearPage(pageId: string): void {
     for (const [key, bitmap] of this.tiles) {

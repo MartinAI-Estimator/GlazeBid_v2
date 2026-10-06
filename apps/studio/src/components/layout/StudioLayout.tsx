@@ -6,6 +6,8 @@ import PropertiesPanel from '../properties/PropertiesPanel';
 import CalibrationModal from '../calibration/CalibrationModal';
 import ThumbnailSidebar from '../sidebar/ThumbnailSidebar';
 import ToolChestPanel from '../sidebar/ToolChestPanel';
+import SearchPanel from '../sidebar/SearchPanel';
+import SplitViewPane from '../canvas/SplitViewPane';
 import TakeoffBar from '../takeoff/TakeoffBar';
 import SummaryPanel from '../takeoff/SummaryPanel';
 import MarkupsList from '../takeoff/MarkupsList';
@@ -258,6 +260,7 @@ export default function StudioLayout() {
         {/* Left thumbnail sidebar */}
         <ThumbnailSidebar engine={engine} />
         <ToolChestPanel />
+        <SearchPanel engine={engine} />
 
         {/* Canvas + navigation bar — stacked in a flex-col so the nav bar
             only spans the center area between the two sidebars */}
@@ -277,6 +280,7 @@ export default function StudioLayout() {
             {/* CalibrationModal renders inside this relative container so
                 its `absolute inset-0` covers only the canvas area, not the panels */}
             <CalibrationModal />
+            <SplitViewPane engine={engine} />
           </div>
           {showMarkups && <MarkupsList engine={engine} />}
           <NavigationBar
