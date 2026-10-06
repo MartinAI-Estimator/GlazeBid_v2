@@ -6387,6 +6387,74 @@
    "allglass": null
   },
   {
+   "id": "TRANSLUCENT PANELS",
+   "cls": "translucent_panel",
+   "kind": "scope",
+   "label": "Translucent wall panels \u2014 28 bays, 3809.7 sf",
+   "desc": "TRANSLUCENT WALL PANEL SYSTEM (from elevation notes)",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 3809.7,
+   "qty_source": "bays measured on the elevations (sf)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "A4.2: translucent panel note's arrows point at panels the engine could not measure (behind louvers / irregular) \u2014 take off by hand",
+    "translucent bays found from the note arrows and the rib pattern \u2014 confirm every bay is captured"
+   ],
+   "notes": [
+    "28 bays, 3809.7 sf total"
+   ],
+   "citations": [
+    "A4.1: 16 bays",
+    "A4.2: 12 bays"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "elevation notes",
+   "allglass": null
+  },
+  {
+   "id": "BREAK METAL WRAPS",
+   "cls": "break_metal",
+   "kind": "scope",
+   "label": "Break metal wraps at translucent panel piers \u2014 33 EA",
+   "desc": "4/A3.10 DETAIL - BRAKE METAL WRAP AT TRANSLUCENT PANEL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 33,
+   "qty_source": "piers between / at the ends of translucent bays on the elevations",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "wrap count = piers along each run of translucent bays (ends included) \u2014 confirm against the plan columns"
+   ],
+   "notes": [],
+   "citations": [
+    "A3.10 detail 4: DETAIL - BRAKE METAL WRAP AT TRANSLUCENT PANEL"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "details",
+   "allglass": null
+  },
+  {
    "id": "BREAK METAL",
    "cls": "break_metal",
    "kind": "scope",
@@ -6398,7 +6466,7 @@
    "frames": [],
    "bays": null,
    "rows": null,
-   "qty": 1544.0,
+   "qty": 1458.2,
    "qty_source": "details + exterior elevations",
    "sf_each": null,
    "sf_total": null,
@@ -6410,7 +6478,7 @@
    ],
    "notes": [
     "edges by system: cw: jamb/sill, sf: head/jamb/sill, translucent: jamb/sill",
-    "total 1543'-11 5/8\" on exterior elevations (LF)"
+    "total 1458'-2 3/16\" on exterior elevations (LF)"
    ],
    "citations": [
     "A3.9 detail 2: JAMB DETAIL AT VESTIBULE SLANTED WALL",
@@ -6430,7 +6498,29 @@
     "A3.12 detail 2: JAMB DETAIL - BRAKE METAL AT SF",
     "A3.12 detail 3: JAMB DETAIL - BRAKE METAL AT TRANSLUCENT PANEL",
     "A3.12 detail 5: SILL DETAIL - SF AT CMU",
-    "A3.12 detail 6: SILL DETAIL - SF AT ACM"
+    "A3.12 detail 6: SILL DETAIL - SF AT ACM",
+    "detail 4/A3.10 marked on types A, B, C, D",
+    "detail 3/A3.10 marked on types A, B, C, D",
+    "detail 11/A3.10 marked on types A, D",
+    "detail 3/A3.12 marked on types A, B, C, D",
+    "detail 7/A3.10 marked on types G",
+    "detail 8/A3.10 marked on types F",
+    "detail 4/A3.9 marked on types F",
+    "detail 3/A3.9 marked on types L",
+    "detail 7/A3.9 marked on types EE",
+    "detail 1/A3.10 marked on types S, T",
+    "detail 5/A3.9 marked on types S, T",
+    "detail 9/A3.10 marked on types N",
+    "detail 8/A3.9 marked on types N",
+    "detail 3/A3.9 marked on types K",
+    "detail 11/A3.10 marked on types E",
+    "detail 4/A3.10 marked on types E",
+    "detail 3/A3.10 marked on types E",
+    "detail 11/A3.10 marked on types P",
+    "detail 4/A3.10 marked on types P",
+    "detail 3/A3.10 marked on types P",
+    "detail 6/A3.12 marked on types V, W",
+    "detail 5/A3.12 marked on types R"
    ],
    "pair": false,
    "stile": null,
@@ -6798,6 +6888,19 @@
    ]
   },
   {
+   "item": "TRANSLUCENT PANELS",
+   "flags": [
+    "A4.2: translucent panel note's arrows point at panels the engine could not measure (behind louvers / irregular) \u2014 take off by hand",
+    "translucent bays found from the note arrows and the rib pattern \u2014 confirm every bay is captured"
+   ]
+  },
+  {
+   "item": "BREAK METAL WRAPS",
+   "flags": [
+    "wrap count = piers along each run of translucent bays (ends included) \u2014 confirm against the plan columns"
+   ]
+  },
+  {
    "item": "BREAK METAL",
    "flags": [
     "break metal lengths are the frame edges named by the details \u2014 confirm which openings each detail covers"
@@ -6841,5 +6944,5 @@
    "sf": 213.1
   }
  },
- "elapsed_s": 84.99
+ "elapsed_s": 93.55
 }

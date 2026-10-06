@@ -47,3 +47,22 @@ aluminum tube louvers. Run by Opus, 0 model calls in the engine.
 - Break metal (≈56 polylengths), canopy (28), translucent panels with sloped tops (no closed rect), plan Polylengths, about half the elevation Areas.
 - A102–A104: HM-frame doors Martin marked Glazing Only — nothing in the schedule says the leaf has glass (flag).
 - Hope suspicious list (9 items) for Martin to confirm.
+
+## Follow-ups with Martin (2026-10-06)
+- **Marked PDF misplaced on rotated sheets** (10 of 19 Hope sheets, 21 of 75 Valvoline, 1 Curtis): markup_writer now maps engine (as-viewed) coordinates through page.derotation_matrix; read_back maps them forward. Scores were unaffected (scored before writing).
+- **Canopy "All Glass Wall Polylength" (28)** = break metal; Martin used the wrong tool. Key relabelled.
+- **A102–A104 Glazing Only** — answered by Martin: the plan door tag carries door type | frame type | hardware set ("A103 / A | 11 | 15"); frame type 11 = HM frame with 1/4" clear glass. New `door_tags.py` reads the cells (dividers inside the tag; wall lines behind it ignored); the frame-type position is found by matching values to the FRAME TYPE n entries (no legend). Frame type text is added to the door row before classifying; a frame type with no tag of its own is counted from the door tags naming it. Result: A102/A103/A104 Glazing Only, plus **A107A** (frame 11, Martin's plan shows its sidelite purple but the schedule row isn't highlighted — probable miss); FRAME TYPE 11 qty 4. Other three sets unchanged.
+- **Glass guardrail**: found on A5.13 (det 1, 4, 5); missed A2.19 callout + 94'-7" run, A2.2B run, A5.13 det 2. Needs callout → leader → measured line (same machinery as break metal).
+
+## Break metal (first pass, 2026-10-06)
+- Martin's rule: **break metal is driven purely off details — if a detail shows it and it touches our system, we pick it up.** **Sill flashing is always ours when shown** (masons never pick it up).
+- `breakmetal.py`: details whose callouts name break/brake metal, metal or aluminum flashing/trim/wrap at SF / CW / translucent (not cavity/thru-wall, roofing, by others); title → edge (head / sill / jamb incl. wrap, between, corner); callouts highlighted; named edges of each frame on the exterior elevations → Break Metal polylengths, merged per line.
+- Hope 57.2 % → 66.5 %; break metal 60/88 (all 6 callouts, 54/59 elevation runs). Engine total 1,544 LF vs Martin 1,665 LF. Engine's F-window sills are correct per the rule (Martin missed them in the rush).
+- Valvoline: aluminum sill flashing callout now found; engine's ~116 LF on elevations is scope Martin missed (confirmed).
+- Next: plan column wraps (23 boxes on A2.2A/B), full-height piers (needs sloped translucent panels), and limiting HEAD details to the openings they're cut through (section markers on the elevations) instead of every frame of the system.
+
+## Translucent panels + break metal by detail marker (2026-10-06, later)
+- **Translucent panels** (`translucent.py`): not tagged like storefront — found from the elevation note ("TRANSLUCENT PANEL SYSTEM") → shoulder → leader arrow tips → rib pattern (rib = tight line pair ≈0.5 pt; frame = pair ≈1.4 pt or a line running past the ribs; ribs stitched across horizontal breaks; tags/leaders bridged) → every rib run in that row standing on the same (possibly sloped) bottom line = a bay → sloped polygon to the outside of the frame. Hope: 28 bays, ≈3,810 sf; A4.1 upper 156.5/184.1/210.4/237.5 sf vs Martin 156.4/183.5/210.5/237.1; A4.2 lower 7 × 143.7 = Martin's 143.7. 26 of Martin's 28 elevation areas found. Not measured (flagged): the A4.2 panel behind the tube louvers (Martin 1,205 sf), the right end of X, bay Y.
+- **Break metal by detail marker**: markers on the window-type sheets (A3.2–A3.5, "4" over "A3.10") tie each detail to the frame types it's cut through (4/A3.9 → F jambs; 8/A3.9 head → N only; translucent wraps → A–D, E, P …). Elevation frames get only their types' edges; sets without markers fall back to every frame of the system. Translucent bays get the translucent details' edges → full-height piers. Hope: 1,458 LF (was 1,953); 60/88 of Martin's break metal marks; precision 72/138 (was 77/178).
+- **Pier wraps**: one per pier along each run of translucent bays (thin mullions < 0.8' excluded) → 33 EA on Hope vs Martin's 23 boxes on the plans — flagged, needs Martin's check.
+- Hope 66.5 % → 69.2 %. Curtis / McLarty / Valvoline unchanged.

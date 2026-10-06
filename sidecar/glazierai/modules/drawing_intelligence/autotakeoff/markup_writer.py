@@ -67,6 +67,12 @@ def write_markups(pdf_in: str, result: dict, pdf_out: str, author: str = "GlazeB
                 annot.set_colors(stroke=stroke, fill=fill)
                 annot.set_opacity(fill_opacity)
                 annot.set_border(width=1.5, dashes=[6, 4] if m.get("dashed") else None)
+            elif role == "area" and len(m.get("points") or []) >= 3:
+                pts = [fitz.Point(*q) * D for q in m["points"]]
+                annot = pg.add_polygon_annot(pts + [pts[0]])
+                annot.set_colors(stroke=stroke, fill=None)
+                annot.set_border(width=1.2)
+                annot.set_opacity(0.9)
             elif role == "area":
                 annot = pg.add_rect_annot(r)
                 annot.set_colors(stroke=stroke, fill=None)

@@ -510,6 +510,49 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                                   [m["p0"], m["p1"]], text=f"{lin[0]}\n{fmt_in(m['len_in'])}", stroke=lin[1], fill=lin[2], opacity=lin[3],
                                   note=f"member {fmt_in(m['len_in'])}"))
 
+    # translucent wall panels: a note with leader arrows into ribbed bays (not tagged like storefront)
+    from .translucent import find_panels as _find_panels
+    from .units import page_ppf as _pppf2
+    panels_by_page: dict[int, list] = {}
+    tp_misses: list = []
+    for s in arch:
+        if "elevation" not in s.categories:
+            continue
+        ppf_ = _pppf2(doc[s.page], 18.0) or 18.0
+        miss: list = []
+        ps = _find_panels(doc[s.page], ppf_, miss)
+        if ps:
+            panels_by_page[s.page] = ps
+        tp_misses += [dict(m, sheet=s.sheet, page=s.page) for m in miss]
+    out["translucent_panels"] = {sheet_of[k].sheet: v for k, v in panels_by_page.items()}
+    if panels_by_page or tp_misses:
+        iid = "TRANSLUCENT PANELS"
+        tot = round(sum(p_["sf"] for v in panels_by_page.values() for p_ in v), 1)
+        n_ = sum(len(v) for v in panels_by_page.values())
+        tp_it = Item(id=iid, cls="translucent_panel", kind="scope", label=f"Translucent wall panels — {n_} bays, {tot} sf",
+                     desc="TRANSLUCENT WALL PANEL SYSTEM (from elevation notes)", qty=tot or None,
+                     qty_source="bays measured on the elevations (sf)", source="elevation notes",
+                     notes=[f"{n_} bays, {tot} sf total"])
+        area_s = subject_for("translucent_panel", "area")
+        reg_s = subject_for("translucent_panel", "region")
+        for pno, ps in panels_by_page.items():
+            s = sheet_of[pno]
+            tp_it.citations.append(f"{s.sheet}: {len(ps)} bays")
+            for nr in {tuple(p_["note_rect"]) for p_ in ps}:
+                if reg_s:
+                    markups.append(_mk(iid, s.sheet, pno, reg_s, "region", list(nr), note="translucent panel note"))
+            for p_ in ps:
+                if area_s:
+                    markups.append(Markup(iid, s.sheet, pno, area_s[0], "area", p_["rect"], p_["poly"],
+                                          text=f"A = {p_['sf']} sf\nW = {fmt_in(p_['w_in'])}\nH = {fmt_in(p_['h_in'])}",
+                                          stroke=area_s[1], fill=area_s[2], opacity=area_s[3], note="translucent bay"))
+        for m_ in tp_misses:
+            tp_it.flags.append(f"{m_['sheet']}: translucent panel note's arrows point at panels the engine could not measure (behind louvers / irregular) — take off by hand")
+            if reg_s:
+                markups.append(_mk(iid, m_["sheet"], m_["page"], reg_s, "region", m_["rect"], note="translucent panel note — not measured"))
+        tp_it.flags.append("translucent bays found from the note arrows and the rib pattern — confirm every bay is captured")
+        items.append(tp_it)
+
     # break metal: driven off details that show it at our systems; measured on the exterior elevations
     from .breakmetal import scan_details as _bm_scan, edges_for as _bm_edges, runs as _bm_runs
     bm_details = []
@@ -531,6 +574,20 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
             for c in b.callouts[:4]:
                 markups.append(_mk(iid, b.sheet, b.page, reg, "region", c["rect"], note=f"detail {b.num}: {c['text'][:40]}"))
         items_by_id = {i.id: i for i in items}
+        # which frame types each detail is cut through: markers on the type-elevation sheets
+        from .breakmetal import detail_markers as _bm_markers
+        bm_keys = {(b.num, b.sheet.replace("-", "").upper()): b for b in bm_details}
+        mark_edges: dict[str, set] = {}
+        _type_pages = sorted({e.page for e in entries if e.layout in ("captioned", "pictorial")})
+        for pno in _type_pages:
+            for k, ms in _bm_markers(doc[pno], [e for e in entries if e.page == pno]).items():
+                b = bm_keys.get(k)
+                if not b:
+                    continue
+                for m_ in ms:
+                    mark_edges.setdefault(m_, set()).update(b.edges)
+                bm_it.citations.append(f"detail {b.num}/{b.sheet} marked on types {', '.join(sorted(ms))}")
+        out["break_metal_by_type"] = {k: sorted(v) for k, v in mark_edges.items()}
         total_in = 0.0
         by_sheet: dict[int, list] = {}
         for x in snaps:
@@ -538,19 +595,28 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
             it = items_by_id.get(x.mark)
             if not s or not it or it.kind != "scope" or x.unsure or "elevation" not in s.categories or not _ext.search(s.title):
                 continue
-            sysk = ["cw"] if "cw" in it.cls else ["sf"] if "sf" in it.cls else []
-            if any(im.get("cls") == "translucent_panel" for im in (it.implied or [])):
-                sysk.append("translucent")
+            if mark_edges:
+                e_ = mark_edges.get(x.mark, set())          # only the details cut through this type
+            else:                                            # no markers in the set: every frame of the system
+                sysk = ["cw"] if "cw" in it.cls else ["sf"] if "sf" in it.cls else []
+                e_ = set().union(*[emap.get(k, set()) for k in sysk]) if sysk else set()
+            if not e_:
+                continue
             for f_ in x.frames:
                 if f_.get("err", 0) <= 0.2:
-                    for k in sysk:
-                        by_sheet.setdefault(x.page, []).append((f_["rect"], k, x.ppf))
+                    by_sheet.setdefault(x.page, []).append((f_["rect"], e_, x.ppf))
+        for pno, ps in panels_by_page.items():
+            s = sheet_of[pno]
+            if _ext.search(s.title) and emap.get("translucent"):
+                ppf_t = _pppf2(doc[pno], 18.0) or 18.0
+                for p_ in ps:
+                    by_sheet.setdefault(pno, []).append((p_["rect"], emap["translucent"], ppf_t))
         for pno, frs in by_sheet.items():
             s = sheet_of[pno]
             ppf_ = next((p for *_r, p in frs if p), None)
             if not ppf_:
                 continue
-            for rn in _bm_runs([(r_, k) for r_, k, _p in frs], emap, ppf_):
+            for rn in _bm_runs([(r_, e_) for r_, e_, _p in frs], ppf_):
                 if rn["len_in"] < 12:
                     continue
                 total_in += rn["len_in"]
@@ -558,6 +624,39 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                 markups.append(Markup(iid, s.sheet, s.page, lin[0], "linear", [min(x0, x1) - 2, min(y0, y1) - 2, max(x0, x1) + 2, max(y0, y1) + 2],
                                       [rn["p0"], rn["p1"]], text=f"{lin[0]}\n{fmt_in(rn['len_in'])}", stroke=lin[1], fill=lin[2],
                                       opacity=lin[3], note=f"{rn['orient']} run {fmt_in(rn['len_in'])}"))
+        # column / pier wraps at translucent panels: one per pier along each continuous row of bays
+        wrap_d = [b for b in bm_details if "translucent" in b.systems and re.search(r"WRAP", b.title, re.I)]
+        if wrap_d and panels_by_page:
+            wid = "BREAK METAL WRAPS"
+            n_w = 0
+            for pno, ps in panels_by_page.items():
+                s = sheet_of[pno]
+                ppf_t = _pppf2(doc[pno], 18.0) or 18.0
+                rows_: list[list] = []
+                for p_ in sorted(ps, key=lambda q: q["rect"][0]):
+                    for row in rows_:
+                        last = row[-1]
+                        if abs(last["rect"][3] - p_["rect"][3]) <= 6 * ppf_t / 6.75 and 0 <= p_["rect"][0] - last["rect"][2] <= 3 * ppf_t:
+                            row.append(p_)
+                            break
+                    else:
+                        rows_.append([p_])
+                for row in rows_:
+                    # a thin mullion between paired panels (< 0.8') is not a pier — no wrap there
+                    xs_ = [row[0]["rect"][0]] + [(a["rect"][2] + b["rect"][0]) / 2 for a, b in zip(row, row[1:])
+                                                 if (b["rect"][0] - a["rect"][2]) / ppf_t >= 0.8] + [row[-1]["rect"][2]]
+                    for i_, xw in enumerate(xs_):
+                        q = row[min(i_, len(row) - 1)]["rect"]
+                        n_w += 1
+                        markups.append(_mk(wid, s.sheet, pno, reg, "region", [xw - 4, q[3] - 14, xw + 4, q[3]],
+                                           note=f"pier wrap {n_w} ({wrap_d[0].num}/{wrap_d[0].sheet})"))
+            if n_w:
+                w_it = Item(id=wid, cls="break_metal", kind="scope", label=f"Break metal wraps at translucent panel piers — {n_w} EA",
+                            desc="; ".join(f"{b.num}/{b.sheet} {b.title}" for b in wrap_d), qty=n_w,
+                            qty_source="piers between / at the ends of translucent bays on the elevations", source="details",
+                            flags=["wrap count = piers along each run of translucent bays (ends included) — confirm against the plan columns"])
+                w_it.citations += [f"{b.sheet} detail {b.num}: {b.title}" for b in wrap_d]
+                items.append(w_it)
         if total_in:
             bm_it.qty = round(total_in / 12, 1)
             bm_it.notes.append(f"total {fmt_in(total_in)} on exterior elevations (LF)")
