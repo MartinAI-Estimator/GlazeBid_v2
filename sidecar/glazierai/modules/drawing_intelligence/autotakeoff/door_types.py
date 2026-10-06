@@ -167,14 +167,23 @@ def _table_for(column: str, tables: dict[str, dict[str, str]]) -> dict[str, str]
     return best[1] if best else None
 
 
+_DREF = re.compile(r"(\d{1,2}[A-Z]?)\s*/\s*([A-Z]{1,2}-?\d{1,2}(?:\.\d{1,2})?[A-Z]?)")
+
+
 def describe_row(cells: dict[str, str], types: dict[str, TypeInfo], tables: dict[str, dict[str, str]],
-                 hm_frame_codes: bool = False) -> str:
-    """Words for a code-only schedule row: type drawing meaning + looked-up codes."""
+                 hm_frame_codes: bool = False, detail_titles: dict | None = None) -> str:
+    """Words for a code-only schedule row: type drawing meaning + looked-up codes + referenced detail titles."""
     parts: list[str] = []
     for col, val in cells.items():
         cu = col.upper()
         v = (val or "").strip()
         if not v or v in ("--", "-", "N/A"):
+            continue
+        if detail_titles and cu in ("HEAD", "JAMB", "SILL", "THRESHOLD", "DETAIL", "DETAILS", "HEAD DETAIL", "JAMB DETAIL", "SILL DETAIL"):
+            for num, sh in _DREF.findall(v):
+                t = detail_titles.get((num, sh.replace("-", "").upper()))
+                if t:
+                    parts.append(f"{cu} DETAIL {num}/{sh}: {t}")
             continue
         codes = [c for c in re.split(r"[,\s]+", v) if c]
         if "DOOR TYPE" in cu or cu in ("TYPE",):

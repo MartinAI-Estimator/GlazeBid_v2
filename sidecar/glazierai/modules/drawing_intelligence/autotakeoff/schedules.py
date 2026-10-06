@@ -435,7 +435,12 @@ _SIZE_COLS = ("WIDTH", "HEIGHT", "SIZE", "SIZE WXH", "SIZE W X H", "MATERIAL", "
 
 def is_schedule_table(tb: "Table") -> bool:
     names = [c[0] for c in tb.columns]
-    return any(n in names for n in _MARK_COLS) and sum(1 for n in names if n in _SIZE_COLS) >= 2
+    if not any(n in names for n in _MARK_COLS):
+        return False
+    if sum(1 for n in names if n in _SIZE_COLS) >= 2:
+        return True
+    # a details-only door schedule (Hope A3.1: MARK | HEAD | JAMB | SILL | NOTES)
+    return sum(1 for n in names if n in ("HEAD", "JAMB", "SILL", "THRESHOLD")) >= 2 and "DOOR" in (tb.title or "").upper() + " ".join(names)
 
 
 def read_tables(pg: fitz.Page, sheet: str) -> list[ScheduleEntry]:
@@ -482,9 +487,23 @@ def read_schedule_sheet(pg: fitz.Page, sheet: str, default_ppf: float = 18.0) ->
     pic = read_pictorial(pg, sheet, default_ppf)
     have = {e.mark for e in tab}
     out = tab + [e for e in pic if e.mark not in have]
-    if not pic and not tab:
-        # captioned elevations only where the sheet has no pictorial / tabular schedule
-        out += read_captioned(pg, sheet, default_ppf)
+    # captioned elevations: keep those that aren't already a pictorial / tabular mark,
+    # aren't a member of a grouped mark (17-19), don't look like a sheet number (detail
+    # bubble "2 / A5.3"), and don't sit inside a pictorial entry's label or hardware table
+    taken = set(have)
+    for e in pic:
+        taken |= set(e.marks or [])
+    boxes = [fitz.Rect(r) for e in pic for r in (e.label_rect, e.hardware_rect) if r]
+    # on a sheet with a schedule table, only text-labelled types ("FRAME TYPE 6") count —
+    # symbol tags there are revision deltas, keyed notes and detail bubbles
+    for e in read_captioned(pg, sheet, default_ppf, text_labels_only=bool(tab)):
+        if e.mark in taken or _SHEETNO.match(e.mark) and re.search(r"\d", e.mark) and "." in e.mark:
+            continue
+        if any(b.intersects(fitz.Rect(e.mark_rect)) for b in boxes):
+            continue
+        if pic and not e.frames:
+            continue
+        out.append(e)
     return out
 
 
@@ -524,7 +543,10 @@ def type_drawings(pg: fitz.Page, min_size_ratio: float = 2.0) -> dict[str, dict]
 
 # ── Captioned types (Curtis A7.21: tag under the drawing, caption under the tag) ──
 
-def read_captioned(pg: fitz.Page, sheet: str, default_ppf: float = 18.0) -> list[ScheduleEntry]:
+_TYPE_LABEL = re.compile(r"^(FRAME|DOOR FRAME|DOOR|WINDOW|STOREFRONT|CURTAIN ?WALL|GLAZING|OPENING)\s+TYPE\s+([A-Z0-9][A-Z0-9-]{0,4})$")
+
+
+def read_captioned(pg: fitz.Page, sheet: str, default_ppf: float = 18.0, text_labels_only: bool = False) -> list[ScheduleEntry]:
     """
     Glazing-assembly / frame-type elevations where each drawing has a tag
     (hexagon / circle) under it and a caption under the tag:
@@ -539,15 +561,22 @@ def read_captioned(pg: fitz.Page, sheet: str, default_ppf: float = 18.0) -> list
     L = [t for t in text_lines(pg) if not t.vertical]
     out: list[ScheduleEntry] = []
     seen: set[str] = set()
-    for t in find_tags(pg, kinds=("hexagon", "circle", "pill", "diamond")):
-        sh = fitz.Rect(t.shape)
+    labels = [] if text_labels_only else [(t.text, fitz.Rect(t.shape)) for t in find_tags(pg, kinds=("hexagon", "circle", "pill", "diamond"))]
+    # text labels under the drawing: "FRAME TYPE 6", "DOOR TYPE B"
+    for u in L:
+        m = _TYPE_LABEL.match(norm_text(u.text).upper())
+        if m:
+            # keep the word: "DOOR TYPE B" must not collide with frame tag "B"
+            labels.append((f"{m.group(1)} TYPE {m.group(2)}", fitz.Rect(u.rect)))
+    for mark_text, sh in labels:
+        t = type("T", (), {"text": mark_text})
         cx = (sh.x0 + sh.x1) / 2
         cap = [u for u in L if 0 <= u.rect[1] - sh.y1 < 60 and abs((u.rect[0] + u.rect[2]) / 2 - cx) < 140 and len(u.text.strip()) > 3]
         cap.sort(key=lambda u: u.rect[1])
         kept = []
         prev = sh.y1
         for u in cap:
-            if u.rect[1] - prev > 18:
+            if u.rect[1] - prev > (30 if not kept else 14):
                 break
             kept.append(u)
             prev = u.rect[3]
@@ -579,8 +608,19 @@ def read_captioned(pg: fitz.Page, sheet: str, default_ppf: float = 18.0) -> list
                              "h_in": round(fr.height / e.ppf * 12, 2), "bays": len(xs) + 1, "rows": len(ys) + 1,
                              "mullions_x": [round(x, 1) for x in xs], "mullions_y": [round(y, 1) for y in ys]})
             e.w_in, e.h_in = e.frames[0]["w_in"], e.frames[0]["h_in"]
+            # a translucent / panel system stacked on top of the frame (Hope A–E, P)
+            if re.search(r"TRANSLUCENT|KALWALL", " ".join(text), re.I):
+                up = [r for r in dedupe(rect_candidates(pg, fitz.Rect(fr.x0 - 8, fr.y0 - fr.width * 1.5 - 40, fr.x1 + 8, fr.y0 + 4), minlen=12))
+                      if abs(r.x0 - fr.x0) < 8 and abs(r.x1 - fr.x1) < 8 and 0 <= fr.y0 - r.y1 < 14 and r.height > 0.5 * fr.height]
+                if up:
+                    tp = max(up, key=lambda r: r.height)
+                    e.frames.append({"rect": [round(v, 1) for v in tp], "w_in": round(tp.width / e.ppf * 12, 2),
+                                     "h_in": round(tp.height / e.ppf * 12, 2), "bays": 1, "rows": 1,
+                                     "mullions_x": [], "mullions_y": [], "role": "translucent_panel"})
         else:
             e.flags.append("no elevation drawing found above the tag")
+        if e.w_in and (e.w_in > 720 or (e.h_in or 0) > 480):
+            continue   # a grid bubble next to a general callout, not a type
         out.append(e)
     _resolve_scales(out, default_ppf)
     for e in out:

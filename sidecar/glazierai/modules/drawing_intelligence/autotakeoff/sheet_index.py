@@ -28,7 +28,7 @@ SHEET_RE = re.compile(r"^(?P<disc>[A-Z]{1,3})\s?-?\s?(?P<num>\d{1,3}(?:[.\-]\d{1
 _TITLE_LABEL = re.compile(r"^(SHEET\s*(TITLE|NAME)|DRAWING\s*TITLE|TITLE)\s*[:#]?$", re.I)
 _LABELS = re.compile(r"^(SHEET|DATE|PROJECT|DRAWN|CHECKED|SCALE|JOB|REVISION|ISSUE|PROFESSIONAL|SEAL|STAMP|NO\.?|#|PROJECT NUMBER|SHEET #)\b.*[:#]?$", re.I)
 
-CATEGORIES = ("schedule", "legend", "plan", "elevation", "detail", "section", "enlarged", "cover", "other")
+CATEGORIES = ("schedule", "legend", "plan", "elevation", "detail", "section", "enlarged", "cover", "other", "unknown")
 
 
 @dataclass
@@ -56,7 +56,7 @@ def categorize_all(title: str, sheet: str = "") -> list[str]:
     cats: list[str] = []
     if "COVER" in t or sheet.upper().startswith(("CS", "G0", "G-0", "T1", "T-1")):
         cats.append("cover")
-    if "SCHEDULE" in t:
+    if "SCHEDULE" in t or re.search(r"\bTYPES\b|HARDWARE SETS?", t):
         cats.append("schedule")
     if "LEGEND" in t:
         cats.append("legend")
@@ -107,6 +107,19 @@ def read_sheet(pg: fitz.Page) -> SheetInfo:
     title = _title(tl, num)
     disc = SHEET_RE.match(sheet).group("disc") if sheet and SHEET_RE.match(sheet) else ""
     cats = categorize_all(title, sheet)
+    if not title:
+        # no sheet title in the title block (Hope): use the drawing titles on the sheet
+        dts = drawing_titles(pg)
+        if dts:
+            title = " / ".join(dts[:4])
+            cats = []
+            for t in dts:
+                for c in categorize_all(t, sheet):
+                    if c not in cats and c != "other":
+                        cats.append(c)
+            cats = cats or ["other"]
+        else:
+            cats = ["unknown"]
     return SheetInfo(pg.number, sheet, title, cats[0], cats, disc, pg.rotation,
                      pg.rect.width, pg.rect.height)
 
@@ -145,6 +158,24 @@ def _title(tl: list[TextLine], num: TextLine | None) -> str:
     title = " ".join(t.text.strip() for t in lines)
     title = re.sub(r"\s+", " ", title).replace(" - ", " - ").strip(" -:")
     return title
+
+
+def drawing_titles(pg: fitz.Page) -> list[str]:
+    """Title-tier text on the drawing area (largest first): 'FIRST FLOOR PLAN - AREA A', 'DOOR TYPES' …"""
+    from collections import Counter
+    L = [t for t in text_lines(pg) if not t.vertical and t.rect[0] < pg.rect.width * 0.9]
+    if not L:
+        return []
+    body = Counter(round(t.size, 1) for t in L if len(t.text) > 2).most_common(1)[0][0]
+    big = [t for t in L if t.size >= body * 1.6 and len(t.text) > 5 and re.search(r"[A-Z]{3}", t.text)
+           and not re.search(r"SCALE|COPYRIGHT|^\d", t.text, re.I)]
+    big.sort(key=lambda t: (-t.size, t.rect[1]))
+    out: list[str] = []
+    for t in big:
+        txt = re.sub(r"\s+", " ", t.text.strip())
+        if txt not in out:
+            out.append(txt)
+    return out
 
 
 def build_index(doc: fitz.Document) -> list[SheetInfo]:

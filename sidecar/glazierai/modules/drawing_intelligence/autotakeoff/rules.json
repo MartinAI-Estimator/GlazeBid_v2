@@ -81,8 +81,10 @@
         "/GL",
         "VISION",
         "WINDOW",
-        "STOREFRONT",
-        "ALUMINUM"
+        "ALUMINUM STOREFRONT DOOR",
+        "SF FRAME",
+        "SF IN ",
+        "STOREFRONT FRAME"
       ],
       "class": "excluded",
       "note": "Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
@@ -281,7 +283,7 @@
       "id": "translucent",
       "any": [
         "KALWALL",
-        "TRANSLUCENT PANEL",
+        "TRANSLUCENT (WALL )?PANEL",
         "POLYCARBONATE PANEL"
       ],
       "class": "translucent_panel",
@@ -452,6 +454,16 @@
       ],
       "class": "sun_control",
       "note": "Sun shade / fins \u2014 ours (integral inherits the parent system)"
+    },
+    {
+      "id": "translucent_with",
+      "any": [
+        "W/\\s*TRANSLUCENT",
+        "WITH TRANSLUCENT",
+        "TRANSLUCENT (WALL )?PANEL"
+      ],
+      "class": "translucent_panel",
+      "note": "Translucent wall panel system with this frame \u2014 always ours, own line item"
     }
   ],
   "location": {

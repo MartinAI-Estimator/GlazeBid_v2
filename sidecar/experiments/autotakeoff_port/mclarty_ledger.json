@@ -6,7 +6,7 @@
    "sheet": "A3.0",
    "page": 8,
    "step": "schedule",
-   "items": 0
+   "items": 1
   },
   {
    "sheet": "A3.2",
@@ -18,7 +18,7 @@
    "sheet": "A3.3",
    "page": 11,
    "step": "schedule",
-   "items": 48
+   "items": 49
   },
   {
    "step": "legend",
@@ -56,44 +56,18 @@
    "page": 2,
    "step": "plan",
    "kind": "hexagon",
-   "tags": 48,
+   "tags": 82,
    "unmatched": {
-    "1": 1,
-    "2": 1,
-    "4": 1,
-    "5": 1,
-    "3": 1,
-    "6a": 1,
-    "7": 1,
-    "8": 1,
-    "9": 1,
-    "10": 1,
-    "11": 1,
-    "12": 1,
-    "13": 1,
-    "14": 1,
-    "15": 1,
+    "M4": 1,
+    "M2": 1,
     "18": 1,
     "19": 1,
-    "20": 1,
-    "21": 1,
-    "22": 1,
-    "23": 1,
     "24": 1,
     "25": 1,
     "26": 1,
     "27": 1,
     "28": 1,
-    "29": 1,
-    "32": 1,
-    "16": 1,
-    "17": 1,
-    "M4": 1,
-    "31a": 1,
-    "30": 1,
-    "M2": 1,
-    "31b": 1,
-    "6b": 1
+    "17": 1
    }
   },
   {
@@ -330,6 +304,94 @@
  },
  "items": [
   {
+   "id": "2",
+   "cls": "ext_cw",
+   "kind": "scope",
+   "label": "2 \u2014 1 Thus",
+   "desc": "FROM EXTERIOR TO JEWEL BOX 102 PITCO ARCHITECTURAL METALS TMW 450 EFG (VSSG) W/ BLACK ANODIZED #63 FINISH 1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
+   "location": "exterior",
+   "w_in": 240.67,
+   "h_in": 264.0,
+   "frames": [
+    {
+     "rect": [
+      545.1,
+      332.0,
+      901.3,
+      512.0
+     ],
+     "w_in": 237.47,
+     "h_in": 120.0,
+     "bays": 4,
+     "rows": 2,
+     "mullions_x": [
+      634.4,
+      722.5,
+      812.0
+     ],
+     "mullions_y": [
+      476.0
+     ]
+    },
+    {
+     "rect": [
+      545.1,
+      97.8,
+      901.7,
+      313.8
+     ],
+     "w_in": 237.73,
+     "h_in": 144.0,
+     "bays": 4,
+     "rows": 2,
+     "mullions_x": [
+      634.4,
+      722.5,
+      812.0
+     ],
+     "mullions_y": [
+      153.3
+     ]
+    }
+   ],
+   "bays": 4,
+   "rows": 4,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 441.23,
+   "sf_total": 441.2,
+   "series": [
+    {
+     "id": "pitco-tmw450",
+     "manufacturer": "PITCO",
+     "series": "TMW 450",
+     "scope_class": "ext_cw",
+     "other_maker": true,
+     "matched": "TMW 450"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "non-Kawneer/Tubelite basis of design \u2014 map to nearest Kawneer/Tubelite equivalent, keep original name (PITCO TMW 450)"
+   ],
+   "notes": [
+    "series PITCO TMW 450 \u2192 ext_cw",
+    "size from A2.0 elevation snap (schedule 19'-9 1/2\" x 22'-0\")",
+    "elevation shows 11 tag(s), plan 1"
+   ],
+   "citations": [
+    "A3.2 pictorial schedule type 2",
+    "plan tags \u00d71",
+    "A2.0 elevation \u00d711 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
    "id": "1",
    "cls": "ext_cw",
    "kind": "scope",
@@ -455,94 +517,6 @@
    ],
    "pair": false,
    "stile": "MEDIUM STILE",
-   "is_door": false,
-   "source": "schedule",
-   "allglass": null
-  },
-  {
-   "id": "2",
-   "cls": "ext_cw",
-   "kind": "scope",
-   "label": "2 \u2014 1 Thus",
-   "desc": "FROM EXTERIOR TO JEWEL BOX 102 PITCO ARCHITECTURAL METALS TMW 450 EFG (VSSG) W/ BLACK ANODIZED #63 FINISH 1\" SOLARBAN 72 ACUITY (LOW IRON) GLAZING. CLEAR, INSULATED & TEMPERED.",
-   "location": "exterior",
-   "w_in": 240.67,
-   "h_in": 264.0,
-   "frames": [
-    {
-     "rect": [
-      545.1,
-      332.0,
-      901.3,
-      512.0
-     ],
-     "w_in": 237.47,
-     "h_in": 120.0,
-     "bays": 4,
-     "rows": 2,
-     "mullions_x": [
-      634.4,
-      722.5,
-      812.0
-     ],
-     "mullions_y": [
-      476.0
-     ]
-    },
-    {
-     "rect": [
-      545.1,
-      97.8,
-      901.7,
-      313.8
-     ],
-     "w_in": 237.73,
-     "h_in": 144.0,
-     "bays": 4,
-     "rows": 2,
-     "mullions_x": [
-      634.4,
-      722.5,
-      812.0
-     ],
-     "mullions_y": [
-      153.3
-     ]
-    }
-   ],
-   "bays": 4,
-   "rows": 4,
-   "qty": 1,
-   "qty_source": "plan tags",
-   "sf_each": 441.23,
-   "sf_total": 441.2,
-   "series": [
-    {
-     "id": "pitco-tmw450",
-     "manufacturer": "PITCO",
-     "series": "TMW 450",
-     "scope_class": "ext_cw",
-     "other_maker": true,
-     "matched": "TMW 450"
-    }
-   ],
-   "hardware": [],
-   "implied": [],
-   "flags": [
-    "non-Kawneer/Tubelite basis of design \u2014 map to nearest Kawneer/Tubelite equivalent, keep original name (PITCO TMW 450)"
-   ],
-   "notes": [
-    "series PITCO TMW 450 \u2192 ext_cw",
-    "size from A2.0 elevation snap (schedule 19'-9 1/2\" x 22'-0\")",
-    "elevation shows 11 tag(s), plan 1"
-   ],
-   "citations": [
-    "A3.2 pictorial schedule type 2",
-    "plan tags \u00d71",
-    "A2.0 elevation \u00d711 (snapped)"
-   ],
-   "pair": false,
-   "stile": null,
    "is_door": false,
    "source": "schedule",
    "allglass": null
@@ -1398,7 +1372,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "louver_door: Louvered door with no glass \u2014 not glazing scope"
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
    ],
    "citations": [
     "A3.2 pictorial schedule type 13",
@@ -1559,7 +1533,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "louver_door: Louvered door with no glass \u2014 not glazing scope"
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
    ],
    "citations": [
     "A3.2 pictorial schedule type 15",
@@ -5516,7 +5490,7 @@
   {
    "id": "146",
    "cls": "excluded",
-   "kind": "exclusion",
+   "kind": "excluded",
    "label": "146 \u2014 1 Thus",
    "desc": "ALUMINUM RAIL W/ STAINLESS STEEL CABLES BY www.stainlesssteelcablerailing.com BLACK SQUARE POSTS W/ FLAT TOP RAIL. MOUNTING PLATE AT FLOOR TO HAVE DECORATIVE DOME SCREW COVERS. STAINLESS STEEL CABLES TO BE MARINE GRADE TYPE 316",
    "location": "interior",
@@ -5553,7 +5527,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "glass_handrail_cable: Cable rail \u2014 not glazing"
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
    ],
    "citations": [
     "A3.3 pictorial schedule type 146",
@@ -5981,7 +5955,7 @@
   {
    "id": "147",
    "cls": "excluded",
-   "kind": "exclusion",
+   "kind": "excluded",
    "label": "147 \u2014 1 Thus",
    "desc": "ALUMINUM RAIL W/ STAINLESS STEEL CABLES BY www.stainlesssteelcablerailing.com BLACK SQUARE POSTS W/ FLAT TOP RAIL. MOUNTING PLATE AT FLOOR TO HAVE DECORATIVE DOME SCREW COVERS. STAINLESS STEEL CABLES TO BE MARINE GRADE TYPE 316",
    "location": "interior",
@@ -6031,7 +6005,7 @@
     "drawn size does not match any dimension string \u2014 check scale"
    ],
    "notes": [
-    "glass_handrail_cable: Cable rail \u2014 not glazing"
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
    ],
    "citations": [
     "A3.3 pictorial schedule type 147",
@@ -10284,53 +10258,19 @@
    "is_door": false,
    "source": "detail",
    "allglass": null
-  },
-  {
-   "id": "A3.2 det ?",
-   "cls": "glazing_only",
-   "kind": "detail",
-   "label": "?/A3.2 DOOR & FRAME NOTES",
-   "desc": "GLAZING",
-   "location": null,
-   "w_in": null,
-   "h_in": null,
-   "frames": [],
-   "bays": null,
-   "rows": null,
-   "qty": null,
-   "qty_source": "",
-   "sf_each": null,
-   "sf_total": null,
-   "series": [],
-   "hardware": [],
-   "implied": [],
-   "flags": [
-    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
-   ],
-   "notes": [
-    "glass_generic: Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
-   ],
-   "citations": [
-    "A3.2 detail ? (DOOR & FRAME NOTES)"
-   ],
-   "pair": false,
-   "stile": null,
-   "is_door": false,
-   "source": "detail",
-   "allglass": null
   }
  ],
  "flags": [
   {
-   "item": "1",
+   "item": "2",
    "flags": [
-    "Bi-fold / folding / sliding door \u2014 pass-thru sub; frame prep by us \u2014 carried as a sub-item of this frame",
     "non-Kawneer/Tubelite basis of design \u2014 map to nearest Kawneer/Tubelite equivalent, keep original name (PITCO TMW 450)"
    ]
   },
   {
-   "item": "2",
+   "item": "1",
    "flags": [
+    "Bi-fold / folding / sliding door \u2014 pass-thru sub; frame prep by us \u2014 carried as a sub-item of this frame",
     "non-Kawneer/Tubelite basis of design \u2014 map to nearest Kawneer/Tubelite equivalent, keep original name (PITCO TMW 450)"
    ]
   },
@@ -10729,12 +10669,6 @@
    "flags": [
     "mirror: glazier vs toilet-accessory package \u2014 confirm"
    ]
-  },
-  {
-   "item": "A3.2 det ?",
-   "flags": [
-    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
-   ]
   }
  ],
  "totals": {
@@ -10764,9 +10698,188 @@
    "sf": 1692.5
   }
  },
- "elapsed_s": 58.57,
+ "elapsed_s": 47.2,
  "model_calls": 0,
  "type_drawings": null,
  "code_tables": null,
- "markups_count": 1152
+ "detail_titles": {
+  "1/A3.0": "ENLARGED PLAN at TOILETS",
+  "3/A3.0": "ENLARGED PLAN at DETAIL BAYS and TECH TOILETS",
+  "2/A3.0": "CLEAR FLOOR AREAS",
+  "4/A3.0": "ENLARGED PLAN at MAIN ENTRY [CURTAIN WALL, STOREFRONT]",
+  "5/A3.0": "ENLARGED PLAN at STAIR",
+  "6/A3.0": "DETAIL-TILE  CAP",
+  "7/A3.0": "DETAIL-FLOOR/WALL TILE JOINT",
+  "8/A3.0": "DETAIL-TILED OUTSIDE CORNER",
+  "9/A3.0": "DETAIL-TILED OUTSIDE CORNER",
+  "11/A4.2": "PLAN DETAIL [CURTAIN WALL]",
+  "12/A4.2": "PLAN DETAIL [CURTAIN WALL]",
+  "13/A4.2": "PLAN DETAIL [CURTAIN WALL, STOREFRONT]",
+  "14/A4.2": "PLAN DETAIL",
+  "1/A4.2": "PLAN DETAIL [STOREFRONT]",
+  "6/A4.2": "PLAN DETAIL [STOREFRONT]",
+  "10/A4.2": "PLAN DETAIL",
+  "2/A4.2": "PLAN DETAIL [STOREFRONT]",
+  "3/A4.2": "PLAN DETAIL [STOREFRONT]",
+  "4/A4.2": "PLAN DETAIL [STOREFRONT]",
+  "5/A4.2": "PLAN DETAIL [STOREFRONT]",
+  "7/A4.2": "PLAN DETAIL",
+  "8/A4.2": "PLAN DETAIL",
+  "9/A4.2": "PLAN DETAIL",
+  "15/A4.2": "PLAN DETAIL",
+  "1/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "2/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "3/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "4/A4.3": "PLAN DETAIL",
+  "5/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "6/A4.3": "PLAN DETAIL",
+  "9/A4.3": "PLAN DETAIL",
+  "7/A4.3": "PLAN DETAIL",
+  "8/A4.3": "PLAN DETAIL",
+  "13/A4.3": "PLAN DETAIL",
+  "10/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "11/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "12/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "14/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "15/A4.3": "PLAN DETAIL",
+  "16/A4.3": "PLAN DETAIL [STOREFRONT]",
+  "17/A4.3": "PLAN DETAIL",
+  "1/A4.4": "PLAN DETAIL",
+  "2/A4.4": "PLAN DETAIL",
+  "3/A4.4": "PLAN DETAIL",
+  "6/A4.4": "PLAN DETAIL",
+  "8/A4.4": "PLAN DETAIL",
+  "4/A4.4": "PLAN DETAIL",
+  "5/A4.4": "PLAN DETAIL",
+  "9/A4.4": "PLAN DETAIL",
+  "7/A4.4": "PLAN DETAIL",
+  "10/A4.4": "PLAN DETAIL",
+  "11/A4.4": "PLAN DETAIL",
+  "12/A4.4": "PLAN DETAIL",
+  "13/A4.4": "PLAN DETAIL",
+  "14/A4.4": "PLAN DETAIL [CURTAIN WALL, STOREFRONT]",
+  "15/A4.4": "PLAN DETAIL [STOREFRONT]",
+  "16/A4.4": "PLAN DETAIL [CURTAIN WALL]",
+  "1/A4.0": "BUILDING SECTION",
+  "2/A4.0": "BUILDING SECTION",
+  "3/A4.0": "BUILDING SECTION",
+  "4/A4.0": "BUILDING SECTION",
+  "5/A4.0": "PARTIAL BUILDING SECTION",
+  "1/A4.1": "BUILDING SECTION",
+  "2/A4.1": "BUILDING SECTION",
+  "5/A4.1": "ENLARGED PLAN at FEATURE WALL",
+  "4/A4.1": "ENLARGED PLAN at FEATURE WALL",
+  "3/A4.1": "ELEVATION  at WASH BAYS",
+  "6/A4.1": "ELEVATION  at VIDEO WALL",
+  "1/A5.0": "SECTION [CURTAIN WALL, STOREFRONT]",
+  "3/A5.0": "DETAIL [STOREFRONT]",
+  "2/A5.0": "DETAIL [CURTAIN WALL, STOREFRONT]",
+  "4/A5.0": "DETAIL",
+  "5/A5.0": "NOT USED",
+  "6/A5.0": "PLAN DETAIL",
+  "1/A5.1": "SECTION [CURTAIN WALL, STOREFRONT]",
+  "2/A5.1": "DETAIL [CURTAIN WALL]",
+  "3/A5.1": "DETAIL [CURTAIN WALL]",
+  "4/A5.1": "GYP. BD CEILING CONTROL JOINT (CJ) DETAIL",
+  "5/A5.1": "GYP. BD CEILING CONTROL JOINT (CJ) DETAIL",
+  "6/A5.1": "DETAIL",
+  "1/A5.2": "WALL SECTION [CURTAIN WALL]",
+  "2/A5.2": "WALL SECTION [STOREFRONT]",
+  "3/A5.2": "WALL SECTION [STOREFRONT]",
+  "4/A5.2": "WALL SECTION [CURTAIN WALL]",
+  "5/A5.2": "PLAN DETAIL",
+  "6/A5.2": "PLAN DETAIL",
+  "7/A5.2": "DETAIL",
+  "1/A5.3": "WALL SECTION [STOREFRONT]",
+  "2/A5.3": "WALL SECTION [CURTAIN WALL, STOREFRONT]",
+  "3/A5.3": "WALL SECTION",
+  "4/A5.3": "WALL SECTION",
+  "7/A5.3": "DETAIL [STOREFRONT]",
+  "8/A5.3": "DETAIL",
+  "5/A5.3": "DETAIL [CURTAIN WALL]",
+  "6/A5.3": "DETAIL [CURTAIN WALL, STOREFRONT]",
+  "10/A5.3": "SILL DETAIL",
+  "9/A5.3": "HEAD DETAIL",
+  "1/A5.4": "SECTION",
+  "2/A5.4": "SECTION [STOREFRONT]",
+  "3/A5.4": "PLAN DETAIL",
+  "4/A5.4": "PLAN DETAIL",
+  "5/A5.4": "PLAN DETAIL",
+  "1/A5.5": "WALL SECTION",
+  "2/A5.5": "WALL SECTION [STOREFRONT]",
+  "3/A5.5": "CANOPY  SECTION",
+  "4/A5.5": "DETAIL",
+  "5/A5.5": "DETAIL [STOREFRONT]",
+  "6/A5.5": "DETAIL",
+  "7/A5.5": "MTL STUD JAMB",
+  "8/A5.5": "TYPICAL MTL STUD JAMB",
+  "1/A5.6": "WALL SECTION",
+  "2/A5.6": "WALL SECTION [CURTAIN WALL]",
+  "3/A5.6": "WALL SECTION [CURTAIN WALL]",
+  "4/A5.6": "PLAN DETAIL",
+  "1/A5.7": "WALL SECTION",
+  "2/A5.7": "WALL SECTION [CURTAIN WALL]",
+  "3/A5.7": "WALL SECTION",
+  "2/A5.8": "WALL SECTION",
+  "1/A5.8": "WALL SECTION",
+  "3/A5.8": "WALL SECTION",
+  "4/A5.8": "WALL SECTION",
+  "5/A5.8": "WALL SECTION",
+  "6/A5.8": "PARAPET CAP DETAIL",
+  "7/A5.8": "TYP. HM HEAD at EXTERIOR CMU",
+  "8/A5.8": "HM HEAD at EXTERIOR CMU",
+  "9/A5.8": "TYP. HM JAMB at EXTERIOR CMU",
+  "10/A5.8": "HM JAMB at EXTERIOR CMU",
+  "13/A5.8": "HM HEAD at EXTERIOR CMU and EIFS",
+  "11/A5.8": "TYP.  JAMB at INTERIOR CMU",
+  "12/A5.8": "TYP.  HEAD at INTERIOR CMU",
+  "1/A5.9": "WALL SECTION [CURTAIN WALL]",
+  "2/A5.9": "WALL SECTION [CURTAIN WALL]",
+  "3/A5.9": "WALL SECTION",
+  "4/A5.9": "WALL SECTION",
+  "5/A5.9": "WALL SECTION",
+  "1/A5.10": "WALL SECTION",
+  "2/A5.10": "WALL SECTION",
+  "3/A5.10": "WALL SECTION",
+  "1/A5.11": "WALL SECTION",
+  "2/A5.11": "WALL SECTION",
+  "3/A5.11": "WALL SECTION",
+  "1/A5.12": "WALL SECTION",
+  "4/A5.12": "WALL SECTION",
+  "5/A5.12": "DETAIL at ROOF HATCH",
+  "2/A5.12": "WALL SECTION-CMU LOW WALL",
+  "7/A5.12": "SECTION at STAIR",
+  "3/A5.12": "WALL SECTION-CMU LOW WALL",
+  "6/A5.12": "6 DETAIL  at ALIGNMENT PIT",
+  "8/A5.12": "SECTION at STAIR",
+  "9/A5.12": "WALL SECTION",
+  "10/A5.12": "WALL SECTION",
+  "1/A5.13": "WALL SECTION",
+  "2/A5.13": "WALL SECTION",
+  "3/A5.13": "WALL SECTION",
+  "4/A5.13": "WALL SECTION",
+  "5/A5.13": "WALL SECTION",
+  "4/A2.0": "NORTH ELEVATION",
+  "3/A2.0": "SOUTH ELEVATION",
+  "1/A2.0": "WEST ELEVATION",
+  "5/A2.0": "PIPE BOLLARD DETAIL [CURTAIN WALL, STOREFRONT]",
+  "2/A2.0": "EAST ELEVATION",
+  "2/A6.0": "2 ELEVATION at  MEN 111",
+  "3/A6.0": "3 ELEVATION at  MEN 111",
+  "7/A6.0": "7 ELEVATION at  WOMEN 112",
+  "11/A6.0": "11 ELEVATION at  WOMEN 112",
+  "6/A6.0": "6 ELEVATION at  MEN 111",
+  "5/A6.0": "5 ELEVATION at  MEN 111",
+  "10/A6.0": "ELEVATION at  WOMEN 112",
+  "8/A6.0": "ELEVATION at  WOMEN 112",
+  "9/A6.0": "ELEVATION at  WOMEN 112",
+  "20/A6.0": "20 ELEV. at SHOP WALL-TYP",
+  "7/A6.1": "7 ELEVATION at BREAK ROOM",
+  "8/A6.1": "8 ELEVATION at COPY/PRINT 110",
+  "9/A6.1": "9 ELEVATION at COPY/PRINT 110",
+  "1/A6.1": "TYPICAL UPPER & LOWER CABINET",
+  "2/A6.1": "SECTION-RESTROOM VANITY",
+  "6/A6.1": "LOCKER BASE DETAIL"
+ },
+ "markups_count": 1167
 }

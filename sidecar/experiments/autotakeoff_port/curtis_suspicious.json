@@ -1,0 +1,12 @@
+[
+ {
+  "item": "G100C",
+  "class": "glazing_only_door",
+  "source": "schedule",
+  "marks": 2,
+  "sheets": [
+   "A7.00"
+  ],
+  "why": "PANEL MATERIAL: 4 | FRAME TYPE: EX | DOOR: G100C | DOOR TYPE: M | DOOR OPENING WIDTH: 6'-0"
+ }
+]

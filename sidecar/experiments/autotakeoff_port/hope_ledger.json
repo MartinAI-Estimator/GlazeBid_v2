@@ -1,0 +1,6916 @@
+{
+ "project": "hope",
+ "pages": 19,
+ "read": [
+  {
+   "sheet": "A3.1",
+   "page": 5,
+   "step": "schedule",
+   "items": 70
+  },
+  {
+   "sheet": "A3.2",
+   "page": 6,
+   "step": "schedule",
+   "items": 9
+  },
+  {
+   "sheet": "A3.3",
+   "page": 7,
+   "step": "schedule",
+   "items": 7
+  },
+  {
+   "sheet": "A3.4",
+   "page": 8,
+   "step": "schedule",
+   "items": 5
+  },
+  {
+   "sheet": "A3.5",
+   "page": 9,
+   "step": "schedule",
+   "items": 0
+  },
+  {
+   "step": "legend",
+   "rows": 9,
+   "codes": []
+  },
+  {
+   "sheet": "A2.1A",
+   "page": 0,
+   "step": "plan",
+   "kind": "pill",
+   "tags": 27,
+   "unmatched": {
+    "1": 3,
+    "A5.1": 4,
+    "A5.2": 3,
+    "A5.4": 1,
+    "3": 2,
+    "A5.17": 1,
+    "2": 2,
+    "A5.5": 1,
+    "M": 1
+   }
+  },
+  {
+   "sheet": "A2.1B",
+   "page": 1,
+   "step": "plan",
+   "kind": "pill",
+   "tags": 36,
+   "unmatched": {
+    "B120": 1,
+    "1": 3,
+    "A5.1": 4,
+    "A5.2": 4,
+    "A5.4": 2,
+    "A5.7": 1,
+    "A5.12": 3,
+    "3": 4,
+    "A2.18": 1,
+    "A5.13": 1,
+    "2": 5,
+    "4": 1,
+    "5": 1
+   }
+  },
+  {
+   "sheet": "A2.2A",
+   "page": 2,
+   "step": "plan",
+   "kind": "pill",
+   "tags": 11,
+   "unmatched": {
+    "1": 2,
+    "A5.1": 4,
+    "A5.2": 3,
+    "A5.4": 1,
+    "A5.5": 1,
+    "3": 2,
+    "2": 2,
+    "Y": 2,
+    "BB": 1,
+    "6": 1
+   }
+  },
+  {
+   "sheet": "A2.2B",
+   "page": 3,
+   "step": "plan",
+   "kind": "pill",
+   "tags": 27,
+   "unmatched": {
+    "1": 4,
+    "A5.1": 3,
+    "A5.2": 4,
+    "A5.4": 2,
+    "A5.7": 1,
+    "A5.12": 2,
+    "3": 4,
+    "A5.14": 1,
+    "A5.17": 1,
+    "A5.13": 2,
+    "2": 4,
+    "4": 1,
+    "H": 1,
+    "6": 1,
+    "5": 1
+   }
+  },
+  {
+   "sheet": "A2.19",
+   "page": 4,
+   "step": "plan",
+   "kind": "pill",
+   "tags": 0,
+   "unmatched": {
+    "A5.1": 4,
+    "A5.13": 5,
+    "A2.19": 2,
+    "2": 6,
+    "1": 2,
+    "3": 3,
+    "5": 2,
+    "4": 1
+   }
+  },
+  {
+   "sheet": "A2.19",
+   "page": 4,
+   "step": "elevation",
+   "snaps": 0,
+   "unsure": 0
+  },
+  {
+   "sheet": "A3.1",
+   "page": 5,
+   "step": "elevation",
+   "snaps": 42,
+   "unsure": 33
+  },
+  {
+   "sheet": "A3.2",
+   "page": 6,
+   "step": "elevation",
+   "snaps": 7,
+   "unsure": 4
+  },
+  {
+   "sheet": "A3.3",
+   "page": 7,
+   "step": "elevation",
+   "snaps": 7,
+   "unsure": 1
+  },
+  {
+   "sheet": "A3.4",
+   "page": 8,
+   "step": "elevation",
+   "snaps": 2,
+   "unsure": 0
+  },
+  {
+   "sheet": "A3.5",
+   "page": 9,
+   "step": "elevation",
+   "snaps": 20,
+   "unsure": 0
+  },
+  {
+   "sheet": "A4.1",
+   "page": 15,
+   "step": "elevation",
+   "snaps": 45,
+   "unsure": 8
+  },
+  {
+   "sheet": "A4.2",
+   "page": 16,
+   "step": "elevation",
+   "snaps": 30,
+   "unsure": 13
+  },
+  {
+   "sheet": "A4.4",
+   "page": 17,
+   "step": "elevation",
+   "snaps": 0,
+   "unsure": 0
+  },
+  {
+   "sheet": "A3.8",
+   "page": 10,
+   "step": "details",
+   "hits": 6
+  },
+  {
+   "sheet": "A3.9",
+   "page": 11,
+   "step": "details",
+   "hits": 12
+  },
+  {
+   "sheet": "A3.10",
+   "page": 12,
+   "step": "details",
+   "hits": 12
+  },
+  {
+   "sheet": "A3.11",
+   "page": 13,
+   "step": "details",
+   "hits": 9
+  },
+  {
+   "sheet": "A3.12",
+   "page": 14,
+   "step": "details",
+   "hits": 8
+  },
+  {
+   "sheet": "A5.13",
+   "page": 18,
+   "step": "details",
+   "hits": 3
+  },
+  {
+   "sheet": "A3.1",
+   "page": 5,
+   "step": "details",
+   "hits": 3
+  },
+  {
+   "sheet": "A4.1",
+   "page": 15,
+   "step": "details",
+   "hits": 1
+  },
+  {
+   "sheet": "A4.2",
+   "page": 16,
+   "step": "details",
+   "hits": 2
+  }
+ ],
+ "skipped": [],
+ "mark_symbol": {
+  "A3.1|tabular|DOOR SCHEDULE": "pill",
+  "A3.1|captioned|": null,
+  "A3.2|captioned|": "hexagon",
+  "A3.3|captioned|": "hexagon",
+  "A3.4|captioned|": "hexagon"
+ },
+ "legend_classes": {},
+ "items": [
+  {
+   "id": "A101A",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A101A \u2014 1 Thus",
+   "desc": "MARK: A101A | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A101A"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A101B",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "A101B \u2014 1 Thus",
+   "desc": "MARK: A101B | HEAD: 9/A3.9 | JAMB: 9/A3.9 | SILL: 5/A3.11 || HEAD DETAIL 9/A3.9: HEAD DETAIL - BRICK/STUD [STOREFRONT] | JAMB DETAIL 9/A3.9: HEAD DETAIL - BRICK/STUD [STOREFRONT] | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A101B"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A102",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A102 \u2014 1 Thus",
+   "desc": "MARK: A102 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A102",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A103",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A103 \u2014 1 Thus",
+   "desc": "MARK: A103 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A103",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A104",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A104 \u2014 1 Thus",
+   "desc": "MARK: A104 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A104",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A105",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A105 \u2014 1 Thus",
+   "desc": "MARK: A105 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A105",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A106A",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A106A \u2014 1 Thus",
+   "desc": "MARK: A106A | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A106A",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A106B",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A106B \u2014 1 Thus",
+   "desc": "MARK: A106B | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A106B",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A106C",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A106C \u2014 1 Thus",
+   "desc": "MARK: A106C | HEAD: 13/A3.8 | JAMB: 14/A3.8 | SILL: 12/A3.8 || HEAD DETAIL 13/A3.8: HEAD DETAIL - COILING COUNTER | JAMB DETAIL 14/A3.8: JAMB DETAIL - COILING COUNTER | SILL DETAIL 12/A3.8: SILL DETAIL - COILING COUNTER DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A106C",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A107A",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A107A \u2014 1 Thus",
+   "desc": "MARK: A107A | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A107A",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A107B",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A107B \u2014 1 Thus",
+   "desc": "MARK: A107B | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A107B",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A107C",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A107C \u2014 1 Thus",
+   "desc": "MARK: A107C | HEAD: 13/A3.8 | JAMB: 14/A3.8 | SILL: 12/A3.8 || HEAD DETAIL 13/A3.8: HEAD DETAIL - COILING COUNTER | JAMB DETAIL 14/A3.8: JAMB DETAIL - COILING COUNTER | SILL DETAIL 12/A3.8: SILL DETAIL - COILING COUNTER DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A107C"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A107D",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A107D \u2014 1 Thus",
+   "desc": "MARK: A107D | HEAD: 13/A3.8 | JAMB: 14/A3.8 | SILL: 12/A3.8 || HEAD DETAIL 13/A3.8: HEAD DETAIL - COILING COUNTER | JAMB DETAIL 14/A3.8: JAMB DETAIL - COILING COUNTER | SILL DETAIL 12/A3.8: SILL DETAIL - COILING COUNTER DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A107D",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109A",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "A109A \u2014 1 Thus",
+   "desc": "MARK: A109A | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109A",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109B",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "A109B \u2014 1 Thus",
+   "desc": "MARK: A109B | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109B",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109C",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "A109C \u2014 1 Thus",
+   "desc": "MARK: A109C | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109C",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109D",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A109D \u2014 1 Thus",
+   "desc": "MARK: A109D | HEAD: 17/A3.8 | JAMB: 18/A3.8 | SILL: 19/A3.8 || HEAD DETAIL 17/A3.8: HEAD DETAIL AT HM DOOR | JAMB DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | SILL DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109D"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109E",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A109E \u2014 1 Thus",
+   "desc": "MARK: A109E | HEAD: 17/A3.8 | JAMB: 18/A3.8 | SILL: 19/A3.8 || HEAD DETAIL 17/A3.8: HEAD DETAIL AT HM DOOR | JAMB DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | SILL DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109E"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109F",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A109F \u2014 1 Thus",
+   "desc": "MARK: A109F | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109F"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109G",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A109G \u2014 1 Thus",
+   "desc": "MARK: A109G | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109G"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109H",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A109H \u2014 1 Thus",
+   "desc": "MARK: A109H | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109H"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109J",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A109J \u2014 1 Thus",
+   "desc": "MARK: A109J | HEAD: 17/A3.8 | JAMB: 18/A3.8 | SILL: 19/A3.8 || HEAD DETAIL 17/A3.8: HEAD DETAIL AT HM DOOR | JAMB DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | SILL DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109J"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A109K",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "A109K \u2014 1 Thus",
+   "desc": "MARK: A109K | HEAD: 17/A3.8 | JAMB: 18/A3.8 | SILL: 19/A3.8 || HEAD DETAIL 17/A3.8: HEAD DETAIL AT HM DOOR | JAMB DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | SILL DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type A109K"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B101A",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B101A \u2014 1 Thus",
+   "desc": "MARK: B101A | HEAD: 4/A3.11 | JAMB: 2/A3.9 | SILL: 5/A3.11 || HEAD DETAIL 4/A3.11: HEAD DETAIL - VESTIBULE | JAMB DETAIL 2/A3.9: JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT] | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B101A",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B101B",
+   "cls": "int_cw_door",
+   "kind": "scope",
+   "label": "B101B \u2014 1 Thus",
+   "desc": "MARK: B101B | HEAD: 2/A3.11 | JAMB: 2/A3.9 || HEAD DETAIL 2/A3.11: HEAD DETAIL - VESITBULE INT. [CURTAINWALL] | JAMB DETAIL 2/A3.9: JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT]",
+   "location": "interior",
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B101B",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B106A",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B106A \u2014 1 Thus",
+   "desc": "MARK: B106A | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B106A"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B106B",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B106B \u2014 1 Thus",
+   "desc": "MARK: B106B | HEAD: 8/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 8/A3.8: HEAD DETAIL - SF IN CMU - TRANSOM | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B106B",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B112",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B112 \u2014 1 Thus",
+   "desc": "MARK: B112 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B112",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B113",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B113 \u2014 1 Thus",
+   "desc": "MARK: B113 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B113",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B117A",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B117A \u2014 1 Thus",
+   "desc": "MARK: B117A | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B117A"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B117B",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B117B \u2014 1 Thus",
+   "desc": "MARK: B117B | HEAD: 8/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 8/A3.8: HEAD DETAIL - SF IN CMU - TRANSOM | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B117B"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B118",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B118 \u2014 1 Thus",
+   "desc": "MARK: B118 | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B118"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B120A",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B120A \u2014 1 Thus",
+   "desc": "MARK: B120A | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B120A"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B120B",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B120B \u2014 1 Thus",
+   "desc": "MARK: B120B | HEAD: 6/A3.9 | JAMB: 6/A3.11 | SILL: 5/A3.11 || HEAD DETAIL 6/A3.9: HEAD DETAIL - ACM AT ACM SOFFIT [STOREFRONT] | JAMB DETAIL 6/A3.11: JAMB DETAIL - SF AT ACM | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B120B",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B120C",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B120C \u2014 1 Thus",
+   "desc": "MARK: B120C | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B120C",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B121",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B121 \u2014 1 Thus",
+   "desc": "MARK: B121 | HEAD: 18/A3.8 | JAMB: 19/A3.8 || HEAD DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | JAMB DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B121"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B122A",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B122A \u2014 1 Thus",
+   "desc": "MARK: B122A | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B122A"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B122B",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B122B \u2014 1 Thus",
+   "desc": "MARK: B122B | HEAD: 18/A3.8 | JAMB: 19/A3.8 || HEAD DETAIL 18/A3.8: JAMB DETAIL - HM FRAME IN CMU/BRICK | JAMB DETAIL 19/A3.8: SILL DETAIL - HM DOOR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B122B",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B123",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B123 \u2014 1 Thus",
+   "desc": "MARK: B123 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B123",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126A",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B126A \u2014 1 Thus",
+   "desc": "MARK: B126A | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126A"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126B",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B126B \u2014 1 Thus",
+   "desc": "MARK: B126B | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126B"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126C",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B126C \u2014 1 Thus",
+   "desc": "MARK: B126C | HEAD: 6/A3.8 | JAMB: 7/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 7/A3.8: JAMB DETAIL - SF FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126C",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126D",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B126D \u2014 1 Thus",
+   "desc": "MARK: B126D | HEAD: 7/A3.11 | JAMB: 8/A3.11 | SILL: 5/A3.11 || HEAD DETAIL 7/A3.11: HEAD DETAIL - SF AT METAL PANEL | JAMB DETAIL 8/A3.11: HEAD DETAIL - SF AT CANOPY | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126D",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126E",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B126E \u2014 1 Thus",
+   "desc": "MARK: B126E | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126E",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126F",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B126F \u2014 1 Thus",
+   "desc": "MARK: B126F | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126F",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126G",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B126G \u2014 1 Thus",
+   "desc": "MARK: B126G | HEAD: 7/A3.11 | JAMB: 8/A3.11 | SILL: 5/A3.11 || HEAD DETAIL 7/A3.11: HEAD DETAIL - SF AT METAL PANEL | JAMB DETAIL 8/A3.11: HEAD DETAIL - SF AT CANOPY | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126G"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126H",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B126H \u2014 1 Thus",
+   "desc": "MARK: B126H | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126H",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126J",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B126J \u2014 1 Thus",
+   "desc": "MARK: B126J | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126J",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126K",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B126K \u2014 1 Thus",
+   "desc": "MARK: B126K | HEAD: 15/A3.8 | JAMB: 1/A3.9 | SILL: 16/A3.8 || HEAD DETAIL 15/A3.8: OVERHEAD DOOR HEAD DETAIL | JAMB DETAIL 1/A3.9: JAMB DETAIL AT OVERHEAD DOOR | SILL DETAIL 16/A3.8: OVERHEAD DOOR SILL DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126K",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B126L",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B126L \u2014 1 Thus",
+   "desc": "MARK: B126L | HEAD: 7/A3.11 | JAMB: 8/A3.11 | SILL: 5/A3.11 || HEAD DETAIL 7/A3.11: HEAD DETAIL - SF AT METAL PANEL | JAMB DETAIL 8/A3.11: HEAD DETAIL - SF AT CANOPY | SILL DETAIL 5/A3.11: SILL DETAIL - SF",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B126L",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B127",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B127 \u2014 1 Thus",
+   "desc": "MARK: B127 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B127",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B201",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B201 \u2014 1 Thus",
+   "desc": "MARK: B201 | HEAD: 10/A3.8 | JAMB: 9/A3.8 || HEAD DETAIL 10/A3.8: HEAD DETAIL - SF IN STUDS | JAMB DETAIL 9/A3.8: JAMB DETAIL - SF IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B201",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B204",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B204 \u2014 1 Thus",
+   "desc": "MARK: B204 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B204"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B205A",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B205A \u2014 1 Thus",
+   "desc": "MARK: B205A | HEAD: 6/A3.8 | JAMB: 11/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 11/A3.8: JAMB DETAIL - SF IN CMU SIDELITE",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B205A"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B205B",
+   "cls": "ext_sf_door",
+   "kind": "scope",
+   "label": "B205B \u2014 1 Thus",
+   "desc": "MARK: B205B | HEAD: 6/A3.8 | JAMB: 11/A3.8 || HEAD DETAIL 6/A3.8: HEAD DETAIL - SF FRAME IN CMU | JAMB DETAIL 11/A3.8: JAMB DETAIL - SF IN CMU SIDELITE",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B205B"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B206",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B206 \u2014 1 Thus",
+   "desc": "MARK: B206 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B206"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B207",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B207 \u2014 1 Thus",
+   "desc": "MARK: B207 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B207"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B208",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B208 \u2014 1 Thus",
+   "desc": "MARK: B208 | HEAD: 1/A3.8 | JAMB: 4/A3.8 || HEAD DETAIL 1/A3.8: HEAD DETAIL - HM FRAME IN CMU | JAMB DETAIL 4/A3.8: JAMB DETAIL - HM FRAME IN CMU",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B208"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B210",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "B210 \u2014 1 Thus",
+   "desc": "MARK: B210 | HEAD: 2/A3.8 | JAMB: 3/A3.8 || HEAD DETAIL 2/A3.8: HEAD DETAIL - HM FRAME IN STUDS | JAMB DETAIL 3/A3.8: JAMB DETAIL - HM FRAME IN STUDS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+   ],
+   "citations": [
+    "A3.1 tabular schedule type B210"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": true,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "DOOR TYPE B",
+   "cls": "glazing_only",
+   "kind": "scope",
+   "label": "DOOR TYPE B \u2014 1 Thus",
+   "desc": "ALUMINUM STOREFRONT DOOR - FLUSH WOOD DOOR, SOLID 1\" INSULATING TEMPERED CORE, STAINED/ TINTED GLASS, AT INTERIOR PREFINISHED DOOR PROVIDE 1/4\" CLEAR TEMPERED GLASS",
+   "location": "interior",
+   "w_in": 36.09,
+   "h_in": 84.09,
+   "frames": [
+    {
+     "rect": [
+      292.9,
+      187.7,
+      346.9,
+      304.0
+     ],
+     "w_in": 36.0,
+     "h_in": 84.0,
+     "bays": 3,
+     "rows": 2,
+     "mullions_x": [
+      298.1,
+      341.7
+     ],
+     "mullions_y": [
+      192.9
+     ]
+    }
+   ],
+   "bays": 3,
+   "rows": 2,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 21.08,
+   "sf_total": 21.1,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 7'-0\" from dimension string (drawing measured 6'-5 1/2\")",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ],
+   "notes": [
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)",
+    "size from A4.1 elevation snap (schedule 3'-0\" x 7'-0\")"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type DOOR TYPE B",
+    "A4.1 elevation \u00d74 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "DOOR TYPE C",
+   "cls": "int_sf",
+   "kind": "scope",
+   "label": "DOOR TYPE C \u2014 1 Thus",
+   "desc": "ALUMINUM STOREFRONT DOOR - 1\" INSULATING TEMPERED TINTED GLASS, AT INTERIOR DOOR PROVIDE 1/4\" CLEAR TEMPERED GLASS",
+   "location": "interior",
+   "w_in": 36.0,
+   "h_in": 84.0,
+   "frames": [
+    {
+     "rect": [
+      426.0,
+      187.7,
+      480.0,
+      304.0
+     ],
+     "w_in": 36.0,
+     "h_in": 84.0,
+     "bays": 3,
+     "rows": 2,
+     "mullions_x": [
+      431.2,
+      474.8
+     ],
+     "mullions_y": [
+      192.9
+     ]
+    }
+   ],
+   "bays": 3,
+   "rows": 2,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 21.0,
+   "sf_total": 21.0,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 7'-0\" from dimension string (drawing measured 6'-5 1/2\")",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type DOOR TYPE C"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "DOOR TYPE F",
+   "cls": "excluded",
+   "kind": "excluded",
+   "label": "DOOR TYPE F \u2014 1 Thus",
+   "desc": "ANODIZED ALUMINUM STACKING OVERHEAD DOOR WITH 1/2\" INSULATED LOW E GLASS",
+   "location": null,
+   "w_in": 144.0,
+   "h_in": 120.0,
+   "frames": [
+    {
+     "rect": [
+      904.1,
+      136.6,
+      1114.3,
+      313.8
+     ],
+     "w_in": 144.0,
+     "h_in": 120.0,
+     "bays": 1,
+     "rows": 1,
+     "mullions_x": [],
+     "mullions_y": []
+    }
+   ],
+   "bays": 1,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "width 12'-0\" from dimension string (drawing measured 11'-8 1/8\")",
+    "height 10'-0\" from dimension string (drawing measured 9'-10 1/8\")"
+   ],
+   "notes": [
+    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type DOOR TYPE F"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 5",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "FRAME TYPE 5 \u2014 1 Thus",
+   "desc": "450T KAWNEER CENTER GLAZED STOREFRONT WITH 1/4\" CLEAR GLASS",
+   "location": null,
+   "w_in": 88.71,
+   "h_in": 85.16,
+   "frames": [
+    {
+     "rect": [
+      797.1,
+      664.6,
+      927.6,
+      793.7
+     ],
+     "w_in": 87.0,
+     "h_in": 86.07,
+     "bays": 3,
+     "rows": 1,
+     "mullions_x": [
+      828.5,
+      867.6
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 3,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 52.46,
+   "sf_total": 52.5,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name",
+    "size from A4.1 elevation snap (schedule 7'-3\" x 7'-2 1/16\")"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 5",
+    "A4.1 elevation \u00d73 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 9",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "FRAME TYPE 9 \u2014 1 Thus",
+   "desc": "450T KAWNEER STOREFRONT FRAME AT INTERIOR, 451T KAWNEER AT EXTERIOR",
+   "location": "exterior",
+   "w_in": 72.93,
+   "h_in": 105.33,
+   "frames": [
+    {
+     "rect": [
+      572.5,
+      1287.2,
+      686.6,
+      1440.9
+     ],
+     "w_in": 72.0,
+     "h_in": 102.47,
+     "bays": 1,
+     "rows": 3,
+     "mullions_x": [],
+     "mullions_y": [
+      1308.7,
+      1314.7
+     ]
+    }
+   ],
+   "bays": 1,
+   "rows": 3,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 53.35,
+   "sf_total": 53.4,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 6'-0\" from dimension string (drawing measured 6'-4 1/16\")",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A3.3 \u2014 confirm"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "size from A3.3 elevation snap (schedule 6'-0\" x 8'-6 1/2\")"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 9",
+    "A3.3 elevation \u00d71 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 11",
+   "cls": "glazing_only",
+   "kind": "scope",
+   "label": "FRAME TYPE 11 \u2014 1 Thus",
+   "desc": "HOLLOW METAL FRAME, PAINTED WITH 1/4\" CLEAR GLASS",
+   "location": null,
+   "w_in": 64.07,
+   "h_in": 86.07,
+   "frames": [
+    {
+     "rect": [
+      962.1,
+      1311.7,
+      1058.2,
+      1440.9
+     ],
+     "w_in": 64.07,
+     "h_in": 84.0,
+     "bays": 3,
+     "rows": 2,
+     "mullions_x": [
+      1001.2,
+      1018.3
+     ],
+     "mullions_y": [
+      1338.4
+     ]
+    }
+   ],
+   "bays": 3,
+   "rows": 2,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 38.3,
+   "sf_total": 38.3,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "height 7'-0\" from dimension string (drawing measured 7'-2 1/8\")",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A3.1 \u2014 confirm"
+   ],
+   "notes": [
+    "hm_lite: Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)",
+    "size from A3.1 elevation snap (schedule 5'-4 1/16\" x 7'-0\")"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 11",
+    "A3.1 elevation \u00d71 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 6",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "FRAME TYPE 6 \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. 12'-0\" 4'-2\" 3'-0\" 4'-2\"",
+   "location": null,
+   "w_in": 97.96,
+   "h_in": 72.18,
+   "frames": [
+    {
+     "rect": [
+      306.6,
+      1036.1,
+      459.7,
+      1145.7
+     ],
+     "w_in": 96.0,
+     "h_in": 73.07,
+     "bays": 1,
+     "rows": 1,
+     "mullions_x": [],
+     "mullions_y": []
+    }
+   ],
+   "bays": 1,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 49.1,
+   "sf_total": 49.1,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 8'-0\" from dimension string (drawing measured 8'-6 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "size from A4.1 elevation snap (schedule 8'-0\" x 6'-1 1/16\")"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 6",
+    "A4.1 elevation \u00d72 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 7",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "FRAME TYPE 7 \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT FRAME WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": 173.75,
+   "h_in": 120.07,
+   "frames": [
+    {
+     "rect": [
+      569.9,
+      965.6,
+      849.4,
+      1145.7
+     ],
+     "w_in": 173.75,
+     "h_in": 120.07,
+     "bays": 5,
+     "rows": 1,
+     "mullions_x": [
+      588.5,
+      659.6,
+      684.7,
+      770.7
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 5,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 144.88,
+   "sf_total": 144.9,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "width 14'-5 3/4\" from dimension string (drawing measured 15'-6 5/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 7"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 8",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "FRAME TYPE 8 \u2014 1 Thus",
+   "desc": "450T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1/4\" CLEAR GLASS. 8'-8\" 1'-0\" 6'-0\" 2\" 1'-0\"",
+   "location": null,
+   "w_in": 182.375,
+   "h_in": 120.07,
+   "frames": [
+    {
+     "rect": [
+      1049.9,
+      965.6,
+      1317.0,
+      1145.7
+     ],
+     "w_in": 182.375,
+     "h_in": 120.07,
+     "bays": 5,
+     "rows": 1,
+     "mullions_x": [
+      1053.0,
+      1127.3,
+      1156.5,
+      1238.4
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 5,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 152.07,
+   "sf_total": 152.1,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 15'-2 3/8\" from dimension string (drawing measured 14'-10 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 8"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 10",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "FRAME TYPE 10 \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT FRAME WITH 1\" INSULATED TINTED GLASS",
+   "location": null,
+   "w_in": 40.07,
+   "h_in": 88.07,
+   "frames": [
+    {
+     "rect": [
+      773.5,
+      1311.8,
+      824.6,
+      1440.9
+     ],
+     "w_in": 40.0,
+     "h_in": 86.07,
+     "bays": 1,
+     "rows": 1,
+     "mullions_x": [],
+     "mullions_y": []
+    }
+   ],
+   "bays": 1,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 24.51,
+   "sf_total": 24.5,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "width 3'-4\" from dimension string (drawing measured 2'-10 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A3.1 \u2014 confirm"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "size from A3.1 elevation snap (schedule 3'-4\" x 7'-2 1/16\")"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 10",
+    "A3.1 elevation \u00d74 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "FRAME TYPE 12",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "FRAME TYPE 12 \u2014 1 Thus",
+   "desc": "450T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1/4\" CLEAR GLASS.",
+   "location": null,
+   "w_in": 118.76,
+   "h_in": 119.82,
+   "frames": [
+    {
+     "rect": [
+      1131.5,
+      1261.0,
+      1315.8,
+      1441.1
+     ],
+     "w_in": 120.0,
+     "h_in": 120.07,
+     "bays": 6,
+     "rows": 2,
+     "mullions_x": [
+      1159.6,
+      1180.6,
+      1209.5,
+      1291.7,
+      1312.7
+     ],
+     "mullions_y": [
+      1316.7
+     ]
+    }
+   ],
+   "bays": 6,
+   "rows": 2,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 98.82,
+   "sf_total": 98.8,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "width 10'-0\" from dimension string (drawing measured 10'-2 7/8\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name",
+    "size from A4.1 elevation snap (schedule 10'-0\" x 10'-0 1/16\")"
+   ],
+   "citations": [
+    "A3.1 captioned schedule type FRAME TYPE 12",
+    "A4.1 elevation \u00d71 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "A \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. W/ TRANSLUCENT WALL PANEL",
+   "location": null,
+   "w_in": 210.2,
+   "h_in": 24.0,
+   "frames": [
+    {
+     "rect": [
+      219.3,
+      376.0,
+      534.6,
+      407.5
+     ],
+     "w_in": 210.2,
+     "h_in": 24.0,
+     "bays": 5,
+     "rows": 1,
+     "mullions_x": [
+      282.0,
+      344.3,
+      406.6,
+      468.9
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 5,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 35.03,
+   "sf_total": 35.0,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "translucent_panel",
+     "note": "Translucent wall panel system with this frame \u2014 always ours, own line item",
+     "rule": "translucent_with"
+    }
+   ],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "keyword rule translucent would say translucent_panel; series wins"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type A",
+    "A3.2 elevation \u00d79 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "B",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "B \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. W/ TRANSLUCENT WALL PANEL",
+   "location": null,
+   "w_in": 210.2,
+   "h_in": 24.0,
+   "frames": [
+    {
+     "rect": [
+      772.2,
+      376.0,
+      1087.5,
+      407.5
+     ],
+     "w_in": 210.2,
+     "h_in": 24.0,
+     "bays": 5,
+     "rows": 1,
+     "mullions_x": [
+      834.9,
+      897.2,
+      959.5,
+      1021.8
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 5,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 35.03,
+   "sf_total": 35.0,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "translucent_panel",
+     "note": "Translucent wall panel system with this frame \u2014 always ours, own line item",
+     "rule": "translucent_with"
+    }
+   ],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "keyword rule translucent would say translucent_panel; series wins"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type B",
+    "A3.2 elevation \u00d73 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "C",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "C \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. W/ TRANSLUCENT WALL PANEL",
+   "location": null,
+   "w_in": 187.125,
+   "h_in": 24.0,
+   "frames": [
+    {
+     "rect": [
+      1328.2,
+      376.0,
+      1643.5,
+      407.5
+     ],
+     "w_in": 187.125,
+     "h_in": 24.0,
+     "bays": 5,
+     "rows": 1,
+     "mullions_x": [
+      1390.9,
+      1453.2,
+      1515.5,
+      1577.8
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 5,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 31.19,
+   "sf_total": 31.2,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "translucent_panel",
+     "note": "Translucent wall panel system with this frame \u2014 always ours, own line item",
+     "rule": "translucent_with"
+    }
+   ],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 15'-7 1/8\" from dimension string (drawing measured 17'-6 3/16\")",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "keyword rule translucent would say translucent_panel; series wins"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type C",
+    "A3.2 elevation \u00d73 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "D",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "D \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. W/ TRANSLUCENT WALL PANEL",
+   "location": null,
+   "w_in": 205.625,
+   "h_in": 24.0,
+   "frames": [
+    {
+     "rect": [
+      1880.1,
+      376.1,
+      2195.4,
+      407.7
+     ],
+     "w_in": 205.625,
+     "h_in": 24.0,
+     "bays": 6,
+     "rows": 1,
+     "mullions_x": [
+      1942.8,
+      2005.1,
+      2067.4,
+      2070.5,
+      2129.8
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 6,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 34.27,
+   "sf_total": 34.3,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "translucent_panel",
+     "note": "Translucent wall panel system with this frame \u2014 always ours, own line item",
+     "rule": "translucent_with"
+    }
+   ],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 17'-1 5/8\" from dimension string (drawing measured 17'-6 3/16\")",
+    "height 2'-0\" from dimension string (drawing measured 1'-9 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "keyword rule translucent would say translucent_panel; series wins"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type D",
+    "A3.2 elevation \u00d73 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "J",
+   "cls": "ext_cw",
+   "kind": "scope",
+   "label": "J \u2014 2 Thus",
+   "desc": "1600 KAWNEER CENTER GLAZED CURTAIN WALL WITH 1\" INSULATED TINTED GLASS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 2,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type J",
+    "plan tags \u00d72"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "G",
+   "cls": "ext_cw",
+   "kind": "scope",
+   "label": "G \u2014 1 Thus",
+   "desc": "1600 KAWNEER CENTER GLAZED CURTAIN WALL WITH 1\" INSULATED TINTED GLASS",
+   "location": null,
+   "w_in": 67.8,
+   "h_in": 286.53,
+   "frames": [
+    {
+     "rect": [
+      479.8,
+      1083.6,
+      581.5,
+      1513.4
+     ],
+     "w_in": 67.8,
+     "h_in": 286.53,
+     "bays": 1,
+     "rows": 13,
+     "mullions_x": [],
+     "mullions_y": [
+      1087.4,
+      1146.7,
+      1150.4,
+      1268.3,
+      1272.1,
+      1331.4,
+      1335.1,
+      1338.9,
+      1342.6,
+      1394.4,
+      1398.2,
+      1509.7
+     ]
+    }
+   ],
+   "bays": 1,
+   "rows": 13,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 134.91,
+   "sf_total": 134.9,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "curtain_wall: Curtain wall by name",
+    "elevation shows 2 tag(s), plan 1"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type G",
+    "plan tags \u00d71",
+    "A3.2 elevation \u00d72 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "F",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "F \u2014 9 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": 97.96,
+   "h_in": 80.0,
+   "frames": [
+    {
+     "rect": [
+      228.4,
+      1405.3,
+      375.5,
+      1525.4
+     ],
+     "w_in": 98.07,
+     "h_in": 80.07,
+     "bays": 2,
+     "rows": 1,
+     "mullions_x": [
+      300.4
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 2,
+   "rows": 1,
+   "qty": 9,
+   "qty_source": "plan tags",
+   "sf_each": 54.42,
+   "sf_total": 489.8,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "size from A4.1 elevation snap (schedule 8'-2 1/16\" x 6'-8 1/16\")",
+    "elevation shows 14 tag(s), plan 9"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type F",
+    "plan tags \u00d79",
+    "A3.2 elevation \u00d714 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "L",
+   "cls": "ext_cw",
+   "kind": "scope",
+   "label": "L \u2014 1 Thus",
+   "desc": "1600 KAWNEER CENTER GLAZED CURTAIN WALL WITH 1\" INSULATED TINTED GLASS",
+   "location": null,
+   "w_in": 55.07,
+   "h_in": 152.4,
+   "frames": [
+    {
+     "rect": [
+      2250.4,
+      1302.8,
+      2333.0,
+      1531.4
+     ],
+     "w_in": 55.07,
+     "h_in": 152.4,
+     "bays": 3,
+     "rows": 5,
+     "mullions_x": [
+      2254.2,
+      2329.3
+     ],
+     "mullions_y": [
+      1306.5,
+      1370.0,
+      1373.7,
+      1527.7
+     ]
+    }
+   ],
+   "bays": 3,
+   "rows": 5,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 58.28,
+   "sf_total": 58.3,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "curtain_wall: Curtain wall by name",
+    "elevation shows 2 tag(s), plan 1"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type L",
+    "plan tags \u00d71",
+    "A3.2 elevation \u00d72 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "EE",
+   "cls": "ext_cw",
+   "kind": "scope",
+   "label": "EE \u2014 1 Thus",
+   "desc": "1600 KAWNEER CENTER GLAZED CURTAIN WALL WITH 1\" INSULATED TINTED GLASS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.2 captioned schedule type EE"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "T",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "T \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": 156.98,
+   "h_in": 39.11,
+   "frames": [
+    {
+     "rect": [
+      2017.3,
+      1421.8,
+      2250.0,
+      1474.4
+     ],
+     "w_in": 155.13,
+     "h_in": 37.0,
+     "bays": 4,
+     "rows": 1,
+     "mullions_x": [
+      2074.0,
+      2132.2,
+      2190.4
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 4,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "schedule (no plan tag found)",
+   "sf_each": 42.64,
+   "sf_total": 42.6,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 3'-1\" from dimension string (drawing measured 2'-11 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "size from A4.1 elevation snap (schedule 12'-11 1/8\" x 3'-1\")"
+   ],
+   "citations": [
+    "A3.3 captioned schedule type T",
+    "A3.1 elevation \u00d746 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "N",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "N \u2014 9 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 9,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A3.3 captioned schedule type N",
+    "plan tags \u00d79"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "S",
+   "cls": "ext_cw",
+   "kind": "scope",
+   "label": "S \u2014 1 Thus",
+   "desc": "1600 KAWNEER CENTER GLAZED CURTAIN WALL WITH 1\" INSULATED TINTED GLASS",
+   "location": null,
+   "w_in": 77.6,
+   "h_in": 37.0,
+   "frames": [
+    {
+     "rect": [
+      1680.3,
+      1420.3,
+      1796.7,
+      1477.4
+     ],
+     "w_in": 77.6,
+     "h_in": 37.0,
+     "bays": 2,
+     "rows": 1,
+     "mullions_x": [
+      1737.8
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 2,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 19.94,
+   "sf_total": 19.9,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "height 3'-1\" from dimension string (drawing measured 3'-2 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "curtain_wall: Curtain wall by name",
+    "elevation shows 6 tag(s), plan 1"
+   ],
+   "citations": [
+    "A3.3 captioned schedule type S",
+    "plan tags \u00d71",
+    "A3.3 elevation \u00d76 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "Q",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "Q \u2014 3 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": 143.82,
+   "h_in": 120.0,
+   "frames": [
+    {
+     "rect": [
+      1086.0,
+      269.4,
+      1296.2,
+      446.6
+     ],
+     "w_in": 144.0,
+     "h_in": 120.0,
+     "bays": 1,
+     "rows": 1,
+     "mullions_x": [],
+     "mullions_y": []
+    }
+   ],
+   "bays": 1,
+   "rows": 1,
+   "qty": 3,
+   "qty_source": "plan tags",
+   "sf_each": 119.85,
+   "sf_total": 359.5,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "width 12'-0\" from dimension string (drawing measured 11'-8 1/8\")",
+    "height 10'-0\" from dimension string (drawing measured 9'-10 1/8\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "size from A4.1 elevation snap (schedule 12'-0\" x 10'-0\")",
+    "elevation shows 6 tag(s), plan 3"
+   ],
+   "citations": [
+    "A3.3 captioned schedule type Q",
+    "plan tags \u00d73",
+    "A3.3 elevation \u00d76 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "K",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "K \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": 172.13,
+   "h_in": 96.07,
+   "frames": [
+    {
+     "rect": [
+      263.4,
+      266.4,
+      521.6,
+      410.5
+     ],
+     "w_in": 172.13,
+     "h_in": 96.07,
+     "bays": 3,
+     "rows": 1,
+     "mullions_x": [
+      386.9,
+      448.1
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 3,
+   "rows": 1,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": 114.84,
+   "sf_total": 114.8,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "elevation shows 4 tag(s), plan 1"
+   ],
+   "citations": [
+    "A3.3 captioned schedule type K",
+    "plan tags \u00d71",
+    "A3.3 elevation \u00d74 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "R",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "R \u2014 5 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": 112.13,
+   "h_in": 64.07,
+   "frames": [
+    {
+     "rect": [
+      2074.0,
+      524.6,
+      2242.2,
+      620.7
+     ],
+     "w_in": 112.13,
+     "h_in": 64.07,
+     "bays": 3,
+     "rows": 1,
+     "mullions_x": [
+      2128.6,
+      2184.6
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 3,
+   "rows": 1,
+   "qty": 5,
+   "qty_source": "plan tags",
+   "sf_each": 49.89,
+   "sf_total": 249.4,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A3.4 captioned schedule type R",
+    "plan tags \u00d75",
+    "A3.3 elevation \u00d75 (tag only)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "E",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "E \u2014 8 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. W/ TRANSLUCENT WALL PANEL SYSTEM",
+   "location": null,
+   "w_in": 208.0,
+   "h_in": 25.07,
+   "frames": [
+    {
+     "rect": [
+      1520.5,
+      376.0,
+      1835.9,
+      407.5
+     ],
+     "w_in": 210.27,
+     "h_in": 24.0,
+     "bays": 6,
+     "rows": 1,
+     "mullions_x": [
+      1583.2,
+      1635.2,
+      1645.5,
+      1707.9,
+      1770.2
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 6,
+   "rows": 1,
+   "qty": 8,
+   "qty_source": "plan tags",
+   "sf_each": 36.21,
+   "sf_total": 289.7,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "translucent_panel",
+     "note": "Translucent wall panel system with this frame \u2014 always ours, own line item",
+     "rule": "translucent_with"
+    }
+   ],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "keyword rule translucent would say translucent_panel; series wins",
+    "size from A4.1 elevation snap (schedule 17'-6 1/4\" x 2'-0\")",
+    "elevation shows 16 tag(s), plan 8"
+   ],
+   "citations": [
+    "A3.3 captioned schedule type E",
+    "plan tags \u00d78",
+    "A3.3 elevation \u00d716 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "P",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "P \u2014 10 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS. W/ TRANSLUCENT WALL PANEL",
+   "location": null,
+   "w_in": 151.82,
+   "h_in": 25.07,
+   "frames": [
+    {
+     "rect": [
+      1361.2,
+      649.2,
+      1589.4,
+      680.8
+     ],
+     "w_in": 152.13,
+     "h_in": 25.0,
+     "bays": 3,
+     "rows": 1,
+     "mullions_x": [
+      1437.0,
+      1512.1
+     ],
+     "mullions_y": []
+    }
+   ],
+   "bays": 3,
+   "rows": 1,
+   "qty": 10,
+   "qty_source": "plan tags",
+   "sf_each": 26.43,
+   "sf_total": 264.3,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "translucent_panel",
+     "note": "Translucent wall panel system with this frame \u2014 always ours, own line item",
+     "rule": "translucent_with"
+    }
+   ],
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-1\" from dimension string (drawing measured 1'-9 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf",
+    "keyword rule translucent would say translucent_panel; series wins",
+    "size from A4.1 elevation snap (schedule 12'-8 1/8\" x 2'-1\")",
+    "elevation shows 18 tag(s), plan 10"
+   ],
+   "citations": [
+    "A3.4 captioned schedule type P",
+    "plan tags \u00d710",
+    "A3.4 elevation \u00d718 (snapped)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "U",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "U \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A3.4 captioned schedule type U",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "V",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "V \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A3.4 captioned schedule type V",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "W",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "W \u2014 1 Thus",
+   "desc": "451T KAWNEER CENTER GLAZED STOREFRONT WINDOWS WITH 1\" INSULATED TINTED GLASS.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "plan tags",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [
+    {
+     "id": "kawneer-451t",
+     "manufacturer": "Kawneer",
+     "series": "451T",
+     "scope_class": "ext_sf",
+     "system_type": "Ext SF",
+     "matched": "451T"
+    }
+   ],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "series Kawneer 451T \u2192 ext_sf"
+   ],
+   "citations": [
+    "A3.4 captioned schedule type W",
+    "plan tags \u00d71"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "schedule",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 1",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "1 (A3.1)",
+   "desc": "PROVIDED BY FINISH HARDWARE PROVIDER: CYLINDER LOCK (ACTIVE LEAF ONLY). PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, CLOSERS WITH STOP, RIM MOUNTED PANIC DEVICES WITH ELECTRIC RETRACTABLE LATCH (ACTIVE LEAF ONLY), CUSTOM LONG EXTERIOR PULLS, DOOR SHOES, HEAVY DUTY FLOOR STOPS, WEATHER STRIPPING, THRESHOLD, KEYED REMOVABLE MULLION.  (PROVIDE EXTRA LENGTH OF CABLE WITH DISCONNECT TO ALLOW FOR REMOVAL OF MULLION.) POWER SUPPLY, POWER TRANSFER. PROVIDED BY OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR: CARD READER  (ACTIVE LEAF ONLY), DOOR CONTACT. COORDINATE INSTALLATION OF ELECTRIC RETRACTABLE LATCH AND ALL WIRING WITH OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 1"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 2",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "2 (A3.1)",
+   "desc": "PROVIDED BY FINISH HARDWARE PROVIDER: CYLINDER LOCK. PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, CLOSER, RIM MOUNTED PANIC DEVICE WITH ELECTRIC RETRACTABLE LATCH, EXTERIOR PULL, DOOR SHOE, HEAVY DUTY FLOOR STOP, WEATHER STRIPPING, THRESHOLD. POWER SUPPLY, POWER TRANSFER. PROVIDED BY OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR: CARD READER, DOOR CONTACT. COORDINATE INSTALLATION OF ELECTRIC RETRACTABLE LATCH AND ALL WIRING WITH OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 2"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 3",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "3 (A3.1)",
+   "desc": "PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, CLOSERS W/ STOP, PUSH /CUSTOM LONG EXTERIOR PULLS, KEYED REMOVABLE MULLION, WEATHER STRIPPING.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 3"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 6",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "6 (A3.1)",
+   "desc": "PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, CLOSERS WITH WALL MOUNTED HOLD OPEN, WEATHERSTRIPPING, THRESHOLD, DOOR SHOES, RIM MOUNTED PANIC DEVICE WITH ELECTRIC STRIKE, KEYED REMOVABLE MULLION. (PROVIDE EXTRA LENGTH OF CABLE WITH DISCONNECT TO ALLOW FOR REMOVAL OF MULLION, POWER SUPPLY, POWER TRANSFER. PROVIDED BY OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR: CARD READER (ACTIVE LEAF ONLY). COORDINATE ELECTRIC STRIKE AND ALL WIRING WITH OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 6"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 7",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "7 (A3.1)",
+   "desc": "PROVIDED BY FINISH HARDWARE PROVIDER: CYLINDER LOCK WITH THUMB TURN. WALL BUMPER. PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, PULLS BOTH SIDES, CLOSER WITH STOP, THRESHOLD, WEATHERSTRIPPING, DOOR SHOES AT DOOR ADJACENT TO POOL DECK.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 7"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 11",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "11 (A3.1)",
+   "desc": "PROVIDED BY FINISH HARDWARE PROVIDER: CYLINDER LOCK (ACTIVE LEAF ONLY). PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, CLOSERS WITH STOP, RIM MOUNTED PANIC DEVICES WITH ELECTRIC RETRACTABLE LATCH (ACTIVE LEAF ONLY), EXTERIOR PULLS, DOOR SHOES, HEAVY DUTY FLOOR STOPS, WEATHER STRIPPING, THRESHOLD, KEYED REMOVABLE MULLION.  (PROVIDE EXTRA LENGTH OF CABLE WITH DISCONNECT TO ALLOW FOR REMOVAL OF MULLION.) POWER SUPPLY, POWER TRANSFER. PROVIDED BY OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR: CARD READER  (ACTIVE LEAF ONLY), DOOR CONTACT. COORDINATE INSTALLATION OF ELECTRIC RETRACTABLE LATCH AND ALL WIRING W/ OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 11"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 14",
+   "cls": "unclassified",
+   "kind": "note",
+   "label": "14 (A3.1)",
+   "desc": "NON-REMOVABLE HINGES, FIXED EXTERIOR PULLS, CYLDINDER LOCK WITH INTERCHANGEABLE CORE (ACTIVE LEAF), FLUSH BOLTS (INACTIVE LEAF), KEYED REMOVABLE MULLION, WEATHERSTRIPPING, DOOR SHOES, DRIP CAP, THRESHOLD",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ],
+   "notes": [],
+   "citations": [
+    "A3.1 note row 14"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 17",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "17 (A3.1)",
+   "desc": "PROVIDED BY FINISH HARDWARE PROVIDER: CYLINDER LOCK. PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, CLOSER, RIM MOUNTED PANIC DEVICE WITH ELECTRIC STRIKE, EXTERIOR PULL, DOOR SHOE, WALL BUMPER, WEATHERSTRIPPING, POWER SUPPLY, POWER TRANSFER. PROVIDED BY OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR: CARD READER. COORDINATE INSTALLATION OF ELECTRIC STRIKE AND ALL WIRING WITH THE OWNER'S LOW VOLTAGE SECURITY SUBCONTRACTOR. ISSUE DATE",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 17"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 note 19",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "19 (A3.1)",
+   "desc": "PROVIDED BY FINISH HARDWARE PROVIDER: CYLINDER LOCK (ACTIVE LEAF). PROVIDED BY ALUMINUM STOREFRONT PROVIDER: PIVOT HINGES, CLOSERS, RIM MOUNTED PANIC DEVICES, KEYED ALUMINUM MULLION, DOOR SHOES.",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 note row 19"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "note",
+   "allglass": null
+  },
+  {
+   "id": "A3.8 det 6",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "6/A3.8 HEAD DETAIL - SF FRAME IN CMU",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.8 detail 6 (HEAD DETAIL - SF FRAME IN CMU)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.8 det 7",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "7/A3.8 JAMB DETAIL - SF FRAME IN CMU",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.8 detail 7 (JAMB DETAIL - SF FRAME IN CMU)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.8 det 8",
+   "cls": "fire_rated_sf",
+   "kind": "detail",
+   "label": "8/A3.8 HEAD DETAIL - SF IN CMU - TRANSOM",
+   "desc": "GLAZING; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "fire_rated_sf: Fire-rated aluminum storefront"
+   ],
+   "citations": [
+    "A3.8 detail 8 (HEAD DETAIL - SF IN CMU - TRANSOM)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.8 det 9",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "9/A3.8 JAMB DETAIL - SF IN STUDS",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.8 detail 9 (JAMB DETAIL - SF IN STUDS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.8 det 10",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "10/A3.8 HEAD DETAIL - SF IN STUDS",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.8 detail 10 (HEAD DETAIL - SF IN STUDS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.8 det 11",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "11/A3.8 JAMB DETAIL - SF IN CMU SIDELITE",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.8 detail 11 (JAMB DETAIL - SF IN CMU SIDELITE)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 1",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "1/A3.9 JAMB DETAIL AT OVERHEAD DOOR",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 1 (JAMB DETAIL AT OVERHEAD DOOR)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 2",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "2/A3.9 JAMB DETAIL AT VESTIBULE SLANTED WALL",
+   "desc": "BRAKE METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 2 (JAMB DETAIL AT VESTIBULE SLANTED WALL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 3",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "3/A3.9 JAMB DETAIL AT VESTIBULE CORNER",
+   "desc": "BRAKE METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 3 (JAMB DETAIL AT VESTIBULE CORNER)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 4",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "4/A3.9 JAMB DETAIL - BRAKE METAL BETWEEN STOREFRONT",
+   "desc": "BRAKE METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 4 (JAMB DETAIL - BRAKE METAL BETWEEN STOREFRONT)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 5",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "5/A3.9 JAMB DETAIL AT BRAKE METAL CORNER",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 5 (JAMB DETAIL AT BRAKE METAL CORNER)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 7",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "7/A3.9 SILL DETAIL - EGRESS STAIR HIGH CLERESTORY",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 7 (SILL DETAIL - EGRESS STAIR HIGH CLERESTORY)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 11",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "11/A3.9 SILL DETAIL - CLERESTORY AT METAL ROOF",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 11 (SILL DETAIL - CLERESTORY AT METAL ROOF)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 12",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "12/A3.9 SILL DETAIL AT VESTIBULE ROOF",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 12 (SILL DETAIL AT VESTIBULE ROOF)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 8",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "8/A3.9 HEAD DETAIL - CLERESTORY AT BRICK INSET",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 8 (HEAD DETAIL - CLERESTORY AT BRICK INSET)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 6",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "6/A3.9 HEAD DETAIL - ACM AT ACM SOFFIT",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 6 (HEAD DETAIL - ACM AT ACM SOFFIT)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 9",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "9/A3.9 HEAD DETAIL - BRICK/STUD",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 9 (HEAD DETAIL - BRICK/STUD)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.9 det 10",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "10/A3.9 SILL DETAIL - BRICK AT STUD",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.9 detail 10 (SILL DETAIL - BRICK AT STUD)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 1",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "1/A3.10 SILL DETAIL AT STAIR STRINGER",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.10 detail 1 (SILL DETAIL AT STAIR STRINGER)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 2",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "2/A3.10 WINDOW DETAIL - EGRESS STAIRS",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.10 detail 2 (WINDOW DETAIL - EGRESS STAIRS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 3",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "3/A3.10 SILL DETAIL - PF METAL WALL PANEL",
+   "desc": "BRAKE METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.10 detail 3 (SILL DETAIL - PF METAL WALL PANEL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 4",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "4/A3.10 DETAIL - BRAKE METAL WRAP AT TRANSLUCENT PANEL",
+   "desc": "BRAKE METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.10 detail 4 (DETAIL - BRAKE METAL WRAP AT TRANSLUCENT PANEL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 6",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "6/A3.10 DETAIL - TALL LOBBY WINDOW AT 2ND FLOOR",
+   "desc": "CURTAINWALL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.10 detail 6 (DETAIL - TALL LOBBY WINDOW AT 2ND FLOOR)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 7",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "7/A3.10 SILL DETAIL - SLANTED LOBBY WALL WINDOW",
+   "desc": "CURTAINWALL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.10 detail 7 (SILL DETAIL - SLANTED LOBBY WALL WINDOW)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 10",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "10/A3.10 SILL DETAIL - LOBBY CLERESTORY",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.10 detail 10 (SILL DETAIL - LOBBY CLERESTORY)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 9",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "9/A3.10 SILL DETAIL - CMU BRICK",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.10 detail 9 (SILL DETAIL - CMU BRICK)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 8",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "8/A3.10 SILL DETAIL - BULL NOSE CMU",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.10 detail 8 (SILL DETAIL - BULL NOSE CMU)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 11",
+   "cls": "unclassified",
+   "kind": "detail",
+   "label": "11/A3.10 JAMB DETAIL - TRANSLUCENT PANEL",
+   "desc": "BRAKE METAL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ],
+   "notes": [],
+   "citations": [
+    "A3.10 detail 11 (JAMB DETAIL - TRANSLUCENT PANEL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 12",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "12/A3.10 JAMB DETAIL - SLANTED LOBBY WALL WINDOW",
+   "desc": "CURTAINWALL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.10 detail 12 (JAMB DETAIL - SLANTED LOBBY WALL WINDOW)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.10 det 13",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "13/A3.10 DETAIL - BRAKE METAL WRAP AT CURTAINWALL",
+   "desc": "BRAKE METAL; CURTAIN WALL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.10 detail 13 (DETAIL - BRAKE METAL WRAP AT CURTAINWALL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 1",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "1/A3.11 PLAN DETAIL - BRICK PILASTER - STUDS",
+   "desc": "CURTAINWALL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.11 detail 1 (PLAN DETAIL - BRICK PILASTER - STUDS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 2",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "2/A3.11 HEAD DETAIL - VESITBULE INT.",
+   "desc": "CURTAINWALL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.11 detail 2 (HEAD DETAIL - VESITBULE INT.)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 3",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "3/A3.11 HEAD DETAIL - LOBBY CEILING",
+   "desc": "CURTAINWALL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A3.11 detail 3 (HEAD DETAIL - LOBBY CEILING)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 5",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "5/A3.11 SILL DETAIL - SF",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.11 detail 5 (SILL DETAIL - SF)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 6",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "6/A3.11 JAMB DETAIL - SF AT ACM",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.11 detail 6 (JAMB DETAIL - SF AT ACM)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 8",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "8/A3.11 HEAD DETAIL - SF AT CANOPY",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.11 detail 8 (HEAD DETAIL - SF AT CANOPY)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 7",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "7/A3.11 HEAD DETAIL - SF AT METAL PANEL",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.11 detail 7 (HEAD DETAIL - SF AT METAL PANEL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 10",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "10/A3.11 JAMB DETAIL - THIN BRICK PILASTER",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.11 detail 10 (JAMB DETAIL - THIN BRICK PILASTER)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.11 det 11",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "11/A3.11 SILL DETAIL - EGRESS STAIR CANOPY",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.11 detail 11 (SILL DETAIL - EGRESS STAIR CANOPY)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 1",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "1/A3.12 SILL DETAIL - SF AT 8\" STUD",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.12 detail 1 (SILL DETAIL - SF AT 8\" STUD)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 2",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "2/A3.12 JAMB DETAIL - BRAKE METAL AT SF",
+   "desc": "BRAKE METAL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.12 detail 2 (JAMB DETAIL - BRAKE METAL AT SF)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 3",
+   "cls": "unclassified",
+   "kind": "detail",
+   "label": "3/A3.12 JAMB DETAIL - BRAKE METAL AT TRANSLUCENT PANEL",
+   "desc": "BRAKE METAL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "break_metal",
+     "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours",
+     "rule": "closure_trim"
+    }
+   ],
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ],
+   "notes": [],
+   "citations": [
+    "A3.12 detail 3 (JAMB DETAIL - BRAKE METAL AT TRANSLUCENT PANEL)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 4",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "4/A3.12 JAMB DETAIL - SF AT CLERESTORY",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.12 detail 4 (JAMB DETAIL - SF AT CLERESTORY)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 5",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "5/A3.12 SILL DETAIL - SF AT CMU",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.12 detail 5 (SILL DETAIL - SF AT CMU)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 6",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "6/A3.12 SILL DETAIL - SF AT ACM",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.12 detail 6 (SILL DETAIL - SF AT ACM)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 7",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "7/A3.12 SILL DETAIL - CLASSROOM SF",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.12 detail 7 (SILL DETAIL - CLASSROOM SF)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.12 det 8",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "8/A3.12 JAMB DETAIL - SF AT CMU / BRICK",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.12 detail 8 (JAMB DETAIL - SF AT CMU / BRICK)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A5.13 det 1",
+   "cls": "glass_handrail",
+   "kind": "detail",
+   "label": "1/A5.13 SECTION - POOL OBSERVATION SEATING - SEATING",
+   "desc": "GLASS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "glass_handrail: Glass handrail \u2014 aluminum rail system = ours; welded steel = glass infill only (flag)"
+   ],
+   "citations": [
+    "A5.13 detail 1 (SECTION - POOL OBSERVATION SEATING - SEATING)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A5.13 det 4",
+   "cls": "glass_handrail",
+   "kind": "detail",
+   "label": "4/A5.13 DETAIL - GLASS RAILING",
+   "desc": "GLASS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "glass_handrail: Glass handrail \u2014 aluminum rail system = ours; welded steel = glass infill only (flag)"
+   ],
+   "citations": [
+    "A5.13 detail 4 (DETAIL - GLASS RAILING)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A5.13 det 5",
+   "cls": "glass_handrail",
+   "kind": "detail",
+   "label": "5/A5.13 SECTION - POOL OBSERVATION SEATING - SIDE RAILING",
+   "desc": "GLASS; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "glass_handrail: Glass handrail \u2014 aluminum rail system = ours; welded steel = glass infill only (flag)"
+   ],
+   "citations": [
+    "A5.13 detail 5 (SECTION - POOL OBSERVATION SEATING - SIDE RAILING)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 det ?",
+   "cls": "int_sf",
+   "kind": "detail",
+   "label": "?/A3.1 DOOR ELEVATIONS",
+   "desc": "GLASS; STOREFRONT; TEMPERED",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 detail ? (DOOR ELEVATIONS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 det ?",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "?/A3.1 DOOR FRAME ELEVATIONS",
+   "desc": "GLASS; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 detail ? (DOOR FRAME ELEVATIONS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A3.1 det ?",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "?/A3.1 HARDWARE SETS",
+   "desc": "MULLION; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [
+    {
+     "cls": "hardware",
+     "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck",
+     "rule": "hardware"
+    }
+   ],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A3.1 detail ? (HARDWARE SETS)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A4.1 det 1",
+   "cls": "ext_cw",
+   "kind": "detail",
+   "label": "1/A4.1 NORTHEAST ELEVATION",
+   "desc": "CURTAINWALL; STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "curtain_wall: Curtain wall by name"
+   ],
+   "citations": [
+    "A4.1 detail 1 (NORTHEAST ELEVATION)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A4.2 det 1",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "1/A4.2 SOUTHWEST ELEVATION",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A4.2 detail 1 (SOUTHWEST ELEVATION)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A4.2 det 2",
+   "cls": "ext_sf",
+   "kind": "detail",
+   "label": "2/A4.2 SOUTHEAST ELEVATION",
+   "desc": "STOREFRONT",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": null,
+   "qty_source": "",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A4.2 detail 2 (SOUTHEAST ELEVATION)"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "detail",
+   "allglass": null
+  },
+  {
+   "id": "A4.4 sun control",
+   "cls": "sun_control",
+   "kind": "scope",
+   "label": "Sun control / louvers (A4.4) \u2014 38 members",
+   "desc": "TUBE LOUVERS, RE - ALUMINUM",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 38,
+   "qty_source": "members drawn on the elevation",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "sun control members counted from the elevation drawing \u2014 confirm count and that they are ours (spec)"
+   ],
+   "notes": [
+    "38 members, total 830'-11 1/8\""
+   ],
+   "citations": [
+    "A4.4 callout: TUBE LOUVERS, RE - ALUMINUM"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "members",
+   "allglass": null
+  }
+ ],
+ "flags": [
+  {
+   "item": "A101B",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B106A",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B117A",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B117B",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B118",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B126A",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B126B",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B126G",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B205A",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B205B",
+   "flags": [
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "DOOR TYPE B",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 7'-0\" from dimension string (drawing measured 6'-5 1/2\")",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "DOOR TYPE C",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 7'-0\" from dimension string (drawing measured 6'-5 1/2\")",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "DOOR TYPE F",
+   "flags": [
+    "width 12'-0\" from dimension string (drawing measured 11'-8 1/8\")",
+    "height 10'-0\" from dimension string (drawing measured 9'-10 1/8\")"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 5",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 9",
+   "flags": [
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 6'-0\" from dimension string (drawing measured 6'-4 1/16\")",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A3.3 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 11",
+   "flags": [
+    "height 7'-0\" from dimension string (drawing measured 7'-2 1/8\")",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A3.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 6",
+   "flags": [
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 8'-0\" from dimension string (drawing measured 8'-6 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 7",
+   "flags": [
+    "width 14'-5 3/4\" from dimension string (drawing measured 15'-6 5/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 8",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 15'-2 3/8\" from dimension string (drawing measured 14'-10 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 10",
+   "flags": [
+    "width 3'-4\" from dimension string (drawing measured 2'-10 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A3.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "FRAME TYPE 12",
+   "flags": [
+    "width 10'-0\" from dimension string (drawing measured 10'-2 7/8\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1",
+    "elevation located by size only on A4.1 \u2014 confirm"
+   ]
+  },
+  {
+   "item": "A",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "B",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "C",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 15'-7 1/8\" from dimension string (drawing measured 17'-6 3/16\")",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "D",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "width 17'-1 5/8\" from dimension string (drawing measured 17'-6 3/16\")",
+    "height 2'-0\" from dimension string (drawing measured 1'-9 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "J",
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "G",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "F",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "L",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "EE",
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "T",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 3'-1\" from dimension string (drawing measured 2'-11 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior",
+    "no plan tag found for this mark \u2014 count assumed 1"
+   ]
+  },
+  {
+   "item": "N",
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "S",
+   "flags": [
+    "height 3'-1\" from dimension string (drawing measured 3'-2 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "Q",
+   "flags": [
+    "width 12'-0\" from dimension string (drawing measured 11'-8 1/8\")",
+    "height 10'-0\" from dimension string (drawing measured 9'-10 1/8\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "K",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "R",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "E",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-0\" from dimension string (drawing measured 1'-9\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "P",
+   "flags": [
+    "scale assumed 18 pt/ft (no dimension string matched this drawing)",
+    "drawn size does not match any dimension string \u2014 check scale",
+    "height 2'-1\" from dimension string (drawing measured 1'-9 1/16\")",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "U",
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "V",
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "W",
+   "flags": [
+    "no elevation drawing found above the tag",
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A3.1 note 6",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A3.1 note 7",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A3.1 note 14",
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ]
+  },
+  {
+   "item": "A3.1 note 19",
+   "flags": [
+    "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A3.10 det 11",
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ]
+  },
+  {
+   "item": "A3.12 det 3",
+   "flags": [
+    "no classification rule matched \u2014 review"
+   ]
+  },
+  {
+   "item": "A4.4 sun control",
+   "flags": [
+    "sun control members counted from the elevation drawing \u2014 confirm count and that they are ours (spec)"
+   ]
+  }
+ ],
+ "totals": {
+  "ext_sf_door": {
+   "items": 20,
+   "qty": 20,
+   "sf": 0.0
+  },
+  "int_cw_door": {
+   "items": 1,
+   "qty": 1,
+   "sf": 0.0
+  },
+  "glazing_only": {
+   "items": 2,
+   "qty": 2,
+   "sf": 59.4
+  },
+  "int_sf": {
+   "items": 1,
+   "qty": 1,
+   "sf": 21.0
+  },
+  "ext_sf": {
+   "items": 22,
+   "qty": 60,
+   "sf": 2520.9
+  },
+  "ext_cw": {
+   "items": 5,
+   "qty": 6,
+   "sf": 213.1
+  }
+ },
+ "elapsed_s": 87.6,
+ "model_calls": 0,
+ "type_drawings": {
+  "A": {
+   "code": "A",
+   "sheet": "A3.1",
+   "page": 5,
+   "section": "DOOR FRAME TYPES",
+   "rect": null,
+   "label_rect": [
+    2475.6,
+    426.4,
+    2508.7,
+    448.7
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": true,
+   "words": "DOOR TYPE A; NO DOOR LEAF DRAWN (opening / frame only)"
+  },
+  "R": {
+   "code": "R",
+   "sheet": "A3.1",
+   "page": 5,
+   "section": "DOOR FRAME TYPES",
+   "rect": null,
+   "label_rect": [
+    2478.2,
+    418.4,
+    2516.9,
+    448.7
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": true,
+   "words": "DOOR TYPE R; NO DOOR LEAF DRAWN (opening / frame only)"
+  },
+  "K": {
+   "code": "K",
+   "sheet": "A3.1",
+   "page": 5,
+   "section": "DOOR FRAME TYPES",
+   "rect": null,
+   "label_rect": [
+    2487.8,
+    418.4,
+    2524.3,
+    448.7
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": true,
+   "words": "DOOR TYPE K; NO DOOR LEAF DRAWN (opening / frame only)"
+  },
+  "S": {
+   "code": "S",
+   "sheet": "A3.1",
+   "page": 5,
+   "section": "DOOR FRAME TYPES",
+   "rect": null,
+   "label_rect": [
+    2506.8,
+    401.1,
+    2543.2,
+    430.8
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": true,
+   "words": "DOOR TYPE S; NO DOOR LEAF DRAWN (opening / frame only)"
+  },
+  "F": {
+   "code": "F",
+   "sheet": "A3.1",
+   "page": 5,
+   "section": "DOOR FRAME TYPES",
+   "rect": null,
+   "label_rect": [
+    2463.7,
+    420.7,
+    2495.6,
+    448.7
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": true,
+   "words": "DOOR TYPE F; NO DOOR LEAF DRAWN (opening / frame only)"
+  },
+  "O": {
+   "code": "O",
+   "sheet": "A3.1",
+   "page": 5,
+   "section": "DOOR FRAME TYPES",
+   "rect": null,
+   "label_rect": [
+    2457.3,
+    415.9,
+    2478.2,
+    445.9
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": true,
+   "words": "DOOR TYPE O; NO DOOR LEAF DRAWN (opening / frame only)"
+  },
+  "T": {
+   "code": "T",
+   "sheet": "A3.1",
+   "page": 5,
+   "section": "DOOR FRAME TYPES",
+   "rect": null,
+   "label_rect": [
+    2442.6,
+    410.3,
+    2481.7,
+    445.9
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": true,
+   "words": "DOOR TYPE T; NO DOOR LEAF DRAWN (opening / frame only)"
+  }
+ },
+ "code_tables": {},
+ "detail_titles": {
+  "2/A2.19": "INTERIOR ELEVATION - POOL OBSERVATION SEATING",
+  "1/A2.19": "ENLARGED POOL OBSERVATION FLOOR PLAN",
+  "3/A2.19": "CEILING DETAIL - CMU WALL",
+  "4/A2.19": "CEILING DETAIL - SLANTED STUD WALL",
+  "1/A3.8": "HEAD DETAIL - HM FRAME IN CMU",
+  "4/A3.8": "JAMB DETAIL - HM FRAME IN CMU",
+  "5/A3.8": "JAMB DETAIL - HM FRAME IN CMU",
+  "2/A3.8": "HEAD DETAIL - HM FRAME IN STUDS",
+  "3/A3.8": "JAMB DETAIL - HM FRAME IN STUDS",
+  "6/A3.8": "HEAD DETAIL - SF FRAME IN CMU",
+  "7/A3.8": "JAMB DETAIL - SF FRAME IN CMU",
+  "8/A3.8": "HEAD DETAIL - SF IN CMU - TRANSOM",
+  "9/A3.8": "JAMB DETAIL - SF IN STUDS",
+  "10/A3.8": "HEAD DETAIL - SF IN STUDS",
+  "11/A3.8": "JAMB DETAIL - SF IN CMU SIDELITE",
+  "12/A3.8": "SILL DETAIL - COILING COUNTER DOOR",
+  "13/A3.8": "HEAD DETAIL - COILING COUNTER",
+  "14/A3.8": "JAMB DETAIL - COILING COUNTER",
+  "15/A3.8": "OVERHEAD DOOR HEAD DETAIL",
+  "16/A3.8": "OVERHEAD DOOR SILL DETAIL",
+  "17/A3.8": "HEAD DETAIL AT HM DOOR",
+  "18/A3.8": "JAMB DETAIL - HM FRAME IN CMU/BRICK",
+  "19/A3.8": "SILL DETAIL - HM DOOR",
+  "1/A3.9": "JAMB DETAIL AT OVERHEAD DOOR",
+  "2/A3.9": "JAMB DETAIL AT VESTIBULE SLANTED WALL [STOREFRONT]",
+  "3/A3.9": "JAMB DETAIL AT VESTIBULE CORNER [STOREFRONT]",
+  "4/A3.9": "JAMB DETAIL - BRAKE METAL BETWEEN STOREFRONT",
+  "5/A3.9": "JAMB DETAIL AT BRAKE METAL CORNER [STOREFRONT]",
+  "7/A3.9": "SILL DETAIL - EGRESS STAIR HIGH CLERESTORY [STOREFRONT]",
+  "11/A3.9": "SILL DETAIL - CLERESTORY AT METAL ROOF [STOREFRONT]",
+  "12/A3.9": "SILL DETAIL AT VESTIBULE ROOF [STOREFRONT]",
+  "8/A3.9": "HEAD DETAIL - CLERESTORY AT BRICK INSET [STOREFRONT]",
+  "6/A3.9": "HEAD DETAIL - ACM AT ACM SOFFIT [STOREFRONT]",
+  "9/A3.9": "HEAD DETAIL - BRICK/STUD [STOREFRONT]",
+  "10/A3.9": "SILL DETAIL - BRICK AT STUD [STOREFRONT]",
+  "1/A3.10": "SILL DETAIL AT STAIR STRINGER [STOREFRONT]",
+  "2/A3.10": "WINDOW DETAIL - EGRESS STAIRS [STOREFRONT]",
+  "3/A3.10": "SILL DETAIL - PF METAL WALL PANEL [STOREFRONT]",
+  "4/A3.10": "DETAIL - BRAKE METAL WRAP AT TRANSLUCENT PANEL [STOREFRONT]",
+  "5/A3.10": "HEAD DETAIL - TRANSLUCENT PANEL",
+  "6/A3.10": "DETAIL - TALL LOBBY WINDOW AT 2ND FLOOR [CURTAINWALL]",
+  "7/A3.10": "SILL DETAIL - SLANTED LOBBY WALL WINDOW [CURTAINWALL]",
+  "10/A3.10": "SILL DETAIL - LOBBY CLERESTORY [STOREFRONT]",
+  "9/A3.10": "SILL DETAIL - CMU BRICK [STOREFRONT]",
+  "8/A3.10": "SILL DETAIL - BULL NOSE CMU [STOREFRONT]",
+  "11/A3.10": "JAMB DETAIL - TRANSLUCENT PANEL",
+  "12/A3.10": "JAMB DETAIL - SLANTED LOBBY WALL WINDOW [CURTAINWALL]",
+  "13/A3.10": "DETAIL - BRAKE METAL WRAP AT CURTAINWALL",
+  "1/A3.11": "PLAN DETAIL - BRICK PILASTER - STUDS [CURTAINWALL]",
+  "2/A3.11": "HEAD DETAIL - VESITBULE INT. [CURTAINWALL]",
+  "3/A3.11": "HEAD DETAIL - LOBBY CEILING [CURTAINWALL]",
+  "4/A3.11": "HEAD DETAIL - VESTIBULE",
+  "5/A3.11": "SILL DETAIL - SF",
+  "6/A3.11": "JAMB DETAIL - SF AT ACM",
+  "8/A3.11": "HEAD DETAIL - SF AT CANOPY",
+  "9/A3.11": "JAMB DETAIL - BRICK SF",
+  "7/A3.11": "HEAD DETAIL - SF AT METAL PANEL",
+  "10/A3.11": "JAMB DETAIL - THIN BRICK PILASTER [STOREFRONT]",
+  "11/A3.11": "SILL DETAIL - EGRESS STAIR CANOPY [STOREFRONT]",
+  "1/A3.12": "SILL DETAIL - SF AT 8\" STUD",
+  "2/A3.12": "JAMB DETAIL - BRAKE METAL AT SF",
+  "3/A3.12": "JAMB DETAIL - BRAKE METAL AT TRANSLUCENT PANEL",
+  "4/A3.12": "JAMB DETAIL - SF AT CLERESTORY",
+  "5/A3.12": "SILL DETAIL - SF AT CMU",
+  "6/A3.12": "SILL DETAIL - SF AT ACM",
+  "7/A3.12": "SILL DETAIL - CLASSROOM SF",
+  "8/A3.12": "JAMB DETAIL - SF AT CMU / BRICK",
+  "1/A5.13": "SECTION - POOL OBSERVATION SEATING - SEATING",
+  "2/A5.13": "SECTION - POOL OBSERVATION SEATING - STAIRS",
+  "3/A5.13": "SECTION - POOL OBSERVATION SEATING - ADA SEATING",
+  "4/A5.13": "DETAIL - GLASS RAILING",
+  "5/A5.13": "SECTION - POOL OBSERVATION SEATING - SIDE RAILING [STOREFRONT]",
+  "6/A5.13": "DETAIL - LOW RAILING",
+  "1/A4.4": "ENLARGED ELEVATION - LOUVERS",
+  "1/A4.1": "NORTHEAST ELEVATION [CURTAINWALL, STOREFRONT]",
+  "2/A4.1": "NORTHWEST ELEVATION",
+  "1/A4.2": "SOUTHWEST ELEVATION [STOREFRONT]",
+  "2/A4.2": "SOUTHEAST ELEVATION [STOREFRONT]"
+ },
+ "markups_count": 994
+}

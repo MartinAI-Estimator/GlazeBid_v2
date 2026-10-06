@@ -35,7 +35,8 @@ class Detail:
     title: str
     title_rect: list
     region: list
-    hits: list = field(default_factory=list)   # [{"text":..., "rect":[...], "kw": "STOREFRONT"}]
+    hits: list = field(default_factory=list)
+    num_rect: list | None = None   # [{"text":..., "rect":[...], "kw": "STOREFRONT"}]
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -71,8 +72,10 @@ def find_details(pg: fitz.Page, sheet: str, keywords: re.Pattern, exclude_x: flo
         th = r.y1 - r.y0
         n = [u for u in nums if abs(u.center.y - r.y0 - th / 2) < 1.5 * th and u.rect[2] <= r.x0 + 2 and r.x0 - u.rect[2] < 90]
         n.sort(key=lambda u: r.x0 - u.rect[2])
+        num_rect = None
         if n:
             num = n[0].text.strip()
+            num_rect = [round(v) for v in n[0].rect]
         else:
             # "11 SCALE: 1/4" = 1'-0"" on the line under the title, or "6 PLAN DETAIL" in the title itself
             sn = [u for u in scale_nums if abs(u.center.y - (r.y0 + r.y1) / 2) < 2.0 * th and r.x0 - 120 <= u.rect[0] <= r.x0 + 4]
@@ -90,5 +93,5 @@ def find_details(pg: fitz.Page, sheet: str, keywords: re.Pattern, exclude_x: flo
                 if m:
                     hits.append({"text": u.text.strip(), "rect": [round(v) for v in u.rect], "kw": m.group(0).upper()})
         out.append(Detail(sheet, pg.number, num, t.text.strip(), [round(v) for v in t.rect],
-                          [round(v) for v in region], hits))
+                          [round(v) for v in region], hits, num_rect))
     return out

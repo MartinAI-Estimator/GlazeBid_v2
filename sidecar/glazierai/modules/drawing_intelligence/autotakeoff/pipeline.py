@@ -124,7 +124,10 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
     by_cat: dict[str, list[SheetInfo]] = {}
     for s in arch:
         for c in s.categories:
-            by_cat.setdefault(c, []).append(s)
+            # a sheet with no title anywhere is read by every reader that can't double-count
+            for cc in (("schedule", "elevation", "detail") if c == "unknown" else (c,)):
+                if s not in by_cat.setdefault(cc, []):
+                    by_cat[cc].append(s)
 
     out: dict = {"project": project_name, "pdf": pdf_path, "pages": len(doc),
                  "sheets": [s.to_dict() for s in index], "read": [], "skipped": []}
@@ -148,9 +151,16 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
     # one entry per mark: when two schedule sheets carry the same mark, keep the
     # one with a drawing / size; the other is a stray (detail bubble, enlarged plan)
     best: dict[str, ScheduleEntry] = {}
+    _rank = {"tabular": 0, "pictorial": 1, "captioned": 2}
     for e in entries:
         cur = best.get(e.mark)
-        if cur is None or (not cur.frames and not cur.w_in and (e.frames or e.w_in)):
+        if cur is None:
+            best[e.mark] = e
+            continue
+        has = lambda x: bool(x.frames or x.w_in)
+        # a real schedule (table / pictorial type) beats a captioned label of the same mark;
+        # otherwise the one with a drawing / size wins
+        if (_rank.get(e.layout, 3), not has(e)) < (_rank.get(cur.layout, 3), not has(cur)):
             best[e.mark] = e
     entries = list(best.values())
     # a pictorial "type" with neither a drawing nor a size is not an opening we can carry
@@ -214,8 +224,8 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                     merged.unmatched[m] = max(merged.unmatched.get(m, 0), n)
             merged.kind = fam_kind[fam] if merged.kind is None else merged.kind
         censuses.append(merged)
-        out["read"].append({"sheet": s.sheet, "page": s.page, "step": "plan", "kind": pc.kind,
-                            "tags": sum(pc.counts.values()), "unmatched": pc.unmatched})
+        out["read"].append({"sheet": s.sheet, "page": s.page, "step": "plan", "kind": merged.kind,
+                            "tags": sum(merged.counts.values()), "unmatched": merged.unmatched})
     plan_counts = merge_counts(censuses, {s.sheet: s.title for s in index})
 
     # ── 3b. classify schedule entries (needed to decide what to snap) ──────
@@ -235,6 +245,27 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
     type_info: dict = {}
     code_tabs: dict = {}
     hm_frames = False
+    # every detail title in the set, for schedule cells like "6/A3.8"
+    detail_titles: dict = {}
+    _dsheets = []
+    for cat in ("detail", "section", "enlarged", "elevation", "schedule"):
+        for s in by_cat.get(cat, []):
+            if s not in _dsheets:
+                _dsheets.append(s)
+    _all_details: dict = {}
+    for s in _dsheets:
+        ds = find_details(doc[s.page], s.sheet, detail_keywords())
+        _all_details[s.page] = ds
+        for d in ds:
+            if d.num and d.num != "?":
+                t = d.title
+                # when the title names no system, carry the detail's own keywords ("…VESTIBULE INT. [STOREFRONT]")
+                if not re.search(r"\bSF\b|STOREFRONT|CURTAIN|\bCW\b|\bHM\b|HOLLOW METAL|OVERHEAD|COILING|WOOD", t, re.I):
+                    kws = sorted({h["kw"] for h in d.hits if h["kw"] in ("STOREFRONT", "STORE FRONT", "CURTAIN WALL", "CURTAINWALL")})
+                    if kws:
+                        t = f"{t} [{', '.join(kws)}]"
+                detail_titles.setdefault((d.num, s.sheet.replace("-", "").upper()), t)
+    out["detail_titles"] = {f"{k[0]}/{k[1]}": v for k, v in detail_titles.items()}
     if any(e.layout == "tabular" for e in entries):
         for s in index:
             if s.discipline.upper().startswith(("A", "I")) and ("TYPE" in s.title.upper() or "schedule" in s.categories):
@@ -246,15 +277,18 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                     code_tabs.setdefault(k, v)
         out["type_drawings"] = {k: v.to_dict() for k, v in type_info.items()}
         out["code_tables"] = code_tabs
-    job_interior = not any("EXTERIOR" in s.title.upper() for s in index)
+    # interior job = no exterior elevations anywhere (titles like "EXTERIOR ELEVATIONS" or
+    # compass elevations "NORTHWEST ELEVATION", "SOUTH ELEVATION", "BUILDING ELEVATIONS")
+    _ext = re.compile(r"EXTERIOR|(NORTH|SOUTH|EAST|WEST)\w*\s+ELEVATION|BUILDING ELEVATION", re.I)
+    job_interior = not any(_ext.search(s.title) for s in index)
     from .classify import rules as _rules
     fire_cols = [c.upper() for c in _rules().get("fire_rating_columns", [])]
     for e in entries:
         s = sheet_of[e.page]
         txt = e.desc if e.layout == "tabular" else " ".join(e.text)
         is_door = _is_door(e)
-        if e.layout == "tabular" and (type_info or code_tabs):
-            extra = describe_row(e.cells, type_info, code_tabs, hm_frame_codes=hm_frames)
+        if e.layout == "tabular" and (type_info or code_tabs or detail_titles):
+            extra = describe_row(e.cells, type_info, code_tabs, hm_frame_codes=hm_frames, detail_titles=detail_titles)
             if extra:
                 e.extra = extra
                 txt = e.desc
@@ -306,7 +340,7 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
         for s in by_cat.get(cat, []):
             if any(d.page == s.page for d in details):
                 continue
-            ds = [d for d in find_details(doc[s.page], s.sheet, KW) if d.hits]
+            ds = [d for d in (_all_details.get(s.page) or find_details(doc[s.page], s.sheet, KW)) if d.hits]
             details += ds
             if ds:
                 out["read"].append({"sheet": s.sheet, "page": s.page, "step": "details", "hits": len(ds)})
@@ -379,11 +413,18 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                   desc=r.text, flags=c.flags, notes=c.notes, implied=c.implied, series=c.series, source=r.kind)
         it.citations.append(f"{r.sheet} {r.kind} row {r.code}")
         items.append(it)
-        sub = subject_for(c.cls, "region") or subject_for("note", "label")
-        markups.append(_mk(iid, r.sheet, r.page, sub, "region", r.rect, note=f"{r.kind} row {r.code}: {r.keyword}"))
+        # legend rows are drawn (Martin colours them); numbered notes only when they name a
+        # manufacturer / series (Valvoline: "STOREFRONT DOORS TYPE A SHALL BE KAWNEER…",
+        # Kawneer hardware rows) — generic code notes stay in the ledger only
+        _mfr = re.compile(r"KAWNEER|TUBELITE|YKK|EFCO|OLDCASTLE|\bOBE\b|PITT?CO|\bCRL\b|ARCADIA|US ALUMINUM|VITRO|WAUSAU|KALWALL", re.I)
+        if r.kind == "legend" or c.series or _mfr.search(r.text):
+            sub = subject_for(c.cls, "region") or subject_for("note", "label")
+            markups.append(_mk(iid, r.sheet, r.page, sub, "region", r.rect, note=f"{r.kind} row {r.code}: {r.keyword}"))
 
     # details
     for d in details:
+        if d.num in ("?", "") and re.search(r"NOTES|LEGEND|KEY\b|ABBREVIATIONS|GENERAL", d.title, re.I):
+            continue   # an unnumbered notes / legend heading, not a detail or a schedule
         kws = sorted({h["kw"] for h in d.hits})
         c = classify(" ".join(h["text"] for h in d.hits))
         iid = f"{d.sheet} det {d.num}"
@@ -393,8 +434,38 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
         items.append(it)
         sub = subject_for(c.cls if c.kind != "excluded" else "excluded", "region") or subject_for("ext_sf", "region")
         markups.append(_mk(iid, d.sheet, d.page, sub, "region", d.title_rect, note=f"detail title; keywords {', '.join(kws)}"))
+        if d.num_rect:
+            markups.append(_mk(iid, d.sheet, d.page, sub, "region", d.num_rect, note="detail number"))
         for h in d.hits[:6]:
             markups.append(_mk(iid, d.sheet, d.page, sub, "region", h["rect"], note=f"keyword {h['kw']}"))
+
+    # repeated members called out by a note (tube louvers, fins, sun shades)
+    from .members import find_members
+    from .units import page_ppf as _pppf
+    for s in arch:
+        if not set(s.categories) & {"elevation", "enlarged", "section", "unknown", "detail"}:
+            continue
+        res = find_members(doc[s.page], s.sheet, _pppf(doc[s.page], 18.0) or 18.0)
+        if not res:
+            continue
+        iid = f"{s.sheet} sun control"
+        total = round(sum(m["len_in"] for m in res["members"]), 1)
+        it = Item(id=iid, cls="sun_control", kind="scope", label=f"Sun control / louvers ({s.sheet}) — {len(res['members'])} members",
+                  desc=res["callout"], qty=len(res["members"]), qty_source="members drawn on the elevation",
+                  notes=[f"{len(res['members'])} members, total {fmt_in(total)}"],
+                  flags=["sun control members counted from the elevation drawing — confirm count and that they are ours (spec)"],
+                  source="members")
+        it.citations.append(f"{s.sheet} callout: {res['callout'][:60]}")
+        items.append(it)
+        lin = subject_for("sun_control", "linear")
+        reg = subject_for("sun_control", "region")
+        if reg:
+            markups.append(_mk(iid, s.sheet, s.page, reg, "region", res["callout_rect"], note="callout"))
+        for m in res["members"]:
+            x0, y0 = m["p0"]; x1, y1 = m["p1"]
+            markups.append(Markup(iid, s.sheet, s.page, lin[0], "linear", [min(x0, x1) - 2, min(y0, y1) - 2, max(x0, x1) + 2, max(y0, y1) + 2],
+                                  [m["p0"], m["p1"]], text=f"{lin[0]}\n{fmt_in(m['len_in'])}", stroke=lin[1], fill=lin[2], opacity=lin[3],
+                                  note=f"member {fmt_in(m['len_in'])}"))
 
     # flags → yellow flag markups at the item's first citation markup
     for it in items:
@@ -512,8 +583,15 @@ def _elev_markups(it: Item, x: ElevSnap, e: ScheduleEntry) -> list[Markup]:
     region = subject_for(cls, "region") or subject_for("excluded", "region")
     area = subject_for(cls, "area")
     ms: list[Markup] = [_mk(it.id, x.sheet, x.page, region, "region", x.tag_rect, note="elevation tag")]
-    for f in x.frames:
+    roles = [f.get("role") for f in (e.frames or [])]
+    for fi_, f in enumerate(x.frames):
         bad = x.unsure or f["err"] > 0.2
+        if fi_ < len(roles) and roles[fi_] == "translucent_panel":
+            tsub = subject_for("translucent_panel", "area")
+            if tsub and not bad:
+                ms.append(_mk(it.id, x.sheet, x.page, tsub, "area", f["rect"],
+                              text=f"A = {sqft(f['w_in'], f['h_in'])} sf\nW = {fmt_in(f['w_in'])}\nH = {fmt_in(f['h_in'])}"))
+            continue
         ms.append(_mk(it.id, x.sheet, x.page, region, "region", f["rect"], dashed=bad,
                       note="elevation frame (snapped)" if not bad else x.note or "snap disagrees with schedule — dashed"))
         if area and not bad and it.kind == "scope":
