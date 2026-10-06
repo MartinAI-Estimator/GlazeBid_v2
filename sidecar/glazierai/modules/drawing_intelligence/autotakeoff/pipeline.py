@@ -510,6 +510,60 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                                   [m["p0"], m["p1"]], text=f"{lin[0]}\n{fmt_in(m['len_in'])}", stroke=lin[1], fill=lin[2], opacity=lin[3],
                                   note=f"member {fmt_in(m['len_in'])}"))
 
+    # break metal: driven off details that show it at our systems; measured on the exterior elevations
+    from .breakmetal import scan_details as _bm_scan, edges_for as _bm_edges, runs as _bm_runs
+    bm_details = []
+    for pno, ds in _all_details.items():
+        s = sheet_of[pno]
+        bm_details += _bm_scan(doc[pno], s.sheet, ds)
+    out["break_metal_details"] = [b.to_dict() for b in bm_details]
+    if bm_details:
+        emap = _bm_edges(bm_details)
+        iid = "BREAK METAL"
+        bm_it = Item(id=iid, cls="break_metal", kind="scope", label="Break metal flashing & trim (from details)",
+                     desc="; ".join(sorted({f"{b.num}/{b.sheet} {b.title}" for b in bm_details}))[:400],
+                     qty=None, qty_source="details + exterior elevations", source="details",
+                     notes=[f"edges by system: " + ", ".join(f"{k}: {'/'.join(sorted(v)) or 'callout only'}" for k, v in sorted(emap.items()))])
+        bm_it.citations += [f"{b.sheet} detail {b.num}: {b.title}" for b in bm_details]
+        reg = subject_for("break_metal", "region")
+        lin = subject_for("break_metal", "linear")
+        for b in bm_details:
+            for c in b.callouts[:4]:
+                markups.append(_mk(iid, b.sheet, b.page, reg, "region", c["rect"], note=f"detail {b.num}: {c['text'][:40]}"))
+        items_by_id = {i.id: i for i in items}
+        total_in = 0.0
+        by_sheet: dict[int, list] = {}
+        for x in snaps:
+            s = sheet_of.get(x.page)
+            it = items_by_id.get(x.mark)
+            if not s or not it or it.kind != "scope" or x.unsure or "elevation" not in s.categories or not _ext.search(s.title):
+                continue
+            sysk = ["cw"] if "cw" in it.cls else ["sf"] if "sf" in it.cls else []
+            if any(im.get("cls") == "translucent_panel" for im in (it.implied or [])):
+                sysk.append("translucent")
+            for f_ in x.frames:
+                if f_.get("err", 0) <= 0.2:
+                    for k in sysk:
+                        by_sheet.setdefault(x.page, []).append((f_["rect"], k, x.ppf))
+        for pno, frs in by_sheet.items():
+            s = sheet_of[pno]
+            ppf_ = next((p for *_r, p in frs if p), None)
+            if not ppf_:
+                continue
+            for rn in _bm_runs([(r_, k) for r_, k, _p in frs], emap, ppf_):
+                if rn["len_in"] < 12:
+                    continue
+                total_in += rn["len_in"]
+                (x0, y0), (x1, y1) = rn["p0"], rn["p1"]
+                markups.append(Markup(iid, s.sheet, s.page, lin[0], "linear", [min(x0, x1) - 2, min(y0, y1) - 2, max(x0, x1) + 2, max(y0, y1) + 2],
+                                      [rn["p0"], rn["p1"]], text=f"{lin[0]}\n{fmt_in(rn['len_in'])}", stroke=lin[1], fill=lin[2],
+                                      opacity=lin[3], note=f"{rn['orient']} run {fmt_in(rn['len_in'])}"))
+        if total_in:
+            bm_it.qty = round(total_in / 12, 1)
+            bm_it.notes.append(f"total {fmt_in(total_in)} on exterior elevations (LF)")
+        bm_it.flags.append("break metal lengths are the frame edges named by the details — confirm which openings each detail covers")
+        items.append(bm_it)
+
     # flags → yellow flag markups at the item's first citation markup
     for it in items:
         if it.flags:

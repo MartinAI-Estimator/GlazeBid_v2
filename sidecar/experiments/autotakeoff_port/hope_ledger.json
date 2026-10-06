@@ -6385,6 +6385,58 @@
    "is_door": false,
    "source": "members",
    "allglass": null
+  },
+  {
+   "id": "BREAK METAL",
+   "cls": "break_metal",
+   "kind": "scope",
+   "label": "Break metal flashing & trim (from details)",
+   "desc": "1/A3.10 SILL DETAIL AT STAIR STRINGER; 11/A3.10 JAMB DETAIL - TRANSLUCENT PANEL; 13/A3.10 DETAIL - BRAKE METAL WRAP AT CURTAINWALL; 2/A3.12 JAMB DETAIL - BRAKE METAL AT SF; 2/A3.9 JAMB DETAIL AT VESTIBULE SLANTED WALL; 3/A3.10 SILL DETAIL - PF METAL WALL PANEL; 3/A3.12 JAMB DETAIL - BRAKE METAL AT TRANSLUCENT PANEL; 3/A3.9 JAMB DETAIL AT VESTIBULE CORNER; 4/A3.10 DETAIL - BRAKE METAL WRAP AT TRANS",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1544.0,
+   "qty_source": "details + exterior elevations",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "break metal lengths are the frame edges named by the details \u2014 confirm which openings each detail covers"
+   ],
+   "notes": [
+    "edges by system: cw: jamb/sill, sf: head/jamb/sill, translucent: jamb/sill",
+    "total 1543'-11 5/8\" on exterior elevations (LF)"
+   ],
+   "citations": [
+    "A3.9 detail 2: JAMB DETAIL AT VESTIBULE SLANTED WALL",
+    "A3.9 detail 3: JAMB DETAIL AT VESTIBULE CORNER",
+    "A3.9 detail 4: JAMB DETAIL - BRAKE METAL BETWEEN STOREFRONT",
+    "A3.9 detail 5: JAMB DETAIL AT BRAKE METAL CORNER",
+    "A3.9 detail 7: SILL DETAIL - EGRESS STAIR HIGH CLERESTORY",
+    "A3.9 detail 8: HEAD DETAIL - CLERESTORY AT BRICK INSET",
+    "A3.10 detail 1: SILL DETAIL AT STAIR STRINGER",
+    "A3.10 detail 3: SILL DETAIL - PF METAL WALL PANEL",
+    "A3.10 detail 4: DETAIL - BRAKE METAL WRAP AT TRANSLUCENT PANEL",
+    "A3.10 detail 7: SILL DETAIL - SLANTED LOBBY WALL WINDOW",
+    "A3.10 detail 9: SILL DETAIL - CMU BRICK",
+    "A3.10 detail 8: SILL DETAIL - BULL NOSE CMU",
+    "A3.10 detail 11: JAMB DETAIL - TRANSLUCENT PANEL",
+    "A3.10 detail 13: DETAIL - BRAKE METAL WRAP AT CURTAINWALL",
+    "A3.12 detail 2: JAMB DETAIL - BRAKE METAL AT SF",
+    "A3.12 detail 3: JAMB DETAIL - BRAKE METAL AT TRANSLUCENT PANEL",
+    "A3.12 detail 5: SILL DETAIL - SF AT CMU",
+    "A3.12 detail 6: SILL DETAIL - SF AT ACM"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "details",
+   "allglass": null
   }
  ],
  "flags": [
@@ -6744,6 +6796,12 @@
    "flags": [
     "sun control members counted from the elevation drawing \u2014 confirm count and that they are ours (spec)"
    ]
+  },
+  {
+   "item": "BREAK METAL",
+   "flags": [
+    "break metal lengths are the frame edges named by the details \u2014 confirm which openings each detail covers"
+   ]
   }
  ],
  "totals": {
@@ -6783,5 +6841,5 @@
    "sf": 213.1
   }
  },
- "elapsed_s": 84.34
+ "elapsed_s": 84.99
 }
