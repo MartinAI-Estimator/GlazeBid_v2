@@ -18,7 +18,7 @@ import { measure, measureLabel } from './shapeGeometry';
 type Cal = Record<string, { pixelsPerInch: number }>;
 type Pg = { id: string; pdfPageIndex: number; label: string };
 
-export type InboxEntry = Omit<RawTakeoff, 'id'> & { quantity?: number; subject?: string };
+export type InboxEntry = Omit<RawTakeoff, 'id'> & { quantity?: number; subject?: string; alternate?: string };
 
 const SYSTEM_TYPE: [RegExp, string][] = [
   [/^ext(\.|\s)*sf|ext sf/i, 'Ext SF'], [/^int(\.|\s)*sf|int sf/i, 'Int SF'],
@@ -52,7 +52,8 @@ export function inboxFromTakeoff(result: TakeoffResult | null, shapes: DrawnShap
     const it = items.get(itemId);
     if (it && it.kind !== 'scope') continue;
     const first = ss[0], b = bbox(first);
-    const loc = { shapeId: first.id, pageId: first.pageId, x: b.x, y: b.y, widthPx: b.w, heightPx: b.h };
+    const alt = ss.find(s => s.alternate)?.alternate ?? it?.alternate;
+    const loc = { shapeId: first.id, pageId: first.pageId, x: b.x, y: b.y, widthPx: b.w, heightPx: b.h, ...(alt ? { alternate: alt } : {}) };
     const lin = ss.filter(s => s.subjectRole === 'polylength' || s.type === 'polyline');
     const areas = ss.filter(s => s.subjectRole === 'area');
     const typed = ss.find(s => s.qtyOverride != null && s.subjectRole !== 'polylength');
@@ -80,7 +81,7 @@ export function inboxFromTakeoff(result: TakeoffResult | null, shapes: DrawnShap
   for (const s of live.filter(x => x.author !== 'engine' && x.subject)) {
     const b = bbox(s), m = measure(s, ppiOf(s));
     const role = s.subjectRole;
-    const loc = { shapeId: s.id, pageId: s.pageId, x: b.x, y: b.y, widthPx: b.w, heightPx: b.h };
+    const loc = { shapeId: s.id, pageId: s.pageId, x: b.x, y: b.y, widthPx: b.w, heightPx: b.h, ...(s.alternate ? { alternate: s.alternate } : {}) };
     if (role === 'polylength' || role === 'line') {
       out.push({ ...loc, widthInches: s.qtyOverride ?? m.lengthIn ?? 0, heightInches: 0, type: 'LF', label: s.subject, subject: s.subject,
                  systemType: systemOf(s.subject), source: 'studio', quantity: 1 });
@@ -92,6 +93,8 @@ export function inboxFromTakeoff(result: TakeoffResult | null, shapes: DrawnShap
                  systemType: systemOf(s.subject), source: 'studio', quantity: 1 });
     }
   }
+  // alternates are priced separately: label them so they never blend into the base bid
+  for (const e of out) if (e.alternate && !(e.label ?? '').startsWith('[')) e.label = `[${e.alternate}] ${e.label ?? ''}`;
   return out;
 }
 
@@ -117,7 +120,7 @@ export function markupsForPdf(shapes: DrawnShape[], pages: Pg[], cals: Cal, auth
       rect, points: pts, stroke: s.color, fill: s.fill, opacity: s.opacity, label, ppf: ppi ? ppi * 12 : null,
       style: s.style, leader: s.type === 'text' && s.leader ? [s.leader.x, s.leader.y] : null,
       font_size: s.type === 'text' ? s.fontSize : null,
-      meta: { author: s.author ?? 'user', itemId: s.itemId, reviewState: s.reviewState, qtyOverride: s.qtyOverride ?? undefined, note: s.note,
+      meta: { author: s.author ?? 'user', itemId: s.itemId, reviewState: s.reviewState, alternate: s.alternate, qtyOverride: s.qtyOverride ?? undefined, note: s.note,
               style: s.style, fontSize: s.type === 'text' ? s.fontSize : undefined,
               leader: s.type === 'text' && s.leader ? [s.leader.x, s.leader.y] : undefined },
     });

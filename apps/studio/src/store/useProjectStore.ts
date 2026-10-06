@@ -193,6 +193,8 @@ export type RawTakeoff = {
   quantity?:    number;
   /** Tool Chest subject (e.g. "Ext. SF Area"). */
   subject?:     string;
+  /** Bid alternate ("Alt 2") — priced separately from the base bid. */
+  alternate?:   string;
 };
 
 // ── Screen 2 — Builder Engineering ───────────────────────────────────────────

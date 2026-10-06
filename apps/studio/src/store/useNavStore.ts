@@ -31,6 +31,12 @@ type State = {
   activeHit: number;
   overlay: Overlay | null;
   splitPageId: string | null;
+  /** Zoom the split pane to this region (item trace "side by side"). */
+  splitFocus: { pageId: string; rect: [number, number, number, number] | null; seq: number } | null;
+  /** The item whose sheets are listed in the trace panel. */
+  traceItem: string | null;
+  setTraceItem: (id: string | null) => void;
+  setSplitFocus: (pageId: string, rect: [number, number, number, number] | null) => void;
   setShowSearch: (v: boolean) => void;
   setSearch: (q: string, hits: SearchHit[]) => void;
   setActiveHit: (i: number) => void;
@@ -46,7 +52,9 @@ type State = {
 
 export const useNavStore = create<State>()((set, get) => ({
   links: [], hoverLink: null, back: [], forward: [], showExternal: true,
-  showSearch: false, searchQuery: '', searchHits: [], activeHit: -1, overlay: null, splitPageId: null,
+  showSearch: false, searchQuery: '', searchHits: [], activeHit: -1, overlay: null, splitPageId: null, splitFocus: null, traceItem: null,
+  setTraceItem: (traceItem) => set({ traceItem }),
+  setSplitFocus: (pageId, rect) => set(s => ({ splitPageId: pageId, splitFocus: { pageId, rect, seq: (s.splitFocus?.seq ?? 0) + 1 } })),
   setShowSearch: (showSearch) => set({ showSearch }),
   setSearch: (searchQuery, searchHits) => set({ searchQuery, searchHits, activeHit: -1 }),
   setActiveHit: (activeHit) => set({ activeHit }),

@@ -16,6 +16,8 @@ import { TOOL_CHEST } from '../../constants/toolChest';
 import { useTakeoffStore } from '../../store/useTakeoffStore';
 import { measureLabel } from '../../engine/shapeGeometry';
 import type { DrawnShape } from '../../types/shapes';
+import { useNavStore } from '../../store/useNavStore';
+import GlossaryText from '../ui/GlossaryText';
 // Suppress unused-var warning for _FP alias
 void _FP;
 
@@ -338,7 +340,23 @@ function ReviewSection({ shape, ppi, onUpdate }: { shape: DrawnShape; ppi: numbe
         </div>
       )}
       {role === 'flag' ? (
-        <div className="text-[11px] text-amber-300 leading-snug">⚑ {shape.note ?? 'Needs review'}</div>
+        <div className="space-y-1.5">
+          <div className="text-[11px] text-amber-300 leading-snug">⚑ {shape.note ?? 'Needs review'}</div>
+          {shape.reviewState === 'accepted' ? (
+            <div className="flex items-center gap-2 text-[11px] text-emerald-400">✓ Resolved
+              <button onClick={() => onUpdate({ reviewState: 'unreviewed' })} className="text-slate-500 hover:text-slate-300">reopen</button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                onUpdate({ reviewState: 'accepted' });
+                useTakeoffStore.getState().record({ action: 'accept', shapeId: shape.id, itemId: shape.itemId, subject: 'flag resolved', reason: shape.note });
+              }}
+              className="w-full rounded border border-emerald-700 bg-emerald-900/30 px-2 py-1 text-[11px] text-emerald-200 hover:bg-emerald-800/50">
+              Mark resolved
+            </button>
+          )}
+        </div>
       ) : (
         <>
           <div>
@@ -354,6 +372,7 @@ function ReviewSection({ shape, ppi, onUpdate }: { shape: DrawnShape; ppi: numbe
               {!options.some(o => o.subject === shape.subject) && shape.subject && <option value={shape.subject}>{shape.subject}</option>}
               {options.map(o => <option key={o.subject} value={o.subject}>{o.subject}</option>)}
             </select>
+            {shape.subject && <div className="mt-0.5 text-[10px] text-slate-500"><GlossaryText text={shape.subject} /></div>}
           </div>
           {lines.length > 0 && (
             <div className="text-xs font-mono text-slate-300 leading-snug">{lines.map(l => <div key={l}>{l}</div>)}</div>
@@ -364,7 +383,27 @@ function ReviewSection({ shape, ppi, onUpdate }: { shape: DrawnShape; ppi: numbe
           )}
         </>
       )}
-      {shape.itemId && <div className="text-[11px] text-slate-400">Item: <span className="text-slate-200">{shape.itemId}</span></div>}
+      {shape.itemId && (
+        <div className="flex items-center gap-2 text-[11px] text-slate-400">
+          <span>Item: <span className="text-slate-200">{shape.itemId}</span></span>
+          <button onClick={() => useNavStore.getState().setTraceItem(shape.itemId!)} className="ml-auto text-sky-400 hover:text-sky-300"
+                  title="List every sheet this item appears on — schedule, plans, elevation, details">All sheets →</button>
+        </div>
+      )}
+      {role !== 'flag' && (
+        <div className="flex items-center gap-2">
+          <label className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Alternate</label>
+          <input
+            key={shape.id}
+            defaultValue={shape.alternate ?? ''}
+            placeholder="base bid"
+            onBlur={e => { const v = e.target.value.trim() || undefined; if (v !== shape.alternate) onUpdate({ alternate: v }); }}
+            onKeyDown={e => { e.stopPropagation(); if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+            className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-200 placeholder-slate-600"
+            title='Type e.g. "Alt 2" to price this markup separately from the base bid'
+          />
+        </div>
+      )}
       {shape.note && role !== 'flag' && <div className="text-[10px] text-slate-500 leading-snug">{shape.note}</div>}
     </div>
   );

@@ -13,11 +13,14 @@ import { useTakeoffStore } from '../../store/useTakeoffStore';
 import { inboxFromTakeoff, markupsForPdf } from '../../engine/finalize';
 import { flushDecisions } from '../../hooks/useTakeoffRunner';
 import { projectNameOf } from '../../hooks/useSetLoader';
+import { BidDayList, useBidDay } from './ReviewPanel';
+import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 
 const SIDECAR_URL = 'http://localhost:8100';
 
-export default function FinalizeDialog({ onClose }: { onClose: () => void }) {
+export default function FinalizeDialog({ onClose, engine }: { onClose: () => void; engine: CanvasEngineAPI | null }) {
   const shapes = useStudioStore(s => s.shapes);
+  const bidLeft = useBidDay().filter(c => !c.done).length;
   const result = useTakeoffStore(s => s.result);
   const [busy, setBusy] = useState<string | null>(null);
   const [done, setDone] = useState<string[] | null>(null);
@@ -42,7 +45,7 @@ export default function FinalizeDialog({ onClose }: { onClose: () => void }) {
       const st = useStudioStore.getState();
       const accepted = st.shapes.filter(s => s.author === 'engine' && s.subjectRole !== 'flag' && (s.reviewState ?? 'unreviewed') === 'unreviewed');
       useStudioStore.setState(s => ({
-        shapes: s.shapes.map(x => (x.author === 'engine' && (x.reviewState ?? 'unreviewed') === 'unreviewed' ? { ...x, reviewState: 'accepted' as const } : x)),
+        shapes: s.shapes.map(x => (x.author === 'engine' && x.subjectRole !== 'flag' && (x.reviewState ?? 'unreviewed') === 'unreviewed' ? { ...x, reviewState: 'accepted' as const } : x)),
       }));
       if (accepted.length) {
         useTakeoffStore.getState().record({ action: 'accept', shapeId: '*', after: { count: accepted.length, ids: accepted.map(a => a.id), itemIds: [...new Set(accepted.map(a => a.itemId))] } });
@@ -90,7 +93,7 @@ export default function FinalizeDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onMouseDown={onClose}>
-      <div className="w-[26rem] rounded-lg border border-slate-700 bg-slate-900 shadow-2xl p-4 text-sm" onMouseDown={e => e.stopPropagation()}>
+      <div className="w-[30rem] rounded-lg border border-slate-700 bg-slate-900 shadow-2xl p-4 text-sm" onMouseDown={e => e.stopPropagation()}>
         <div className="text-slate-100 font-semibold mb-2">Finalize takeoff</div>
         {!done ? (
           <>
@@ -100,8 +103,10 @@ export default function FinalizeDialog({ onClose }: { onClose: () => void }) {
               <li>• the takeoff goes to the estimate's inbox (replacing an earlier finalize)</li>
               <li>• a Bluebeam-compatible marked set is written</li>
             </ul>
-            {stats.flags > 0 && (
-              <div className="text-xs text-amber-300 mb-3">⚑ {stats.flags} yellow flags are still on the drawings — check them before you bid.</div>
+            <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bid-day checklist</div>
+            <div className="mb-3 max-h-64 overflow-auto text-xs"><BidDayList engine={engine} compact /></div>
+            {bidLeft > 0 && (
+              <div className="text-xs text-amber-300 mb-3">{bidLeft} checklist item{bidLeft === 1 ? '' : 's'} still open — you can finalize anyway and come back.</div>
             )}
             {err && <div className="text-xs text-red-400 mb-2">{err}</div>}
             <div className="flex justify-end gap-2">

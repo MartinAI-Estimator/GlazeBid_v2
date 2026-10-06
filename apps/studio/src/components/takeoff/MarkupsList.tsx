@@ -6,13 +6,14 @@
 import { useMemo, useState } from 'react';
 import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useStudioStore } from '../../store/useStudioStore';
+import { useNavStore } from '../../store/useNavStore';
 import { DEFAULT_PDF_PPI } from '../../engine/coordinateSystem';
 import { measure, fmtFtIn, fmtSf } from '../../engine/shapeGeometry';
 import type { DrawnShape } from '../../types/shapes';
 
 type Row = {
   id: string; subject: string; sheet: string; kind: string; qty: string; qtyNum: number; unit: string;
-  author: string; state: string; item: string; note: string;
+  author: string; state: string; item: string; note: string; alt: string;
 };
 
 export default function MarkupsList({ engine }: { engine: CanvasEngineAPI | null }) {
@@ -38,16 +39,17 @@ export default function MarkupsList({ engine }: { engine: CanvasEngineAPI | null
     const m = new Map<string, { subject: string; n: number; qty: number; unit: string }>();
     for (const r of shown) {
       if (r.kind === 'flag') continue;
-      const t = m.get(r.subject) ?? { subject: r.subject, n: 0, qty: 0, unit: r.unit };
-      t.n += 1; t.qty += r.qtyNum; m.set(r.subject, t);
+      const key = r.alt ? `${r.subject} [${r.alt}]` : r.subject;
+      const t = m.get(key) ?? { subject: key, n: 0, qty: 0, unit: r.unit };
+      t.n += 1; t.qty += r.qtyNum; m.set(key, t);
     }
     return [...m.values()].sort((a, b) => a.subject.localeCompare(b.subject));
   }, [shown]);
 
   function exportCsv() {
-    const head = ['Subject', 'Sheet', 'Measurement', 'Quantity', 'Unit', 'Item', 'Author', 'Status', 'Note'];
+    const head = ['Subject', 'Sheet', 'Measurement', 'Quantity', 'Unit', 'Item', 'Alternate', 'Author', 'Status', 'Note'];
     const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
-    const lines = [head.join(','), ...shown.map(r => [r.subject, r.sheet, r.qty, String(r.qtyNum), r.unit, r.item, r.author, r.state, r.note].map(esc).join(','))];
+    const lines = [head.join(','), ...shown.map(r => [r.subject, r.sheet, r.qty, String(r.qtyNum), r.unit, r.item, r.alt, r.author, r.state, r.note].map(esc).join(','))];
     const blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -97,7 +99,10 @@ export default function MarkupsList({ engine }: { engine: CanvasEngineAPI | null
                   <td className="px-3 py-0.5 text-slate-200 whitespace-nowrap">{r.kind === 'flag' ? <span className="text-amber-400">⚑ </span> : null}{r.subject}</td>
                   <td className="px-2 text-slate-300 whitespace-nowrap">{r.sheet}</td>
                   <td className="px-2 text-slate-300 tabular-nums whitespace-nowrap">{r.qty}</td>
-                  <td className="px-2 text-slate-400 whitespace-nowrap">{r.item}</td>
+                  <td className="px-2 whitespace-nowrap">
+                    {r.item && <button onClick={e => { e.stopPropagation(); useNavStore.getState().setTraceItem(r.item); }} className="text-slate-300 hover:text-sky-300" title="Every sheet this item is on">{r.item}</button>}
+                    {r.alt && <span className="ml-1 rounded bg-fuchsia-900/60 px-1 text-[10px] text-fuchsia-200">{r.alt}</span>}
+                  </td>
                   <td className="px-2 text-slate-400">{r.author}</td>
                   <td className="px-2 text-slate-400">{r.state}</td>
                   <td className="px-2 text-slate-500 truncate max-w-[28rem]" title={r.note}>{r.note}</td>
@@ -135,6 +140,7 @@ function toRow(s: DrawnShape, pages: { id: string; label: string }[], cals: Reco
     author: s.author === 'engine' ? 'engine' : s.author === 'external' ? 'external' : 'user',
     state: s.author === 'engine' ? (s.reviewState ?? 'unreviewed') : '',
     item: s.itemId ?? '',
+    alt: s.alternate ?? '',
     note: s.note ?? s.label ?? '',
   };
 }

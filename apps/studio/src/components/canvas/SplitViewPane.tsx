@@ -19,6 +19,7 @@ export default function SplitViewPane({ engine }: { engine: CanvasEngineAPI | nu
   const shapes  = useStudioStore(s => s.shapes);
   const cals    = useStudioStore(s => s.calibrations);
   const showExt = useNavStore(s => s.showExternal);
+  const focus   = useNavStore(s => s.splitFocus);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef   = useRef<HTMLDivElement>(null);
   const cam = useRef<Cam>({ scale: 0.2, tx: 0, ty: 0 });
@@ -77,6 +78,17 @@ export default function SplitViewPane({ engine }: { engine: CanvasEngineAPI | nu
   }, [page]);
 
   useEffect(() => { fit(); draw(); }, [pageId]);        // eslint-disable-line react-hooks/exhaustive-deps
+  // item trace "side by side": zoom to the item on this sheet
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!focus || !wrap || !page || focus.pageId !== page.id) return;
+    if (!focus.rect) { fit(); draw(); return; }
+    const [x0, y0, x1, y1] = focus.rect;
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    const s = Math.max(0.05, Math.min((w * 0.7) / Math.max(x1 - x0, 30), (h * 0.7) / Math.max(y1 - y0, 30), 6));
+    cam.current = { scale: s, tx: w / 2 - ((x0 + x1) / 2) * s, ty: h / 2 - ((y0 + y1) / 2) * s };
+    draw();
+  }, [focus?.seq, page?.id]);                          // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { draw(); });
   useEffect(() => {
     const wrap = wrapRef.current;

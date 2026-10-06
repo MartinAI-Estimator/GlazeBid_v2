@@ -8,6 +8,8 @@ import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useStudioStore } from '../../store/useStudioStore';
 import { useTakeoffStore } from '../../store/useTakeoffStore';
 import { systemTotals, CLASS_NAME, type EngineItem } from '../../engine/takeoffImport';
+import { useNavStore } from '../../store/useNavStore';
+import GlossaryText from '../ui/GlossaryText';
 
 export default function SummaryPanel({ engine }: { engine: CanvasEngineAPI | null }) {
   const result = useTakeoffStore(s => s.result);
@@ -25,9 +27,9 @@ export default function SummaryPanel({ engine }: { engine: CanvasEngineAPI | nul
 
   if (!result) {
     return (
-      <aside className="w-80 flex-shrink-0 bg-slate-900 border-l border-slate-800 flex items-center justify-center p-6 text-center">
+      <div className="flex-1 flex items-center justify-center p-6 text-center">
         <p className="text-xs text-slate-500">Open a drawing set and click <span className="text-slate-300">Run Auto-Takeoff</span>. The summary of everything it found shows here.</p>
-      </aside>
+      </div>
     );
   }
 
@@ -39,7 +41,7 @@ export default function SummaryPanel({ engine }: { engine: CanvasEngineAPI | nul
   const counts = log.reduce<Record<string, number>>((a, d) => { a[d.action] = (a[d.action] ?? 0) + 1; return a; }, {});
 
   return (
-    <aside className="w-80 flex-shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col min-h-0">
+    <div className="flex-1 flex flex-col min-h-0">
       <div className="px-4 py-3 border-b border-slate-800">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Takeoff Summary</div>
         <div className="mt-1 text-[11px] text-slate-500">
@@ -58,7 +60,7 @@ export default function SummaryPanel({ engine }: { engine: CanvasEngineAPI | nul
             <tbody>
               {totals.map(t => (
                 <tr key={t.cls} className="border-t border-slate-800/70 cursor-pointer hover:bg-slate-800/60" onClick={() => setOpen(open === t.cls ? null : t.cls)}>
-                  <td className="py-1 text-slate-200">{t.name}{t.flagged ? <span className="ml-1 text-amber-400">⚑{t.flagged}</span> : null}</td>
+                  <td className="py-1 text-slate-200"><GlossaryText text={t.name} />{t.flagged ? <span className="ml-1 text-amber-400">⚑{t.flagged}</span> : null}</td>
                   <td className="text-right tabular-nums text-slate-300">{t.ea ? t.ea : ''}</td>
                   <td className="text-right tabular-nums text-slate-300">{t.sf ? Math.round(t.sf).toLocaleString() : ''}</td>
                   <td className="text-right tabular-nums text-slate-300">{t.lf ? Math.round(t.lf).toLocaleString() : ''}</td>
@@ -69,7 +71,7 @@ export default function SummaryPanel({ engine }: { engine: CanvasEngineAPI | nul
           {open && (
             <div className="mt-2 rounded border border-slate-800 bg-slate-950/60">
               {scope.filter(i => i.cls === open).map(i => (
-                <button key={i.id} onClick={() => go(i)} className="w-full text-left px-2 py-1 hover:bg-slate-800 border-b border-slate-800/60 last:border-0">
+                <button key={i.id} onClick={() => { useNavStore.getState().setTraceItem(i.id); if (!byItem.has(i.id)) go(i); }} title="Show every sheet this item is on" className="w-full text-left px-2 py-1 hover:bg-slate-800 border-b border-slate-800/60 last:border-0">
                   <div className="flex justify-between gap-2">
                     <span className="text-slate-200 truncate">{i.id}</span>
                     <span className="text-slate-400 tabular-nums whitespace-nowrap">{i.qty ?? ''} {i.sf_total ? `· ${Math.round(i.sf_total)} sf` : ''}</span>
@@ -80,6 +82,17 @@ export default function SummaryPanel({ engine }: { engine: CanvasEngineAPI | nul
             </div>
           )}
         </Section>
+
+        {scope.some(i => i.alternate) && (
+          <Section title="Alternates (priced separately)">
+            {scope.filter(i => i.alternate).map(i => (
+              <button key={i.id} onClick={() => useNavStore.getState().setTraceItem(i.id)} className="flex w-full justify-between px-1 py-0.5 text-left hover:bg-slate-800">
+                <span className="text-slate-200">{i.id}</span>
+                <span className="text-fuchsia-300">{i.alternate}</span>
+              </button>
+            ))}
+          </Section>
+        )}
 
         <Section title="Assumptions">
           <Assumptions items={scope} />
@@ -113,7 +126,7 @@ export default function SummaryPanel({ engine }: { engine: CanvasEngineAPI | nul
           )}
         </Section>
       </div>
-    </aside>
+    </div>
   );
 }
 

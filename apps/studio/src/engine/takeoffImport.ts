@@ -31,7 +31,11 @@ export type EngineItem = {
   w_in?: number | null; h_in?: number | null; series?: unknown[]; hardware?: unknown[];
   implied?: { cls: string; note?: string }[]; flags: string[]; notes: string[]; citations: string[];
   is_door?: boolean; source?: string; location?: string | null;
+  /** "Alt 2" when the item belongs to a bid alternate (priced separately). */
+  alternate?: string;
 };
+
+export type EngineAlternate = { page: number; label: string; text: string; rect: number[]; source?: string };
 
 export type EngineSheet = {
   page: number; sheet: string; title: string; category: string; categories: string[];
@@ -43,6 +47,7 @@ export type TakeoffResult = {
   sheets: EngineSheet[]; read: Record<string, unknown>[]; skipped: Record<string, unknown>[];
   items: EngineItem[]; markups: EngineMarkup[]; flags: { item: string; flags: string[] }[];
   totals?: Record<string, unknown>; elapsed_s?: number; model_calls?: number;
+  alternates?: EngineAlternate[];
 };
 
 const ROLE_OF: Record<string, SubjectRole> = {
@@ -70,6 +75,7 @@ export function importTakeoff(res: TakeoffResult, pages: PageState[]): {
   }
 
   const tc = new Map(TOOL_CHEST.map(t => [t.subject, t]));
+  const altOf = new Map(res.items.filter(i => i.alternate).map(i => [i.id, i.alternate as string]));
   const shapes: DrawnShape[] = [];
   for (const m of res.markups) {
     const pg = byIndex.get(m.page);
@@ -84,6 +90,7 @@ export function importTakeoff(res: TakeoffResult, pages: PageState[]): {
       opacity: m.opacity ?? t?.opacity ?? null,
       author: 'engine' as const, reviewState: 'unreviewed' as const,
       itemId: m.item, note: [m.text, m.note].filter(Boolean).join(' — ') || undefined,
+      ...(altOf.has(m.item) ? { alternate: altOf.get(m.item) } : {}),
     };
     if (role === 'polylength' && m.points && m.points.length >= 2) {
       const pts = m.points.map(([x, y]) => ({ x, y }));
@@ -123,7 +130,7 @@ export type SystemTotal = { cls: string; name: string; items: number; ea: number
 export function systemTotals(items: EngineItem[]): SystemTotal[] {
   const m = new Map<string, SystemTotal>();
   for (const it of items) {
-    if (it.kind !== 'scope') continue;
+    if (it.kind !== 'scope' || it.alternate) continue;
     const t = m.get(it.cls) ?? { cls: it.cls, name: CLASS_NAME[it.cls] ?? it.cls, items: 0, ea: 0, sf: 0, lf: 0, flagged: 0 };
     t.items += 1;
     if (it.flags?.length) t.flagged += 1;

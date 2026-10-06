@@ -23,7 +23,7 @@ Ordering rule (from the McLarty / Hope blind tests, RESULTS.md 2026-07-15):
 
 import logging
 import os
-from typing import Optional
+from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException
 from fastapi.concurrency import run_in_threadpool
@@ -802,3 +802,75 @@ async def autotakeoff_diff_endpoint(req: CompareRequest):
     with open(new_j, encoding="utf-8") as f:
         new = _json.load(f)
     return {"changes": diff_takeoffs(old, new), "new_result": new}
+
+
+# ── Specs cross-check, Studio review state ───────────────────────────────────
+
+class SpecCheckRequest(BaseModel):
+    project_name: str
+    spec_pdf_base64: Optional[str] = None   # a spec book; omitted → the spec sheets / notes in the drawing set
+    spec_name: Optional[str] = None
+    use_saved_spec: bool = True             # reuse the spec book saved for this job last time
+
+
+@router.post("/spec/check")
+async def spec_check_endpoint(req: SpecCheckRequest):
+    """Read the Division 08 specs (deterministic) and cross-check them against the drawings and the takeoff."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.spec_check import check_job
+    d = _runs_dir(req.project_name)
+    drawings = os.path.join(d, "set.pdf")
+    spec = os.path.join(d, "specs.pdf")
+    if req.spec_pdf_base64:
+        with open(spec, "wb") as f:
+            f.write(_b64.b64decode(req.spec_pdf_base64))
+        with open(os.path.join(d, "specs_name.txt"), "w", encoding="utf-8") as f:
+            f.write(req.spec_name or "specs.pdf")
+    elif not req.use_saved_spec and os.path.exists(spec):
+        os.remove(spec)
+    if not os.path.exists(drawings):
+        raise HTTPException(status_code=400, detail="Open the drawing set first")
+    result = None
+    rj = os.path.join(d, "autotakeoff.json")
+    if os.path.exists(rj):
+        with open(rj, encoding="utf-8") as f:
+            result = _json.load(f)
+    out = await run_in_threadpool(check_job, spec if os.path.exists(spec) else None, drawings, result)
+    if os.path.exists(spec):
+        try:
+            out["spec_name"] = open(os.path.join(d, "specs_name.txt"), encoding="utf-8").read().strip()
+        except OSError:
+            out["spec_name"] = "specs.pdf"
+    with open(os.path.join(d, "spec_check.json"), "w", encoding="utf-8") as f:
+        _json.dump(out, f, default=str)
+    return out
+
+
+class StateRequest(BaseModel):
+    project_name: str
+    key: Optional[str] = None
+    value: Optional[Any] = None   # omitted → read
+
+
+@router.post("/studio/state")
+async def studio_state_endpoint(req: StateRequest):
+    """Per-job review state Studio keeps (scope checklist, bid-day ticks, sheets reviewed, spec check)."""
+    d = _runs_dir(req.project_name)
+    path = os.path.join(d, "studio_state.json")
+    state: dict = {}
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                state = _json.load(f)
+        except (OSError, ValueError):
+            state = {}
+    if req.key is not None and req.value is not None:
+        state[req.key] = req.value
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            _json.dump(state, f, default=str)
+        os.replace(tmp, path)
+    sc = os.path.join(d, "spec_check.json")
+    if req.key is None and os.path.exists(sc):
+        with open(sc, encoding="utf-8") as f:
+            state["_spec_check"] = _json.load(f)
+    return state

@@ -9,7 +9,9 @@ import ToolChestPanel from '../sidebar/ToolChestPanel';
 import SearchPanel from '../sidebar/SearchPanel';
 import SplitViewPane from '../canvas/SplitViewPane';
 import TakeoffBar from '../takeoff/TakeoffBar';
-import SummaryPanel from '../takeoff/SummaryPanel';
+import ReviewPanel from '../takeoff/ReviewPanel';
+import TracePanel from '../canvas/TracePanel';
+import { GlossaryTooltip } from '../ui/GlossaryText';
 import MarkupsList from '../takeoff/MarkupsList';
 import { QtyEditor, RejectPrompt } from '../takeoff/ReviewPopovers';
 import { useTakeoffStore } from '../../store/useTakeoffStore';
@@ -251,6 +253,7 @@ export default function StudioLayout() {
     <div className="flex flex-col h-screen w-screen bg-slate-950 overflow-hidden select-none">
       {/* ── Custom title bar (matching Builder) ── */}
       <StudioTitleBar />
+      <GlossaryTooltip />
 
       {/* ── PDF Tab Bar — shown only when 1+ PDFs are open ── */}
       <PdfTabBar />
@@ -280,6 +283,7 @@ export default function StudioLayout() {
             {/* CalibrationModal renders inside this relative container so
                 its `absolute inset-0` covers only the canvas area, not the panels */}
             <CalibrationModal />
+            <TracePanel engine={engine} />
             <SplitViewPane engine={engine} />
           </div>
           {showMarkups && <MarkupsList engine={engine} />}
@@ -294,7 +298,7 @@ export default function StudioLayout() {
 
         {/* Right side: DI panel | type library | structural panel | properties panel */}
         {showSummary && !structuralShape && !selectedShapeId ? (
-          <SummaryPanel engine={engine} />
+          <ReviewPanel engine={engine} />
         ) : structuralShape ? (
           <aside className="w-80 flex-shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col">
             <StructuralPanel

@@ -10,6 +10,7 @@
 import { useEffect } from 'react';
 import type { CanvasEngineAPI } from './useCanvasEngine';
 import { useStudioStore } from '../store/useStudioStore';
+import { useReviewStore } from '../store/useReviewStore';
 import { useNavStore, type SheetLink } from '../store/useNavStore';
 import { recompute } from '../engine/shapeGeometry';
 import type { DrawnShape, SubjectRole } from '../types/shapes';
@@ -43,6 +44,8 @@ export function useSetLoader(engine: CanvasEngineAPI | null): void {
     const project = projectNameOf(fileName);
     const body = JSON.stringify({ pdf_base64: b64(buf), project_name: project });
     useNavStore.getState().setLinks([]);
+    useNavStore.getState().setTraceItem(null);
+    void useReviewStore.getState().load(project);   // this job's scope / bid-day / spec check
     (async () => {
       try {
         const r = await fetch(`${SIDECAR_URL}/drawing-intelligence/sheets`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
@@ -91,6 +94,7 @@ export function annotToShape(a: Annot, pages: { id: string; pdfPageIndex: number
     itemId: (meta.itemId as string) || undefined,
     reviewState: (meta.reviewState as 'unreviewed' | 'edited' | 'accepted') || undefined,
     qtyOverride: (meta.qtyOverride as number) ?? undefined,
+    alternate: (meta.alternate as string) || undefined,
     note: (meta.note as string) || (ours ? undefined : a.label || undefined),
   };
   const pts = (a.points || []).map(([x, y]) => ({ x, y }));

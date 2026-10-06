@@ -780,6 +780,14 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
     out["elevation_snaps"] = [x.to_dict() for x in snaps]
     out["details"] = [d.to_dict() for d in details]
     out["items"] = [i.to_dict() for i in items]
+    # alternates that touch glazing: tagged on the base takeoff, priced separately
+    try:
+        from .spec_check import find_alternates, tag_alternates
+        out["alternates"] = find_alternates(pdf_path)
+        tag_alternates(out["items"], out["alternates"])
+    except Exception as e:  # never let the alternates pass break a takeoff
+        out["alternates"] = []
+        out.setdefault("warnings", []).append(f"alternates: {e}")
     out["markups"] = [m.to_dict() for m in markups]
     out["flags"] = [{"item": i.id, "flags": i.flags} for i in items if i.flags]
     out["totals"] = _totals(items)

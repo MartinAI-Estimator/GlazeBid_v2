@@ -41,6 +41,8 @@ type ShapeBase = {
   note?:        string;
   /** Engine markups: unreviewed until finalized, edited once the estimator changes it. */
   reviewState?: 'unreviewed' | 'edited' | 'accepted';
+  /** Bid alternate this markup belongs to ("Alt 2") — priced separately from the base bid. */
+  alternate?: string;
   /** Annotation style: a revision cloud (polygon) or an arrow (line). */
   style?:       'cloud' | 'arrow';
 };

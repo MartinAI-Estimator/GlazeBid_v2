@@ -228,3 +228,14 @@ export function removeVertex(shape: DrawnShape, index: number, ppi: number): Dra
   }
   return shape;
 }
+
+/** Axis-aligned bounds of a shape in page space. */
+export function shapeBounds(sh: DrawnShape): { x: number; y: number; w: number; h: number } {
+  const pts = sh.type === 'rect' || sh.type === 'text' ? [sh.origin, { x: sh.origin.x + sh.widthPx, y: sh.origin.y + sh.heightPx }]
+    : sh.type === 'line' ? [sh.start, sh.end]
+    : sh.type === 'marker' ? [sh.position]
+    : sh.points;
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const x = Math.min(...xs), y = Math.min(...ys);
+  return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y };
+}

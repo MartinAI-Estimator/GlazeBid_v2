@@ -31,6 +31,7 @@ import type { InProgressShape, DrawnShape, RectShape, LineShape, PolygonShape, P
 import type { ToolChestItem } from '../constants/toolChest';
 import {
   hitHandle, applyHandleDrag, translate, hitEdge, insertVertex, removeVertex, polylineLengthPx, type Handle,
+  shapeBounds,
 } from '../engine/shapeGeometry';
 import type { ContextMenuTarget } from '../components/canvas/ShapeContextMenu';
 import { getClipboard, setClipboard } from '../utils/clipboard';
@@ -1391,16 +1392,6 @@ function commitPolygon(
 /** Shapes to draw / hit: others' markups only while "Others' markups" is on. */
 function visibleShapes(shapes: DrawnShape[]): DrawnShape[] {
   return useNavStore.getState().showExternal ? shapes : shapes.filter(x => x.author !== 'external');
-}
-
-function shapeBounds(sh: DrawnShape): { x: number; y: number; w: number; h: number } {
-  const pts = sh.type === 'rect' || sh.type === 'text' ? [sh.origin, { x: sh.origin.x + sh.widthPx, y: sh.origin.y + sh.heightPx }]
-    : sh.type === 'line' ? [sh.start, sh.end]
-    : sh.type === 'marker' ? [sh.position]
-    : sh.points;
-  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
-  const x = Math.min(...xs), y = Math.min(...ys);
-  return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y };
 }
 
 // ── Hit testing ───────────────────────────────────────────────────────────────

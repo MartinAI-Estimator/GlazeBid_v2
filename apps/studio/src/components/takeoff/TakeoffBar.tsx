@@ -24,7 +24,7 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
   const shapes       = useStudioStore(s => s.shapes);
   const selectedId   = useStudioStore(s => s.selectedShapeId);
 
-  const flags = useMemo(() => shapes.filter(s => s.subjectRole === 'flag'), [shapes]);
+  const flags = useMemo(() => shapes.filter(s => s.subjectRole === 'flag' && s.reviewState !== 'accepted'), [shapes]);
   const engineCount = useMemo(() => shapes.filter(s => s.author === 'engine' && s.subjectRole !== 'flag').length, [shapes]);
   const flagIdx = flags.findIndex(f => f.id === selectedId);
   const [finalizing, setFinalizing] = useState(false);
@@ -67,7 +67,7 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
         <div className="flex items-center gap-1">
           <button onClick={() => step(-1)} className={`${btn} border-amber-700/60 text-amber-300 hover:bg-amber-900/30`} title="Previous flag">◀</button>
           <button onClick={() => step(1)} className={`${btn} border-amber-700/60 text-amber-300 hover:bg-amber-900/30`} title="Next flag">
-            ⚑ {flagIdx >= 0 ? `${flagIdx + 1} / ` : ''}{flags.length} flags
+            ⚑ {flagIdx >= 0 ? `${flagIdx + 1} / ` : ''}{flags.length} open flag{flags.length === 1 ? '' : 's'}
           </button>
           <button onClick={() => step(1)} className={`${btn} border-amber-700/60 text-amber-300 hover:bg-amber-900/30`} title="Next flag">▶</button>
         </div>
@@ -99,7 +99,7 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
         className={`${btn} border-emerald-700 text-emerald-200 bg-emerald-900/30 hover:bg-emerald-800/50 disabled:opacity-40`}
         title="Accept, send to the estimate, write the marked set"
       >Finalize</button>
-      {finalizing && <FinalizeDialog onClose={() => setFinalizing(false)} />}
+      {finalizing && <FinalizeDialog engine={engine} onClose={() => setFinalizing(false)} />}
       <ComparePanel engine={engine} open={comparing} onClose={() => setComparing(false)} />
     </div>
   );
