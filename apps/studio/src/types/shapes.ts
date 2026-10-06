@@ -28,8 +28,10 @@ type ShapeBase = {
   /** Fill colour / opacity from the Tool Chest (stroke = color). */
   fill?:        string;
   opacity?:     number | null;
-  /** Who made it: the estimator, or the auto-takeoff engine. */
-  author?:      'user' | 'engine';
+  /** Who made it: the estimator, the auto-takeoff engine, or someone else (Bluebeam markups already in the set — shown locked). */
+  author?:      'user' | 'engine' | 'external';
+  /** Name on an external markup (Bluebeam author). */
+  authorName?:  string;
   /** Estimator's quantity override ("Thus" count, or a typed length / area). */
   qtyOverride?: number | null;
   /** Auto-takeoff item this markup cites (e.g. "F", "FRAME TYPE 11", "BREAK METAL"). */

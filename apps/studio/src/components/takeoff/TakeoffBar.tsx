@@ -2,7 +2,9 @@
  * TakeoffBar — slim bar above the drawing: run the auto-takeoff, open the
  * Summary / Markups list, and step through the yellow flags.
  */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import FinalizeDialog from './FinalizeDialog';
+import { useNavStore } from '../../store/useNavStore';
 import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useTakeoffRunner } from '../../hooks/useTakeoffRunner';
 import { useStudioStore } from '../../store/useStudioStore';
@@ -24,6 +26,10 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
   const flags = useMemo(() => shapes.filter(s => s.subjectRole === 'flag'), [shapes]);
   const engineCount = useMemo(() => shapes.filter(s => s.author === 'engine' && s.subjectRole !== 'flag').length, [shapes]);
   const flagIdx = flags.findIndex(f => f.id === selectedId);
+  const [finalizing, setFinalizing] = useState(false);
+  const showExternal = useNavStore(s => s.showExternal);
+  const toggleExternal = useNavStore(s => s.toggleExternal);
+  const externalCount = useMemo(() => shapes.filter(s => s.author === 'external').length, [shapes]);
 
   function step(d: number) {
     if (!flags.length || !engine) return;
@@ -59,8 +65,21 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
           <button onClick={() => step(1)} className={`${btn} border-amber-700/60 text-amber-300 hover:bg-amber-900/30`} title="Next flag">▶</button>
         </div>
       )}
+      {externalCount > 0 && (
+        <button onClick={toggleExternal} title="Markups already in the PDF from Bluebeam / others — locked, not part of the takeoff"
+                className={`${btn} ${showExternal ? 'border-slate-500 text-slate-200' : 'border-slate-700 text-slate-500'} hover:bg-slate-800`}>
+          {showExternal ? 'Hide' : 'Show'} others' markups ({externalCount})
+        </button>
+      )}
       <button onClick={toggleSummary} className={`${btn} ${showSummary ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'}`}>Summary</button>
       <button onClick={toggleMarkups} className={`${btn} ${showMarkups ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'}`}>Markups List</button>
+      <button
+        disabled={!pdfFileName}
+        onClick={() => setFinalizing(true)}
+        className={`${btn} border-emerald-700 text-emerald-200 bg-emerald-900/30 hover:bg-emerald-800/50 disabled:opacity-40`}
+        title="Accept, send to the estimate, write the marked set"
+      >Finalize</button>
+      {finalizing && <FinalizeDialog onClose={() => setFinalizing(false)} />}
     </div>
   );
 }

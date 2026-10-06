@@ -670,3 +670,57 @@ async def log_review_decisions(req: ReviewDecisions):
         for d in req.decisions:
             f.write(_json.dumps(d, default=str) + "\n")
     return {"ok": True, "logged": len(req.decisions), "path": path}
+
+
+# ── Studio ⇄ PDF: sheet index + hyperlinks, Bluebeam markup round-trip ───────
+
+class SetRequest(BaseModel):
+    pdf_base64: Optional[str] = None
+    pdf_path: Optional[str] = None
+    project_name: str = ""
+
+
+def _set_path(req) -> str:
+    """The drawing set: an explicit path, the base64 sent, or the project's saved set.pdf."""
+    if req.pdf_path and os.path.exists(req.pdf_path):
+        return req.pdf_path
+    path = os.path.join(_runs_dir(req.project_name), "set.pdf")
+    if req.pdf_base64:
+        with open(path, "wb") as f:
+            f.write(_b64.b64decode(req.pdf_base64))
+    if not os.path.exists(path):
+        raise HTTPException(status_code=400, detail="Provide pdf_base64, pdf_path, or run the takeoff first")
+    return path
+
+
+@router.post("/sheets")
+async def sheets_endpoint(req: SetRequest):
+    """Sheet numbers, titles, drawing scales and hyperlinked callouts for navigation."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.links import sheets_and_links
+    path = _set_path(req)
+    return await run_in_threadpool(sheets_and_links, path)
+
+
+@router.post("/markups/read")
+async def markups_read_endpoint(req: SetRequest):
+    """Every annotation in the set (Studio's own come back editable; others' locked)."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.bluebeam_io import read_annotations
+    path = _set_path(req)
+    return {"annotations": await run_in_threadpool(read_annotations, path)}
+
+
+class MarkupsWriteRequest(SetRequest):
+    markups: list[dict]
+    out_name: Optional[str] = None
+
+
+@router.post("/markups/write")
+async def markups_write_endpoint(req: MarkupsWriteRequest):
+    """Studio markups → Bluebeam-compatible PDF annotations; returns the marked set (base64)."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.bluebeam_io import write_studio_markups
+    path = _set_path(req)
+    out = os.path.join(_runs_dir(req.project_name), req.out_name or "marked.pdf")
+    stats = await run_in_threadpool(write_studio_markups, path, req.markups, out)
+    with open(out, "rb") as f:
+        data = _b64.b64encode(f.read()).decode()
+    return {"path": out, "pdf_base64": data, **stats}

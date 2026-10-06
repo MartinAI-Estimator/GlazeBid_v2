@@ -88,6 +88,8 @@ type RenderContext = {
   frameTypeColors:  Record<string, string>;
   /** Mark look-up: frameTypeId → mark string (e.g. "SF-1A"). */
   frameTypeMarks:   Record<string, string>;
+  /** Hyperlinked callout under the cursor (active page) — highlighted like Bluebeam. */
+  hoverLinkRect?:   [number, number, number, number] | null;
 };
 
 // ── Palette ───────────────────────────────────────────────────────────────────
@@ -220,6 +222,18 @@ export function renderFrame(rc: RenderContext): void {
     // 7 — In-progress shape
     if (rc.inProgress) {
       drawInProgress(ctx, rc.inProgress, camera.scale);
+    }
+
+    // 7b — hovered hyperlink
+    if (rc.hoverLinkRect) {
+      const [x0, y0, x1, y1] = rc.hoverLinkRect, pad = 2 / camera.scale;
+      ctx.save();
+      ctx.fillStyle = 'rgba(14,165,233,0.15)';
+      ctx.strokeStyle = '#0ea5e9';
+      ctx.lineWidth = 1.5 / camera.scale;
+      ctx.fillRect(x0 - pad, y0 - pad, x1 - x0 + 2 * pad, y1 - y0 + 2 * pad);
+      ctx.strokeRect(x0 - pad, y0 - pad, x1 - x0 + 2 * pad, y1 - y0 + 2 * pad);
+      ctx.restore();
     }
 
     // 8 — Snap indicator
@@ -363,7 +377,8 @@ function drawSubjectShape(
   ctx: CanvasRenderingContext2D, shape: DrawnShape, scale: number, selected: boolean, ppi: number,
 ): void {
   const stroke = shape.color ?? '#FFFF00';
-  const fillA  = hexA(shape.fill ?? stroke, shape.subjectRole === 'highlight' ? 0.35 : (shape.opacity ?? 0.25));
+  const fillA  = hexA(shape.fill ?? stroke, shape.author === 'external' ? Math.min(shape.opacity ?? 0.2, 0.2)
+                       : shape.subjectRole === 'highlight' ? 0.35 : (shape.opacity ?? 0.25));
   const lw     = (shape.subjectRole === 'polylength' ? 3 : 2) / scale;
   ctx.save();
   ctx.lineJoin = 'round';
@@ -412,7 +427,7 @@ function drawSubjectShape(
     ctx.fillStyle = hexA(stroke, 0.55); ctx.fill(); ctx.stroke();
     if (shape.qtyOverride != null) labelAt = { x: shape.position.x, y: shape.position.y - r - 8 / scale };
   }
-  if (labelAt) {
+  if (labelAt && shape.author !== 'external') {
     const lines = measureLabel(shape, ppi);
     if (lines.length) drawTag(ctx, lines, labelAt.x, labelAt.y, scale, stroke);
   }

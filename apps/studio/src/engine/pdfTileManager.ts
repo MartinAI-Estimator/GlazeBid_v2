@@ -258,7 +258,7 @@ export class PdfTileManager {
       // clips anything outside [0, canvasW] × [0, canvasH] automatically.
       ctx.translate(-x * renderScale, -y * renderScale);
 
-      await proxy.render({ canvasContext: ctx, viewport: vp }).promise;
+      await proxy.render({ canvasContext: ctx, viewport: vp, annotationMode: this.bakeAnnotations ? 1 : 0 }).promise;
 
       // LRU eviction: Map preserves insertion order.
       if (this.vpTiles.size >= PdfTileManager.VP_CACHE_MAX) {
@@ -318,7 +318,7 @@ export class PdfTileManager {
       canvas.height = h;
       const ctx = canvas.getContext('2d')!;
 
-      await proxy.render({ canvasContext: ctx, viewport: vp }).promise;
+      await proxy.render({ canvasContext: ctx, viewport: vp, annotationMode: this.bakeAnnotations ? 1 : 0 }).promise;
 
       // Close stale same-bucket tile before replacing it
       const old = this.tiles.get(key);
@@ -335,6 +335,23 @@ export class PdfTileManager {
     } finally {
       this.rendering.delete(key);
     }
+  }
+
+  /**
+   * PDF annotations (Bluebeam markups) painted into the page image (true), or
+   * left out because Studio draws them itself as objects (false, after the
+   * sidecar has read them).  pdf.js AnnotationMode: 1 = ENABLE, 0 = DISABLE.
+   */
+  private bakeAnnotations = true;
+
+  setBakeAnnotations(bake: boolean): void {
+    if (bake === this.bakeAnnotations) return;
+    this.bakeAnnotations = bake;
+    for (const bitmap of this.tiles.values()) bitmap.close();
+    this.tiles.clear(); this.rendering.clear(); this.failed.clear();
+    for (const tile of this.vpTiles.values()) tile.bitmap.close();
+    this.vpTiles.clear(); this.vpRendering.clear(); this.vpFailed.clear();
+    this.onReady?.();
   }
 
   /** Evict all tiles for a page (e.g., when navigating pages). */
@@ -367,6 +384,7 @@ export class PdfTileManager {
     this.pageDimensions.clear();
 
     this.proxies.clear();
+    this.bakeAnnotations = true;   // a new set starts with annotations painted in until they're read
     // onReady intentionally preserved — it is set once by useCanvasEngine on
     // mount and must survive PDF reloads.
   }

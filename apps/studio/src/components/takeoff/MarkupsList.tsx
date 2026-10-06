@@ -21,7 +21,7 @@ export default function MarkupsList({ engine }: { engine: CanvasEngineAPI | null
   const cals   = useStudioStore(s => s.calibrations);
   const selectedId = useStudioStore(s => s.selectedShapeId);
   const [q, setQ] = useState('');
-  const [who, setWho] = useState<'all' | 'engine' | 'user'>('all');
+  const [who, setWho] = useState<'all' | 'engine' | 'user' | 'external'>('all');
   const [hideFlags, setHideFlags] = useState(false);
   const [byTotals, setByTotals] = useState(false);
 
@@ -64,7 +64,7 @@ export default function MarkupsList({ engine }: { engine: CanvasEngineAPI | null
         <input value={q} onChange={e => setQ(e.target.value)} placeholder="Filter subject, sheet, item…"
                className="ml-2 w-56 rounded bg-slate-800 border border-slate-700 px-2 py-0.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none" />
         <select value={who} onChange={e => setWho(e.target.value as typeof who)} className="rounded bg-slate-800 border border-slate-700 px-1 py-0.5 text-xs text-slate-200">
-          <option value="all">Everyone</option><option value="engine">Engine</option><option value="user">Mine</option>
+          <option value="all">Everyone</option><option value="engine">Engine</option><option value="user">Mine</option><option value="external">Others (Bluebeam)</option>
         </select>
         <label className="flex items-center gap-1 text-slate-400"><input type="checkbox" checked={hideFlags} onChange={e => setHideFlags(e.target.checked)} />hide flags</label>
         <label className="flex items-center gap-1 text-slate-400"><input type="checkbox" checked={byTotals} onChange={e => setByTotals(e.target.checked)} />totals by subject</label>
@@ -132,7 +132,7 @@ function toRow(s: DrawnShape, pages: { id: string; label: string }[], cals: Reco
     subject: s.subject ?? (s.type === 'polyline' ? 'Polylength' : s.type),
     sheet: pages.find(p => p.id === s.pageId)?.label ?? '',
     kind: role, qty, qtyNum, unit,
-    author: s.author === 'engine' ? 'engine' : 'user',
+    author: s.author === 'engine' ? 'engine' : s.author === 'external' ? 'external' : 'user',
     state: s.author === 'engine' ? (s.reviewState ?? 'unreviewed') : '',
     item: s.itemId ?? '',
     note: s.note ?? s.label ?? '',

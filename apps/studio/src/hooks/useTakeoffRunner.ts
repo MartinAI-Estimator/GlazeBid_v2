@@ -98,6 +98,7 @@ export function startDecisionLogger(flushEveryMs = 4000): () => void {
     for (const [id, a] of after) {
       const b = before.get(id);
       if (!b) {
+        if (a.author === 'external') continue;
         if (a.author !== 'engine') {
           tk.record({ action: 'add', shapeId: id, subject: a.subject, page: pageLabel(a.pageId), after: a });
         } else {

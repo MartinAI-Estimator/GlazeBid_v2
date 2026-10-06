@@ -43,6 +43,7 @@ import {
 } from '../store/useStudioStore';
 import type { PageCalibration } from '../engine/coordinateSystem';
 import { useProjectStore } from '../store/useProjectStore';
+import { useNavStore, type SheetLink } from '../store/useNavStore';
 
 // ── Engine-internal state (keeps render function pure) ────────────────────────
 
@@ -114,6 +115,8 @@ export type CanvasEngineAPI = {
   getPdfBuffer: () => Uint8Array | null;
   /** Go to a markup: switch to its page, zoom to it and select it. */
   focusShape: (id: string) => void;
+  /** Paint PDF annotations into the page image (true) or leave them to Studio (false). */
+  setBakeAnnotations: (bake: boolean) => void;
   /** Tool cursors for new plugin tools. */
   rake:  never; count: never; wand: never; ghost: never;  // presence check only, not used directly
 };
@@ -201,6 +204,8 @@ export function useCanvasEngine(
         viewport,
       );
 
+      const nav = useNavStore.getState();
+      const hl  = nav.hoverLink;
       renderFrame({
         ctx,
         canvas,
@@ -208,7 +213,8 @@ export function useCanvasEngine(
         dpr,
         pageWidth:  pg?.widthPx  ?? DEFAULT_PAGE_W,
         pageHeight: pg?.heightPx ?? DEFAULT_PAGE_H,
-        shapes:     s.shapes,   // renderEngine filters by pageId in continuous mode
+        shapes:     visibleShapes(s.shapes),   // renderEngine filters by pageId in continuous mode
+        hoverLinkRect: hl && pg && hl.page === pg.pdfPageIndex ? hl.rect : null,
         selectedId: s.selectedId,
         inProgress: inProgressRef.current,
         snapResult: snapRef.current,
@@ -402,9 +408,14 @@ export function useCanvasEngine(
     scheduleRedraw();
   }, [canvasRef, scheduleRedraw]);
 
+  const setBakeAnnotations = useCallback((bake: boolean) => {
+    tileManagerRef.current.setBakeAnnotations(bake);
+    scheduleRedraw();
+  }, [scheduleRedraw]);
+
   const api = useMemo<CanvasEngineAPI>(
-    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, getPdfBuffer: () => pdfBufferRef.current, focusShape, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
-    [fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, focusShape],
+    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, getPdfBuffer: () => pdfBufferRef.current, focusShape, setBakeAnnotations, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
+    [fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, focusShape, setBakeAnnotations],
   );
 
   // ── Safety kick: re-draw when active page changes (e.g. PDF just loaded) ─────
@@ -469,6 +480,9 @@ export function useCanvasEngine(
     // Subscribe to project store so TypeCountDot changes also trigger a redraw
     const unsubProjectStore = useProjectStore.subscribe(() => {
       scheduleRedraw();
+    });
+    const unsubNav = useNavStore.subscribe((n, o) => {
+      if (n.hoverLink !== o.hoverLink || n.showExternal !== o.showExternal) scheduleRedraw();
     });
 
     // ── ResizeObserver: keep canvas buffer in sync with CSS size ─────────────
@@ -576,6 +590,56 @@ export function useCanvasEngine(
       }
     }
 
+    // ── Views + hyperlinks ───────────────────────────────────────────────────
+    function currentView() {
+      const cam = cameraRef.current;
+      return { pageId: stateRef.current.activePageId, scale: cam.scale, tx: cam.tx, ty: cam.ty };
+    }
+    function restoreView(v: { pageId: string; scale: number; tx: number; ty: number }) {
+      const st = useStudioStore.getState();
+      if (st.activePageId !== v.pageId) st.setActivePage(v.pageId);
+      const cam = cameraRef.current;
+      cam.scale = v.scale; cam.tx = v.tx; cam.ty = v.ty;
+      st.setCameraScale(cam.scale);
+      scheduleRedraw();
+    }
+    function linkAt(pt: { x: number; y: number }): SheetLink | null {
+      const s = stateRef.current;
+      const pg = s.pages.find(p => p.id === s.activePageId);
+      if (!pg) return null;
+      const pad = 2 / cameraRef.current.scale;
+      for (const l of useNavStore.getState().links) {
+        if (l.page !== pg.pdfPageIndex) continue;
+        const [x0, y0, x1, y1] = l.rect;
+        if (pt.x >= x0 - pad && pt.x <= x1 + pad && pt.y >= y0 - pad && pt.y <= y1 + pad) return l;
+      }
+      return null;
+    }
+    function followLink(l: SheetLink) {
+      const s = stateRef.current;
+      const tgt = s.pages.find(p => p.pdfPageIndex === l.target_page);
+      if (!tgt) return;
+      useNavStore.getState().pushView(currentView());
+      useNavStore.getState().setHoverLink(null);
+      const st = useStudioStore.getState();
+      if (st.activePageId !== tgt.id) st.setActivePage(tgt.id);
+      const cam = cameraRef.current;
+      const cw = canvas.clientWidth, ch = canvas.clientHeight;
+      if (l.target_rect) {
+        // centre the detail (number bubble / title) with its drawing above it in view
+        const [x0, y0, x1, y1] = l.target_rect;
+        cam.scale = Math.min(cw / 900, ch / 650);
+        cam.tx = cw / 2 - ((x0 + x1) / 2 + 180) * cam.scale;
+        cam.ty = ch * 0.75 - ((y0 + y1) / 2) * cam.scale;
+        st.setCameraScale(cam.scale);
+        scheduleRedraw();
+      } else {
+        cam.fitToPage(tgt.widthPx, tgt.heightPx, cw, ch);
+        st.setCameraScale(cam.scale);
+        scheduleRedraw();
+      }
+    }
+
     function updateCursor(): void {
       const s = stateRef.current;
       canvas.style.cursor = ptrRef.current.isPanning
@@ -645,7 +709,11 @@ export function useCanvasEngine(
             }
           }
           // 2. a shape body → select it and get ready to move it
-          const hit = hitTest(raw, s.shapes.filter(sh => sh.pageId === s.activePageId), tol);
+          const hit = hitTest(raw, visibleShapes(s.shapes).filter(sh => sh.pageId === s.activePageId), tol);
+          if (!hit) {
+            const l = linkAt(raw);
+            if (l) { followLink(l); break; }
+          }
           useStudioStore.getState().selectShape(hit?.id ?? null);
           if (hit && !hit.locked) {
             dragRef.current = { mode: 'move', shapeId: hit.id, handle: null, start: raw, orig: hit, started: false };
@@ -749,6 +817,12 @@ export function useCanvasEngine(
         store.replaceShapeLive(next);
         scheduleRedraw();
         return;
+      }
+
+      if (stateRef.current.activeTool === 'select' && !inProgressRef.current) {
+        const l = linkAt(resolveLocalPageXY(pageXY(e)));
+        useNavStore.getState().setHoverLink(l);
+        canvas.style.cursor = l ? 'pointer' : CURSOR.select;
       }
 
       const pt = getSnappedPage(e);
@@ -863,8 +937,8 @@ export function useCanvasEngine(
       if (s.activeTool === 'select') {
         // double-click a markup → type its quantity (Bluebeam: edit the measurement label)
         const raw = resolveLocalPageXY(pageXY(e));
-        const hit = hitTest(raw, s.shapes.filter(sh => sh.pageId === s.activePageId), 7 / cameraRef.current.scale);
-        if (hit && (hit.subject || hit.type === 'polyline')) {
+        const hit = hitTest(raw, visibleShapes(s.shapes).filter(sh => sh.pageId === s.activePageId), 7 / cameraRef.current.scale);
+        if (hit && !hit.locked && (hit.subject || hit.type === 'polyline')) {
           useStudioStore.getState().selectShape(hit.id);
           useStudioStore.getState().setPendingQtyEdit({ shapeId: hit.id, screenX: e.clientX, screenY: e.clientY });
           return;
@@ -930,6 +1004,31 @@ export function useCanvasEngine(
           store.updateShape(sel.id, translate(sel, dx, dy, getPpi(stateRef.current)));
           e.preventDefault(); return;
         }
+      }
+
+      // Previous / next view (Bluebeam Alt+Left / Alt+Right)
+      if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        const v = e.key === 'ArrowLeft' ? useNavStore.getState().popBack(currentView()) : useNavStore.getState().popForward(currentView());
+        if (v) restoreView(v);
+        e.preventDefault(); return;
+      }
+      // Next / previous page
+      if (e.key === 'PageDown' || e.key === 'PageUp') {
+        const st0 = stateRef.current;
+        const i = st0.pages.findIndex(p => p.id === st0.activePageId);
+        const j = e.key === 'PageDown' ? i + 1 : i - 1;
+        if (j >= 0 && j < st0.pages.length) {
+          useNavStore.getState().pushView(currentView());
+          store.setActivePage(st0.pages[j].id);
+          setTimeout(() => fitToPage(), 0);
+        }
+        e.preventDefault(); return;
+      }
+      // Bluebeam measurement shortcuts: Shift+Alt+L length, N polylength, A area, C count
+      if (e.shiftKey && e.altKey && !e.ctrlKey) {
+        const mt: Record<string, ToolType> = { l: 'line', n: 'polyline', a: 'polygon', c: 'tcount' };
+        const t = mt[e.key.toLowerCase()] ?? mt[e.code.replace('Key', '').toLowerCase()];
+        if (t) { store.setActiveSubject(null); store.setActiveTool(t); e.preventDefault(); return; }
       }
 
       // Escape = cancel current drawing
@@ -1046,7 +1145,7 @@ export function useCanvasEngine(
       const cb = onContextMenuRef.current;
       const rect    = canvas.getBoundingClientRect();
       const pagePt  = cameraRef.current.screenToPage(e.clientX - rect.left, e.clientY - rect.top);
-      const hit     = hitTest(pagePt, stateRef.current.shapes, 7 / cameraRef.current.scale);
+      const hit     = hitTest(pagePt, visibleShapes(stateRef.current.shapes), 7 / cameraRef.current.scale);
       console.log('[contextMenu] right-click at', { clientX: e.clientX, clientY: e.clientY, pagePt }, 'hit:', hit?.id, hit?.type, 'callback:', !!cb);
       if (!cb) return;
       if (hit && (hit.type === 'rect' || hit.type === 'polygon')) {
@@ -1065,6 +1164,7 @@ export function useCanvasEngine(
     return () => {
       unsubStore();
       unsubProjectStore();
+      unsubNav();
       resizeObserver.disconnect();
       canvas.removeEventListener('wheel',       handleWheel);
       canvas.removeEventListener('mousedown',   handleMouseDown);
@@ -1192,6 +1292,11 @@ function commitPolygon(
     ...stamp(s),
   } as PolygonShape;
   useStudioStore.getState().addShape(shape);
+}
+
+/** Shapes to draw / hit: others' markups only while "Others' markups" is on. */
+function visibleShapes(shapes: DrawnShape[]): DrawnShape[] {
+  return useNavStore.getState().showExternal ? shapes : shapes.filter(x => x.author !== 'external');
 }
 
 function shapeBounds(sh: DrawnShape): { x: number; y: number; w: number; h: number } {

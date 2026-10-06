@@ -187,8 +187,12 @@ export type RawTakeoff = {
   mark?:        string | null;
   /** Detector confidence 0–1. */
   confidence?:  number;
-  /** How this takeoff was produced: 'boxsnap' for AI regions; absent = drawn by hand. */
+  /** How this takeoff was produced: 'boxsnap' for AI regions, 'autotakeoff' / 'studio-finalize' from Finalize; absent = drawn by hand. */
   source?:      string;
+  /** How many of this (Thus).  Finalize sends one line per item with its count. */
+  quantity?:    number;
+  /** Tool Chest subject (e.g. "Ext. SF Area"). */
+  subject?:     string;
 };
 
 // ── Screen 2 — Builder Engineering ───────────────────────────────────────────

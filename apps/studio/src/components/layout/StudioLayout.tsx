@@ -12,6 +12,7 @@ import MarkupsList from '../takeoff/MarkupsList';
 import { QtyEditor, RejectPrompt } from '../takeoff/ReviewPopovers';
 import { useTakeoffStore } from '../../store/useTakeoffStore';
 import { useDecisionLogger } from '../../hooks/useTakeoffRunner';
+import { useSetLoader } from '../../hooks/useSetLoader';
 import FrameTypeLibrary from '../typeLibrary/FrameTypeLibrary';
 import { BulkClassifyDialog } from '../ui/BulkClassifyDialog';
 import ShapeContextMenu, { type ContextMenuTarget } from '../canvas/ShapeContextMenu';
@@ -106,6 +107,7 @@ export default function StudioLayout() {
   const showSummary = useTakeoffStore(s => s.showSummary);
   const showMarkups = useTakeoffStore(s => s.showMarkups);
   useDecisionLogger();
+  useSetLoader(engine);
   // Keep a stable ref so the IPC listener can call loadPdfBuffer even after
   // engine state updates (avoids stale closure over null).
   const engineRef = useRef<CanvasEngineAPI | null>(null);
