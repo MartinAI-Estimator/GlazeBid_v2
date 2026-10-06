@@ -120,6 +120,7 @@ function App() {
   useEstimatorSync();
   // IPC/localStorage receiver — RawTakeoff[] from new Studio engine
   useInboxSync();
+  const currentProjectRef = useRef(null);
 
   const [isElectron, setIsElectron] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
@@ -129,6 +130,8 @@ function App() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [projectType, setProjectType] = useState('pdf'); // 'pdf' or 'tiles'
   const [currentView, setCurrentView] = useState('glazebidHome'); // Navigation state
+  // Studio → Frame Builder hand-off: frames land in the project's Incoming list
+  const [frameNotice, setFrameNotice] = useState(null);   // { target, frames }
   // Bid-cart frame currently open in the Parametric Frame Builder ('frame-editor' view)
   const [editingFrameId, setEditingFrameId] = useState(null);
   const [activeSidebarSection, setActiveSidebarSection] = useState(null);
@@ -1304,8 +1307,33 @@ function App() {
     );
   };
 
+  currentProjectRef.current = currentProject;
+  useEffect(() => {
+    if (!window.electronAPI?.onFrameTakeoffReceive) return undefined;
+    return window.electronAPI.onFrameTakeoffReceive((packet) => {
+      const r = useFrameTakeoffStore.getState().receive({ ...packet, builderProject: packet?.builderProject || currentProjectRef.current });
+      setFrameNotice({ target: r.target, frames: r.frames });
+    });
+  }, []);
+
   return (
     <ProjectProvider> {/* Wrap entire app in ProjectProvider */}
+      {frameNotice && (
+        <div style={{ position: 'fixed', right: 18, bottom: 18, zIndex: 9999, background: '#0f2a1f', border: '1px solid #2f7d5a', color: '#d1fae5',
+          borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,.4)', display: 'flex', gap: 10, alignItems: 'center', fontSize: 13 }}>
+          <span>{frameNotice.frames} frame type{frameNotice.frames === 1 ? '' : 's'} from Studio{frameNotice.target ? ` → ${frameNotice.target}` : ' — open a project to file them'}</span>
+          {frameNotice.target && (
+            <button type="button" style={{ background: '#2f7d5a', color: 'white', border: 0, borderRadius: 6, padding: '4px 10px', cursor: 'pointer' }}
+              onClick={() => {
+                if (frameNotice.target !== currentProject) setCurrentProject(frameNotice.target);
+                useFrameTakeoffStore.getState().open(frameNotice.target);
+                setCurrentView('frame-takeoff');
+                setFrameNotice(null);
+              }}>Open Frame Builder</button>
+          )}
+          <button type="button" style={{ background: 'transparent', color: '#9ca3af', border: 0, cursor: 'pointer' }} onClick={() => setFrameNotice(null)}>✕</button>
+        </div>
+      )}
       <div style={styles.appContainer}>
         {/* Custom title bar for Electron - includes menu when in project */}
         {isElectron && (

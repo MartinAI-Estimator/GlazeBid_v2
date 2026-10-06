@@ -12,6 +12,7 @@ import { useTakeoffStore } from '../../store/useTakeoffStore';
 import { buildTrace, KIND_LABEL, type TraceEntry } from '../../engine/itemTrace';
 import { CLASS_NAME } from '../../engine/takeoffImport';
 import GlossaryText from '../ui/GlossaryText';
+import { useFrameLinkStore } from '../../hooks/useFrameHandoff';
 
 const KIND_COLOR: Record<string, string> = {
   schedule: 'bg-sky-900/60 text-sky-200', plan: 'bg-emerald-900/60 text-emerald-200',
@@ -25,6 +26,7 @@ export default function TracePanel({ engine }: { engine: CanvasEngineAPI | null 
   const shapes = useStudioStore(s => s.shapes);
   const pages  = useStudioStore(s => s.pages);
   const [idx, setIdx] = useState(0);
+  const fb = useFrameLinkStore(s => (itemId ? s.status[itemId] : undefined));
 
   const { item, entries } = useMemo(
     () => (itemId ? buildTrace(itemId, result, shapes, pages, links) : { item: null, entries: [] as TraceEntry[] }),
@@ -61,6 +63,13 @@ export default function TracePanel({ engine }: { engine: CanvasEngineAPI | null 
           <div className="text-slate-400 truncate">
             {item ? <GlossaryText text={CLASS_NAME[item.cls] ?? item.cls} /> : 'not in the takeoff'}{qty ? ` · ${qty}` : ''}
             {item?.alternate ? <span className="ml-1 rounded bg-fuchsia-900/60 px-1 text-fuchsia-200">{item.alternate}</span> : null}
+            {fb ? (
+              <span className={`ml-1 rounded px-1 ${fb.state === 'built' ? 'bg-emerald-900/60 text-emerald-200' : fb.state === 'needs-input' ? 'bg-amber-900/60 text-amber-200' : 'bg-violet-900/60 text-violet-200'}`}
+                    title="Status in the Frame Builder">
+                {fb.state === 'built' ? 'built' : fb.state === 'needs-input' ? 'built — needs input' : 'in Frame Builder Incoming'}
+                {fb.quantity != null && item?.qty != null && fb.quantity !== item.qty ? ` · FB qty ${fb.quantity} vs ${item.qty} here` : ''}
+              </span>
+            ) : null}
           </div>
         </div>
         <button onClick={() => useNavStore.getState().setTraceItem(null)} className="text-slate-500 hover:text-slate-200" title="Close">✕</button>

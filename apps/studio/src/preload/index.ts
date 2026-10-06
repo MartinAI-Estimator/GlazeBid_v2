@@ -24,6 +24,20 @@ contextBridge.exposeInMainWorld('electron', {
    * Builder receives this as 'frame-builder-receive'.
    */
   sendToFrameBuilder: (payload: unknown) => ipcRenderer.send('frame-builder-send', payload),
+  /** Frame payloads → the Builder's Frame Builder (Incoming list). */
+  sendFrameTakeoff: (packet: unknown) => ipcRenderer.send('frame-takeoff-send', packet),
+  /** Frame Builder "Show in Studio" → open an item's trace. */
+  onStudioTrace: (cb: (req: unknown) => void) => {
+    const handler = (_ev: Electron.IpcRendererEvent, req: unknown) => cb(req);
+    ipcRenderer.on('studio-trace', handler);
+    return () => ipcRenderer.off('studio-trace', handler);
+  },
+  /** Frame Builder → built / needs-input status and quantities per item. */
+  onFrameStatus: (cb: (status: unknown) => void) => {
+    const handler = (_ev: Electron.IpcRendererEvent, status: unknown) => cb(status);
+    ipcRenderer.on('frame-status', handler);
+    return () => ipcRenderer.off('frame-status', handler);
+  },
   /**
    * Send Studio frame-type library snapshot to Builder.
    * Builder receives this as 'frame-types-update'.

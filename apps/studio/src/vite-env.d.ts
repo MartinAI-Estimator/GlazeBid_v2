@@ -15,6 +15,9 @@ interface Window {
     syncInbox: (inbox: unknown) => void;
     syncCustomCards: (cards: unknown) => void;
     sendToFrameBuilder: (payload: unknown) => void;
+    sendFrameTakeoff?: (packet: unknown) => void;
+    onStudioTrace?: (cb: (req: unknown) => void) => () => void;
+    onFrameStatus?: (cb: (status: unknown) => void) => () => void;
     syncFrameTypes: (payload: unknown) => void;
     openStudio: () => void;
     saveProject: (json: string) => Promise<unknown>;

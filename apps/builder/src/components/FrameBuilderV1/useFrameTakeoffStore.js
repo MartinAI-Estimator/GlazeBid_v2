@@ -14,9 +14,32 @@
 import { create } from 'zustand';
 import {
   createTakeoff, createFrame, variantOf, normalizeSpec, TAKEOFF_SCHEMA, defaultGlassTypes,
+  importJob, resyncFrame, acceptDrawingValue,
 } from '@glazebid/frame-engine/core';
 
 const KEY = (projectName) => `glazebid:frameTakeoff:${projectName || '__scratch__'}`;
+const KEY_UNASSIGNED = 'glazebid:frameIncoming:unassigned';
+
+/** A new packet replaces the old one; a single-frame send ("Open in Frame Builder") merges by item. */
+export function mergeIncoming(prev, packet) {
+  const doc = packet?.doc ?? {};
+  const base = {
+    receivedAt: new Date().toISOString(), source: packet?.source ?? 'studio',
+    studioProject: packet?.studioProject ?? null, pdfName: packet?.pdfName ?? null,
+    jobDefaults: doc.jobDefaults ?? prev?.jobDefaults ?? null, doorTypes: doc.doorTypes ?? prev?.doorTypes ?? [],
+  };
+  if (packet?.mode === 'one' && prev) {
+    const ids = new Set((doc.frames ?? []).map((p) => p.itemId));
+    return { ...prev, ...base, frames: [...(prev.frames ?? []).filter((p) => !ids.has(p.itemId)), ...(doc.frames ?? [])],
+      focus: doc.frames?.[0]?.itemId ?? null };
+  }
+  return { ...base, frames: doc.frames ?? [], nonFrames: doc.nonFrames ?? [], built: [],
+    focus: packet?.mode === 'one' ? doc.frames?.[0]?.itemId ?? null : null };
+}
+
+function isPristine(f) {
+  return f.columns.length === 3 && f.columns.every((c) => c.dlo == null && c.kind === 'glass') && f.rows.length === 1 && !f.notes;
+}
 const HISTORY = 60;
 
 function readSaved(projectName) {
@@ -164,6 +187,108 @@ const useFrameTakeoffStore = create((set, get) => ({
     if (!newName || tp.frameSets[newName]) return;
     const fs = { ...tp.frameSets }; fs[newName] = fs[oldName]; delete fs[oldName];
     get()._commit({ ...tp, frameSets: fs, frames: tp.frames.map((f) => (f.frameSet === oldName ? { ...f, frameSet: newName } : f)) });
+  },
+
+  // ── Incoming from Studio / window schedule ──
+  //
+  // takeoff.incoming = { receivedAt, source, studioProject, pdfName, frames: [payload],
+  //                      nonFrames, doorTypes, jobDefaults }
+  // Nothing is built until the estimator says so (Build all / per row).
+
+  /**
+   * Receive a hand-off packet.  Goes to `packet.builderProject`, else the open
+   * project.  A project that isn't open gets it in its saved takeoff, ready for
+   * when it is opened.  → { target, frames }
+   */
+  receive(packet) {
+    const target = packet?.builderProject || get().projectName || null;
+    if (!target) {
+      try { localStorage.setItem(KEY_UNASSIGNED, JSON.stringify(packet)); } catch { /* ignore */ }
+      return { target: null, frames: packet?.doc?.frames?.length ?? 0 };
+    }
+    const merge = (tp) => ({ ...tp, incoming: mergeIncoming(tp.incoming, packet) });
+    if (target === get().projectName && get().takeoff) {
+      get()._commit(merge(get().takeoff));
+    } else {
+      const tp = readSaved(target) ?? createTakeoff({ name: target, projectId: target, frames: [] });
+      try { localStorage.setItem(KEY(target), JSON.stringify({ ...merge(tp), updatedAt: new Date().toISOString() })); }
+      catch (err) { console.error('[FrameBuilder] could not store incoming frames', err); }
+    }
+    return { target, frames: packet?.doc?.frames?.length ?? 0 };
+  },
+
+  /** Pick up a packet that arrived with no project (Studio opened on its own). */
+  claimUnassigned() {
+    try {
+      const raw = localStorage.getItem(KEY_UNASSIGNED);
+      if (!raw) return 0;
+      localStorage.removeItem(KEY_UNASSIGNED);
+      const packet = JSON.parse(raw);
+      get().receive({ ...packet, builderProject: get().projectName });
+      return packet?.doc?.frames?.length ?? 0;
+    } catch { return 0; }
+  },
+
+  /**
+   * Build incoming frames (all, or the given item ids).  A mark already built from
+   * Studio is re-synced: untouched fields update, edited fields are kept with a
+   * "drawing now says" note.  → { added, updated, kept, glassTypes }
+   */
+  buildIncoming(itemIds = null) {
+    const tp = get().takeoff;
+    const inc = tp?.incoming;
+    if (!inc?.frames?.length) return { added: 0, updated: 0, kept: 0, glassTypes: 0 };
+    const pick = inc.frames.filter((p) => p.buildable !== false && (!itemIds || itemIds.includes(p.itemId)));
+    const job = importJob({ frames: pick, jobDefaults: inc.jobDefaults }, tp, { source: inc.source ?? 'studio' });
+    const glassTypes = [...(tp.glassTypes?.length ? tp.glassTypes : defaultGlassTypes()), ...job.glassTypes];
+    let frames = [...tp.frames];
+    const sets = { ...tp.frameSets };
+    let added = 0; let updated = 0; let kept = 0;
+    let firstId = null;
+    pick.forEach((p, i) => {
+      const fresh = job.frames[i].spec;
+      const idx = frames.findIndex((f) => f.importMeta?.itemId && f.importMeta.itemId === p.itemId);
+      if (idx >= 0) {
+        const r = resyncFrame(frames[idx], p, { takeoff: { ...tp, glassTypes, finish: job.finish }, glassTypeIdFor: job.glassTypeIdFor, source: inc.source });
+        frames[idx] = r.spec;
+        if (r.updated.length) updated++;
+        if (r.kept.length) kept++;
+        firstId ??= r.spec.id;
+      } else {
+        frames.push(fresh);
+        if (fresh.frameSet && !sets[fresh.frameSet]) sets[fresh.frameSet] = { liftLine: null, difficulty: 1 };
+        added++;
+        firstId ??= fresh.id;
+      }
+    });
+    // a fresh takeoff's placeholder frame (SF-1, untouched) goes away once real frames arrive
+    if (added && frames.length > added) {
+      frames = frames.filter((f) => !(f.importMeta == null && f.mark === 'SF-1' && isPristine(f)));
+    }
+    const built = new Set(pick.map((p) => p.itemId));
+    const left = inc.frames.filter((p) => !built.has(p.itemId));
+    get()._commit({ ...tp, glassTypes, frames, frameSets: sets,
+      incoming: { ...inc, frames: left, built: [...(inc.built ?? []), ...built] } });
+    if (firstId) set({ selectedFrameId: firstId, selection: null });
+    return { added, updated, kept, glassTypes: job.glassTypes.length };
+  },
+
+  /** Drop incoming frames without building them. */
+  dismissIncoming(itemIds = null) {
+    const tp = get().takeoff;
+    if (!tp?.incoming) return;
+    const frames = itemIds ? tp.incoming.frames.filter((p) => !itemIds.includes(p.itemId)) : [];
+    get()._commit({ ...tp, incoming: { ...tp.incoming, frames, nonFrames: itemIds ? tp.incoming.nonFrames : [] } });
+  },
+
+  /** Take the drawing's value for one field the estimator had edited. */
+  acceptDrawing(id, field) {
+    get().updateFrame(id, (f) => acceptDrawingValue(f, field));
+  },
+
+  /** The estimator has looked at an imported frame's flags. */
+  markReviewed(id) {
+    get().updateFrame(id, (f) => (f.importMeta ? { ...f, importMeta: { ...f.importMeta, open: false, reviewedAt: new Date().toISOString() } } : f));
   },
 
   // ── Glass types ──

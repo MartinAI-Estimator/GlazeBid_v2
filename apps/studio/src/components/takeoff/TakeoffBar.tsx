@@ -5,6 +5,7 @@
 import { useMemo, useState } from 'react';
 import FinalizeDialog from './FinalizeDialog';
 import ComparePanel from './ComparePanel';
+import { sendFramesToBuilder, useFrameLinkStore } from '../../hooks/useFrameHandoff';
 import { useNavStore } from '../../store/useNavStore';
 import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 import { useTakeoffRunner } from '../../hooks/useTakeoffRunner';
@@ -29,6 +30,17 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
   const flagIdx = flags.findIndex(f => f.id === selectedId);
   const [finalizing, setFinalizing] = useState(false);
   const [comparing, setComparing] = useState(false);
+  const notice = useFrameLinkStore(s => s.notice);
+  const [sending, setSending] = useState(false);
+  async function sendFrames() {
+    setSending(true);
+    try {
+      const r = await sendFramesToBuilder(engine);
+      useFrameLinkStore.getState().setNotice({ kind: 'ok', text: `${r.frames} frame types sent to the Frame Builder${r.target ? ` (${r.target})` : ''} — build them from its Incoming list.` });
+    } catch (e) {
+      useFrameLinkStore.getState().setNotice({ kind: 'error', text: e instanceof Error ? e.message : String(e) });
+    } finally { setSending(false); }
+  }
   const overlay = useNavStore(s => s.overlay);
   const splitPageId = useNavStore(s => s.splitPageId);
   const showSearch = useNavStore(s => s.showSearch);
@@ -93,6 +105,15 @@ export default function TakeoffBar({ engine }: { engine: CanvasEngineAPI | null 
       </button>
       <button onClick={toggleSummary} className={`${btn} ${showSummary ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'}`}>Summary</button>
       <button onClick={toggleMarkups} className={`${btn} ${showMarkups ? 'border-slate-500 text-white bg-slate-700' : 'border-slate-700 text-slate-300 hover:bg-slate-800'}`}>Markups List</button>
+      {notice && (
+        <span className={`max-w-[26rem] truncate ${notice.kind === 'error' ? 'text-red-400' : 'text-emerald-300'}`} title={notice.text}
+              onClick={() => useFrameLinkStore.getState().setNotice(null)}>{notice.text}</span>
+      )}
+      <button disabled={!result || sending} onClick={() => void sendFrames()}
+              title="Send every frame type (bays, rows, doors read off the elevations) to the Frame Builder's Incoming list"
+              className={`${btn} border-violet-700 text-violet-200 bg-violet-900/30 hover:bg-violet-800/50 disabled:opacity-40`}>
+        {sending ? 'Sending…' : 'To Frame Builder'}
+      </button>
       <button
         disabled={!pdfFileName}
         onClick={() => setFinalizing(true)}

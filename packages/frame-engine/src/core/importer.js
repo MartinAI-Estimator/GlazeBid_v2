@@ -292,6 +292,7 @@ export function snapshot(spec) {
  *   → { frames: [{ spec, needsInput }], glassTypes: [new types], finish, nonFrames, report }
  */
 export function importJob(doc = {}, takeoff = {}, opts = {}) {
+  // (opts.source: 'studio' | 'schedule')
   const existing = takeoff.glassTypes ?? [];
   const newTypes = [];
   const jd = doc.jobDefaults ?? {};
@@ -325,6 +326,7 @@ export function importJob(doc = {}, takeoff = {}, opts = {}) {
   return {
     frames,
     glassTypes: newTypes,
+    glassTypeIdFor,
     finish,
     nonFrames: doc.nonFrames ?? [],
     doorTypes: doc.doorTypes ?? [],

@@ -166,3 +166,18 @@
 .fbv1-modal-box h3 { margin: 0; font-size: 15px; }
 
 @media (max-width: 1280px) { .fbv1-body { grid-template-columns: 200px minmax(0, 1fr) 360px; } }
+
+/* ── Incoming from Studio / window schedule ── */
+.fbv1-modal-box.wide { width: min(1180px, 96vw); }
+.fbv1-scroll { max-height: 56vh; overflow: auto; margin: 8px 0; }
+.fbv1-table tr.muted td { opacity: .5; }
+.fbv1-status-new { color: #7dd3a7; }
+.fbv1-status-update { color: #93c5fd; }
+.fbv1-status-edited { color: var(--warn); }
+.fbv1-status-same { color: var(--dim); }
+.fbv1-badge.flag { background: rgba(245,158,11,.18); color: var(--warn); margin-left: 4px; }
+.fbv1-import { margin-bottom: 10px; }
+.fbv1-import.open { border-color: rgba(245,158,11,.5); }
+.fbv1-needs { margin: 6px 0; padding-left: 16px; font-size: 11.5px; color: var(--warn); }
+.fbv1-says { margin: 6px 0; font-size: 12px; }
+.fbv1-says .fbv1-row { gap: 6px; padding: 3px 0; border-bottom: 1px dashed var(--line); }

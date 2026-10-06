@@ -17,6 +17,7 @@ import { QtyEditor, RejectPrompt } from '../takeoff/ReviewPopovers';
 import { useTakeoffStore } from '../../store/useTakeoffStore';
 import { useDecisionLogger } from '../../hooks/useTakeoffRunner';
 import { useSetLoader } from '../../hooks/useSetLoader';
+import { useFrameHandoffLinks, sendFramesToBuilder, useFrameLinkStore } from '../../hooks/useFrameHandoff';
 import FrameTypeLibrary from '../typeLibrary/FrameTypeLibrary';
 import { BulkClassifyDialog } from '../ui/BulkClassifyDialog';
 import ShapeContextMenu, { type ContextMenuTarget } from '../canvas/ShapeContextMenu';
@@ -112,6 +113,7 @@ export default function StudioLayout() {
   const showMarkups = useTakeoffStore(s => s.showMarkups);
   useDecisionLogger();
   useSetLoader(engine);
+  useFrameHandoffLinks(engine);     // before studioReady below: catches the Builder project
   // Keep a stable ref so the IPC listener can call loadPdfBuffer even after
   // engine state updates (avoids stale closure over null).
   const engineRef = useRef<CanvasEngineAPI | null>(null);
@@ -173,6 +175,13 @@ export default function StudioLayout() {
 
   const handleContextMenuOpenFrameBuilder = useCallback((shape: RectShape | PolygonShape) => {
     setContextMenuTarget(null);
+    // an auto-takeoff frame type → its payload (bays, doors, system) into the Frame Builder's Incoming
+    if (shape.itemId) {
+      sendFramesToBuilder(engineRef.current, { only: shape.itemId })
+        .then((r) => useFrameLinkStore.getState().setNotice({ kind: 'ok', text: `${shape.itemId} sent to the Frame Builder${r.target ? ` (${r.target})` : ''}.` }))
+        .catch((e: unknown) => useFrameLinkStore.getState().setNotice({ kind: 'error', text: e instanceof Error ? e.message : String(e) }));
+      return;
+    }
     // Send shape dims to Builder via IPC → Builder "Needs Work" import card
     const widthIn  = shape.type === 'rect' ? shape.widthInches  : shape.bbWidthInches;
     const heightIn = shape.type === 'rect' ? shape.heightInches : shape.bbHeightInches;

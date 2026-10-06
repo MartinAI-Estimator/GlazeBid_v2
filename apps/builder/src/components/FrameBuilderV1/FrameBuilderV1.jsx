@@ -22,6 +22,7 @@ import {
   FramePanel, GridPanel, GlassPanel, DoorsPanel, JointsPanel, MembersPanel, LaborPanel, BrakePanel, TakeoffPanel, JobPanel,
 } from './Panels';
 import { REPORTS } from './reports';
+import IncomingPanel, { FromStudioBox } from './IncomingPanel';
 import { laborDeps, syncToBid } from './builderBridge';
 import useProductionRatesStore from '../../store/useProductionRatesStore';
 import './frameBuilderV1.css';
@@ -53,6 +54,30 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
   const [toast, setToast] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
   const [reportsOpen, setReportsOpen] = useState(false);
+  const [incomingOpen, setIncomingOpen] = useState(false);
+  const incomingCount = takeoff?.incoming?.frames?.length ?? 0;
+  // open the Incoming list when a new hand-off arrives
+  useEffect(() => { if (incomingCount) setIncomingOpen(true); }, [takeoff?.incoming?.receivedAt]); // eslint-disable-line react-hooks/exhaustive-deps
+  // tell Studio what is built / needs input / waiting, with the Frame Builder quantity (decision 11)
+  useEffect(() => {
+    if (!takeoff || !window.electronAPI?.sendFrameStatus) return undefined;
+    const t = setTimeout(() => {
+      const frames = [
+        ...takeoff.frames.filter((f) => f.importMeta?.itemId).map((f) => ({ itemId: f.importMeta.itemId, mark: f.mark,
+          state: f.importMeta.open ? 'needs-input' : 'built', quantity: f.quantity })),
+        ...(takeoff.incoming?.frames ?? []).map((p) => ({ itemId: p.itemId, mark: p.mark, state: 'incoming', quantity: p.quantity })),
+      ];
+      window.electronAPI.sendFrameStatus({ builderProject: projectName, frames });
+    }, 800);
+    return () => clearTimeout(t);
+  }, [takeoff, projectName]);
+
+  // a hand-off that arrived with no project (Studio opened on its own) goes to the project opened next
+  useEffect(() => {
+    if (!takeoff) return;
+    const n = store.claimUnassigned();
+    if (n) setToast({ kind: 'info', text: `${n} frame type(s) from Studio added to Incoming.` });
+  }, [projectName, !!takeoff]); // eslint-disable-line react-hooks/exhaustive-deps
   const ratesVersion = useProductionRatesStore((s) => s.hourlyFunctionsByType);
   const cache = useRef(new Map());
 
@@ -149,6 +174,8 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
         <div className="fbv1-actions">
           <button type="button" className="fbv1-btn ghost" disabled={!store.past.length} onClick={store.undo} title="Undo (Ctrl+Z)">↶</button>
           <button type="button" className="fbv1-btn ghost" disabled={!store.future.length} onClick={store.redo} title="Redo (Ctrl+Y)">↷</button>
+          <button type="button" className={`fbv1-btn ${incomingCount ? 'primary' : 'ghost'}`} onClick={() => setIncomingOpen(true)}
+            title="Frames sent from Studio / read from a window schedule, waiting to be built">Incoming{incomingCount ? ` (${incomingCount})` : ''}</button>
           <button type="button" className="fbv1-btn ghost" onClick={() => setImportOpen(true)}>Import</button>
           <button type="button" className="fbv1-btn ghost" onClick={() => downloadJson(takeoff, projectName)}>Save file</button>
           <div className="fbv1-menu">
@@ -191,6 +218,7 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
                     <div className="fbv1-item-main">
                       <b>{f.mark || '—'}</b><span className="fbv1-qty">×{f.quantity}</span>
                       {warn > 0 && <span className="fbv1-badge warn" title={(fr?.bom?.warnings ?? [fr?.error]).join('\n')}>{warn}</span>}
+                      {f.importMeta?.open && <span className="fbv1-badge flag" title={[...(f.importMeta.drawingSays ?? []).map((k) => `Drawing now says a different ${k.field}`), ...(f.importMeta.needs ?? []).filter((n) => n.field !== 'drawing').map((n) => n.reason)].join('\n') || 'Imported — review it'}>⚑</span>}
                     </div>
                     <div className="fbv1-item-sub">{fr?.bom ? `${formatFeetInches(fr.bom.solved.width)} × ${formatFeetInches(fr.bom.solved.height)}` : '—'} · {getSystem(f.systemId).series}</div>
                     {f.id === selectedFrameId && (
@@ -248,6 +276,7 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
           </nav>
           <div className="fbv1-panel">
             {!spec && tab !== 'Job' && <div className="fbv1-empty small">Select a frame.</div>}
+            {spec && tab === 'Frame' && <FromStudioBox spec={spec} store={store} onShowInStudio={window.electronAPI?.showInStudio ? (itemId) => window.electronAPI.showInStudio({ itemId, builderProject: projectName }) : null} />}
             {spec && tab === 'Frame' && <FramePanel spec={spec} update={update} takeoff={takeoff} setFrameSet={store.setFrameSet} />}
             {spec && tab === 'Grid' && <GridPanel spec={spec} result={frameResult?.bom} update={update} selectedCol={selectedCol} setSelectedCol={setSelectedCol} />}
             {spec && tab === 'Glass' && <GlassPanel spec={spec} update={update} takeoff={takeoff} store={store} result={frameResult?.bom} selection={selection} activeGlassId={activeGlassId} setActiveGlassId={(id) => { setActiveGlassId(id); setMode('glass'); }} />}
@@ -262,6 +291,10 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
         </aside>
       </div>
 
+      {incomingOpen && <IncomingPanel takeoff={takeoff} store={store} onClose={() => setIncomingOpen(false)} onBuilt={(r) => {
+        setIncomingOpen(false); setTab('Frame');
+        setToast({ kind: r.kept ? 'warn' : 'ok', text: `Built ${r.added} new frame(s), updated ${r.updated}${r.kept ? `; ${r.kept} frame(s) you edited have drawing changes to review (⚑)` : ''}${r.glassTypes ? `; ${r.glassTypes} glass type(s) added from the specs` : ''}.` });
+      }} />}
       {importOpen && <ImportDialog takeoff={takeoff} onClose={() => setImportOpen(false)} onFrames={(specs, notes) => {
         store.addFrames(specs); setImportOpen(false);
         setToast({ kind: notes.length ? 'warn' : 'ok', text: `Imported ${specs.length} frame(s).${notes.length ? ` ${notes.length} field(s) need your input — see each frame's notes.` : ''}` });

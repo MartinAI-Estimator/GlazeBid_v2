@@ -14,6 +14,7 @@ import { inboxFromTakeoff, markupsForPdf } from '../../engine/finalize';
 import { flushDecisions } from '../../hooks/useTakeoffRunner';
 import { projectNameOf } from '../../hooks/useSetLoader';
 import { BidDayList, useBidDay } from './ReviewPanel';
+import { sendFramesToBuilder } from '../../hooks/useFrameHandoff';
 import type { CanvasEngineAPI } from '../../hooks/useCanvasEngine';
 
 const SIDECAR_URL = 'http://localhost:8100';
@@ -62,7 +63,18 @@ export default function FinalizeDialog({ onClose, engine }: { onClose: () => voi
       for (const e of entries) ps.addTakeoff({ ...e, source: e.source === 'studio' ? 'studio-finalize' : e.source });
       notes.push(`${entries.length} takeoff lines sent to the estimate inbox`);
 
-      // 3. marked PDF
+      // 3. frame types → the Frame Builder's Incoming list (decision 1)
+      if (result) {
+        setBusy('Sending frame types to the Frame Builder…');
+        try {
+          const r = await sendFramesToBuilder(engine);
+          notes.push(`${r.frames} frame types sent to the Frame Builder${r.target ? ` (${r.target})` : ''} — build them from its Incoming list`);
+        } catch (e) {
+          notes.push(`frame types not sent: ${e instanceof Error ? e.message : String(e)}`);
+        }
+      }
+
+      // 4. marked PDF
       setBusy('Writing the marked set (Bluebeam-compatible)…');
       const payload = markupsForPdf(st2.shapes, st2.pages, st2.calibrations);
       const project = projectNameOf(st2.pdfFileName);
@@ -101,6 +113,7 @@ export default function FinalizeDialog({ onClose, engine }: { onClose: () => voi
               <li>• {stats.unreviewed} engine markups you didn't change will be <span className="text-emerald-300">accepted</span> ({stats.edited} edited, kept as edited)</li>
               <li>• {stats.mine} markups you drew go in as your takeoff</li>
               <li>• the takeoff goes to the estimate's inbox (replacing an earlier finalize)</li>
+              <li>• every frame type goes to the Frame Builder's Incoming list (bays, doors, system)</li>
               <li>• a Bluebeam-compatible marked set is written</li>
             </ul>
             <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bid-day checklist</div>

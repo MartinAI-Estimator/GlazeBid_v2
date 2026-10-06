@@ -102,6 +102,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
    * in Studio and chooses "Open in Frame Builder".
    * Returns a cleanup function.
    */
+  /** Frame payloads from Studio (Finalize / "Open in Frame Builder") → Frame Builder Incoming. */
+  onFrameTakeoffReceive: (callback) => {
+    const handler = (_event, packet) => callback(packet);
+    ipcRenderer.on('frame-takeoff-receive', handler);
+    return () => ipcRenderer.off('frame-takeoff-receive', handler);
+  },
+  /** Frame Builder "Show in Studio": open the item's sheets in Studio. */
+  showInStudio: (req) => ipcRenderer.send('studio-trace-send', req),
+  /** Tell Studio which frame types are built / need input / their quantities. */
+  sendFrameStatus: (status) => ipcRenderer.send('frame-status-send', status),
+
   onFrameBuilderReceive: (callback) => {
     const handler = (_event, payload) => callback(payload);
     ipcRenderer.on('frame-builder-receive', handler);

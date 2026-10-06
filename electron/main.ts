@@ -17,6 +17,12 @@
  *   inbox-update         Main → Builder renderer (relays inbox-sync)
  *   custom-cards-sync    Studio renderer → custom system cards update
  *   custom-cards-update  Main → Builder renderer (relays custom-cards-sync)
+ *   frame-takeoff-send   Studio renderer → frame payloads for the Frame Builder (Incoming)
+ *   frame-takeoff-receive Main → Builder renderer
+ *   studio-trace-send    Builder renderer → "Show in Studio" (item trace)
+ *   studio-trace         Main → Studio renderer
+ *   frame-status-send    Builder renderer → built / needs-input status per item
+ *   frame-status         Main → Studio renderer
  *   frame-builder-send   Studio renderer → "Open in Frame Builder" from right-click
  *   frame-builder-receive Main → Builder renderer (relays frame-builder-send)
  *
@@ -612,6 +618,33 @@ app.whenReady().then(async () => {
   ipcMain.on('custom-cards-sync', (_event, cards: unknown) => {
     if (builderWindow && !builderWindow.isDestroyed()) {
       builderWindow.webContents.send('custom-cards-update', cards);
+    }
+  });
+
+  // ── frame-takeoff-send: Studio → Frame Builder hand-off (frame payloads) ──────
+  //    Studio sends { builderProject, studioProject, pdfName, mode, doc }; the
+  //    Builder files it in that project's Frame Builder "Incoming" list.
+  ipcMain.on('frame-takeoff-send', (_event, packet: unknown) => {
+    if (builderWindow && !builderWindow.isDestroyed()) {
+      builderWindow.webContents.send('frame-takeoff-receive', packet);
+      if (builderWindow.isMinimized()) builderWindow.restore();
+      builderWindow.focus();
+    }
+  });
+
+  // ── studio-trace-send: Frame Builder "Show in Studio" → Studio item trace ────
+  ipcMain.on('studio-trace-send', (_event, req: unknown) => {
+    if (studioWindow && !studioWindow.isDestroyed()) {
+      studioWindow.webContents.send('studio-trace', req);
+      if (studioWindow.isMinimized()) studioWindow.restore();
+      studioWindow.focus();
+    }
+  });
+
+  // ── frame-status-send: Frame Builder → Studio (built / needs input / quantities) ─
+  ipcMain.on('frame-status-send', (_event, status: unknown) => {
+    if (studioWindow && !studioWindow.isDestroyed()) {
+      studioWindow.webContents.send('frame-status', status);
     }
   });
 
