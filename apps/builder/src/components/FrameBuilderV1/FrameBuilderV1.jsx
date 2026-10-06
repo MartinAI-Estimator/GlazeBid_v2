@@ -22,7 +22,7 @@ import {
   FramePanel, GridPanel, GlassPanel, DoorsPanel, JointsPanel, MembersPanel, LaborPanel, BrakePanel, TakeoffPanel, JobPanel,
 } from './Panels';
 import { REPORTS } from './reports';
-import IncomingPanel, { FromStudioBox } from './IncomingPanel';
+import IncomingPanel, { FromStudioBox, ScheduleUpload } from './IncomingPanel';
 import { laborDeps, syncToBid } from './builderBridge';
 import useProductionRatesStore from '../../store/useProductionRatesStore';
 import './frameBuilderV1.css';
@@ -176,6 +176,8 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
           <button type="button" className="fbv1-btn ghost" disabled={!store.future.length} onClick={store.redo} title="Redo (Ctrl+Y)">↷</button>
           <button type="button" className={`fbv1-btn ${incomingCount ? 'primary' : 'ghost'}`} onClick={() => setIncomingOpen(true)}
             title="Frames sent from Studio / read from a window schedule, waiting to be built">Incoming{incomingCount ? ` (${incomingCount})` : ''}</button>
+          <ScheduleUpload store={store} projectName={projectName} className="fbv1-btn ghost"
+            onDone={(r) => setToast({ kind: 'ok', text: r.text })} />
           <button type="button" className="fbv1-btn ghost" onClick={() => setImportOpen(true)}>Import</button>
           <button type="button" className="fbv1-btn ghost" onClick={() => downloadJson(takeoff, projectName)}>Save file</button>
           <div className="fbv1-menu">
@@ -291,7 +293,7 @@ export default function FrameBuilderV1({ projectName, onBack, onNavigate }) {
         </aside>
       </div>
 
-      {incomingOpen && <IncomingPanel takeoff={takeoff} store={store} onClose={() => setIncomingOpen(false)} onBuilt={(r) => {
+      {incomingOpen && <IncomingPanel takeoff={takeoff} store={store} projectName={projectName} onClose={() => setIncomingOpen(false)} onBuilt={(r) => {
         setIncomingOpen(false); setTab('Frame');
         setToast({ kind: r.kept ? 'warn' : 'ok', text: `Built ${r.added} new frame(s), updated ${r.updated}${r.kept ? `; ${r.kept} frame(s) you edited have drawing changes to review (⚑)` : ''}${r.glassTypes ? `; ${r.glassTypes} glass type(s) added from the specs` : ''}.` });
       }} />}

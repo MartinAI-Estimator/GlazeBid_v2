@@ -903,3 +903,39 @@ async def frames_payload_endpoint(req: FramesPayloadRequest):
     with open(os.path.join(d, "frames_payload.json"), "w", encoding="utf-8") as f:
         _json.dump(out, f, default=str)
     return out
+
+
+# ── Window schedule uploaded in the Frame Builder (no AI) ────────────────────
+
+class ScheduleReadRequest(BaseModel):
+    pdf_base64: str
+    file_name: str = "schedule.pdf"
+    project_name: str = ""
+
+
+@router.post("/schedule/read")
+async def schedule_read_endpoint(req: ScheduleReadRequest):
+    """A window / frame schedule PDF uploaded in the Frame Builder → the same frame payloads
+    Studio sends, read by the deterministic engine (schedule tables, pictorial schedules and
+    type elevations).  Kept apart from the project's drawing-set run."""
+    from glazierai.modules.drawing_intelligence.autotakeoff import run_autotakeoff
+    from glazierai.modules.drawing_intelligence.autotakeoff.frames import frame_payloads, schedule_payloads
+    d = _runs_dir((req.project_name or "untitled") + "__schedule")
+    pdf = os.path.join(d, "schedule.pdf")
+    with open(pdf, "wb") as f:
+        f.write(_b64.b64decode(req.pdf_base64))
+    try:
+        result = await run_in_threadpool(run_autotakeoff, pdf, req.project_name or "schedule", None)
+    except Exception as exc:
+        logger.exception(f"[DI] schedule read failed: {exc}")
+        raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}")
+    spec = None
+    sj = os.path.join(_runs_dir(req.project_name), "spec_check.json") if req.project_name else ""
+    if sj and os.path.exists(sj):
+        with open(sj, encoding="utf-8") as f:
+            spec = _json.load(f)
+    out = await run_in_threadpool(frame_payloads, result, spec, pdf)
+    out = schedule_payloads(out, req.file_name)
+    with open(os.path.join(d, "frames_payload.json"), "w", encoding="utf-8") as f:
+        _json.dump(out, f, default=str)
+    return out

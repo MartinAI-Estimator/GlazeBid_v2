@@ -21,11 +21,11 @@ except ImportError:  # PyMuPDF < 1.24.3
 if __package__ in (None, ""):
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")))
     from glazierai.modules.drawing_intelligence.autotakeoff.elevation_grid import read_grid
-    from glazierai.modules.drawing_intelligence.autotakeoff.frames import frame_payloads, cells_of, _members_clean
+    from glazierai.modules.drawing_intelligence.autotakeoff.frames import frame_payloads, schedule_payloads, cells_of, _members_clean
     from glazierai.modules.drawing_intelligence.autotakeoff.pdfgeom import clear_cache
 else:
     from .elevation_grid import read_grid
-    from .frames import frame_payloads, cells_of, _members_clean
+    from .frames import frame_payloads, schedule_payloads, cells_of, _members_clean
     from .pdfgeom import clear_cache
 
 PPI = 1.5            # page points per inch (1/8" = 1'-0" is 1.5 pt/in)
@@ -132,6 +132,19 @@ def test_payload_links_door_to_frame_type_and_reads_bays():
     assert f["frameSeries"] and f["provenance"]["system"]["source"] == "assumed"
     assert any(n["kind"] == "brake_metal" and n["unit"] == "LF" for n in out["nonFrames"])
     assert out["summary"]["doorsInFrames"] == 1 and out["summary"]["standaloneDoors"] == 0
+
+
+def test_schedule_upload_flags_the_count():
+    doc = {"frames": [
+        {"mark": "SF2", "quantity": 1, "provenance": {"quantity": {"source": "schedule", "note": "schedule (no plan tag found)"}},
+         "needs": [{"field": "drawing", "reason": "no plan tag found for this mark — count assumed 1"}]},
+        {"mark": "SF3", "quantity": 4, "provenance": {"quantity": {"source": "plan", "note": "plan tags"}}, "needs": []},
+    ]}
+    out = schedule_payloads(doc, "A6.1 schedule.pdf")
+    a, b = out["frames"]
+    assert a["source"] == "schedule" and a["scheduleFile"] == "A6.1 schedule.pdf"
+    assert [n["field"] for n in a["needs"]] == ["quantity"]
+    assert b["needs"] == [] and b["provenance"]["quantity"]["source"] == "plan"
 
 
 if __name__ == "__main__":

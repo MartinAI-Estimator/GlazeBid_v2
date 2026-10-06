@@ -185,6 +185,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
    */
   runRegionTakeoff: (payload) => ipcRenderer.invoke('glazierai:runRegion', payload),
 
+  /**
+   * Frame Builder — read a window / frame schedule PDF with the deterministic engine (no AI).
+   * payload: { pdfBase64, fileName, projectName } → { ok, data: framePayloads } | { ok: false, error }
+   */
+  readSchedule: (payload) => ipcRenderer.invoke('glazierai:readSchedule', payload),
+
   // ── Project filesystem ─────────────────────────────────────────────────────
   /**
    * Get the configured projects root path (e.g. "Z:\\GlazeBid Projects").

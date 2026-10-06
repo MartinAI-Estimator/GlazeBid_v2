@@ -460,7 +460,8 @@ def _payload(it: dict, doors: list[dict], spec_series: dict, sheets: dict) -> di
             need("doors", f"{len(doors)} door(s) name this frame type but {len(door_cols)} door bay(s) were read — place the rest.")
 
     qty = it.get("qty") or 1
-    prov["quantity"] = {"source": "plan" if "plan" in (it.get("qty_source") or "") else "schedule", "note": it.get("qty_source")}
+    qs = it.get("qty_source") or ""
+    prov["quantity"] = {"source": "plan" if ("plan" in qs or "door tags" in qs) and "no plan" not in qs else "schedule", "note": qs}
 
     glass = _glass_text(it, cells)
     finish = _finish_text(cells, it.get("desc") or "")
@@ -592,3 +593,24 @@ def job_defaults(spec_check: dict | None) -> dict:
                           "exterior": bool(re.search(r"exterior", desc, re.I)),
                           "interior": bool(re.search(r"interior", desc, re.I))})
     return {"finish": finish, "glassTypes": glass[:8], "source": spec_check.get("source")}
+
+
+# ── Window schedule uploaded on its own (Frame Builder "Upload schedule") ────
+
+def schedule_payloads(doc: dict, file_name: str = "") -> dict:
+    """Payloads read from a schedule PDF uploaded in the Frame Builder (no plans in it):
+    every frame is tagged source 'schedule'; a count the schedule doesn't give is flagged
+    as such (the plans count it once Studio sends the same mark)."""
+    for p in doc.get("frames", []):
+        p["source"] = "schedule"
+        p["scheduleFile"] = file_name
+        prov = p.setdefault("provenance", {})
+        q = prov.get("quantity") or {}
+        if q.get("source") != "plan":
+            prov["quantity"] = {"source": "schedule", "note": "not on the schedule — 1 assumed"}
+            p["needs"] = [n for n in p.get("needs", []) if "no plan tag found" not in n.get("reason", "")]
+            if not any(n.get("field") == "quantity" for n in p["needs"]):
+                p["needs"].append({"field": "quantity", "reason": "The schedule gives no count — 1 assumed. Send the plans from Studio (the plan count wins) or enter it."})
+    doc["source"] = "schedule"
+    doc["scheduleFile"] = file_name
+    return doc

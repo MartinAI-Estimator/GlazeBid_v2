@@ -93,6 +93,184 @@ function eqIndex(values, eligible) {
   return best;
 }
 
+// ── Marks, schedule rows, schedule ↔ Studio merge (decisions 4, 6) ──────────
+
+/** "FRAME TYPE 5" / "Type 05" / "5" → "5";  "SF-01" → "SF1";  "6a" → "6A". */
+export function markKey(s) {
+  let t = String(s ?? '').toUpperCase().trim();
+  t = t.replace(/^(FRAME|WINDOW|STOREFRONT|CURTAIN\s*WALL|OPENING)\s*(TYPE|MARK)?\s*[:#]?\s*/, '').replace(/^(TYPE|MARK)\s*[:#]?\s*/, '');
+  t = t.replace(/[\s\-_.#]/g, '');
+  return t.replace(/(^|\D)0+(?=\d)/g, '$1');
+}
+
+/** The imported frame a payload re-syncs into: same item id, else same mark. */
+export function findImported(frames, p) {
+  const byId = frames.findIndex((f) => f.importMeta?.itemId && f.importMeta.itemId === p.itemId);
+  if (byId >= 0) return byId;
+  const k = markKey(p.mark ?? p.itemId);
+  if (!k) return -1;
+  return frames.findIndex((f) => f.importMeta && (markKey(f.importMeta.itemId) === k || markKey(f.mark) === k));
+}
+
+/**
+ * A Cowork §4 payload (spreadsheet schedules, older imports) gives bay / row sizes as
+ * bayWidths / rowHeights (centerline spans, left → right and bottom → top) and door bays
+ * as doorBays.  Turned into the same columns the elevation reader sends.
+ */
+function fromScheduleShape(p) {
+  if ((Array.isArray(p.columns) && p.columns.length) || !Array.isArray(p.bayWidths) || !p.bayWidths.length) return p;
+  const bw = p.bayWidths.map((v) => num(v, 0));
+  if (!bw.every((v) => v > 0)) return p;
+  const rh = Array.isArray(p.rowHeights) ? p.rowHeights.map((v) => num(v, 0)) : [];
+  const at = [];
+  if (rh.length > 1 && rh.every((v) => v > 0)) rh.slice(0, -1).reduce((acc, v) => { at.push(r4(acc + v)); return acc + v; }, 0);
+  const doorBays = new Set(p.doorBays ?? []);
+  return {
+    ...p,
+    columns: bw.map((w, i) => ({
+      widthCL: w, kind: doorBays.has(i) ? 'door' : 'glass',
+      rows: doorBays.has(i) ? 1 : at.length + 1, horizontalsAt: doorBays.has(i) ? [] : at, doorHeight: null,
+    })),
+  };
+}
+
+const fmtIn = (v) => { const f = Math.floor(v / 12); const i = r16(v - f * 12); return `${f}'-${i}"`; };
+const normTxt = (s) => String(s ?? '').toUpperCase().replace(/[^A-Z0-9/".]+/g, ' ').trim();
+const SCHED_TAKES = new Set(['size', 'system', 'glass', 'finish', 'sillAFF']);
+
+function clsForType(systemType, cls) {
+  const t = String(systemType ?? '');
+  const int = String(cls ?? '').startsWith('int');
+  if (t === 'curtainwall' && !String(cls ?? '').includes('cw')) return int ? 'int_cw' : 'ext_cw';
+  if (t === 'storefront' && String(cls ?? '').includes('cw')) return int ? 'int_sf' : 'ext_sf';
+  return cls;
+}
+
+function scheduleGaveCount(s) {
+  if (s.quantityGiven != null) return !!s.quantityGiven;
+  const q = s.provenance?.quantity ?? {};
+  return q.source === 'schedule' && !/not on the schedule|assumed|no plan tag/i.test(q.note ?? '');
+}
+
+/**
+ * The same mark from Studio (the plans) and from the window schedule → one payload:
+ * size, size mode and type from the schedule; count from the plans; bays from the
+ * elevation; glass / finish / sill from the schedule where it lists them.  Every
+ * disagreement becomes a need on the frame.
+ */
+export function mergeSchedule(studio, sched) {
+  const out = structuredClone(studio);
+  const file = sched.scheduleFile || 'the window schedule';
+  let needs = [...(studio.needs ?? [])];
+  const flag = (field, reason) => needs.push({ field, reason });
+  const drop = (field) => { needs = needs.filter((n) => n.field !== field); };
+  const prov = { ...(studio.provenance ?? {}) };
+  const sw = num(sched.overallWidth, 0); const sh = num(sched.overallHeight, 0);
+  const w = num(studio.overallWidth, 0); const h = num(studio.overallHeight, 0);
+
+  if (sw > 0 && sh > 0) {
+    drop('size');
+    if (w > 0 && h > 0 && (Math.abs(sw - w) > 0.5 || Math.abs(sh - h) > 0.5)) {
+      flag('size', `Schedule says ${fmtIn(sw)} × ${fmtIn(sh)}; the elevation measured ${fmtIn(w)} × ${fmtIn(h)} — schedule size used. Confirm.`);
+    }
+    out.overallWidth = sw; out.overallHeight = sh; out.buildable = true;
+    if (sched.sizeMode) out.sizeMode = sched.sizeMode;
+    prov.size = { ...(sched.provenance?.size ?? {}), source: 'schedule', file };
+  }
+  const sSeries = sched.frameSeries || null;
+  const sMaker = sched.manufacturer && sched.manufacturer !== 'Generic' ? sched.manufacturer : null;
+  if (sSeries || sMaker) {
+    const before = [studio.manufacturer, studio.frameSeries].filter(Boolean).join(' ');
+    const after = [sMaker ?? studio.manufacturer, sSeries ?? studio.frameSeries].filter(Boolean).join(' ');
+    drop('system');
+    if (before && studio.provenance?.system?.source !== 'assumed' && normTxt(before) !== normTxt(after)) {
+      flag('system', `Schedule names ${after}; the drawings name ${before} — schedule used.`);
+    }
+    if (sMaker) out.manufacturer = sMaker;
+    if (sSeries) out.frameSeries = sSeries;
+    prov.system = { source: 'schedule', file };
+  }
+  if (sched.systemType && studio.systemType && sched.systemType !== studio.systemType) {
+    flag('system', `Schedule calls it ${sched.systemType.replace('_', ' ')}; the drawings read ${studio.systemType.replace('_', ' ')} — schedule used.`);
+    out.systemType = sched.systemType;
+    out.cls = clsForType(sched.systemType, studio.cls);
+  }
+  for (const [f, label] of [['primaryGlass', 'glass'], ['finish', 'finish']]) {
+    if (!sched[f]) continue;
+    if (studio[f] && normTxt(studio[f]) !== normTxt(sched[f])) flag(label, `Schedule ${label}: ${sched[f]}; drawings: ${studio[f]} — schedule used.`);
+    out[f] = sched[f];
+    prov[label] = { source: 'schedule', file };
+  }
+  if (sched.sillAFF != null) {
+    drop('sillAFF');
+    out.sillAFF = sched.sillAFF;
+  }
+
+  // count from the plans
+  if (scheduleGaveCount(sched) && sched.quantity != null) {
+    const q = studio.provenance?.quantity ?? {};
+    const planCounted = (q.source === 'plan' && !/no plan tag/i.test(q.note ?? '')) || studio.studioQuantity;
+    if (planCounted) {
+      if (Number(sched.quantity) !== Number(studio.quantity)) flag('quantity', `Schedule says ${sched.quantity}; the plans count ${studio.quantity} — plan count used.`);
+    } else {
+      out.quantity = Number(sched.quantity);
+      prov.quantity = { source: 'schedule', file };
+      flag('quantity', `No plan count — the schedule's ${sched.quantity} used. Confirm on the plans.`);
+    }
+  }
+
+  // bays from the elevation
+  const studioBays = studio.columns?.length ?? null;
+  const schedBays = sched.columns?.length ?? (Array.isArray(sched.bayWidths) ? sched.bayWidths.length : null) ?? sched.panelCount ?? null;
+  if (!studioBays && schedBays) {
+    for (const f of ['columns', 'mullionsX', 'mullionsY', 'bayWidths', 'rowHeights', 'panelCount', 'rowCount', 'doorBays']) out[f] = structuredClone(sched[f] ?? null);
+    prov.bays = { ...(sched.provenance?.bays ?? {}), source: 'schedule', file };
+  } else if (studioBays && schedBays && studioBays !== schedBays) {
+    flag('bays', `Schedule elevation shows ${schedBays} bay(s); the drawing elevation shows ${studioBays} — drawing used.`);
+  }
+  // doors: the drawings' doors; the schedule's when the drawings tied none
+  const studioDoor = !!(studio.hasDoor || studio.columns?.some((c) => c.kind === 'door'));
+  if (!studioDoor && (sched.doors?.length || sched.hasDoor)) {
+    if (sched.doors?.length) { out.doors = structuredClone(sched.doors); out.hasDoor = true; }
+    else flag('doors', 'Schedule shows a door in this frame; none read on the drawings — set the door bay.');
+  }
+
+  // the schedule's own flags on the fields it supplied
+  for (const n of sched.needs ?? []) if (SCHED_TAKES.has(n.field)) needs.push({ field: n.field, reason: `Schedule: ${n.reason}` });
+  out.notes = [studio.notes, sched.notes ? `Schedule: ${sched.notes}` : null].filter(Boolean).join('\n') || null;
+  out.needs = needs.filter((n, i) => needs.findIndex((u) => u.field === n.field && u.reason === n.reason) === i);
+  out.provenance = prov;
+  out.citations = [...(studio.citations ?? []), `${file} — ${sched.mark}`];
+  out.source = 'studio+schedule';
+  out.scheduleFile = sched.scheduleFile ?? null;
+  out.scheduleMark = sched.mark;
+  return out;
+}
+
+/**
+ * Studio's payloads + the schedule's → one incoming list, merged by mark.
+ * Marks on one side only stay, flagged (decision 5: never dropped).
+ */
+export function combineSources(studioFrames = [], schedFrames = [], opts = {}) {
+  const file = opts.scheduleFile || schedFrames[0]?.scheduleFile || 'the window schedule';
+  const byKey = new Map();
+  for (const s of schedFrames) { const k = markKey(s.mark ?? s.itemId); if (k && !byKey.has(k)) byKey.set(k, s); }
+  const used = new Set();
+  const out = studioFrames.map((p) => {
+    const k = markKey(p.mark ?? p.itemId);
+    const s = k ? byKey.get(k) : null;
+    if (s) { used.add(k); return mergeSchedule(p, s); }
+    if (!schedFrames.length || p.standaloneDoor) return p;
+    return { ...p, needs: [...(p.needs ?? []), { field: 'schedule', reason: `Not on ${file} — confirm it's in scope.` }] };
+  });
+  for (const [k, s] of byKey) {
+    if (used.has(k)) continue;
+    const extra = studioFrames.length ? [{ field: 'quantity', reason: 'On the schedule but not found in the Studio takeoff — count it on the plans.' }] : [];
+    out.push({ ...s, itemId: s.itemId ?? s.mark, source: 'schedule', needs: [...(s.needs ?? []), ...extra] });
+  }
+  return out;
+}
+
 // ── One frame ────────────────────────────────────────────────────────────────
 
 /**
@@ -100,6 +278,7 @@ function eqIndex(values, eligible) {
  * @param {object} [opts]   { takeoff, glassTypeIdFor(text), defaultJoints, source }
  */
 export function importFrame(p = {}, opts = {}) {
+  p = fromScheduleShape(p);
   const tp = opts.takeoff ?? {};
   const needs = [...(p.needs ?? [])].map((n) => ({ field: n.field, reason: n.reason }));
   const need = (field, reason) => needs.push({ field, reason });
@@ -158,6 +337,7 @@ export function importFrame(p = {}, opts = {}) {
         if (d) usedDoors.add(d.mark);
         // the door opening runs from the floor to the header's underside
         let openH = c.doorHeight ? c.doorHeight - hdrSL / 2 : num(d?.height, 84);
+        if (!c.doorHeight && !d?.height) need('doors', `Door bay ${i + 1}: door height not given — 7'-0" opening assumed. Confirm.`);
         if (openH > frameH - P.head.sightline) {             // unknown / too tall: the door runs to the head
           openH = frameH - P.head.sightline;
           need('doors', `Door bay ${i + 1}: door height not read — taken to the head (${r16(openH)}"). Confirm.`);
@@ -216,6 +396,9 @@ export function importFrame(p = {}, opts = {}) {
       need('doors', `Door ${d.mark} belongs in this frame but its bay was not read — set the door bay.`);
     }
   }
+  if (p.hasDoor && !(p.doors ?? []).length && !columns.some((c) => c.kind === 'door') && !needs.some((n) => n.field === 'doors')) {
+    need('doors', 'The schedule shows a door in this frame but no door bay was read — set the door bay.');
+  }
   for (const d of p.doors ?? []) {
     if (!usedDoors.has(d.mark) && !needs.some((n) => n.field === 'doors' && n.reason.includes(d.mark))) {
       need('doors', `Door ${d.mark} belongs in this frame but no door bay was matched to it.`);
@@ -247,13 +430,14 @@ export function importFrame(p = {}, opts = {}) {
     glass: { frameDefault: glassId, lites: {}, temper: {}, hazards: {} },
   }));
   if (!(W > 0 && H > 0)) need('size', 'No size — enter it before building.');
-  if (p.sillAFF == null && !p.standaloneDoor) need('sillAFF', 'Sill AFF not on the drawing — 0" used.');
+  if (p.sillAFF == null && !p.standaloneDoor) need('sillAFF', 'Sill AFF not given — 0" used.');
 
   const uniq = [];
   for (const n of needs) if (!uniq.some((u) => u.field === n.field && u.reason === n.reason)) uniq.push(n);
   spec.importMeta = {
-    source: opts.source ?? 'studio',
+    source: p.source ?? opts.source ?? 'studio',
     itemId: p.itemId ?? p.mark ?? null,
+    scheduleFile: p.scheduleFile ?? null,
     importedAt: new Date().toISOString(),
     confidence: p.confidence ?? null,
     system: sys,
@@ -322,7 +506,7 @@ export function importJob(doc = {}, takeoff = {}, opts = {}) {
     return allTypes.find((g) => (ig && g.nominal === 1 && g.kind === 'vision') || (mono && g.nominal === 0.25))?.id ?? null;
   };
   const finish = jd.finish?.value ?? null;
-  const frames = (doc.frames ?? []).map((p) => importFrame(p, { takeoff: { ...takeoff, finish }, glassTypeIdFor, source: opts.source ?? 'studio' }));
+  const frames = (doc.frames ?? []).map((p) => importFrame(p, { takeoff: { ...takeoff, finish }, glassTypeIdFor, source: opts.source }));
   return {
     frames,
     glassTypes: newTypes,
@@ -369,6 +553,9 @@ export function resyncFrame(current, payload, opts = {}) {
   }
   out.importMeta = {
     ...current.importMeta,
+    itemId: fresh.importMeta.itemId ?? current.importMeta.itemId,
+    source: fresh.importMeta.source,
+    scheduleFile: fresh.importMeta.scheduleFile ?? current.importMeta.scheduleFile ?? null,
     importedAt: new Date().toISOString(),
     needs: fresh.importMeta.needs,
     provenance: fresh.importMeta.provenance,

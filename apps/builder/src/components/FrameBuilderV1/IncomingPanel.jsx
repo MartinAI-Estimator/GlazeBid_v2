@@ -10,12 +10,13 @@
  * needs input, and "drawing now says …" values to accept (re-sync, decision 5).
  */
 import React, { useMemo, useState } from 'react';
-import { formatFeetInches, resyncFrame } from '@glazebid/frame-engine/core';
+import { formatFeetInches, resyncFrame, findImported } from '@glazebid/frame-engine/core';
+import { readScheduleFile } from './scheduleIntake';
 
 const ft = (v) => (v ? formatFeetInches(v) : '—');
 
 export function incomingStatus(takeoff, p) {
-  const existing = takeoff.frames.find((f) => f.importMeta?.itemId && f.importMeta.itemId === p.itemId);
+  const existing = takeoff.frames[findImported(takeoff.frames, p)] ?? null;
   if (!existing) return { key: 'new', label: 'New', existing: null };
   try {
     const r = resyncFrame(existing, p, { takeoff });
@@ -27,7 +28,53 @@ export function incomingStatus(takeoff, p) {
   }
 }
 
-export default function IncomingPanel({ takeoff, store, onClose, onBuilt }) {
+const SOURCE_TAG = { studio: 'Studio', schedule: 'Schedule', 'studio+schedule': 'Studio + schedule' };
+
+function sourceLine(inc) {
+  const parts = [];
+  if (inc.pdfName || inc.studioFrames?.length) parts.push(`Studio${inc.pdfName ? ` (${inc.pdfName})` : ''}`);
+  if (inc.schedule?.fileName) parts.push(`window schedule (${inc.schedule.fileName})`);
+  return parts.length ? `From ${parts.join(' + ')}.` : '';
+}
+
+/**
+ * "Upload schedule…" — a spreadsheet is read here by rules; a PDF by the GlazeBid engine
+ * (no AI).  Also takes a file dropped on the button.
+ */
+export function ScheduleUpload({ store, projectName, onDone, className = 'fbv1-btn' }) {
+  const ref = React.useRef(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const take = async (file) => {
+    if (!file) return;
+    setBusy(true); setMsg(null);
+    try {
+      const doc = await readScheduleFile(file, { projectName });
+      const r = store.receiveSchedule(doc);
+      const text = `${doc.fileName}: ${doc.report.frames} frame type(s) read` +
+        (r.merged ? `, ${r.merged} merged with Studio` : '') + (doc.report.needInput ? ` — ${doc.report.needInput} need input` : '') + '.';
+      setMsg({ kind: 'ok', text });
+      onDone?.({ ...r, text });
+    } catch (err) {
+      setMsg({ kind: 'error', text: err?.message ?? String(err) });
+    } finally {
+      setBusy(false);
+      if (ref.current) ref.current.value = '';
+    }
+  };
+  return (
+    <span className="fbv1-upload" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); take(e.dataTransfer?.files?.[0]); }}>
+      <input ref={ref} type="file" accept=".xlsx,.xlsm,.xls,.csv,.tsv,.pdf" style={{ display: 'none' }} onChange={(e) => take(e.target.files?.[0])} />
+      <button type="button" className={className} disabled={busy} onClick={() => ref.current?.click()}
+        title="Read a window / frame schedule — spreadsheet by rules, PDF by the GlazeBid engine (no AI). Merged with Studio by mark.">
+        {busy ? 'Reading schedule…' : 'Upload schedule…'}
+      </button>
+      {msg && (msg.kind === 'error' || !onDone) && <span className={`fbv1-meta ${msg.kind === 'error' ? 'fbv1-err' : ''}`}> {msg.text}</span>}
+    </span>
+  );
+}
+
+export default function IncomingPanel({ takeoff, store, projectName, onClose, onBuilt }) {
   const inc = takeoff.incoming ?? { frames: [] };
   const rows = useMemo(() => inc.frames.map((p) => ({ p, st: incomingStatus(takeoff, p) })), [inc.frames, takeoff]);
   const [sel, setSel] = useState(() => new Set(inc.focus ? [inc.focus] : []));
@@ -43,12 +90,18 @@ export default function IncomingPanel({ takeoff, store, onClose, onBuilt }) {
           <h3>Incoming frames {inc.pdfName ? <span className="fbv1-sub">from {inc.pdfName}</span> : null}</h3>
           <button type="button" className="fbv1-x" onClick={onClose}>×</button>
         </header>
+        <div className="fbv1-row">
+          <span className="fbv1-sub">{sourceLine(inc)}</span>
+          <span style={{ flex: 1 }} />
+          <ScheduleUpload store={store} projectName={projectName} />
+        </div>
         <p className="fbv1-sub">
-          {inc.source === 'schedule' ? 'Read from the window schedule.' : 'Sent from Studio\'s auto-takeoff.'} Bays, rows and door bays were read off
+          Size and type come from the schedule, the count from the plans, bays from the elevation; every disagreement is listed under
+          "Needs your input". Bays, rows and door bays were read off
           the elevations and converted to DLO with each system's sightlines — confirm them. Frames you already built are re-synced:
           fields you never changed update; fields you changed are kept and the drawing's value is shown on the frame to accept or ignore.
         </p>
-        {!rows.length && <div className="fbv1-empty small">Nothing waiting. Send frames from Studio (Finalize, or right-click a frame → Open in Frame Builder).</div>}
+        {!rows.length && <div className="fbv1-empty small">Nothing waiting. Send frames from Studio (Finalize, or right-click a frame → Open in Frame Builder), or upload the window schedule.</div>}
         {rows.length > 0 && (
           <div className="fbv1-scroll">
             <table className="fbv1-table compact">
@@ -67,7 +120,7 @@ export default function IncomingPanel({ takeoff, store, onClose, onBuilt }) {
                     <tr key={p.itemId} className={`${p.buildable === false ? 'muted' : ''} ${st.key}`}>
                       <td><input type="checkbox" disabled={p.buildable === false} checked={sel.has(p.itemId)} onChange={() => toggle(p.itemId)} /></td>
                       <td><b>{p.mark}</b>{p.standaloneDoor ? <span className="fbv1-meta"> door frame</span> : null}</td>
-                      <td className="fbv1-meta">{sheet || '—'}</td>
+                      <td className="fbv1-meta">{SOURCE_TAG[p.source] ?? 'Studio'}{sheet ? ` · ${sheet}` : ''}</td>
                       <td>{ft(p.overallWidth)} × {ft(p.overallHeight)}{p.sizeMode === 'ro' ? <span className="fbv1-meta"> R.O.</span> : null}</td>
                       <td>{nb} × {nr}</td>
                       <td>{doors || '—'}{p.doors?.length ? <span className="fbv1-meta"> {p.doors.map((d) => d.mark).join(', ')}</span> : null}</td>
@@ -130,10 +183,10 @@ export function FromStudioBox({ spec, store, onShowInStudio }) {
   return (
     <div className={`fbv1-card fbv1-import ${m.open ? 'open' : ''}`}>
       <div className="fbv1-row">
-        <b>From {m.source === 'schedule' ? 'the window schedule' : 'Studio'}</b>
-        <span className="fbv1-meta">{[src.sheet, m.system?.how === 'named' ? m.system.note : null].filter(Boolean).join(' · ')}</span>
+        <b>From {m.source === 'schedule' ? 'the window schedule' : m.source === 'studio+schedule' ? 'Studio + the window schedule' : 'Studio'}</b>
+        <span className="fbv1-meta">{[src.sheet, m.scheduleFile, m.system?.how === 'named' ? m.system.note : null].filter(Boolean).join(' · ')}</span>
         <span style={{ flex: 1 }} />
-        {onShowInStudio && <button type="button" className="fbv1-btn ghost small" onClick={() => onShowInStudio(m.itemId)} title="Open this frame's elevation, schedule row and details in Studio">Show in Studio</button>}
+        {onShowInStudio && m.source !== 'schedule' && <button type="button" className="fbv1-btn ghost small" onClick={() => onShowInStudio(m.itemId)} title="Open this frame's elevation, schedule row and details in Studio">Show in Studio</button>}
       </div>
       {says.length > 0 && (
         <div className="fbv1-says">

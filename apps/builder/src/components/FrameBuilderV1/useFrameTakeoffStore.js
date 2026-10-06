@@ -14,27 +14,57 @@
 import { create } from 'zustand';
 import {
   createTakeoff, createFrame, variantOf, normalizeSpec, TAKEOFF_SCHEMA, defaultGlassTypes,
-  importJob, resyncFrame, acceptDrawingValue,
+  importJob, resyncFrame, acceptDrawingValue, combineSources, findImported, markKey,
 } from '@glazebid/frame-engine/core';
 
 const KEY = (projectName) => `glazebid:frameTakeoff:${projectName || '__scratch__'}`;
 const KEY_UNASSIGNED = 'glazebid:frameIncoming:unassigned';
 
-/** A new packet replaces the old one; a single-frame send ("Open in Frame Builder") merges by item. */
+/**
+ * A new Studio packet replaces the old one; a single-frame send ("Open in Frame Builder")
+ * merges by item.  A window schedule already uploaded is merged in by mark (decision 6).
+ */
 export function mergeIncoming(prev, packet) {
   const doc = packet?.doc ?? {};
+  const sched = prev?.schedule?.frames ?? [];
   const base = {
-    receivedAt: new Date().toISOString(), source: packet?.source ?? 'studio',
+    receivedAt: new Date().toISOString(), source: sched.length ? 'studio+schedule' : (packet?.source ?? 'studio'),
     studioProject: packet?.studioProject ?? null, pdfName: packet?.pdfName ?? null,
     jobDefaults: doc.jobDefaults ?? prev?.jobDefaults ?? null, doorTypes: doc.doorTypes ?? prev?.doorTypes ?? [],
+    schedule: prev?.schedule ?? null,
   };
+  const incoming = doc.frames ?? [];
   if (packet?.mode === 'one' && prev) {
-    const ids = new Set((doc.frames ?? []).map((p) => p.itemId));
-    return { ...prev, ...base, frames: [...(prev.frames ?? []).filter((p) => !ids.has(p.itemId)), ...(doc.frames ?? [])],
-      focus: doc.frames?.[0]?.itemId ?? null };
+    const ids = new Set(incoming.map((p) => p.itemId));
+    const keys = new Set(incoming.map((p) => markKey(p.mark ?? p.itemId)));
+    const other = (p) => !ids.has(p.itemId) && !keys.has(markKey(p.mark ?? p.itemId));
+    return { ...prev, ...base,
+      studioFrames: [...(prev.studioFrames ?? []).filter(other), ...incoming],
+      frames: [...(prev.frames ?? []).filter(other), ...combineSources(incoming, sched).slice(0, incoming.length)],
+      focus: incoming[0]?.itemId ?? null };
   }
-  return { ...base, frames: doc.frames ?? [], nonFrames: doc.nonFrames ?? [], built: [],
-    focus: packet?.mode === 'one' ? doc.frames?.[0]?.itemId ?? null : null };
+  return { ...base, studioFrames: incoming, frames: combineSources(incoming, sched), nonFrames: doc.nonFrames ?? [], built: [],
+    focus: packet?.mode === 'one' ? incoming[0]?.itemId ?? null : null };
+}
+
+/**
+ * A window schedule uploaded in the Frame Builder (scheduleIntake.readScheduleFile).
+ * Merged by mark with what Studio sent; marks on one side only stay, flagged.
+ */
+export function mergeScheduleIncoming(prev, doc) {
+  const studio = prev?.studioFrames ?? (prev?.frames ?? []).filter((p) => p.source !== 'schedule');
+  return {
+    built: [], nonFrames: [], doorTypes: [], ...(prev ?? {}),
+    receivedAt: new Date().toISOString(),
+    source: studio.length ? 'studio+schedule' : 'schedule',
+    studioFrames: studio,
+    schedule: { fileName: doc.fileName, kind: doc.kind, receivedAt: new Date().toISOString(), frames: doc.frames ?? [] },
+    jobDefaults: prev?.jobDefaults ?? doc.jobDefaults ?? null,
+    doorTypes: prev?.doorTypes?.length ? prev.doorTypes : doc.doorTypes ?? [],
+    nonFrames: prev?.nonFrames?.length ? prev.nonFrames : doc.nonFrames ?? [],
+    frames: combineSources(studio, doc.frames ?? [], { scheduleFile: doc.fileName }),
+    focus: null,
+  };
 }
 
 function isPristine(f) {
@@ -217,6 +247,19 @@ const useFrameTakeoffStore = create((set, get) => ({
     return { target, frames: packet?.doc?.frames?.length ?? 0 };
   },
 
+  /** A window schedule read in the Frame Builder → Incoming, merged with Studio by mark. */
+  receiveSchedule(doc) {
+    const tp = get().takeoff;
+    if (!tp) return { frames: 0, merged: 0 };
+    const incoming = mergeScheduleIncoming(tp.incoming, doc);
+    get()._commit({ ...tp, incoming });
+    return {
+      frames: incoming.frames.length,
+      merged: incoming.frames.filter((p) => p.source === 'studio+schedule').length,
+      scheduleOnly: incoming.frames.filter((p) => p.source === 'schedule').length,
+    };
+  },
+
   /** Pick up a packet that arrived with no project (Studio opened on its own). */
   claimUnassigned() {
     try {
@@ -230,8 +273,8 @@ const useFrameTakeoffStore = create((set, get) => ({
   },
 
   /**
-   * Build incoming frames (all, or the given item ids).  A mark already built from
-   * Studio is re-synced: untouched fields update, edited fields are kept with a
+   * Build incoming frames (all, or the given item ids).  A mark already built (from
+   * Studio or the schedule) is re-synced: untouched fields update, edited fields are kept with a
    * "drawing now says" note.  → { added, updated, kept, glassTypes }
    */
   buildIncoming(itemIds = null) {
@@ -247,7 +290,7 @@ const useFrameTakeoffStore = create((set, get) => ({
     let firstId = null;
     pick.forEach((p, i) => {
       const fresh = job.frames[i].spec;
-      const idx = frames.findIndex((f) => f.importMeta?.itemId && f.importMeta.itemId === p.itemId);
+      const idx = findImported(frames, p);
       if (idx >= 0) {
         const r = resyncFrame(frames[idx], p, { takeoff: { ...tp, glassTypes, finish: job.finish }, glassTypeIdFor: job.glassTypeIdFor, source: inc.source });
         frames[idx] = r.spec;

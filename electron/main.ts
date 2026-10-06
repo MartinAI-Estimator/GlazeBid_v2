@@ -1024,6 +1024,27 @@ app.whenReady().then(async () => {
     }
   });
 
+  // ── Frame Builder: window schedule PDF → frame payloads (deterministic, no AI) ──
+  ipcMain.handle('glazierai:readSchedule', async (_event, payload: {
+    pdfBase64: string;
+    fileName?: string;
+    projectName?: string;
+  }) => {
+    if (!payload?.pdfBase64) return { ok: false, error: 'No PDF provided.' };
+    try {
+      const res = await fetch(`http://localhost:${SIDECAR_PORT}/drawing-intelligence/schedule/read`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pdf_base64: payload.pdfBase64, file_name: payload.fileName ?? 'schedule.pdf', project_name: payload.projectName ?? '' }),
+        signal: AbortSignal.timeout(300_000),
+      });
+      if (!res.ok) return { ok: false, error: `The GlazeBid engine returned ${res.status}: ${await res.text()}` };
+      return { ok: true, data: await res.json() };
+    } catch (err) {
+      return { ok: false, error: `The GlazeBid engine (sidecar) is not reachable: ${err instanceof Error ? err.message : String(err)}` };
+    }
+  });
+
   // ── Box & Snap: vision detection on one region of one page ────────────────
   // Renderer → here → POST /drawing-intelligence/run-region.  The API key is
   // attached here from safeStorage; the renderer never sees it.
