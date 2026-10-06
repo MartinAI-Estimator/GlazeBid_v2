@@ -60,7 +60,10 @@
     "FRAMED MIRROR"
    ],
    "class": "excluded",
-   "note": "Toilet-accessory / framed mirror (Div 10) \u2014 excluded"
+   "note": "Toilet-accessory / framed mirror (Div 10: Bobrick etc.) \u2014 excluded; frameless mirrors are always ours (Martin 2026-10-06)",
+   "none": [
+    "FRAMELESS"
+   ]
   },
   {
    "id": "hm_no_glass",
@@ -219,7 +222,8 @@
    "none": [
     "HANDRAIL",
     "GUARD ?RAIL",
-    "CABLE"
+    "CABLE",
+    "MIRROR"
    ],
    "class": "all_glass_wall",
    "note": "Frameless / all-glass \u2014 All Glass Wall; film, SSG joints and polished edges implied"
