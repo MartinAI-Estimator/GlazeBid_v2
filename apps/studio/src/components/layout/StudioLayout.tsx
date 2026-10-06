@@ -6,6 +6,12 @@ import PropertiesPanel from '../properties/PropertiesPanel';
 import CalibrationModal from '../calibration/CalibrationModal';
 import ThumbnailSidebar from '../sidebar/ThumbnailSidebar';
 import ToolChestPanel from '../sidebar/ToolChestPanel';
+import TakeoffBar from '../takeoff/TakeoffBar';
+import SummaryPanel from '../takeoff/SummaryPanel';
+import MarkupsList from '../takeoff/MarkupsList';
+import { QtyEditor, RejectPrompt } from '../takeoff/ReviewPopovers';
+import { useTakeoffStore } from '../../store/useTakeoffStore';
+import { useDecisionLogger } from '../../hooks/useTakeoffRunner';
 import FrameTypeLibrary from '../typeLibrary/FrameTypeLibrary';
 import { BulkClassifyDialog } from '../ui/BulkClassifyDialog';
 import ShapeContextMenu, { type ContextMenuTarget } from '../canvas/ShapeContextMenu';
@@ -96,6 +102,10 @@ function PdfTabBar() {
 export default function StudioLayout() {
   const [engine, setEngine] = useState<CanvasEngineAPI | null>(null);
   const pdfFileName = useStudioStore(s => s.pdfFileName);
+  // ── Auto-takeoff review ───────────────────────────────────────────────────
+  const showSummary = useTakeoffStore(s => s.showSummary);
+  const showMarkups = useTakeoffStore(s => s.showMarkups);
+  useDecisionLogger();
   // Keep a stable ref so the IPC listener can call loadPdfBuffer even after
   // engine state updates (avoids stale closure over null).
   const engineRef = useRef<CanvasEngineAPI | null>(null);
@@ -250,6 +260,7 @@ export default function StudioLayout() {
         {/* Canvas + navigation bar — stacked in a flex-col so the nav bar
             only spans the center area between the two sidebars */}
         <div className="flex flex-col flex-1 min-w-0 min-h-0">
+          <TakeoffBar engine={engine} />
           <div className="relative flex flex-1 min-w-0 min-h-0">
             <StudioCanvas
               onEngine={handleEngine}
@@ -265,6 +276,7 @@ export default function StudioLayout() {
                 its `absolute inset-0` covers only the canvas area, not the panels */}
             <CalibrationModal />
           </div>
+          {showMarkups && <MarkupsList engine={engine} />}
           <NavigationBar
             engine={engine}
             showTypeLibrary={showTypeLibrary}
@@ -275,7 +287,9 @@ export default function StudioLayout() {
         </div>
 
         {/* Right side: DI panel | type library | structural panel | properties panel */}
-        {structuralShape ? (
+        {showSummary && !structuralShape && !selectedShapeId ? (
+          <SummaryPanel engine={engine} />
+        ) : structuralShape ? (
           <aside className="w-80 flex-shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col">
             <StructuralPanel
               shape={structuralShape}
@@ -335,11 +349,20 @@ export default function StudioLayout() {
           onSendToCustom={() => handleContextMenuSendToCustom(contextMenuTarget.shape)}
           onCheckStructural={() => handleContextMenuCheckStructural(contextMenuTarget.shape)}
           onDelete={() => {
-            useStudioStore.getState().removeShape(contextMenuTarget.shape.id);
+            const sh = contextMenuTarget.shape;
+            if (sh.author === 'engine') {
+              useTakeoffStore.getState().setRejectPrompt({ shapeId: sh.id, screenX: contextMenuTarget.screenX, screenY: contextMenuTarget.screenY });
+            } else {
+              useStudioStore.getState().removeShape(sh.id);
+            }
             setContextMenuTarget(null);
           }}
         />
       )}
+
+      {/* ── Review prompts: typed quantity, delete reason ── */}
+      <QtyEditor />
+      <RejectPrompt />
 
       {/* ── Custom System Modal ── */}
       {customSystemShape && (

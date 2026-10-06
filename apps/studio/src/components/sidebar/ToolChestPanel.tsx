@@ -20,6 +20,7 @@ const ROLE_TOOL: Record<SubjectRole, ToolType> = {
   count: 'tcount',
   highlight: 'rect',
   line: 'line',
+  flag: 'select',
 };
 
 const ORDER: SubjectRole[] = ['area', 'polylength', 'count', 'highlight'];

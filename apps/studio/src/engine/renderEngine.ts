@@ -395,6 +395,17 @@ function drawSubjectShape(
   } else if (shape.type === 'line') {
     ctx.beginPath(); ctx.moveTo(shape.start.x, shape.start.y); ctx.lineTo(shape.end.x, shape.end.y); ctx.stroke();
     labelAt = { x: (shape.start.x + shape.end.x) / 2, y: (shape.start.y + shape.end.y) / 2 - 8 / scale };
+  } else if (shape.type === 'marker' && shape.subjectRole === 'flag') {
+    // yellow flag pin: engine uncertainty (reason in Properties)
+    const { x, y } = shape.position, r = 8 / scale;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - r * 0.8, y - r * 1.6); ctx.lineTo(x + r * 0.8, y - r * 1.6); ctx.closePath();
+    ctx.fillStyle = '#facc15'; ctx.fill(); ctx.lineWidth = 1 / scale; ctx.strokeStyle = '#713f12'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y - r * 2.1, r * 0.9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#713f12'; ctx.font = `bold ${r * 1.2}px system-ui,sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('!', x, y - r * 2.05);
+    if (selected) { ctx.strokeStyle = '#0ea5e9'; ctx.lineWidth = 2 / scale; ctx.beginPath(); ctx.arc(x, y - r * 2.1, r * 1.3, 0, Math.PI * 2); ctx.stroke(); }
+    ctx.restore();
+    return;
   } else if (shape.type === 'marker') {
     const r = 7 / scale;
     ctx.beginPath(); ctx.arc(shape.position.x, shape.position.y, r, 0, Math.PI * 2);
@@ -406,7 +417,7 @@ function drawSubjectShape(
     if (lines.length) drawTag(ctx, lines, labelAt.x, labelAt.y, scale, stroke);
   }
   // engine markup not yet reviewed → small badge
-  if (shape.author === 'engine' && labelAt) {
+  if (shape.author === 'engine' && shape.reviewState !== 'accepted' && labelAt) {
     dot(ctx, { x: labelAt.x - 10 / scale, y: labelAt.y - 10 / scale }, 3.5 / scale, '#facc15');
   }
   if (selected) drawHandles(ctx, shape, scale);

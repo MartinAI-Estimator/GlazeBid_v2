@@ -14,7 +14,7 @@ export type InProgressShape =
 // ── Committed shapes (stored in useStudioStore) ───────────────────────────────
 
 /** How a Tool Chest markup measures (Bluebeam Estimating ToolBox roles). */
-export type SubjectRole = 'area' | 'polylength' | 'count' | 'highlight' | 'line';
+export type SubjectRole = 'area' | 'polylength' | 'count' | 'highlight' | 'line' | 'flag';
 
 type ShapeBase = {
   id:      string;
@@ -32,6 +32,12 @@ type ShapeBase = {
   author?:      'user' | 'engine';
   /** Estimator's quantity override ("Thus" count, or a typed length / area). */
   qtyOverride?: number | null;
+  /** Auto-takeoff item this markup cites (e.g. "F", "FRAME TYPE 11", "BREAK METAL"). */
+  itemId?:      string;
+  /** Engine note / flag reason shown in Properties. */
+  note?:        string;
+  /** Engine markups: unreviewed until finalized, edited once the estimator changes it. */
+  reviewState?: 'unreviewed' | 'edited' | 'accepted';
 };
 
 export type LineShape = ShapeBase & {

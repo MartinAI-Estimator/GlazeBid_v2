@@ -606,23 +606,67 @@ async def drawing_intelligence_health():
 # everything uncertain is flagged with a reason.  Runs in ~30 s on a 35-sheet set.
 
 class AutoTakeoffRequest(BaseModel):
-    pdf_path: str
+    pdf_path: Optional[str] = None
+    pdf_base64: Optional[str] = None            # Studio sends the open set as base64
     project_name: str = ""
     sheets: Optional[list[str]] = None          # limit to these sheet numbers
     marked_pdf_path: Optional[str] = None       # when set, also write the markups into a copy of the set
 
 
+def _runs_dir(project: str) -> str:
+    """<repo>/_autotakeoff_runs/<project> — takeoff results and the review decision log."""
+    from pathlib import Path
+    import re as _re
+    root = os.environ.get("GLAZEBID_RUNS_DIR") or str(Path(__file__).resolve().parents[4] / "_autotakeoff_runs")
+    safe = _re.sub(r"[^A-Za-z0-9._-]+", "_", project or "untitled").strip("_") or "untitled"
+    d = os.path.join(root, safe)
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
 @router.post("/autotakeoff")
 async def run_autotakeoff_endpoint(req: AutoTakeoffRequest):
     from glazierai.modules.drawing_intelligence.autotakeoff import run_autotakeoff, write_markups
-    if not os.path.exists(req.pdf_path):
-        raise HTTPException(status_code=404, detail=f"PDF not found: {req.pdf_path}")
+    if req.pdf_path:
+        pdf_path = req.pdf_path
+        if not os.path.exists(pdf_path):
+            raise HTTPException(status_code=404, detail=f"PDF not found: {pdf_path}")
+    elif req.pdf_base64:
+        # keep the set beside the run so the decision log always has its drawings
+        pdf_path = os.path.join(_runs_dir(req.project_name), "set.pdf")
+        with open(pdf_path, "wb") as f:
+            f.write(_b64.b64decode(req.pdf_base64))
+    else:
+        raise HTTPException(status_code=400, detail="Provide pdf_path or pdf_base64")
     try:
-        result = await run_in_threadpool(run_autotakeoff, req.pdf_path, req.project_name, req.sheets)
+        result = await run_in_threadpool(run_autotakeoff, pdf_path, req.project_name, req.sheets)
         if req.marked_pdf_path:
-            n = await run_in_threadpool(write_markups, req.pdf_path, result, req.marked_pdf_path)
+            n = await run_in_threadpool(write_markups, pdf_path, result, req.marked_pdf_path)
             result["marked_pdf"] = {"path": req.marked_pdf_path, "annotations": n}
+        try:
+            with open(os.path.join(_runs_dir(req.project_name), "autotakeoff.json"), "w", encoding="utf-8") as f:
+                _json.dump(result, f, default=str)
+        except Exception as e:  # the run itself succeeded; saving it is best effort
+            logger.warning(f"[DI] could not save autotakeoff result: {e}")
         return result
     except Exception as exc:
         logger.exception(f"[DI] autotakeoff failed: {exc}")
         raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}")
+
+
+# ── Review decision log (Studio) ─────────────────────────────────────────────
+# Every accept / reject / edit / add-as-miss the estimator makes on the engine's
+# takeoff is appended here; it becomes the answer key the engine learns from.
+
+class ReviewDecisions(BaseModel):
+    project_name: str = ""
+    decisions: list[dict]
+
+
+@router.post("/autotakeoff/decisions")
+async def log_review_decisions(req: ReviewDecisions):
+    path = os.path.join(_runs_dir(req.project_name), "decisions.jsonl")
+    with open(path, "a", encoding="utf-8") as f:
+        for d in req.decisions:
+            f.write(_json.dumps(d, default=str) + "\n")
+    return {"ok": True, "logged": len(req.decisions), "path": path}

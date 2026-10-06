@@ -112,6 +112,8 @@ export type CanvasEngineAPI = {
   getSnap: (pagePt: PagePoint) => SnapResult;
   /** Return the last loaded PDF buffer (for sidecar scan). */
   getPdfBuffer: () => Uint8Array | null;
+  /** Go to a markup: switch to its page, zoom to it and select it. */
+  focusShape: (id: string) => void;
   /** Tool cursors for new plugin tools. */
   rake:  never; count: never; wand: never; ghost: never;  // presence check only, not used directly
 };
@@ -377,9 +379,32 @@ export function useCanvasEngine(
     return res;
   }, [scheduleRedraw]);
 
+  const focusShape = useCallback((id: string) => {
+    const st = useStudioStore.getState();
+    const sh = st.shapes.find(x => x.id === id);
+    const canvas = canvasRef.current;
+    if (!sh || !canvas) return;
+    if (st.activePageId !== sh.pageId) st.setActivePage(sh.pageId);
+    st.selectShape(id);
+    const b = shapeBounds(sh);
+    const cw = canvas.clientWidth, ch = canvas.clientHeight;
+    const cam = cameraRef.current;
+    // fit the markup into ~45% of the view, never zooming out past the current page fit
+    const target = Math.min((cw * 0.45) / Math.max(b.w, 24), (ch * 0.45) / Math.max(b.h, 24), 6);
+    cam.scale = Math.max(target, 0.05);
+    let oy = 0;
+    if (st.continuousScroll && st.pages.length > 1) {
+      oy = computePageLayout(st.pages).find(l => l.page.id === sh.pageId)?.yOffset ?? 0;
+    }
+    cam.tx = cw / 2 - (b.x + b.w / 2) * cam.scale;
+    cam.ty = ch / 2 - (b.y + b.h / 2 + oy) * cam.scale;
+    st.setCameraScale(cam.scale);
+    scheduleRedraw();
+  }, [canvasRef, scheduleRedraw]);
+
   const api = useMemo<CanvasEngineAPI>(
-    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, getPdfBuffer: () => pdfBufferRef.current, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
-    [fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap],
+    () => ({ fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, getPdfBuffer: () => pdfBufferRef.current, focusShape, rake: undefined as never, count: undefined as never, wand: undefined as never, ghost: undefined as never }),
+    [fitToPage, zoomIn, zoomOut, openPdf, loadPdfBuffer, screenToPage, pageToScreen, getSnap, focusShape],
   );
 
   // ── Safety kick: re-draw when active page changes (e.g. PDF just loaded) ─────
@@ -835,6 +860,16 @@ export function useCanvasEngine(
           }
         }
       }
+      if (s.activeTool === 'select') {
+        // double-click a markup → type its quantity (Bluebeam: edit the measurement label)
+        const raw = resolveLocalPageXY(pageXY(e));
+        const hit = hitTest(raw, s.shapes.filter(sh => sh.pageId === s.activePageId), 7 / cameraRef.current.scale);
+        if (hit && (hit.subject || hit.type === 'polyline')) {
+          useStudioStore.getState().selectShape(hit.id);
+          useStudioStore.getState().setPendingQtyEdit({ shapeId: hit.id, screenX: e.clientX, screenY: e.clientY });
+          return;
+        }
+      }
       if (ip?.type === 'polygon' && ip.points.length >= 3) {
         commitPolygon(ip.points, s);
         inProgressRef.current = null;
@@ -1157,6 +1192,16 @@ function commitPolygon(
     ...stamp(s),
   } as PolygonShape;
   useStudioStore.getState().addShape(shape);
+}
+
+function shapeBounds(sh: DrawnShape): { x: number; y: number; w: number; h: number } {
+  const pts = sh.type === 'rect' ? [sh.origin, { x: sh.origin.x + sh.widthPx, y: sh.origin.y + sh.heightPx }]
+    : sh.type === 'line' ? [sh.start, sh.end]
+    : sh.type === 'marker' ? [sh.position]
+    : sh.points;
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const x = Math.min(...xs), y = Math.min(...ys);
+  return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y };
 }
 
 // ── Hit testing ───────────────────────────────────────────────────────────────

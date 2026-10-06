@@ -549,5 +549,5 @@ export const TOOL_CHEST: ToolChestItem[] = [
 ];
 
 export const ROLE_LABEL: Record<SubjectRole, string> = {
-  area: 'Areas', polylength: 'Polylengths', count: 'Counts', highlight: 'Highlights', line: 'Lines',
+  area: 'Areas', polylength: 'Polylengths', count: 'Counts', highlight: 'Highlights', line: 'Lines', flag: 'Flags',
 };

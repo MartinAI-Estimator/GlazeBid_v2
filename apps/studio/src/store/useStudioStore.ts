@@ -209,6 +209,11 @@ type State = {
   undo:        () => void;
   redo:        () => void;
   setActiveSubject: (item: import('../constants/toolChest').ToolChestItem | null) => void;
+  /** Swap in a fresh set of engine markups (keeps the estimator's own) — one undo step. */
+  replaceEngineShapes: (shapes: DrawnShape[]) => void;
+  /** Double-click on a markup → inline quantity editor at the cursor. */
+  pendingQtyEdit: { shapeId: string; screenX: number; screenY: number } | null;
+  setPendingQtyEdit: (v: { shapeId: string; screenX: number; screenY: number } | null) => void;
 
   // ── Actions: Type Library ─────────────────────────────────────────────────
   setActiveFrameTypeId: (id: string | null) => void;
@@ -295,6 +300,7 @@ export const useStudioStore = create<State>()((set, get) => ({
   future:                 [],
   editing:                false,
   activeSubject:          null,
+  pendingQtyEdit:         null,
   selectedShapeId:        null,
   activeFrameTypeId:      null,
   bookmarkedPageIds:      new Set<string>(),
@@ -529,6 +535,15 @@ export const useStudioStore = create<State>()((set, get) => ({
     }),
 
   setActiveSubject: (item) => set({ activeSubject: item }),
+
+  replaceEngineShapes: (engineShapes) =>
+    set(s => ({
+      ...pushHistory(s),
+      shapes: [...s.shapes.filter(x => x.author !== 'engine'), ...engineShapes],
+      selectedShapeId: null,
+    })),
+
+  setPendingQtyEdit: (v) => set({ pendingQtyEdit: v }),
 
   selectShape: (id) => set({ selectedShapeId: id }),
 

@@ -12,6 +12,10 @@ import type { RectShape, LineShape, PolygonShape } from '../../types/shapes';
 import { useFallbackIntelligence } from '../../hooks/useFallbackIntelligence';
 import { useLearningLoop } from '../../hooks/useLearningLoop';
 import { ConfidenceBadge } from '../ui/ConfidenceBadge';
+import { TOOL_CHEST } from '../../constants/toolChest';
+import { useTakeoffStore } from '../../store/useTakeoffStore';
+import { measureLabel } from '../../engine/shapeGeometry';
+import type { DrawnShape } from '../../types/shapes';
 // Suppress unused-var warning for _FP alias
 void _FP;
 
@@ -69,6 +73,10 @@ export default function PropertiesPanel() {
             {shape.type}
           </span>
         </div>
+
+        {(shape.subject || shape.author === 'engine') && (
+          <ReviewSection shape={shape} ppi={calibPpi} onUpdate={(patch) => updateShape(shape.id, patch)} />
+        )}
 
         {/* AI Confidence Badge — only for unassigned rect/polygon shapes */}
         {(shape.type === 'rect' || shape.type === 'polygon') &&
@@ -135,7 +143,13 @@ export default function PropertiesPanel() {
 
         {/* Delete button */}
         <button
-          onClick={() => removeShape(shape.id)}
+          onClick={(e) => {
+            if (shape.author === 'engine') {
+              useTakeoffStore.getState().setRejectPrompt({ shapeId: shape.id, screenX: e.clientX - 230, screenY: e.clientY - 200 });
+            } else {
+              removeShape(shape.id);
+            }
+          }}
           className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-xs font-medium text-red-400 hover:bg-red-950/40 border border-red-900/30 hover:border-red-700/40 transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
@@ -305,6 +319,53 @@ function CalibrationInfo({ calibPpi, pageId }: { calibPpi: number; pageId: strin
           : <span className="text-emerald-500/80">{calibPpi.toFixed(2)} px/in</span>
         }
       </p>
+    </div>
+  );
+}
+
+// ── Review section (Tool Chest / engine markups) ─────────────────────────────
+
+function ReviewSection({ shape, ppi, onUpdate }: { shape: DrawnShape; ppi: number; onUpdate: (patch: Partial<DrawnShape>) => void }) {
+  const role = shape.subjectRole;
+  const options = TOOL_CHEST.filter(t => t.role === role);
+  const lines = measureLabel(shape, ppi);
+  return (
+    <div className="space-y-2 rounded border border-slate-800 p-2">
+      {shape.author === 'engine' && (
+        <div className="text-[10px] uppercase tracking-wider">
+          <span className="text-sky-400">From auto-takeoff</span>
+          <span className="text-slate-500"> · {shape.reviewState ?? 'unreviewed'}</span>
+        </div>
+      )}
+      {role === 'flag' ? (
+        <div className="text-[11px] text-amber-300 leading-snug">⚑ {shape.note ?? 'Needs review'}</div>
+      ) : (
+        <>
+          <div>
+            <label className="block text-[10px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Subject</label>
+            <select
+              value={shape.subject ?? ''}
+              onChange={e => {
+                const t = options.find(o => o.subject === e.target.value);
+                if (t) onUpdate({ subject: t.subject, color: t.stroke, fill: t.fill, opacity: t.opacity });
+              }}
+              className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200"
+            >
+              {!options.some(o => o.subject === shape.subject) && shape.subject && <option value={shape.subject}>{shape.subject}</option>}
+              {options.map(o => <option key={o.subject} value={o.subject}>{o.subject}</option>)}
+            </select>
+          </div>
+          {lines.length > 0 && (
+            <div className="text-xs font-mono text-slate-300 leading-snug">{lines.map(l => <div key={l}>{l}</div>)}</div>
+          )}
+          <div className="text-[10px] text-slate-500">Double-click the markup to type a quantity.</div>
+          {shape.qtyOverride != null && (
+            <button onClick={() => onUpdate({ qtyOverride: null })} className="text-[10px] text-sky-400 hover:text-sky-300">Clear typed quantity</button>
+          )}
+        </>
+      )}
+      {shape.itemId && <div className="text-[11px] text-slate-400">Item: <span className="text-slate-200">{shape.itemId}</span></div>}
+      {shape.note && role !== 'flag' && <div className="text-[10px] text-slate-500 leading-snug">{shape.note}</div>}
     </div>
   );
 }
