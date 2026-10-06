@@ -131,7 +131,7 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                     by_cat[cc].append(s)
 
     out: dict = {"project": project_name, "pdf": pdf_path, "pages": len(doc),
-                 "sheets": [s.to_dict() for s in index], "read": [], "skipped": []}
+                 "sheets": [dict(s.to_dict(), ppf=page_ppf(doc[s.page], None)) for s in index], "read": [], "skipped": []}
 
     # ── 1. schedules ────────────────────────────────────────────────────────
     entries: list[ScheduleEntry] = []
