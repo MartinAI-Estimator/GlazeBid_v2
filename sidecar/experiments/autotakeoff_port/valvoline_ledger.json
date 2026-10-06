@@ -1,5 +1,5 @@
 {
- "project": "Valvoline",
+ "project": "valvoline",
  "pages": 75,
  "read": [
   {
@@ -25,13 +25,7 @@
    "step": "plan",
    "kind": "rect",
    "tags": 0,
-   "unmatched": {
-    "UP": 1,
-    "12": 1,
-    "P13": 3,
-    "HW": 1,
-    "CW": 1
-   }
+   "unmatched": {}
   },
   {
    "sheet": "A-1.2",
@@ -40,23 +34,9 @@
    "kind": "rect",
    "tags": 4,
    "unmatched": {
-    "DN": 1,
-    "10": 2,
-    "17": 1,
-    "18": 1,
-    "20": 1,
-    "19": 1,
-    "15": 1,
-    "14": 1,
-    "16": 1,
-    "13": 1,
-    "11": 2,
-    "12": 1,
-    "FD": 4,
-    "24": 1,
-    "21": 1,
-    "22": 1,
-    "23": 1
+    "A-3.1": 2,
+    "A-3.2": 2,
+    "TYP": 1
    }
   },
   {
@@ -195,7 +175,7 @@
  ],
  "mark_symbol": {
   "G-3.1|pictorial|": null,
-  "A-6.1|tabular|DOOR": "pill",
+  "A-6.1|tabular|NOMINAL": "pill",
   "A-6.1|tabular|STOREFRONT OPENING SCHEDULE": "rect"
  },
  "legend_classes": {},
@@ -274,7 +254,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "D1 \u2014 1 Thus",
-   "desc": "NO.: D1 | ROOM NAME: CHANGING ROOM | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H6 SEE NOTES 1 & 12",
+   "desc": "DOOR NO.: D1 | ROOM NAME: CHANGING ROOM | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM | FINISH: PT-2 | TYPE MATERIAL 2: F2 HM | FINISH 2: PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H6 SEE NOTES 1 & 12",
    "location": null,
    "w_in": 36.0,
    "h_in": 84.0,
@@ -307,7 +287,7 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "D2 \u2014 1 Thus",
-   "desc": "NO.: D2 | ROOM NAME: WAITING | WIDTH: 3' - 0\" | HEIGHT: 7' - 10\" | TYPE MATERIAL: A AL/GL F1 ALUM. | FINISH: SEE SCHEDULE A-3.1 SEE SCHEDULE A-3.1 | HEAD: 4/A-6.2 | JAMB: 3/A-6.2 | THRESHOLD: 1/A-6.2 -- | COMMENTS: H1 SEE NOTES 1, 2, 3, 4, 5, 8, 9 & 11",
+   "desc": "DOOR NO.: D2 | ROOM NAME: WAITING | WIDTH: 3' - 0\" | HEIGHT: 7' - 10\" | TYPE MATERIAL: A AL/GL | FINISH: SEE SCHEDULE A-3.1 | TYPE MATERIAL 2: F1 ALUM. | FINISH 2: SEE SCHEDULE A-3.1 | HEAD: 4/A-6.2 | JAMB: 3/A-6.2 | THRESHOLD: 1/A-6.2 -- | COMMENTS: H1 SEE NOTES 1, 2, 3, 4, 5, 8, 9 & 11",
    "location": null,
    "w_in": 36.0,
    "h_in": 93.87,
@@ -350,7 +330,7 @@
    "cls": "int_sf_door",
    "kind": "scope",
    "label": "D3 \u2014 1 Thus",
-   "desc": "NO.: D3 | ROOM NAME: WAITING | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: A AL/GL -- ALUM. | FINISH: MATCH EXT. FINISH MATCH EXT. FINISH | HEAD: 18/A-6.2 | JAMB: 16/A-6.2 | THRESHOLD: 15/A-6.2 -- | COMMENTS: H2 SEE NOTES 1 & 8",
+   "desc": "DOOR NO.: D3 | ROOM NAME: WAITING | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: A AL/GL | FINISH: MATCH EXT. FINISH | TYPE MATERIAL 2: -- ALUM. | FINISH 2: MATCH EXT. FINISH | HEAD: 18/A-6.2 | JAMB: 16/A-6.2 | THRESHOLD: 15/A-6.2 -- | COMMENTS: H2 SEE NOTES 1 & 8",
    "location": "interior",
    "w_in": 36.0,
    "h_in": 83.93,
@@ -394,7 +374,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "D4 \u2014 1 Thus",
-   "desc": "NO.: D4 | ROOM NAME: UNISEX RESTROOM | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H6 SEE NOTES 1 & 12",
+   "desc": "DOOR NO.: D4 | ROOM NAME: UNISEX RESTROOM | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM | FINISH: PT-2 | TYPE MATERIAL 2: F2 HM | FINISH 2: PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H6 SEE NOTES 1 & 12",
    "location": null,
    "w_in": 36.0,
    "h_in": 84.0,
@@ -427,7 +407,7 @@
    "cls": "glazing_only_door",
    "kind": "scope",
    "label": "D5 \u2014 1 Thus",
-   "desc": "NO.: D5 | ROOM NAME: OFFICE | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: C HM/GL F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H5 SEE NOTES 1, 11, & 12",
+   "desc": "DOOR NO.: D5 | ROOM NAME: OFFICE | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: C HM/GL | FINISH: PT-2 | TYPE MATERIAL 2: F2 HM | FINISH 2: PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H5 SEE NOTES 1, 11, & 12",
    "location": null,
    "w_in": 36.0,
    "h_in": 84.0,
@@ -466,7 +446,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "D6 \u2014 1 Thus",
-   "desc": "NO.: D6 | ROOM NAME: ACCESS CHASE | WIDTH: 1' - 6\" | HEIGHT: 1' - 6\" | TYPE MATERIAL: E S. STEEL -- S. STEEL | FINISH: STAINLESS STEEL STAINLESS STEEL | HEAD: 10/A-6.2 | JAMB: 10/A-6.2 | THRESHOLD: 10/A-6.2 -- | COMMENTS: -- SEE NOTES 4,5,7,9,& 11",
+   "desc": "DOOR NO.: D6 | ROOM NAME: ACCESS CHASE | WIDTH: 1' - 6\" | HEIGHT: 1' - 6\" | TYPE MATERIAL: E S. STEEL | FINISH: STAINLESS STEEL | TYPE MATERIAL 2: -- S. STEEL | FINISH 2: STAINLESS STEEL | HEAD: 10/A-6.2 | JAMB: 10/A-6.2 | THRESHOLD: 10/A-6.2 -- | COMMENTS: -- SEE NOTES 4,5,7,9,& 11",
    "location": null,
    "w_in": 18.0,
    "h_in": 18.0,
@@ -499,7 +479,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "D7 \u2014 1 Thus",
-   "desc": "NO.: D7 | ROOM NAME: MECHANICAL | WIDTH: 6' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F3 HM | FINISH: PT-2 PT-2 | HEAD: 8/A-6.2 | JAMB: 7/A-6.2 | THRESHOLD: 6/A-6.2 -- | COMMENTS: H3 SEE NOTES 1, 2, 4, 5, 8, 9, & 11",
+   "desc": "DOOR NO.: D7 | ROOM NAME: MECHANICAL | WIDTH: 6' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM | FINISH: PT-2 | TYPE MATERIAL 2: F3 HM | FINISH 2: PT-2 | HEAD: 8/A-6.2 | JAMB: 7/A-6.2 | THRESHOLD: 6/A-6.2 -- | COMMENTS: H3 SEE NOTES 1, 2, 4, 5, 8, 9, & 11",
    "location": null,
    "w_in": 72.0,
    "h_in": 84.0,
@@ -532,7 +512,7 @@
    "cls": "glazing_only_door",
    "kind": "scope",
    "label": "D8 \u2014 1 Thus",
-   "desc": "NO.: D8 | ROOM NAME: UTILITY | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: C HM/GL F2 HM/GL | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H4 SEE NOTES 1 & 12",
+   "desc": "DOOR NO.: D8 | ROOM NAME: UTILITY | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: C HM/GL | FINISH: PT-2 | TYPE MATERIAL 2: F2 HM/GL | FINISH 2: PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H4 SEE NOTES 1 & 12",
    "location": null,
    "w_in": 36.0,
    "h_in": 84.0,
@@ -571,7 +551,7 @@
    "cls": "ext_sf_door",
    "kind": "scope",
    "label": "D9 \u2014 1 Thus",
-   "desc": "NO.: D9 | ROOM NAME: SERVICE BAYS | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: A AL/GL F3 ALUM. | FINISH: SEE SCHEDULE A-3.1 SEE SCHEDULE A-3.1 | HEAD: 5/A-6.2 | JAMB: 2/A-6.2 | THRESHOLD: 1/A-6.2 -- | COMMENTS: H1 SEE NOTES 1, 2, 3, 4, 5, 8, 9 & 11",
+   "desc": "DOOR NO.: D9 | ROOM NAME: SERVICE BAYS | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: A AL/GL | FINISH: SEE SCHEDULE A-3.1 | TYPE MATERIAL 2: F3 ALUM. | FINISH 2: SEE SCHEDULE A-3.1 | HEAD: 5/A-6.2 | JAMB: 2/A-6.2 | THRESHOLD: 1/A-6.2 -- | COMMENTS: H1 SEE NOTES 1, 2, 3, 4, 5, 8, 9 & 11",
    "location": null,
    "w_in": 36.0,
    "h_in": 84.0,
@@ -610,7 +590,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "D10 \u2014 1 Thus",
-   "desc": "NO.: D10 | ROOM NAME: DRUM TRANSFER STATION | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM F2 HM | FINISH: PT-2 PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H8 SEE NOTES 1 & 12",
+   "desc": "DOOR NO.: D10 | ROOM NAME: DRUM TRANSFER STATION | WIDTH: 3' - 0\" | HEIGHT: 7' - 0\" | TYPE MATERIAL: B HM | FINISH: PT-2 | TYPE MATERIAL 2: F2 HM | FINISH 2: PT-2 | HEAD: 19/A-6.2 | JAMB: 17/A-6.2 | THRESHOLD: -- -- | COMMENTS: H8 SEE NOTES 1 & 12",
    "location": null,
    "w_in": 36.0,
    "h_in": 84.0,
@@ -643,7 +623,7 @@
    "cls": "excluded",
    "kind": "excluded",
    "label": "D12 \u2014 4 Thus",
-   "desc": "NO.: D12 | ROOM NAME: SERVICE BAYS | WIDTH: 10' - 0\" | HEIGHT: 12' - 0\" | TYPE MATERIAL: D -- -- -- | FINISH: SEE SCHEDULE A-3.1 SEE SCHEDULE A-3.1 | HEAD: 13/A-6.2 | JAMB: 12/A-6.2 | THRESHOLD: 11/A-6.2 -- | COMMENTS: H7 SEE NOTES 6 & 9",
+   "desc": "DOOR NO.: D12 | ROOM NAME: SERVICE BAYS | WIDTH: 10' - 0\" | HEIGHT: 12' - 0\" | TYPE MATERIAL: D -- | FINISH: SEE SCHEDULE A-3.1 | TYPE MATERIAL 2: -- -- | FINISH 2: SEE SCHEDULE A-3.1 | HEAD: 13/A-6.2 | JAMB: 12/A-6.2 | THRESHOLD: 11/A-6.2 -- | COMMENTS: H7 SEE NOTES 6 & 9",
    "location": null,
    "w_in": 120.0,
    "h_in": 144.0,
@@ -2392,7 +2372,46 @@
    "sf": 71.6
   }
  },
- "elapsed_s": 33.2,
+ "elapsed_s": 47.32,
  "model_calls": 0,
+ "type_drawings": {
+  "1": {
+   "code": "1",
+   "sheet": "A-6.1",
+   "page": 44,
+   "section": "STOREFRONT & DOOR FRAME TYPES",
+   "rect": [
+    1060.9,
+    237.5,
+    1104.4,
+    302.6
+   ],
+   "label_rect": [
+    1011.6,
+    343.2,
+    1029.8,
+    358.9
+   ],
+   "has_lite": false,
+   "lite_count": 0,
+   "coiling": false,
+   "frame_only": false,
+   "words": "DOOR TYPE 1; ALUMINUM STOREFRONT DOOR"
+  }
+ },
+ "code_tables": {
+  "DOOR SCHEDULE": {
+   "F2": "HM PT-2 19/A-6.2 17/A-6.2 --",
+   "F1": "ALUM. SEE SCHEDULE A-3.1 4/A-6.2 3/A-6.2 1/A-6.2",
+   "F3": "ALUM. SEE SCHEDULE A-3.1 5/A-6.2 2/A-6.2 1/A-6.2"
+  },
+  "STOREFRONT OPENING SCHEDULE": {
+   "1": "FLUSH BOLTS ROCKWOOD 555 LEVER EXTENTION BOLT US26D ON INTERACTIVE LEAF",
+   "2": "KICK DOWN HOLDER IVES FS 555-SP28",
+   "WIDTH": "T. = TEMPERED GLAZING",
+   "DOOR": "EQ. S.G. = SAFETY GLAZING",
+   "F1": "F2"
+  }
+ },
  "markups_count": 196
 }

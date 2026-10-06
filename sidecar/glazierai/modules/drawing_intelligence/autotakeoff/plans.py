@@ -110,3 +110,27 @@ def opening_runs(pg: fitz.Page, tag_center, w_in: float, ppf: float, tol: float 
             out.append(((x0, y), (x1, y), round(ln / ppf * 12, 2), round(d, 1)))
     out.sort(key=lambda t: t[3])
     return out
+
+
+def frame_box(pg: fitz.Page, tag_center, w_in: float, ppf: float, tol: float = 0.12):
+    """
+    The frame drawn IN the wall on a plan: a thin closed rectangle whose long
+    side is the schedule width at the plan scale and whose short side is a
+    frame depth (3–18 pt), nearest the tag.  Returns (rect, length_in) or None.
+    """
+    from .pdfgeom import rect_candidates, dedupe
+    import math
+    L = w_in / 12 * ppf
+    if L < 8:
+        return None
+    c = fitz.Point(*tag_center)
+    r = L * 1.6 + 40
+    rc = dedupe(rect_candidates(pg, fitz.Rect(c.x - r, c.y - r, c.x + r, c.y + r), minlen=3))
+    cand = [q for q in rc if abs(max(q.width, q.height) - L) <= tol * L + 2 and 3 <= min(q.width, q.height) <= 18]
+    if not cand:
+        return None
+    cand.sort(key=lambda q: math.hypot((q.x0 + q.x1) / 2 - c.x, (q.y0 + q.y1) / 2 - c.y))
+    q = cand[0]
+    if math.hypot((q.x0 + q.x1) / 2 - c.x, (q.y0 + q.y1) / 2 - c.y) > L + 80:
+        return None
+    return q, round(max(q.width, q.height) / ppf * 12, 2)

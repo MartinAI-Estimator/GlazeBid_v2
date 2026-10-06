@@ -24,7 +24,7 @@ except ImportError:  # PyMuPDF < 1.24.3
 
 from .pdfgeom import text_lines, TextLine
 
-SHEET_RE = re.compile(r"^(?P<disc>[A-Z]{1,3})\s?-?\s?(?P<num>\d{1,3}(?:[.\-]\d{1,3})?[A-Za-z]?)$")
+SHEET_RE = re.compile(r"^(?P<disc>[A-Z]{1,3})\s?-?\s?(?P<num>\d{1,3}(?:[.\-]\d{1,3})?(?:[A-Za-z]{1,2}\d?)?)$")
 _TITLE_LABEL = re.compile(r"^(SHEET\s*(TITLE|NAME)|DRAWING\s*TITLE|TITLE)\s*[:#]?$", re.I)
 _LABELS = re.compile(r"^(SHEET|DATE|PROJECT|DRAWN|CHECKED|SCALE|JOB|REVISION|ISSUE|PROFESSIONAL|SEAL|STAMP|NO\.?|#|PROJECT NUMBER|SHEET #)\b.*[:#]?$", re.I)
 
@@ -118,10 +118,16 @@ def _title(tl: list[TextLine], num: TextLine | None) -> str:
     lines: list[TextLine] = []
     if label:
         lab = label[0]
-        x0, x1 = lab.rect[0] - 20, lab.rect[0] + 260
-        lines = [t for t in tl if lab.rect[3] - 2 <= t.rect[1] <= lab.rect[3] + 100
+        # titles are often centred under the label: take lines whose centre is near the label's centre,
+        # stopping at the next label ("SHEET NO.") below
+        lcx = (lab.rect[0] + lab.rect[2]) / 2
+        nxt = [t for t in tl if t is not lab and t.rect[1] > lab.rect[3] and _LABELS.match(t.text.strip())
+               and abs((t.rect[0] + t.rect[2]) / 2 - lcx) < 120]
+        ystop = min([t.rect[1] for t in nxt] + [lab.rect[3] + 100])
+        x0, x1 = lab.rect[0] - 160, lab.rect[0] + 260
+        lines = [t for t in tl if lab.rect[3] - 2 <= t.rect[1] < ystop and abs((t.rect[0] + t.rect[2]) / 2 - lcx) < 110
                  and x0 <= t.rect[0] <= x1 and t is not lab and not _LABELS.match(t.text)
-                 and t.size >= 11]
+                 and t.size >= 9 and not re.fullmatch(r"[\d./\-\s]+", t.text.strip())]
     if not lines:
         # text column above the sheet number, mid-size, contiguous
         nx0, nx1 = num.rect[0] - 40, num.rect[2] + 40

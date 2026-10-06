@@ -47,7 +47,7 @@ class ElevSnap:
 
 
 def mark_kind(pg: fitz.Page, marks, alias: dict | None = None,
-              kinds=("hexagon", "circle", "pill", "diamond", "rect")) -> str | None:
+              kinds=("hexagon", "circle", "pill", "diamond", "rect", "ellipse")) -> str | None:
     """
     The callout-symbol kind the job uses for door/frame marks on this page: the
     kind under which the most DISTINCT schedule marks appear.  Grid bubbles and

@@ -1,5 +1,5 @@
 {
- "project": "McLarty",
+ "project": "mclarty",
  "pages": 35,
  "read": [
   {
@@ -25,7 +25,9 @@
    "rows": 44,
    "codes": [
     "D-1",
+    "D-3",
     "D-4",
+    "D-5",
     "D-8",
     "GF-1",
     "SF-1",
@@ -86,8 +88,10 @@
     "32": 1,
     "16": 1,
     "17": 1,
+    "M4": 1,
     "31a": 1,
     "30": 1,
+    "M2": 1,
     "31b": 1,
     "6b": 1
    }
@@ -268,6 +272,15 @@
     "exterior / interior not stated \u2014 assumed exterior"
    ]
   },
+  "D-3": {
+   "cls": "glazing_only",
+   "text": "ROLLING OVERHEAD NO GLAZING PARTS DOOR PAINT: EP-1",
+   "sheet": "A2.0",
+   "series": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ]
+  },
   "D-4": {
    "cls": "ext_sf",
    "text": "DOOR PITTCO ARCHITECTURAL STANDARD NARROW STILE #63 BLACK FINISH",
@@ -276,6 +289,15 @@
    "flags": [
     "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
     "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  "D-5": {
+   "cls": "glazing_only",
+   "text": "ROLLING OVERHEAD PROVIDE SINGLE BAND OF GLASS DOOR PAINT TO MATCH",
+   "sheet": "A2.0",
+   "series": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
    ]
   },
   "GF-1": {
@@ -1376,7 +1398,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "louver_door: Louvered door with no glass \u2014 not glazing scope"
    ],
    "citations": [
     "A3.2 pictorial schedule type 13",
@@ -1537,7 +1559,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "louver_door: Louvered door with no glass \u2014 not glazing scope"
    ],
    "citations": [
     "A3.2 pictorial schedule type 15",
@@ -5494,7 +5516,7 @@
   {
    "id": "146",
    "cls": "excluded",
-   "kind": "excluded",
+   "kind": "exclusion",
    "label": "146 \u2014 1 Thus",
    "desc": "ALUMINUM RAIL W/ STAINLESS STEEL CABLES BY www.stainlesssteelcablerailing.com BLACK SQUARE POSTS W/ FLAT TOP RAIL. MOUNTING PLATE AT FLOOR TO HAVE DECORATIVE DOME SCREW COVERS. STAINLESS STEEL CABLES TO BE MARINE GRADE TYPE 316",
    "location": "interior",
@@ -5531,7 +5553,7 @@
    "implied": [],
    "flags": [],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "glass_handrail_cable: Cable rail \u2014 not glazing"
    ],
    "citations": [
     "A3.3 pictorial schedule type 146",
@@ -5959,7 +5981,7 @@
   {
    "id": "147",
    "cls": "excluded",
-   "kind": "excluded",
+   "kind": "exclusion",
    "label": "147 \u2014 1 Thus",
    "desc": "ALUMINUM RAIL W/ STAINLESS STEEL CABLES BY www.stainlesssteelcablerailing.com BLACK SQUARE POSTS W/ FLAT TOP RAIL. MOUNTING PLATE AT FLOOR TO HAVE DECORATIVE DOME SCREW COVERS. STAINLESS STEEL CABLES TO BE MARINE GRADE TYPE 316",
    "location": "interior",
@@ -6009,7 +6031,7 @@
     "drawn size does not match any dimension string \u2014 check scale"
    ],
    "notes": [
-    "hm_no_glass: Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+    "glass_handrail_cable: Cable rail \u2014 not glazing"
    ],
    "citations": [
     "A3.3 pictorial schedule type 147",
@@ -7630,8 +7652,8 @@
   },
   {
    "id": "A2.0 legend D-3",
-   "cls": "excluded",
-   "kind": "excluded",
+   "cls": "glazing_only",
+   "kind": "scope",
    "label": "D-3 (A2.0)",
    "desc": "ROLLING OVERHEAD NO GLAZING PARTS DOOR PAINT: EP-1",
    "location": null,
@@ -7647,9 +7669,11 @@
    "series": [],
    "hardware": [],
    "implied": [],
-   "flags": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
    "notes": [
-    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+    "glass_generic: Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
    ],
    "citations": [
     "A2.0 legend row D-3"
@@ -7697,8 +7721,8 @@
   },
   {
    "id": "A2.0 legend D-5",
-   "cls": "excluded",
-   "kind": "excluded",
+   "cls": "glazing_only",
+   "kind": "scope",
    "label": "D-5 (A2.0)",
    "desc": "ROLLING OVERHEAD PROVIDE SINGLE BAND OF GLASS DOOR PAINT TO MATCH",
    "location": null,
@@ -7714,9 +7738,11 @@
    "series": [],
    "hardware": [],
    "implied": [],
-   "flags": [],
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ],
    "notes": [
-    "overhead: Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
+    "glass_generic: Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
    ],
    "citations": [
     "A2.0 legend row D-5"
@@ -10595,10 +10621,22 @@
    ]
   },
   {
+   "item": "A2.0 legend D-3",
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
+   ]
+  },
+  {
    "item": "A2.0 legend D-4",
    "flags": [
     "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW",
     "exterior / interior not stated \u2014 assumed exterior"
+   ]
+  },
+  {
+   "item": "A2.0 legend D-5",
+   "flags": [
+    "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)"
    ]
   },
   {
@@ -10726,7 +10764,9 @@
    "sf": 1692.5
   }
  },
- "elapsed_s": 41.15,
+ "elapsed_s": 58.57,
  "model_calls": 0,
- "markups_count": 1148
+ "type_drawings": null,
+ "code_tables": null,
+ "markups_count": 1152
 }

@@ -25,12 +25,12 @@ except ImportError:  # PyMuPDF < 1.24.3
     import fitz
 
 from .pdfgeom import text_lines, TextLine, type_frames, mullion_positions, dedupe, small_shapes
-from .units import parse_dim, norm_text, region_ppf, ppf_from_dims, nearest_ppf, STANDARD_PPF
+from .units import fmt_in, parse_dim, norm_text, region_ppf, ppf_from_dims, nearest_ppf, STANDARD_PPF
 from .tags import find_tags
 
-MARK_RE = re.compile(r"^(?:[A-Z]{0,2}-?\d{1,3}[A-Za-z]?|[A-Z]{1,2}-?\d{0,2}[a-z]?|[A-Z]\d?-[A-Z0-9]{1,3})$")
+MARK_RE = re.compile(r"^(?:[A-Z]{0,2}-?\d{1,4}[A-Za-z]?(?:\.\d{1,2}[A-Za-z]?)?|[A-Z]{1,2}-?\d{0,2}[a-z]?|[A-Z]\d?-[A-Z0-9]{1,3})$")
 STOP_RE = re.compile(r"^(HARDWARE|QUANTITY|QUANITY|QTY\.?|DESCRIPTION|FINISH|HDWR\.?|REMARKS|NOTES?|SET)\s*[:#]?\s*(DESCRIPTION)?$", re.I)
-HEADER_WORDS = re.compile(r"^(MARK|NO\.?|NUMBER|TYPE|SIZE(\s*W\s*X\s*H)?|WIDTH|HEIGHT|THK\.?|THICKNESS|MAT(ERIA)?L\.?|TYPE\s+MATERIAL|MATERIAL|FRAME(\s*TYPE)?|GLAZING|GLASS|FINISH|HEAD|JAMB|SILL|THRESHOLD|HDWR\.?(\s*SET)?|HARDWARE(\s*SET)?|SET|REMARKS|COMMENTS|NOTES|DETAIL(S)?|LABEL|RATING|FIRE\s*RATING|DOOR|QTY\.?|LOCATION|ROOM(\s*NAME)?|FROM|TO|ELEV(ATION)?|MFR\.?|MANUFACTURER|SERIES|MODEL|OPERATION|LOUVER|UNDERCUT|CLOSER|LOCKSET|SWING|HAND)$", re.I)
+HEADER_WORDS = re.compile(r"^(KEYED\s+NOTES|HDWR\s+SET|MARK|NO\.?|NUMBER|TYPE|SIZE(\s*W\s*X\s*H)?|WIDTH|HEIGHT|THK\.?|THICKNESS|MAT(ERIA)?L\.?|TYPE\s+MATERIAL|MATERIAL|FRAME(\s*TYPE)?|GLAZING|GLASS|FINISH|HEAD|JAMB|SILL|THRESHOLD|HDWR\.?(\s*SET)?|HARDWARE(\s*SET)?|SET|REMARKS|COMMENTS|NOTES|DETAIL(S)?|LABEL|RATING|FIRE\s*RATING|DOOR|QTY\.?|LOCATION|ROOM(\s*NAME)?|FROM|TO|ELEV(ATION)?|MFR\.?|MANUFACTURER|SERIES|MODEL|OPERATION|LOUVER|UNDERCUT|CLOSER|LOCKSET|SWING|HAND)$", re.I)
 
 
 @dataclass
@@ -57,9 +57,12 @@ class ScheduleEntry:
     ppf_scores: dict = field(default_factory=dict)
     text_ppf: float | None = None
 
+    extra: str = ""                  # words looked up from type drawings / code tables
+
     @property
     def desc(self) -> str:
-        return " / ".join(self.text) if self.text else " | ".join(f"{k}: {v}" for k, v in self.cells.items() if v)
+        base = " / ".join(self.text) if self.text else " | ".join(f"{k}: {v}" for k, v in self.cells.items() if v)
+        return f"{base} || {self.extra}" if self.extra else base
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -284,7 +287,7 @@ def _resolve_scales(entries: list[ScheduleEntry], default_ppf: float) -> None:
         sc = getattr(e, "ppf_scores", None) or {}
         own = max(sc.items(), key=lambda kv: kv[1])[0] if sc else None
         ppf = sheet_ppf
-        if own is not None and sc[own] >= 2 and own != sheet_ppf:
+        if own is not None and sc[own] >= 2 and own != sheet_ppf and not sc.get(sheet_ppf):
             ppf = own
             e.flags.append(f"scale {ppf:g} pt/ft from this drawing's own dimensions (sheet is {sheet_ppf:g})")
         elif not sc:
@@ -329,64 +332,105 @@ class Table:
     rect: list
 
 
+_UPPER_HEADER = re.compile(r"^(DOOR|PANEL|FRAME|FIRE|KEYED|HDWR|HARDWARE|GLASS|GLAZING|ROUGH|MASONRY|LABEL|UNIT|OPENING|DOOR\s+OPENING|ROOM|WALL|SILL|HEAD)$", re.I)
+_MARK_HEAD = re.compile(r"^(MARK|NO\.?|NUMBER|DOOR|DOOR\s+NO\.?|OPENING|WINDOW|TAG)$", re.I)
+
+
 def find_tables(pg: fitz.Page) -> list[Table]:
     lines = [t for t in text_lines(pg) if not t.vertical]
-    # header rows: ≥ 4 header words on one y
+    from collections import Counter
+    body_size = Counter(round(t.size, 1) for t in lines if len(t.text) > 2).most_common(1)[0][0] if lines else 9.0
+    hmax = max(13.5, body_size * 1.4)
+    # header rows: >= 4 header words on one y
     byy: dict[int, list[TextLine]] = {}
     for t in lines:
-        if HEADER_WORDS.match(norm_text(t.text).strip(" :")) and t.size < 12:
+        if HEADER_WORDS.match(norm_text(t.text).strip(" :")) and t.size < hmax:
             byy.setdefault(round(t.rect[1] / 4), []).append(t)
     tables: list[Table] = []
-    for _, hs in sorted(byy.items()):
-        if len(hs) < 4:
+    for _, hs_all in sorted(byy.items()):
+        if len(hs_all) < 4:
             continue
-        hs.sort(key=lambda t: t.rect[0])
-        # merge header words that sit on two lines (e.g. "TYPE MATERIAL") — already joined per line by PyMuPDF
-        y0 = min(t.rect[1] for t in hs)
-        y1 = max(t.rect[3] for t in hs)
-        # column bounds: midpoints between neighbouring headers
-        cols = []
-        for i, t in enumerate(hs):
-            x0 = (hs[i - 1].rect[2] + t.rect[0]) / 2 if i > 0 else t.rect[0] - 40
-            x1 = (t.rect[2] + hs[i + 1].rect[0]) / 2 if i + 1 < len(hs) else t.rect[2] + 120
-            cols.append((norm_text(t.text).strip(" :").upper(), x0, x1))
-        # title: nearest larger text above the header
-        above = [t for t in lines if y0 - 60 <= t.rect[3] <= y0 and t.rect[0] < cols[-1][2] and t.rect[2] > cols[0][1] and t.size >= hs[0].size]
-        above.sort(key=lambda t: -t.rect[3])
-        title = above[0].text.strip() if above else ""
-        # rows: lines below the header within the column span, until a gap > 3 row heights or another header row
-        rh = y1 - y0
-        body = [t for t in lines if t.rect[1] > y1 and cols[0][1] <= t.rect[0] <= cols[-1][2] and t.size < 12]
-        body.sort(key=lambda t: t.rect[1])
-        rows: list[dict] = []
-        cur_y = y1
-        for t in body:
-            if t.rect[1] - cur_y > 3.5 * rh and rows:
-                break
-            if HEADER_WORDS.match(norm_text(t.text).strip(" :")) and sum(1 for u in body if abs(u.rect[1] - t.rect[1]) < 3 and HEADER_WORDS.match(norm_text(u.text).strip(" :"))) >= 4:
-                break
-            cur_y = max(cur_y, t.rect[3])
-            # assign to a row by y (rows may wrap to 2 lines; keep 1 line = 1 row and merge later by mark)
-            cx = (t.rect[0] + t.rect[2]) / 2
-            col = next((c[0] for c in cols if c[1] <= cx < c[2]), None)
-            if col is None:
+        hs_all.sort(key=lambda t: t.rect[0])
+        # two tables side by side on one header row: split where a mark column starts again
+        groups: list[list[TextLine]] = [[]]
+        for t in hs_all:
+            nm = norm_text(t.text).strip(" :")
+            if groups[-1] and len(groups[-1]) >= 4 and _MARK_HEAD.match(nm) and not _upper_word(lines, t):
+                groups.append([])
+            groups[-1].append(t)
+        for hs in groups:
+            if len(hs) < 4:
                 continue
-            row = next((r for r in rows if abs(r["y"] - t.rect[1]) < rh * 0.6), None)
-            if row is None:
-                row = {"y": t.rect[1], "rect": [t.rect[0], t.rect[1], t.rect[2], t.rect[3]], "cells": {}}
-                rows.append(row)
-            row["cells"][col] = (row["cells"].get(col, "") + " " + t.text.strip()).strip()
-            r = row["rect"]
-            r[0], r[1], r[2], r[3] = min(r[0], t.rect[0]), min(r[1], t.rect[1]), max(r[2], t.rect[2]), max(r[3], t.rect[3])
-        if not rows:
-            continue
-        trect = [cols[0][1], y0, cols[-1][2], max(r["rect"][3] for r in rows)]
-        tables.append(Table(title, [cols[0][1], y0, cols[-1][2], y1], cols, rows, trect))
+            tb = _table_from_header(lines, hs, hmax)
+            if tb:
+                tables.append(tb)
     return tables
 
 
-_MARK_COLS = ("MARK", "NO.", "NO", "NUMBER", "DOOR", "TYPE", "LABEL", "DOOR NO.", "DOOR NO", "OPENING", "WINDOW")
-_SIZE_COLS = ("WIDTH", "HEIGHT", "SIZE", "SIZE WXH", "SIZE W X H", "MATERIAL", "TYPE MATERIAL", "MATL", "MATL.", "FRAME", "GLAZING", "GLASS", "FRAME TYPE")
+def _upper_word(lines: list[TextLine], t: TextLine) -> TextLine | None:
+    """The first line of a two-line header ("DOOR" over "TYPE")."""
+    h = t.rect[3] - t.rect[1]
+    for u in lines:
+        if u is t or not (0 < t.rect[1] - u.rect[3] < 0.9 * h + 3):
+            continue
+        if min(u.rect[2], t.rect[2]) - max(u.rect[0], t.rect[0]) > 0.5 * min(u.rect[2] - u.rect[0], t.rect[2] - t.rect[0]):
+            if _UPPER_HEADER.match(norm_text(u.text).strip(" :")):
+                return u
+    return None
+
+
+def _table_from_header(lines: list[TextLine], hs: list[TextLine], hmax: float) -> Table | None:
+    y0 = min(t.rect[1] for t in hs)
+    y1 = max(t.rect[3] for t in hs)
+    cols = []
+    for i, t in enumerate(hs):
+        x0 = (hs[i - 1].rect[2] + t.rect[0]) / 2 if i > 0 else t.rect[0] - 40
+        x1 = (t.rect[2] + hs[i + 1].rect[0]) / 2 if i + 1 < len(hs) else t.rect[2] + 120
+        name = norm_text(t.text).strip(" :").upper()
+        up = _upper_word(lines, t)
+        if up is not None:
+            name = f"{norm_text(up.text).strip(' :').upper()} {name}"
+            y0 = min(y0, up.rect[1])
+        cols.append((name, x0, x1))
+    # a later column with the same name gets a suffix so cells don't merge ("TYPE" twice)
+    seen: dict[str, int] = {}
+    for i, (n, a, b) in enumerate(cols):
+        seen[n] = seen.get(n, 0) + 1
+        if seen[n] > 1:
+            cols[i] = (f"{n} {seen[n]}", a, b)
+    above = [t for t in lines if y0 - 60 <= t.rect[3] <= y0 and t.rect[0] < cols[-1][2] and t.rect[2] > cols[0][1] and t.size >= hs[0].size]
+    above.sort(key=lambda t: -t.rect[3])
+    title = above[0].text.strip() if above else ""
+    rh = hs[0].rect[3] - hs[0].rect[1]
+    body = [t for t in lines if t.rect[1] > y1 and cols[0][1] <= t.rect[0] <= cols[-1][2] and t.size < hmax]
+    body.sort(key=lambda t: t.rect[1])
+    rows: list[dict] = []
+    cur_y = y1
+    for t in body:
+        if t.rect[1] - cur_y > 4.5 * rh and rows:
+            break
+        if HEADER_WORDS.match(norm_text(t.text).strip(" :")) and sum(1 for u in body if abs(u.rect[1] - t.rect[1]) < 3 and HEADER_WORDS.match(norm_text(u.text).strip(" :"))) >= 4:
+            break
+        cur_y = max(cur_y, t.rect[3])
+        cx = (t.rect[0] + t.rect[2]) / 2
+        col = next((c[0] for c in cols if c[1] <= cx < c[2]), None)
+        if col is None:
+            continue
+        row = next((r for r in rows if abs(r["y"] - t.rect[1]) < rh * 0.6), None)
+        if row is None:
+            row = {"y": t.rect[1], "rect": [t.rect[0], t.rect[1], t.rect[2], t.rect[3]], "cells": {}}
+            rows.append(row)
+        row["cells"][col] = (row["cells"].get(col, "") + " " + t.text.strip()).strip()
+        r = row["rect"]
+        r[0], r[1], r[2], r[3] = min(r[0], t.rect[0]), min(r[1], t.rect[1]), max(r[2], t.rect[2]), max(r[3], t.rect[3])
+    if not rows:
+        return None
+    trect = [cols[0][1], y0, cols[-1][2], max(r["rect"][3] for r in rows)]
+    return Table(title, [cols[0][1], y0, cols[-1][2], y1], cols, rows, trect)
+
+
+_MARK_COLS = ("MARK", "NO.", "NO", "NUMBER", "DOOR", "DOOR NO.", "DOOR NO", "DOOR NUMBER", "OPENING", "WINDOW", "TAG", "TYPE", "LABEL")
+_SIZE_COLS = ("WIDTH", "HEIGHT", "SIZE", "SIZE WXH", "SIZE W X H", "MATERIAL", "TYPE MATERIAL", "MATL", "MATL.", "FRAME", "GLAZING", "GLASS", "FRAME TYPE", "DOOR TYPE", "PANEL MATERIAL", "DOOR MATERIAL", "FRAME MATERIAL")
 
 
 def is_schedule_table(tb: "Table") -> bool:
@@ -433,11 +477,15 @@ def _size_from_cells(e: ScheduleEntry) -> None:
 
 
 def read_schedule_sheet(pg: fitz.Page, sheet: str, default_ppf: float = 18.0) -> list[ScheduleEntry]:
-    """Both layouts; tabular entries first (they carry explicit sizes), pictorial after."""
+    """All layouts; tabular entries first (they carry explicit sizes), then pictorial, then captioned."""
     tab = read_tables(pg, sheet)
     pic = read_pictorial(pg, sheet, default_ppf)
     have = {e.mark for e in tab}
-    return tab + [e for e in pic if e.mark not in have]
+    out = tab + [e for e in pic if e.mark not in have]
+    if not pic and not tab:
+        # captioned elevations only where the sheet has no pictorial / tabular schedule
+        out += read_captioned(pg, sheet, default_ppf)
+    return out
 
 
 # ── Door / frame type drawings (letters under elevations, "DOOR TYPES") ──────
@@ -472,3 +520,134 @@ def type_drawings(pg: fitz.Page, min_size_ratio: float = 2.0) -> dict[str, dict]
         out[t.text.strip()] = {"rect": [round(v, 1) for v in fr], "bays": len(xs) + 1, "rows": len(ys) + 1,
                                "look": look, "label_rect": [round(v, 1) for v in t.rect]}
     return out
+
+
+# ── Captioned types (Curtis A7.21: tag under the drawing, caption under the tag) ──
+
+def read_captioned(pg: fitz.Page, sheet: str, default_ppf: float = 18.0) -> list[ScheduleEntry]:
+    """
+    Glazing-assembly / frame-type elevations where each drawing has a tag
+    (hexagon / circle) under it and a caption under the tag:
+          [ drawing ]
+          (SAB)  40 Thus
+          2" X 4.5" ALUMINUM STOREFRONT NON-INSULATED
+    Only tags whose caption names glazing are kept.
+    """
+    from .tags import find_tags
+    from .classify import is_glazing_text
+    from .pdfgeom import rect_candidates, union_adjacent
+    L = [t for t in text_lines(pg) if not t.vertical]
+    out: list[ScheduleEntry] = []
+    seen: set[str] = set()
+    for t in find_tags(pg, kinds=("hexagon", "circle", "pill", "diamond")):
+        sh = fitz.Rect(t.shape)
+        cx = (sh.x0 + sh.x1) / 2
+        cap = [u for u in L if 0 <= u.rect[1] - sh.y1 < 60 and abs((u.rect[0] + u.rect[2]) / 2 - cx) < 140 and len(u.text.strip()) > 3]
+        cap.sort(key=lambda u: u.rect[1])
+        kept = []
+        prev = sh.y1
+        for u in cap:
+            if u.rect[1] - prev > 18:
+                break
+            kept.append(u)
+            prev = u.rect[3]
+        text = [u.text.strip() for u in kept]
+        if not text or not is_glazing_text(" ".join(text)):
+            continue
+        mark = t.text
+        if mark in seen:
+            continue
+        seen.add(mark)
+        e = ScheduleEntry(mark=mark, sheet=sheet, page=pg.number, layout="captioned", text=text,
+                          mark_rect=[round(v, 1) for v in sh])
+        e.label_rect = [round(min([sh.x0] + [u.rect[0] for u in kept]) - 3, 1), round(sh.y0 - 2, 1),
+                        round(max([sh.x1] + [u.rect[2] for u in kept]) + 3, 1), round(max(u.rect[3] for u in kept) + 2, 1)]
+        # the drawing: closed rectangles just above the tag, overlapping it horizontally
+        win = fitz.Rect(cx - 320, sh.y0 - 520, cx + 320, sh.y0 - 4)
+        rc = dedupe(rect_candidates(pg, win, minlen=12))
+        fr = _pane_cluster(rc, sh)
+        if fr is not None:
+            fr = _snap_out(pg, fr)
+            dims = sorted({d for d in (parse_dim(u.text) for u in text_lines(pg)
+                                       if fitz.Rect(fr.x0 - 140, fr.y0 - 140, fr.x1 + 140, fr.y1 + 20).intersects(u.r)) if d})
+            e.dims_in = dims
+            e.ppf_scores = scale_scores([fr], dims)
+            e.text_ppf = region_ppf(pg, fr, None)
+            e.ppf = e.text_ppf or default_ppf
+            xs, ys = mullion_positions(pg, fr)
+            e.frames.append({"rect": [round(v, 1) for v in fr], "w_in": round(fr.width / e.ppf * 12, 2),
+                             "h_in": round(fr.height / e.ppf * 12, 2), "bays": len(xs) + 1, "rows": len(ys) + 1,
+                             "mullions_x": [round(x, 1) for x in xs], "mullions_y": [round(y, 1) for y in ys]})
+            e.w_in, e.h_in = e.frames[0]["w_in"], e.frames[0]["h_in"]
+        else:
+            e.flags.append("no elevation drawing found above the tag")
+        out.append(e)
+    _resolve_scales(out, default_ppf)
+    for e in out:
+        _dims_override(e)
+    return out
+
+
+def _dims_override(e: "ScheduleEntry") -> None:
+    """
+    Captioned elevations: when the drawn width/height is a few inches off the
+    nearest overall dimension string (door bays have no pane, so the pane
+    cluster stops short), take the dimension and say so.
+    """
+    if not e.frames or not e.dims_in:
+        return
+    f = e.frames[0]
+    for key in ("w_in", "h_in"):
+        v = f[key]
+        near = [d for d in e.dims_in if 0.85 * v <= d <= 1.25 * v]
+        if not near:
+            continue
+        d = min(near, key=lambda d: abs(d - v))
+        if 1.0 < abs(d - v) <= max(8.0, 0.12 * v):
+            f[key] = d
+            e.flags.append(f"{'width' if key == 'w_in' else 'height'} {fmt_in(d)} from dimension string (drawing measured {fmt_in(v)})")
+    e.w_in, e.h_in = f["w_in"], f["h_in"]
+
+
+def _pane_cluster(rects: list, tag: "fitz.Rect", gap: float = 8.0):
+    """
+    The elevation above a tag = the connected group of panes (closed rects that
+    touch or nearly touch), seeded by the pane nearest above the tag.  Works when
+    the outer frame lines are broken at every mullion/transom.
+    """
+    cx = (tag.x0 + tag.x1) / 2
+    above = [r for r in rects if r.y1 <= tag.y0 + 2]
+    if not above:
+        return None
+    seed_c = [r for r in above if r.x0 - 60 <= cx <= r.x1 + 60]
+    if not seed_c:
+        return None
+    seed = min(seed_c, key=lambda r: (tag.y0 - r.y1) + 0.2 * abs((r.x0 + r.x1) / 2 - cx))
+    if tag.y0 - seed.y1 > 160:
+        return None
+    group = [seed]
+    u = fitz.Rect(seed)
+    changed = True
+    while changed:
+        changed = False
+        for r in above:
+            if r in group:
+                continue
+            g = fitz.Rect(u.x0 - gap, u.y0 - gap, u.x1 + gap, u.y1 + gap)
+            if g.intersects(r) and any(fitz.Rect(q.x0 - gap, q.y0 - gap, q.x1 + gap, q.y1 + gap).intersects(r) for q in group):
+                group.append(r)
+                u |= r
+                changed = True
+    return u
+
+
+def _snap_out(pg, u: "fitz.Rect", reach: float = 7.0) -> "fitz.Rect":
+    """Grow a pane cluster to the frame's outer lines (jambs / head / sill members just outside it)."""
+    from .pdfgeom import long_lines
+    W = fitz.Rect(u.x0 - reach - 1, u.y0 - reach - 1, u.x1 + reach + 1, u.y1 + reach + 1)
+    vs, hs = long_lines(pg, W, minlen=min(u.height, u.width) * 0.5)
+    x0 = min([x for x, a, b in vs if u.x0 - reach <= x <= u.x0 and (b - a) >= 0.5 * u.height] + [u.x0])
+    x1 = max([x for x, a, b in vs if u.x1 <= x <= u.x1 + reach and (b - a) >= 0.5 * u.height] + [u.x1])
+    y0 = min([y for y, a, b in hs if u.y0 - reach <= y <= u.y0 and (b - a) >= 0.5 * u.width] + [u.y0])
+    y1 = max([y for y, a, b in hs if u.y1 <= y <= u.y1 + reach and (b - a) >= 0.5 * u.width] + [u.y1])
+    return fitz.Rect(x0, y0, x1, y1)

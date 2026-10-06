@@ -95,6 +95,15 @@ class Item:
         return asdict(self)
 
 
+def _is_door(e: ScheduleEntry) -> bool:
+    """A tabular row is a door when its table is a door schedule: title or a column says DOOR."""
+    if e.layout != "tabular":
+        return False
+    if "DOOR" in (e.table or "").upper():
+        return True
+    return any(k.upper().startswith("DOOR") for k in e.cells)
+
+
 def _loc_hint(sheet: SheetInfo) -> str | None:
     t = sheet.title.upper()
     if "EXTERIOR" in t:
@@ -220,13 +229,46 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
 
     cls_of: dict[int, Classification] = {}
     from .schedules import type_drawings
+    from .door_types import read_type_drawings, read_code_tables, describe_row
     tdraw: dict[int, dict] = {}
+    # type drawings (door / frame types) and code tables (panel material, keyed notes …)
+    type_info: dict = {}
+    code_tabs: dict = {}
+    hm_frames = False
+    if any(e.layout == "tabular" for e in entries):
+        for s in index:
+            if s.discipline.upper().startswith(("A", "I")) and ("TYPE" in s.title.upper() or "schedule" in s.categories):
+                ti = read_type_drawings(doc[s.page], s.sheet)
+                for k, v in ti.items():
+                    type_info.setdefault(k, v)
+                hm_frames = hm_frames or any("HOLLOW METAL FRAME" in v.section for v in ti.values())
+                for k, v in read_code_tables(doc[s.page]).items():
+                    code_tabs.setdefault(k, v)
+        out["type_drawings"] = {k: v.to_dict() for k, v in type_info.items()}
+        out["code_tables"] = code_tabs
+    job_interior = not any("EXTERIOR" in s.title.upper() for s in index)
+    from .classify import rules as _rules
+    fire_cols = [c.upper() for c in _rules().get("fire_rating_columns", [])]
     for e in entries:
         s = sheet_of[e.page]
         txt = e.desc if e.layout == "tabular" else " ".join(e.text)
-        is_door = e.layout == "tabular" and "DOOR" in (e.table or "").upper()
+        is_door = _is_door(e)
+        if e.layout == "tabular" and (type_info or code_tabs):
+            extra = describe_row(e.cells, type_info, code_tabs, hm_frame_codes=hm_frames)
+            if extra:
+                e.extra = extra
+                txt = e.desc
         code, lcls = legend_for(txt)
-        c = classify(txt, location=_loc_hint(s), legend_class=lcls, is_door=is_door, legend_code=code)
+        hint = _loc_hint(s) or ("interior" if job_interior and _rules()["location"].get("default_interior_when_no_exterior_sheets") else None)
+        c = classify(txt, location=hint, legend_class=lcls, is_door=is_door, legend_code=code)
+        if hint == "interior" and not _loc_hint(s):
+            c.notes.append("interior assumed: no exterior sheets in this set")
+        # fire rating column on a glass-only door → fire-rated glazing
+        fire_rx = re.compile(_rules().get("fire_rating_value", r"\d+\s*(MIN|HR)"), re.I)
+        fire = next((v for k, v in e.cells.items() if k.upper() in fire_cols and fire_rx.search(v or "")), None) if e.layout == "tabular" else None
+        if fire and c.cls in ("glazing_only", "glazing_only_door"):
+            c.cls, c.kind = "fire_rated_glazing", "scope"
+            c.notes.append(f"fire rating {fire} → fire-rated glazing")
         # tabular door with a TYPE letter: read the door-type drawing's geometry
         if e.layout == "tabular" and c.cls == "unclassified":
             cells = {k.upper(): v for k, v in e.cells.items()}
@@ -276,7 +318,7 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
     for e in entries:
         s = sheet_of[e.page]
         txt = e.desc if e.layout == "tabular" else " ".join(e.text)
-        is_door = e.layout == "tabular" and "DOOR" in (e.table or "").upper()
+        is_door = _is_door(e)
         c = cls_of[id(e)]
         it = Item(id=e.mark, cls=c.cls, kind=c.kind, label=e.mark, desc=txt, location=c.location,
                   w_in=e.w_in, h_in=e.h_in, frames=e.frames, series=c.series, hardware=e.hardware,
@@ -443,7 +485,16 @@ def _tag_markup(it: Item, sheet: str, page: int, tg: dict, pg: fitz.Page, e: Sch
         ppf = page_ppf(pg, DEFAULT_PPF["plan"]) or DEFAULT_PPF["plan"]
         sh = tg["shape"]
         c = ((sh[0] + sh[2]) / 2, (sh[1] + sh[3]) / 2)
-        runs = opening_runs(pg, c, e.w_in or it.w_in, ppf)
+        from .plans import frame_box
+        fb = None if it.cls in ("all_glass_wall", "all_glass_door") else frame_box(pg, c, e.w_in or it.w_in, ppf)
+        runs = [] if fb else opening_runs(pg, c, e.w_in or it.w_in, ppf)
+        if fb:
+            q, ln = fb
+            if q.width >= q.height:
+                p0, p1 = ((q.x0, (q.y0 + q.y1) / 2), (q.x1, (q.y0 + q.y1) / 2))
+            else:
+                p0, p1 = (((q.x0 + q.x1) / 2, q.y0), ((q.x0 + q.x1) / 2, q.y1))
+            runs = [(p0, p1, ln, 0.0)]
         if runs:
             p0, p1, ln, d = runs[0]
             ms.append(Markup(it.id, sheet, page, lin[0], "linear",

@@ -22,7 +22,7 @@ except ImportError:  # PyMuPDF < 1.24.3
 
 from .pdfgeom import text_lines, small_shapes, drawings
 
-MARK_PATTERN = r"[A-Z]{0,2}-?\d{1,3}[A-Za-z]?|[A-Z]{1,2}-?\d{0,2}[a-z]?"   # 1, 6a, 101, A, SF-1, D2, W3
+MARK_PATTERN = r"[A-Z]{0,2}-?\d{1,4}[A-Za-z]?(?:\.\d{1,2})?|[A-Z]{1,3}-?\d{0,3}[a-z]?"   # 1, 6a, 101, A, SF-1, D2, W3
 
 
 @dataclass
@@ -70,7 +70,8 @@ def _shapes_with_items(pg: fitz.Page, maxsz: float):
             n = sum(1 for it in p["items"] if it[0] == "l")
             c = sum(1 for it in p["items"] if it[0] == "c")
             re_ = sum(1 for it in p["items"] if it[0] == "re")
-            out.append((r, n, c, re_, p["items"]))
+            fill_only = p.get("type") == "f" and p.get("color") is None
+            out.append((r, n, c, re_, p["items"], fill_only))
     return out
 
 
@@ -136,13 +137,39 @@ def _composite(tl, pieces, max_shape: float):
     c = tl.center
     _, grid = pieces
     near = [p for p in _near(grid, W) if W.contains(p[0]) and not p[0].contains(r)]
+    # a hexagon drawn as loose diagonal strokes: four diagonals around the text,
+    # whatever else (walls, door swings) happens to be nearby
+    diag = [p for p in near if p[1] and p[0].width > 2 and p[0].height > 2]
+    if 4 <= len(diag) <= 8:
+        u = fitz.Rect(diag[0][0])
+        for p in diag[1:]:
+            u |= p[0]
+        if u.contains(c) and u.width <= max_shape and u.height <= max_shape and u.width >= r.width \
+                and sum(1 for p in diag if (p[0].y0 + p[0].y1) / 2 < c.y) >= 2 and sum(1 for p in diag if (p[0].y0 + p[0].y1) / 2 > c.y) >= 2:
+            return u, len(diag) + 2, 0, "hexagon"
+    # an ellipse / circle drawn as a ring of short straight segments (Curtis door tags)
+    short = [p for p in near if p[1] and max(p[0].width, p[0].height) <= max(6.0, 0.4 * max(r.width, r.height))]
+    if len(short) >= 10:
+        ring = [p for p in short if not fitz.Rect(r.x0 + 1, r.y0 + 1, r.x1 - 1, r.y1 - 1).intersects(p[0])]
+        if len(ring) >= 10:
+            u = fitz.Rect(ring[0][0])
+            for p in ring[1:]:
+                u |= p[0]
+            def _cxy(q):
+                return (q.x0 + q.x1) / 2, (q.y0 + q.y1) / 2
+            sides = (any(_cxy(p[0])[0] < c.x - r.width * 0.3 for p in ring), any(_cxy(p[0])[0] > c.x + r.width * 0.3 for p in ring),
+                     any(_cxy(p[0])[1] < c.y - r.height * 0.3 for p in ring), any(_cxy(p[0])[1] > c.y + r.height * 0.3 for p in ring))
+            if all(sides) and u.contains(c) and u.width <= max_shape * 1.3 and u.height <= max_shape * 1.3:
+                return u, len(ring), 0, "ellipse"
     if len(near) < 3 or len(near) > 40:
         return None
     qx, qy = r.width * 0.25, r.height * 0.25
-    left = any(p[0].x1 <= c.x - qx and p[0].y0 - 2 <= c.y <= p[0].y1 + 2 for p in near)
-    right = any(p[0].x0 >= c.x + qx and p[0].y0 - 2 <= c.y <= p[0].y1 + 2 for p in near)
-    above = any(p[0].y1 <= c.y - qy and p[0].x0 - 2 <= c.x <= p[0].x1 + 2 for p in near)
-    below = any(p[0].y0 >= c.y + qy and p[0].x0 - 2 <= c.x <= p[0].x1 + 2 for p in near)
+    def cxy(q):
+        return (q.x0 + q.x1) / 2, (q.y0 + q.y1) / 2
+    left = any(cxy(p[0])[0] <= c.x - qx for p in near)
+    right = any(cxy(p[0])[0] >= c.x + qx for p in near)
+    above = any(cxy(p[0])[1] <= c.y - qy for p in near)
+    below = any(cxy(p[0])[1] >= c.y + qy for p in near)
     if not (left and right and above and below):
         return None
     u = fitz.Rect(near[0][0])
@@ -152,11 +179,15 @@ def _composite(tl, pieces, max_shape: float):
         return None
     n = sum(p[1] for p in near)
     cv = sum(p[2] for p in near)
-    kind = "pill" if cv >= 2 else "composite"
+    if cv >= 2:
+        kind = "pill"
+    else:
+        diag = sum(1 for p in near if p[1] and p[0].width > 2 and p[0].height > 2)
+        kind = "hexagon" if 4 <= diag <= 8 and n <= 8 and u.width > u.height * 1.2 else "composite"
     return u, n, cv, kind
 
 
-def find_tags(pg: fitz.Page, pattern: str = MARK_PATTERN, kinds=("hexagon", "circle", "diamond", "pill"),
+def find_tags(pg: fitz.Page, pattern: str = MARK_PATTERN, kinds=("hexagon", "circle", "diamond", "pill", "ellipse"),
               max_size: float = 10.0, max_shape: float = 40.0) -> list[Tag]:
     pat = re.compile(pattern)
     shapes = _shapes_with_items(pg, max_shape)
@@ -169,10 +200,14 @@ def find_tags(pg: fitz.Page, pattern: str = MARK_PATTERN, kinds=("hexagon", "cir
         if tl.size >= max_size or not pat.fullmatch(t):
             continue
         c = tl.center
-        enc = [s for s in _near(sgrid, fitz.Rect(c.x - 1, c.y - 1, c.x + 1, c.y + 1)) if s[0].contains(c) and s[0].width <= max_shape]
+        tw, th = tl.rect[2] - tl.rect[0], tl.rect[3] - tl.rect[1]
+        enc = [s for s in _near(sgrid, fitz.Rect(c.x - 1, c.y - 1, c.x + 1, c.y + 1)) if s[0].contains(c) and s[0].width <= max_shape
+               # a fill-only box that hugs the text is a mask behind it, not the symbol
+               and not (s[5] and s[0].width <= tw + 4 and s[0].height <= th + 4)
+               and s[0].contains(fitz.Rect(tl.rect).irect if False else fitz.Rect(c.x - 0.3 * (tl.rect[2] - tl.rect[0]), c.y - 0.3 * (tl.rect[3] - tl.rect[1]), c.x + 0.3 * (tl.rect[2] - tl.rect[0]), c.y + 0.3 * (tl.rect[3] - tl.rect[1])))]
         if enc:
             enc.sort(key=lambda s: s[0].width * s[0].height)
-            r, n, cv, nre, items = enc[0]
+            r, n, cv, nre, items, _fo = enc[0]
             kind = _kind(n, cv, nre, items)
         else:
             comp = _composite(tl, pieces, max_shape)
@@ -189,7 +224,7 @@ def find_tags(pg: fitz.Page, pattern: str = MARK_PATTERN, kinds=("hexagon", "cir
     return res
 
 
-def tag_census(pg: fitz.Page, pattern: str = MARK_PATTERN, kinds=("hexagon", "circle", "diamond", "pill")) -> dict[str, list[Tag]]:
+def tag_census(pg: fitz.Page, pattern: str = MARK_PATTERN, kinds=("hexagon", "circle", "diamond", "pill", "ellipse")) -> dict[str, list[Tag]]:
     """Tags grouped by text — the plan count."""
     out: dict[str, list[Tag]] = {}
     for t in find_tags(pg, pattern, kinds):
