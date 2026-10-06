@@ -874,3 +874,32 @@ async def studio_state_endpoint(req: StateRequest):
         with open(sc, encoding="utf-8") as f:
             state["_spec_check"] = _json.load(f)
     return state
+
+
+# ── Frame Builder hand-off ───────────────────────────────────────────────────
+
+class FramesPayloadRequest(BaseModel):
+    project_name: str
+
+
+@router.post("/frames/payload")
+async def frames_payload_endpoint(req: FramesPayloadRequest):
+    """One Frame Builder payload per frame type (bays, rows and door bays read off the elevations),
+    plus non-frame lines, door types and job defaults from the spec check."""
+    from glazierai.modules.drawing_intelligence.autotakeoff.frames import frame_payloads
+    d = _runs_dir(req.project_name)
+    rj = os.path.join(d, "autotakeoff.json")
+    if not os.path.exists(rj):
+        raise HTTPException(status_code=400, detail="Run the auto-takeoff on this set first")
+    with open(rj, encoding="utf-8") as f:
+        result = _json.load(f)
+    spec = None
+    sj = os.path.join(d, "spec_check.json")
+    if os.path.exists(sj):
+        with open(sj, encoding="utf-8") as f:
+            spec = _json.load(f)
+    pdf = os.path.join(d, "set.pdf")
+    out = await run_in_threadpool(frame_payloads, result, spec, pdf if os.path.exists(pdf) else None)
+    with open(os.path.join(d, "frames_payload.json"), "w", encoding="utf-8") as f:
+        _json.dump(out, f, default=str)
+    return out
