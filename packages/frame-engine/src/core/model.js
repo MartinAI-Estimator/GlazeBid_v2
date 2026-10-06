@@ -128,6 +128,8 @@ export function normalizeSpec(s = {}) {
     liftLine: s.liftLine === null || s.liftLine === undefined || s.liftLine === '' ? null : num(s.liftLine, null),
     labor: { difficulty: num(s.labor?.difficulty, 1), extra: { ...(s.labor?.extra ?? {}) } },
     brakeMetal: Array.isArray(s.brakeMetal) ? s.brakeMetal : [],
+    // where an imported frame came from + what was imported (re-sync compares against it)
+    ...(s.importMeta ? { importMeta: s.importMeta } : {}),
   };
 }
 

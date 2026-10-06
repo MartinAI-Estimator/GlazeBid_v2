@@ -191,7 +191,7 @@ def read_grid(pg: fitz.Page, rect, W: float, H: float) -> dict | None:
                 and (others_low or no_sill))
         if leaf:
             c["rows_cl"] = hs[1:]
-        c["door"] = 28 <= c["width"] <= 84 and ((clear_below and (no_sill or c["swing"] or head_only)) or leaf)
+        c["door"] = H >= 78 and 28 <= c["width"] <= 84 and ((clear_below and (no_sill or c["swing"] or head_only)) or leaf)
         c["why"] = ", ".join(w for w, ok in (("no sill (other bays have one)", no_sill), ("door swing drawn", c["swing"]),
                                              ("header at door height, no low rail (other bays have one)", head_only),
                                              ("door leaf drawn", leaf)) if ok)
