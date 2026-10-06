@@ -1,5 +1,5 @@
 {
- "project": "Hope",
+ "project": "hope",
  "pages": 19,
  "read": [
   {
@@ -3008,7 +3008,8 @@
    ],
    "citations": [
     "A3.2 captioned schedule type A",
-    "A3.2 elevation \u00d79 (tag only)"
+    "A3.2 elevation \u00d79 (tag only)",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS."
    ],
    "pair": false,
    "stile": null,
@@ -3083,7 +3084,8 @@
    ],
    "citations": [
     "A3.2 captioned schedule type B",
-    "A3.2 elevation \u00d73 (tag only)"
+    "A3.2 elevation \u00d73 (tag only)",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS."
    ],
    "pair": false,
    "stile": null,
@@ -3401,7 +3403,13 @@
    "citations": [
     "A3.2 captioned schedule type F",
     "plan tags \u00d79",
-    "A3.2 elevation \u00d714 (snapped)"
+    "A3.2 elevation \u00d714 (snapped)",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS."
    ],
    "pair": false,
    "stile": null,
@@ -3610,7 +3618,11 @@
    ],
    "citations": [
     "A3.3 captioned schedule type N",
-    "plan tags \u00d79"
+    "plan tags \u00d79",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.2 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS."
    ],
    "pair": false,
    "stile": null,
@@ -3729,7 +3741,12 @@
    "citations": [
     "A3.3 captioned schedule type Q",
     "plan tags \u00d73",
-    "A3.3 elevation \u00d76 (snapped)"
+    "A3.3 elevation \u00d76 (snapped)",
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.2 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS.",
+    "A4.2 note: ALUMINUM STOREFRONT",
+    "A4.2 note: ALUMINUM STOREFRONT",
+    "A4.2 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS."
    ],
    "pair": false,
    "stile": null,
@@ -4144,7 +4161,8 @@
    ],
    "citations": [
     "A3.4 captioned schedule type W",
-    "plan tags \u00d71"
+    "plan tags \u00d71",
+    "A4.2 note: ALUMINUM STOREFRONT SYSTEM, RE-WINDOW ELEVS."
    ],
    "pair": false,
    "stile": null,
@@ -6423,6 +6441,74 @@
    "allglass": null
   },
   {
+   "id": "A2.19 NOTE 1",
+   "cls": "glass_handrail",
+   "kind": "scope",
+   "label": "42\" TALL GLASS GUARDRAIL (A2.19, from elevation note)",
+   "desc": "42\" TALL GLASS GUARDRAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 89.6,
+   "qty_source": "LF along the line the note's arrow touches",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "untagged scope found only from an elevation note's arrow \u2014 confirm extent and count"
+   ],
+   "notes": [
+    "glass_handrail: Glass handrail \u2014 aluminum rail system = ours; welded steel = glass infill only (flag)"
+   ],
+   "citations": [
+    "A2.19 note: 42\" TALL GLASS GUARDRAIL"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "elevation note",
+   "allglass": null
+  },
+  {
+   "id": "A4.1 NOTE 2",
+   "cls": "ext_sf",
+   "kind": "scope",
+   "label": "ALUMINUM STOREFRONT SYSTEM (A4.1, from elevation note)",
+   "desc": "ALUMINUM STOREFRONT SYSTEM",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "outlines the note's arrows point at",
+   "sf_each": null,
+   "sf_total": 24.6,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "untagged scope found only from an elevation note's arrow \u2014 confirm extent and count"
+   ],
+   "notes": [
+    "storefront: Aluminum storefront / entrance by name"
+   ],
+   "citations": [
+    "A4.1 note: ALUMINUM STOREFRONT SYSTEM"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "elevation note",
+   "allglass": null
+  },
+  {
    "id": "BREAK METAL WRAPS",
    "cls": "break_metal",
    "kind": "scope",
@@ -6895,6 +6981,18 @@
    ]
   },
   {
+   "item": "A2.19 NOTE 1",
+   "flags": [
+    "untagged scope found only from an elevation note's arrow \u2014 confirm extent and count"
+   ]
+  },
+  {
+   "item": "A4.1 NOTE 2",
+   "flags": [
+    "untagged scope found only from an elevation note's arrow \u2014 confirm extent and count"
+   ]
+  },
+  {
    "item": "BREAK METAL WRAPS",
    "flags": [
     "wrap count = piers along each run of translucent bays (ends included) \u2014 confirm against the plan columns"
@@ -6944,5 +7042,5 @@
    "sf": 213.1
   }
  },
- "elapsed_s": 93.55
+ "elapsed_s": 160.12
 }

@@ -1,523 +1,543 @@
 {
-  "_about": "Machine-applied classification rules for the deterministic auto-takeoff. Written from Martin's interview answers (2026-10-03/05) and the two manual tests (Valvoline, McLarty). Ordered: the first matching rule in each list wins. Patterns are case-insensitive regexes run on the item's description text (schedule description + table cells + legend row). Prose versions live in knowledge/system_knowledge_base.json.",
-  "glazing_keywords": "STOREFRONT|STORE FRONT|CURTAIN ?WALL|WINDOW WALL|FRAMELESS|ALL[- ]GLASS|GLASS PARTITION|GLASS DOOR|GLASS WALL|GLAZING|GLAZED|(?<!FIBER)GLASS|SILL FLASHING|CLOSURE TRIM|CLOSURE TRMI|BREAK METAL|BRAKE METAL|BRK\\.? METAL|MIRROR|'?U'? ?CHANNEL|TEMPERED|INSULAT(ED|ING) GLASS|IGU|SPANDREL|TRANSOM|SIDELITE|SIDELIGHT|VISION LITE|\\bLITES?\\b|MULLION|ALUM(INUM|\\.)? (FRAME|STOREFRONT|WINDOW|ENTRANCE|DOOR)|KAWNEER|TUBELITE|PITCO|PITTCO|OLDCASTLE|\\bOBE\\b|\\bYKK\\b|\\bEFCO\\b|\\bCRL\\b|\\b3M\\b|FASARA|GLASS FILM|FROST|SKYLIGHT|HANDRAIL|GLASS RAIL|TRANSACTION WINDOW|PASS[- ]THRU|PATCH FITTING|SSG|STRUCTURAL SILICONE|BUTT[- ]GLAZ|KALWALL|TRANSLUCENT|SUN ?SHADE|LOUVER|WINDOW SILL|SOLID SURFACE SILL",
-  "detail_keywords": "STOREFRONT|STORE FRONT|CURTAIN ?WALL|WINDOW WALL|FRAMELESS GLASS|GLASS PARTITION|GLASS DOOR|GLAZING|SILL FLASHING|CLOSURE TRIM|CLOSURE TRMI|BREAK METAL|BRAKE METAL|BRK\\.? METAL|MIRROR|'?U'? ?CHANNEL|TEMPERED|ALUM(INUM|\\.)? (FRAME|SILL|HEAD|JAMB|WINDOW)|SPANDREL|MULLION|DBL\\.? ALUM|DOUBLE ALUM|GLASS",
-  "exclusions": [
-    {
-      "id": "existing",
-      "any": [
-        "EXISTING DOOR TO REMAIN",
-        "EXISTING TO REMAIN",
-        "\\(E\\) DOOR"
-      ],
-      "class": "excluded",
-      "flag": true,
-      "note": "Existing to remain \u2014 not in our scope (flag if glazing is altered)"
-    },
-    {
-      "id": "overhead",
-      "any": [
-        "SECTIONAL DOOR",
-        "ROLLING DOOR",
-        "COILING",
-        "RYTEC",
-        "HIGH[- ]SPEED",
-        "SPIRAL",
-        "ROLL[- ]UP",
-        "GRILLE",
-        "DOCK DOOR",
-        "MOTORIZED",
-        "OVERHEAD COILING",
-        "OVERHEAD\\s+(INSULATED|SECTIONAL|ROLLING|COILING|DOOR|GRILLE)"
-      ],
-      "class": "excluded",
-      "note": "Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
-    },
-    {
-      "id": "vinyl_wood_window",
-      "any": [
-        "VINYL",
-        "FIBERGLASS WINDOW",
-        "WOOD WINDOW",
-        "CLAD WINDOW",
-        "\\bPVC\\b"
-      ],
-      "class": "excluded",
-      "note": "Vinyl / fiberglass / wood window \u2014 not ours; confirm material"
-    },
-    {
-      "id": "toilet_accessory_mirror",
-      "all": [
-        "MIRROR"
-      ],
-      "any": [
-        "BOBRICK",
-        "BRADLEY",
-        "\\bASI\\b",
-        "TOILET ACCESSOR",
-        "10 28 00",
-        "102800",
-        "FRAMED MIRROR"
-      ],
-      "class": "excluded",
-      "note": "Toilet-accessory / framed mirror (Div 10) \u2014 excluded"
-    },
-    {
-      "id": "hm_no_glass",
-      "any": [
-        "\\bHM\\b",
-        "HOLLOW METAL",
-        "\\bH\\.M\\.",
-        "\\bWD\\b",
-        "\\bWOOD\\b",
-        "S\\.? ?STEEL",
-        "STAINLESS",
-        "FRP"
-      ],
-      "none": [
-        "(?<!FIBER)GLASS",
-        "GLAZ",
-        "LITE",
-        "/GL",
-        "VISION",
-        "WINDOW",
-        "ALUMINUM STOREFRONT DOOR",
-        "SF FRAME",
-        "SF IN ",
-        "STOREFRONT FRAME"
-      ],
-      "class": "excluded",
-      "note": "Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
-    },
-    {
-      "id": "louver_door",
-      "any": [
-        "LOUVER"
-      ],
-      "none": [
-        "(?<!FIBER)GLASS",
-        "GLAZ",
-        "LITE",
-        "STOREFRONT",
-        "CURTAIN"
-      ],
-      "class": "excluded",
-      "note": "Louvered door with no glass \u2014 not glazing scope"
-    },
-    {
-      "id": "solid_surface_sill",
-      "any": [
-        "SOLID SURFACE",
-        "CORIAN",
-        "QUARTZ",
-        "STONE SILL",
-        "WINDOW SILL"
-      ],
-      "none": [
-        "ALUM",
-        "BREAK METAL",
-        "BRAKE METAL"
-      ],
-      "class": "excluded",
-      "note": "Solid-surface / stone window sill \u2014 by others (finish legend)"
-    },
-    {
-      "id": "flush_door",
-      "any": [
-        "FLUSH DOOR - SOLID PANEL"
-      ],
-      "none": [
-        "STOREFRONT",
-        "VISION LITE",
-        "GLASS IN DOOR"
-      ],
-      "class": "excluded",
-      "note": "Flush door with no lite in its type drawing \u2014 not glazing scope"
-    }
-  ],
-  "pass_thru": [
-    {
-      "id": "auto_door",
-      "any": [
-        "AUTOMATIC SLID",
-        "AUTO SLID",
-        "AUTO-SLID",
-        "AUTOMATIC DOOR",
-        "AUTOMATIC ENTRANCE",
-        "SLIDING AUTOMATIC",
-        "\\bAUTO\\b.*DOOR"
-      ],
-      "class": "auto_door",
-      "note": "Automatic sliding door \u2014 pass-thru (auto-door sub), frame prep by us"
-    },
-    {
-      "id": "revolving",
-      "any": [
-        "REVOLVING"
-      ],
-      "class": "revolving_door",
-      "note": "Revolving door \u2014 pass-thru"
-    },
-    {
-      "id": "skylight",
-      "any": [
-        "SKYLIGHT"
-      ],
-      "class": "skylight",
-      "note": "Unit skylight \u2014 pass-thru (sub quote)"
-    },
-    {
-      "id": "bifold",
-      "any": [
-        "BI-?FOLD",
-        "FOLDING DOOR",
-        "FOLDING GLASS",
-        "NANAWALL",
-        "MULTI-?SLIDE"
-      ],
-      "class": "bifold_sliding",
-      "note": "Bi-fold / folding / sliding door \u2014 pass-thru sub; frame prep by us"
-    }
-  ],
-  "scope": [
-    {
-      "id": "all_glass",
-      "any": [
-        "FRAMELESS",
-        "ALL[- ]GLASS",
-        "PATCH FITTING",
-        "1/2\" (CLEAR, )?TEMPERED GLASS PANELS",
-        "GLASS PANELS AND DOORS",
-        "\\bCRL\\b",
-        "RAIL(ING)? (GLASS|SYSTEM)",
-        "GLASS PARTITION",
-        "GLASS PANELS",
-        "POLISHED EDGES?",
-        "BUTT[- ]?GLAZED",
-        "GLASS (WALL|PARTITION|ENTRANCE) SYSTEM"
-      ],
-      "none": [
-        "HANDRAIL",
-        "GUARD ?RAIL",
-        "CABLE"
-      ],
-      "class": "all_glass_wall",
-      "note": "Frameless / all-glass \u2014 All Glass Wall; film, SSG joints and polished edges implied"
-    },
-    {
-      "id": "glass_handrail",
-      "any": [
-        "HANDRAIL",
-        "GUARD ?RAIL",
-        "GLASS RAIL"
-      ],
-      "all": [
-        "(?<!FIBER)GLASS"
-      ],
-      "class": "glass_handrail",
-      "note": "Glass handrail \u2014 aluminum rail system = ours; welded steel = glass infill only (flag)"
-    },
-    {
-      "id": "glass_handrail_cable",
-      "any": [
-        "STAINLESS STEEL CABLE",
-        "CABLE RAIL"
-      ],
-      "class": "excluded",
-      "note": "Cable rail \u2014 not glazing"
-    },
-    {
-      "id": "hm_lite",
-      "any": [
-        "\\bHM\\b",
-        "HOLLOW METAL",
-        "\\bH\\.M\\.",
-        "HM/GL",
-        "\\bWD\\b",
-        "\\bWOOD\\b"
-      ],
-      "all_any": [
-        "(?<!FIBER)GLASS",
-        "GLAZ",
-        "LITE",
-        "/GL",
-        "VISION",
-        "WINDOW"
-      ],
-      "class": "glazing_only",
-      "note": "Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
-    },
-    {
-      "id": "fire_rated_sf",
-      "all": [
-        "STOREFRONT"
-      ],
-      "any": [
-        "FIRE[- ]?RATED",
-        "\\d+ ?MIN"
-      ],
-      "class": "fire_rated_sf",
-      "note": "Fire-rated aluminum storefront"
-    },
-    {
-      "id": "fire_rated",
-      "any": [
-        "FIRE[- ]?RATED",
-        "\\d+ ?(MIN|HR)\\.? (RATED|LABEL)",
-        "FIRELITE",
-        "PYRAN",
-        "WIRED GLASS"
-      ],
-      "class": "fire_rated_glazing",
-      "note": "Fire-rated glazing \u2014 ours, glass only unless an aluminum fire-rated frame is named"
-    },
-    {
-      "id": "mirror",
-      "any": [
-        "MIRROR"
-      ],
-      "class": "mirror",
-      "note": "Frameless mirror \u2014 ours; flag glazier vs accessory package"
-    },
-    {
-      "id": "translucent",
-      "any": [
-        "KALWALL",
-        "TRANSLUCENT (WALL )?PANEL",
-        "POLYCARBONATE PANEL"
-      ],
-      "class": "translucent_panel",
-      "note": "Translucent panel \u2014 always ours"
-    },
-    {
-      "id": "transaction",
-      "any": [
-        "TRANSACTION WINDOW",
-        "DRIVE[- ]?(UP|THRU) WINDOW",
-        "PASS[- ]THRU WINDOW",
-        "TELLER"
-      ],
-      "class": "transaction_window",
-      "note": "Transaction / drive-up window \u2014 ours"
-    },
-    {
-      "id": "window_wall",
-      "any": [
-        "WINDOW WALL"
-      ],
-      "class": "window_wall",
-      "note": "Window wall \u2014 its own class (series list pending)"
-    },
-    {
-      "id": "curtain_wall",
-      "any": [
-        "CURTAIN ?WALL",
-        "\\bCW\\b"
-      ],
-      "class": "ext_cw",
-      "note": "Curtain wall by name"
-    },
-    {
-      "id": "sliding_storefront",
-      "any": [
-        "SLIDING STOREFRONT",
-        "SLIDING GLASS DOOR",
-        "ALUMINUM SLIDING DOOR"
-      ],
-      "class": "bifold_sliding",
-      "note": "Sliding storefront / sliding glass door \u2014 Bi-Fold / Sliding Door"
-    },
-    {
-      "id": "storefront",
-      "any": [
-        "STOREFRONT",
-        "STORE FRONT",
-        "\\bSF\\b",
-        "ALUM(INUM|\\.)? ENTRANCE",
-        "AL/GL",
-        "ALUM(INUM|\\.)? (FRAME|DOOR)",
-        "ALUMINUM.*GLASS",
-        "GLASS.*ALUMINUM"
-      ],
-      "class": "ext_sf",
-      "note": "Aluminum storefront / entrance by name"
-    },
-    {
-      "id": "alum_window",
-      "any": [
-        "ALUM(INUM|\\.)? WINDOW",
-        "FIXED WINDOW",
-        "OPERABLE WINDOW",
-        "CASEMENT",
-        "AWNING WINDOW",
-        "HOPPER",
-        "PROJECTED WINDOW"
-      ],
-      "none": [
-        "VINYL",
-        "WOOD",
-        "FIBERGLASS"
-      ],
-      "class": "window",
-      "note": "Aluminum fixed / operable window \u2014 ours"
-    },
-    {
-      "id": "glass_generic",
-      "any": [
-        "(?<!FIBER)GLASS",
-        "GLAZ",
-        "TEMPERED",
-        "INSULAT(ED|ING)",
-        "IGU"
-      ],
-      "class": "glazing_only",
-      "note": "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)",
-      "flag": true
-    }
-  ],
-  "implied": [
-    {
-      "id": "film",
-      "any": [
-        "FROST",
-        "FASARA",
-        "GLASS FILM",
-        "\\bGF-?\\d",
-        "DECORATIVE FILM",
-        "\\b3M\\b",
-        "PRIVACY FILM",
-        "GRADIENT"
-      ],
-      "class": "glass_film",
-      "note": "Glass film \u2014 line item attached to the frame / opening"
-    },
-    {
-      "id": "sill_flashing",
-      "any": [
-        "SILL FLASHING",
-        "SILL FLASH",
-        "SILL PAN"
-      ],
-      "class": "break_metal",
-      "flag": true,
-      "note": "Sill flashing / pan under our frame \u2014 flag for trade (24 ga pre-finished is often the GC's)"
-    },
-    {
-      "id": "closure_trim",
-      "any": [
-        "CLOSURE TRIM",
-        "CLOSURE TRMI",
-        "BREAK METAL",
-        "BRAKE METAL",
-        "BRK\\.? METAL",
-        "ALUM(INUM|\\.)? CLOSURE",
-        "DBL\\.? ALUM",
-        "DOUBLE ALUM",
-        "ALUM(INUM|\\.)? (HEAD|JAMB|SILL) (FLASHING|TRIM|FILLER|CLOSURE)"
-      ],
-      "class": "break_metal",
-      "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours"
-    },
-    {
-      "id": "fire_caulk",
-      "any": [
-        "SAFING",
-        "FIRE ?STOP",
-        "FIRE CAULK"
-      ],
-      "class": "floor_line_fire_caulk",
-      "note": "Slab-edge safing / floor-line fire caulking at curtain wall \u2014 ours"
-    },
-    {
-      "id": "hardware",
-      "any": [
-        "HARDWARE",
-        "\\bHDWR\\b",
-        "PANIC",
-        "CLOSER",
-        "PUSH BAR",
-        "PULL",
-        "CYLINDER",
-        "THRESHOLD",
-        "WEATHERSTRIP"
-      ],
-      "class": "hardware",
-      "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck"
-    },
-    {
-      "id": "sunshade",
-      "any": [
-        "SUN ?SHADE",
-        "SUN CONTROL",
-        "LIGHT SHELF",
-        "\\bFINS?\\b"
-      ],
-      "class": "sun_control",
-      "note": "Sun shade / fins \u2014 ours (integral inherits the parent system)"
-    },
-    {
-      "id": "translucent_with",
-      "any": [
-        "W/\\s*TRANSLUCENT",
-        "WITH TRANSLUCENT",
-        "TRANSLUCENT (WALL )?PANEL"
-      ],
-      "class": "translucent_panel",
-      "note": "Translucent wall panel system with this frame \u2014 always ours, own line item"
-    }
-  ],
-  "location": {
-    "exterior_any": [
-      "FROM EXTERIOR",
-      "TO EXTERIOR",
-      "EXTERIOR",
-      "\\bEXT\\.?\\b",
-      "OUTSIDE"
-    ],
-    "interior_any": [
-      "BETWEEN",
-      "INTERIOR",
-      "\\bINT\\.?\\b",
-      "FROM (HALL|CORRIDOR|LOBBY|OFFICE|SHOP|ROOM|VESTIBULE)"
-    ],
-    "interior_strong": [
-      "MATCH(ES|ING)? EXT(ERIOR|\\.)? (FINISH|COLOR|SYSTEM|STOREFRONT|FRAME)",
-      "INTERIOR S\\.?F\\.?",
-      "INT\\.? S\\.?F\\.?",
-      "INTERIOR STOREFRONT",
-      "INTERIOR (GLAZING|GLASS|PARTITION)"
-    ],
-    "default_interior_when_no_exterior_sheets": true
+ "_about": "Machine-applied classification rules for the deterministic auto-takeoff. Written from Martin's interview answers (2026-10-03/05) and the two manual tests (Valvoline, McLarty). Ordered: the first matching rule in each list wins. Patterns are case-insensitive regexes run on the item's description text (schedule description + table cells + legend row). Prose versions live in knowledge/system_knowledge_base.json.",
+ "glazing_keywords": "STOREFRONT|STORE FRONT|CURTAIN ?WALL|WINDOW WALL|FRAMELESS|ALL[- ]GLASS|GLASS PARTITION|GLASS DOOR|GLASS WALL|GLAZING|GLAZED|(?<!FIBER)GLASS|SILL FLASHING|CLOSURE TRIM|CLOSURE TRMI|BREAK METAL|BRAKE METAL|BRK\\.? METAL|MIRROR|'?U'? ?CHANNEL|TEMPERED|INSULAT(ED|ING) GLASS|IGU|SPANDREL|TRANSOM|SIDELITE|SIDELIGHT|VISION LITE|\\bLITES?\\b|MULLION|ALUM(INUM|\\.)? (FRAME|STOREFRONT|WINDOW|ENTRANCE|DOOR)|KAWNEER|TUBELITE|PITCO|PITTCO|OLDCASTLE|\\bOBE\\b|\\bYKK\\b|\\bEFCO\\b|\\bCRL\\b|\\b3M\\b|FASARA|GLASS FILM|FROST|SKYLIGHT|HANDRAIL|GLASS RAIL|TRANSACTION WINDOW|PASS[- ]THRU|PATCH FITTING|SSG|STRUCTURAL SILICONE|BUTT[- ]GLAZ|KALWALL|TRANSLUCENT|SUN ?SHADE|LOUVER|WINDOW SILL|SOLID SURFACE SILL",
+ "detail_keywords": "STOREFRONT|STORE FRONT|CURTAIN ?WALL|WINDOW WALL|FRAMELESS GLASS|GLASS PARTITION|GLASS DOOR|GLAZING|SILL FLASHING|CLOSURE TRIM|CLOSURE TRMI|BREAK METAL|BRAKE METAL|BRK\\.? METAL|MIRROR|'?U'? ?CHANNEL|TEMPERED|ALUM(INUM|\\.)? (FRAME|SILL|HEAD|JAMB|WINDOW)|SPANDREL|MULLION|DBL\\.? ALUM|DOUBLE ALUM|GLASS",
+ "exclusions": [
+  {
+   "id": "existing",
+   "any": [
+    "EXISTING DOOR TO REMAIN",
+    "EXISTING TO REMAIN",
+    "\\(E\\) DOOR"
+   ],
+   "class": "excluded",
+   "flag": true,
+   "note": "Existing to remain \u2014 not in our scope (flag if glazing is altered)"
   },
-  "legend_precedence": {
-    "rule": "When the legend / keynote names a system class for a code (SF-1 = curtain wall) and the named series says otherwise (TMW 450 = CW anyway, TMS 114 = SF), the LEGEND class is used and the conflict is flagged with both readings. (Martin 2026-10-05: legend + details win; flag; draft RFI.)",
-    "flag_text": "legend vs trade usage"
+  {
+   "id": "overhead",
+   "any": [
+    "SECTIONAL DOOR",
+    "ROLLING DOOR",
+    "COILING",
+    "RYTEC",
+    "HIGH[- ]SPEED",
+    "SPIRAL",
+    "ROLL[- ]UP",
+    "GRILLE",
+    "DOCK DOOR",
+    "MOTORIZED",
+    "OVERHEAD COILING",
+    "OVERHEAD\\s+(INSULATED|SECTIONAL|ROLLING|COILING|DOOR|GRILLE)"
+   ],
+   "class": "excluded",
+   "note": "Overhead / rolling / coiling / high-speed door \u2014 always excluded, lites included (glazed by the door supplier)"
   },
-  "other_manufacturer_flag": "non-Kawneer/Tubelite basis of design \u2014 map to nearest Kawneer/Tubelite equivalent, keep original name",
-  "door_in_frame": {
-    "pair_any": [
-      "\\bPAIR\\b",
-      "\\bPR\\.?\\b",
-      "DOUBLE DOOR",
-      "\\(2\\) DOORS"
-    ],
-    "stile_any": [
-      "NARROW STILE",
-      "MEDIUM STILE",
-      "WIDE STILE"
-    ]
+  {
+   "id": "vinyl_wood_window",
+   "any": [
+    "VINYL",
+    "FIBERGLASS WINDOW",
+    "WOOD WINDOW",
+    "CLAD WINDOW",
+    "\\bPVC\\b"
+   ],
+   "class": "excluded",
+   "note": "Vinyl / fiberglass / wood window \u2014 not ours; confirm material"
   },
-  "manufacturers": "KAWNEER|TUBELITE|PITT?CO|OLDCASTLE|\\bOBE\\b|\\bYKK\\b|\\bEFCO\\b|ARCADIA|US ALUMINUM|U\\.S\\. ALUMINUM|VITRO|WAUSAU|TUBE ?LITE|CORAL|COMMERCIAL ARCHITECTURAL|\\bCRL\\b|ALUMINUM FRAMING SYSTEM",
-  "manufacturer_default": {
-    "class": "ext_sf",
-    "flag": "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW"
+  {
+   "id": "toilet_accessory_mirror",
+   "all": [
+    "MIRROR"
+   ],
+   "any": [
+    "BOBRICK",
+    "BRADLEY",
+    "\\bASI\\b",
+    "TOILET ACCESSOR",
+    "10 28 00",
+    "102800",
+    "FRAMED MIRROR"
+   ],
+   "class": "excluded",
+   "note": "Toilet-accessory / framed mirror (Div 10) \u2014 excluded"
   },
-  "pass_thru_in_frame_note": "A pass-thru door type (bi-fold, auto slider, revolving) named inside a framed system stays a sub-item of that frame: the frame is ours, the door is pass-thru, frame prep by us.",
-  "fire_rating_columns": [
-    "FIRE RATING",
-    "RATING",
-    "FIRE",
-    "LABEL"
+  {
+   "id": "hm_no_glass",
+   "any": [
+    "\\bHM\\b",
+    "HOLLOW METAL",
+    "\\bH\\.M\\.",
+    "\\bWD\\b",
+    "\\bWOOD\\b",
+    "S\\.? ?STEEL",
+    "STAINLESS",
+    "FRP"
+   ],
+   "none": [
+    "(?<!FIBER)GLASS",
+    "GLAZ",
+    "LITE",
+    "/GL",
+    "VISION",
+    "WINDOW",
+    "ALUMINUM STOREFRONT DOOR",
+    "SF FRAME",
+    "SF IN ",
+    "STOREFRONT FRAME"
+   ],
+   "class": "excluded",
+   "note": "Hollow metal / wood / steel door and frame with no glass \u2014 not ours"
+  },
+  {
+   "id": "louver_door",
+   "any": [
+    "LOUVER"
+   ],
+   "none": [
+    "(?<!FIBER)GLASS",
+    "GLAZ",
+    "LITE",
+    "STOREFRONT",
+    "CURTAIN",
+    "TUBE LOUVERS?",
+    "SUN ?SHADES?",
+    "SUNSHADES?",
+    "SUN CONTROL",
+    "\\bFINS?\\b"
+   ],
+   "class": "excluded",
+   "note": "Louvered door with no glass \u2014 not glazing scope"
+  },
+  {
+   "id": "solid_surface_sill",
+   "any": [
+    "SOLID SURFACE",
+    "CORIAN",
+    "QUARTZ",
+    "STONE SILL",
+    "WINDOW SILL"
+   ],
+   "none": [
+    "ALUM",
+    "BREAK METAL",
+    "BRAKE METAL"
+   ],
+   "class": "excluded",
+   "note": "Solid-surface / stone window sill \u2014 by others (finish legend)"
+  },
+  {
+   "id": "flush_door",
+   "any": [
+    "FLUSH DOOR - SOLID PANEL"
+   ],
+   "none": [
+    "STOREFRONT",
+    "VISION LITE",
+    "GLASS IN DOOR"
+   ],
+   "class": "excluded",
+   "note": "Flush door with no lite in its type drawing \u2014 not glazing scope"
+  }
+ ],
+ "pass_thru": [
+  {
+   "id": "auto_door",
+   "any": [
+    "AUTOMATIC SLID",
+    "AUTO SLID",
+    "AUTO-SLID",
+    "AUTOMATIC DOOR",
+    "AUTOMATIC ENTRANCE",
+    "SLIDING AUTOMATIC",
+    "\\bAUTO\\b.*DOOR"
+   ],
+   "class": "auto_door",
+   "note": "Automatic sliding door \u2014 pass-thru (auto-door sub), frame prep by us"
+  },
+  {
+   "id": "revolving",
+   "any": [
+    "REVOLVING"
+   ],
+   "class": "revolving_door",
+   "note": "Revolving door \u2014 pass-thru"
+  },
+  {
+   "id": "skylight",
+   "any": [
+    "SKYLIGHT"
+   ],
+   "class": "skylight",
+   "note": "Unit skylight \u2014 pass-thru (sub quote)"
+  },
+  {
+   "id": "bifold",
+   "any": [
+    "BI-?FOLD",
+    "FOLDING DOOR",
+    "FOLDING GLASS",
+    "NANAWALL",
+    "MULTI-?SLIDE"
+   ],
+   "class": "bifold_sliding",
+   "note": "Bi-fold / folding / sliding door \u2014 pass-thru sub; frame prep by us"
+  }
+ ],
+ "scope": [
+  {
+   "id": "sun_control",
+   "any": [
+    "TUBE LOUVERS?",
+    "SUN ?SHADES?",
+    "SUNSHADES?",
+    "SUN CONTROL",
+    "ALUMINUM FINS?",
+    "VERTICAL FINS?",
+    "HORIZONTAL FINS?",
+    "BRISE"
+   ],
+   "class": "sun_control",
+   "note": "Aluminum sun control / tube louvers called out with our system \u2014 Sun Control Device"
+  },
+  {
+   "id": "all_glass",
+   "any": [
+    "FRAMELESS",
+    "ALL[- ]GLASS",
+    "PATCH FITTING",
+    "1/2\" (CLEAR, )?TEMPERED GLASS PANELS",
+    "GLASS PANELS AND DOORS",
+    "\\bCRL\\b",
+    "RAIL(ING)? (GLASS|SYSTEM)",
+    "GLASS PARTITION",
+    "GLASS PANELS",
+    "POLISHED EDGES?",
+    "BUTT[- ]?GLAZED",
+    "GLASS (WALL|PARTITION|ENTRANCE) SYSTEM"
+   ],
+   "none": [
+    "HANDRAIL",
+    "GUARD ?RAIL",
+    "CABLE"
+   ],
+   "class": "all_glass_wall",
+   "note": "Frameless / all-glass \u2014 All Glass Wall; film, SSG joints and polished edges implied"
+  },
+  {
+   "id": "glass_handrail",
+   "any": [
+    "HANDRAIL",
+    "GUARD ?RAIL",
+    "GLASS RAIL"
+   ],
+   "all": [
+    "(?<!FIBER)GLASS"
+   ],
+   "class": "glass_handrail",
+   "note": "Glass handrail \u2014 aluminum rail system = ours; welded steel = glass infill only (flag)"
+  },
+  {
+   "id": "glass_handrail_cable",
+   "any": [
+    "STAINLESS STEEL CABLE",
+    "CABLE RAIL"
+   ],
+   "class": "excluded",
+   "note": "Cable rail \u2014 not glazing"
+  },
+  {
+   "id": "hm_lite",
+   "any": [
+    "\\bHM\\b",
+    "HOLLOW METAL",
+    "\\bH\\.M\\.",
+    "HM/GL",
+    "\\bWD\\b",
+    "\\bWOOD\\b"
+   ],
+   "all_any": [
+    "(?<!FIBER)GLASS",
+    "GLAZ",
+    "LITE",
+    "/GL",
+    "VISION",
+    "WINDOW"
+   ],
+   "class": "glazing_only",
+   "note": "Glass in a hollow-metal / wood frame or door \u2014 Glazing Only (frame and door by others)"
+  },
+  {
+   "id": "fire_rated_sf",
+   "all": [
+    "STOREFRONT"
+   ],
+   "any": [
+    "FIRE[- ]?RATED",
+    "\\d+ ?MIN"
+   ],
+   "class": "fire_rated_sf",
+   "note": "Fire-rated aluminum storefront"
+  },
+  {
+   "id": "fire_rated",
+   "any": [
+    "FIRE[- ]?RATED",
+    "\\d+ ?(MIN|HR)\\.? (RATED|LABEL)",
+    "FIRELITE",
+    "PYRAN",
+    "WIRED GLASS"
+   ],
+   "class": "fire_rated_glazing",
+   "note": "Fire-rated glazing \u2014 ours, glass only unless an aluminum fire-rated frame is named"
+  },
+  {
+   "id": "mirror",
+   "any": [
+    "MIRROR"
+   ],
+   "class": "mirror",
+   "note": "Frameless mirror \u2014 ours; flag glazier vs accessory package"
+  },
+  {
+   "id": "translucent",
+   "any": [
+    "KALWALL",
+    "TRANSLUCENT (WALL )?PANEL",
+    "POLYCARBONATE PANEL"
+   ],
+   "class": "translucent_panel",
+   "note": "Translucent panel \u2014 always ours"
+  },
+  {
+   "id": "transaction",
+   "any": [
+    "TRANSACTION WINDOW",
+    "DRIVE[- ]?(UP|THRU) WINDOW",
+    "PASS[- ]THRU WINDOW",
+    "TELLER"
+   ],
+   "class": "transaction_window",
+   "note": "Transaction / drive-up window \u2014 ours"
+  },
+  {
+   "id": "window_wall",
+   "any": [
+    "WINDOW WALL"
+   ],
+   "class": "window_wall",
+   "note": "Window wall \u2014 its own class (series list pending)"
+  },
+  {
+   "id": "curtain_wall",
+   "any": [
+    "CURTAIN ?WALL",
+    "\\bCW\\b"
+   ],
+   "class": "ext_cw",
+   "note": "Curtain wall by name"
+  },
+  {
+   "id": "sliding_storefront",
+   "any": [
+    "SLIDING STOREFRONT",
+    "SLIDING GLASS DOOR",
+    "ALUMINUM SLIDING DOOR"
+   ],
+   "class": "bifold_sliding",
+   "note": "Sliding storefront / sliding glass door \u2014 Bi-Fold / Sliding Door"
+  },
+  {
+   "id": "storefront",
+   "any": [
+    "STOREFRONT",
+    "STORE FRONT",
+    "\\bSF\\b",
+    "ALUM(INUM|\\.)? ENTRANCE",
+    "AL/GL",
+    "ALUM(INUM|\\.)? (FRAME|DOOR)",
+    "ALUMINUM.*GLASS",
+    "GLASS.*ALUMINUM"
+   ],
+   "class": "ext_sf",
+   "note": "Aluminum storefront / entrance by name"
+  },
+  {
+   "id": "alum_window",
+   "any": [
+    "ALUM(INUM|\\.)? WINDOW",
+    "FIXED WINDOW",
+    "OPERABLE WINDOW",
+    "CASEMENT",
+    "AWNING WINDOW",
+    "HOPPER",
+    "PROJECTED WINDOW"
+   ],
+   "none": [
+    "VINYL",
+    "WOOD",
+    "FIBERGLASS"
+   ],
+   "class": "window",
+   "note": "Aluminum fixed / operable window \u2014 ours"
+  },
+  {
+   "id": "glass_generic",
+   "any": [
+    "(?<!FIBER)GLASS",
+    "GLAZ",
+    "TEMPERED",
+    "INSULAT(ED|ING) (TINTED |CLEAR |LOW-?E )?(GLASS|GLAZ|UNIT|IG\\b)",
+    "IGU"
+   ],
+   "class": "glazing_only",
+   "note": "Glass named with no frame system \u2014 Glazing Only until the frame is identified (flag)",
+   "flag": true
+  }
+ ],
+ "implied": [
+  {
+   "id": "film",
+   "any": [
+    "FROST",
+    "FASARA",
+    "GLASS FILM",
+    "\\bGF-?\\d",
+    "DECORATIVE FILM",
+    "\\b3M\\b",
+    "PRIVACY FILM",
+    "GRADIENT"
+   ],
+   "class": "glass_film",
+   "note": "Glass film \u2014 line item attached to the frame / opening"
+  },
+  {
+   "id": "sill_flashing",
+   "any": [
+    "SILL FLASHING",
+    "SILL FLASH",
+    "SILL PAN"
+   ],
+   "class": "break_metal",
+   "flag": true,
+   "note": "Sill flashing / pan under our frame \u2014 flag for trade (24 ga pre-finished is often the GC's)"
+  },
+  {
+   "id": "closure_trim",
+   "any": [
+    "CLOSURE TRIM",
+    "CLOSURE TRMI",
+    "BREAK METAL",
+    "BRAKE METAL",
+    "BRK\\.? METAL",
+    "ALUM(INUM|\\.)? CLOSURE",
+    "DBL\\.? ALUM",
+    "DOUBLE ALUM",
+    "ALUM(INUM|\\.)? (HEAD|JAMB|SILL) (FLASHING|TRIM|FILLER|CLOSURE)"
+   ],
+   "class": "break_metal",
+   "note": "Break metal / closure trim / aluminum flashing touching our frame \u2014 ours"
+  },
+  {
+   "id": "fire_caulk",
+   "any": [
+    "SAFING",
+    "FIRE ?STOP",
+    "FIRE CAULK"
+   ],
+   "class": "floor_line_fire_caulk",
+   "note": "Slab-edge safing / floor-line fire caulking at curtain wall \u2014 ours"
+  },
+  {
+   "id": "hardware",
+   "any": [
+    "HARDWARE",
+    "\\bHDWR\\b",
+    "PANIC",
+    "CLOSER",
+    "PUSH BAR",
+    "PULL",
+    "CYLINDER",
+    "THRESHOLD",
+    "WEATHERSTRIP"
+   ],
+   "class": "hardware",
+   "note": "Door hardware \u2014 default included on aluminum doors; estimator may uncheck"
+  },
+  {
+   "id": "sunshade",
+   "any": [
+    "SUN ?SHADE",
+    "SUN CONTROL",
+    "LIGHT SHELF",
+    "\\bFINS?\\b"
+   ],
+   "class": "sun_control",
+   "note": "Sun shade / fins \u2014 ours (integral inherits the parent system)"
+  },
+  {
+   "id": "translucent_with",
+   "any": [
+    "W/\\s*TRANSLUCENT",
+    "WITH TRANSLUCENT",
+    "TRANSLUCENT (WALL )?PANEL"
+   ],
+   "class": "translucent_panel",
+   "note": "Translucent wall panel system with this frame \u2014 always ours, own line item"
+  }
+ ],
+ "location": {
+  "exterior_any": [
+   "FROM EXTERIOR",
+   "TO EXTERIOR",
+   "EXTERIOR",
+   "\\bEXT\\.?\\b",
+   "OUTSIDE"
   ],
-  "fire_rating_value": "\\d+\\s*(MIN|MINUTE|HR|HOUR)|\\b[A-C]\\s*LABEL|^\\s*\\d{2,3}\\s*$"
+  "interior_any": [
+   "BETWEEN",
+   "INTERIOR",
+   "\\bINT\\.?\\b",
+   "FROM (HALL|CORRIDOR|LOBBY|OFFICE|SHOP|ROOM|VESTIBULE)"
+  ],
+  "interior_strong": [
+   "MATCH(ES|ING)? EXT(ERIOR|\\.)? (FINISH|COLOR|SYSTEM|STOREFRONT|FRAME)",
+   "INTERIOR S\\.?F\\.?",
+   "INT\\.? S\\.?F\\.?",
+   "INTERIOR STOREFRONT",
+   "INTERIOR (GLAZING|GLASS|PARTITION)"
+  ],
+  "default_interior_when_no_exterior_sheets": true
+ },
+ "legend_precedence": {
+  "rule": "When the legend / keynote names a system class for a code (SF-1 = curtain wall) and the named series says otherwise (TMW 450 = CW anyway, TMS 114 = SF), the LEGEND class is used and the conflict is flagged with both readings. (Martin 2026-10-05: legend + details win; flag; draft RFI.)",
+  "flag_text": "legend vs trade usage"
+ },
+ "other_manufacturer_flag": "non-Kawneer/Tubelite basis of design \u2014 map to nearest Kawneer/Tubelite equivalent, keep original name",
+ "door_in_frame": {
+  "pair_any": [
+   "\\bPAIR\\b",
+   "\\bPR\\.?\\b",
+   "DOUBLE DOOR",
+   "\\(2\\) DOORS"
+  ],
+  "stile_any": [
+   "NARROW STILE",
+   "MEDIUM STILE",
+   "WIDE STILE"
+  ]
+ },
+ "manufacturers": "KAWNEER|TUBELITE|PITT?CO|OLDCASTLE|\\bOBE\\b|\\bYKK\\b|\\bEFCO\\b|ARCADIA|US ALUMINUM|U\\.S\\. ALUMINUM|VITRO|WAUSAU|TUBE ?LITE|CORAL|COMMERCIAL ARCHITECTURAL|\\bCRL\\b|ALUMINUM FRAMING SYSTEM",
+ "manufacturer_default": {
+  "class": "ext_sf",
+  "flag": "manufacturer named but series not in the library \u2014 storefront assumed, confirm SF vs CW"
+ },
+ "pass_thru_in_frame_note": "A pass-thru door type (bi-fold, auto slider, revolving) named inside a framed system stays a sub-item of that frame: the frame is ours, the door is pass-thru, frame prep by us.",
+ "fire_rating_columns": [
+  "FIRE RATING",
+  "RATING",
+  "FIRE",
+  "LABEL"
+ ],
+ "fire_rating_value": "\\d+\\s*(MIN|MINUTE|HR|HOUR)|\\b[A-C]\\s*LABEL|^\\s*\\d{2,3}\\s*$"
 }

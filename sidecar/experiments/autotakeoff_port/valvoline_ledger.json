@@ -324,7 +324,8 @@
    "citations": [
     "A-6.1 tabular schedule type D2",
     "plan tags \u00d71",
-    "A-3.1 elevation \u00d71 (snapped)"
+    "A-3.1 elevation \u00d71 (snapped)",
+    "A-3.1 note: ALUMINUM STOREFRONT"
    ],
    "pair": false,
    "stile": null,
@@ -2188,6 +2189,80 @@
    "is_door": false,
    "source": "detail",
    "allglass": null
+  },
+  {
+   "id": "A-7.1 NOTE 1",
+   "cls": "mirror",
+   "kind": "scope",
+   "label": "MIRROR (A-7.1, from elevation note)",
+   "desc": "MIRROR",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 1,
+   "qty_source": "outlines the note's arrows point at",
+   "sf_each": null,
+   "sf_total": 4.5,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "untagged scope found only from an elevation note's arrow \u2014 confirm extent and count"
+   ],
+   "notes": [
+    "mirror: Frameless mirror \u2014 ours; flag glazier vs accessory package"
+   ],
+   "citations": [
+    "A-7.1 note: MIRROR"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "elevation note",
+   "allglass": null
+  },
+  {
+   "id": "BREAK METAL",
+   "cls": "break_metal",
+   "kind": "scope",
+   "label": "Break metal flashing & trim (from details)",
+   "desc": "16/A-6.2 INTERIOR DOOR JAMB DETAIL; 2/A-6.1 STOREFRONT OPENING SILL DETAIL; 2/A-6.2 STOREFRONT DOOR JAMB DETAIL; 3/A-6.2 STOREFRONT JAMB / SIDELITE DETAIL; 4/A-6.2 STOREFRONT DOOR TRANSOM DETAIL; 5/A-6.1 PIER DETAIL",
+   "location": null,
+   "w_in": null,
+   "h_in": null,
+   "frames": [],
+   "bays": null,
+   "rows": null,
+   "qty": 116.1,
+   "qty_source": "details + exterior elevations",
+   "sf_each": null,
+   "sf_total": null,
+   "series": [],
+   "hardware": [],
+   "implied": [],
+   "flags": [
+    "break metal lengths are the frame edges named by the details \u2014 confirm which openings each detail covers"
+   ],
+   "notes": [
+    "edges by system: sf: jamb/sill",
+    "total 116'-1 1/2\" on exterior elevations (LF)"
+   ],
+   "citations": [
+    "A-6.1 detail 2: STOREFRONT OPENING SILL DETAIL",
+    "A-6.1 detail 5: PIER DETAIL",
+    "A-6.2 detail 4: STOREFRONT DOOR TRANSOM DETAIL",
+    "A-6.2 detail 3: STOREFRONT JAMB / SIDELITE DETAIL",
+    "A-6.2 detail 2: STOREFRONT DOOR JAMB DETAIL",
+    "A-6.2 detail 16: INTERIOR DOOR JAMB DETAIL"
+   ],
+   "pair": false,
+   "stile": null,
+   "is_door": false,
+   "source": "details",
+   "allglass": null
   }
  ],
  "flags": [
@@ -2335,6 +2410,18 @@
    "flags": [
     "mirror: glazier vs toilet-accessory package \u2014 confirm"
    ]
+  },
+  {
+   "item": "A-7.1 NOTE 1",
+   "flags": [
+    "untagged scope found only from an elevation note's arrow \u2014 confirm extent and count"
+   ]
+  },
+  {
+   "item": "BREAK METAL",
+   "flags": [
+    "break metal lengths are the frame edges named by the details \u2014 confirm which openings each detail covers"
+   ]
   }
  ],
  "totals": {
@@ -2369,142 +2456,5 @@
    "sf": 71.6
   }
  },
- "elapsed_s": 44.52,
- "model_calls": 0,
- "type_drawings": {
-  "1": {
-   "code": "1",
-   "sheet": "A-6.1",
-   "page": 44,
-   "section": "STOREFRONT & DOOR FRAME TYPES",
-   "rect": [
-    1060.9,
-    237.5,
-    1104.4,
-    302.6
-   ],
-   "label_rect": [
-    1011.6,
-    343.2,
-    1029.8,
-    358.9
-   ],
-   "has_lite": false,
-   "lite_count": 0,
-   "coiling": false,
-   "frame_only": false,
-   "words": "DOOR TYPE 1; ALUMINUM STOREFRONT DOOR"
-  }
- },
- "code_tables": {
-  "DOOR SCHEDULE": {
-   "F2": "HM PT-2 19/A-6.2 17/A-6.2 --",
-   "F1": "ALUM. SEE SCHEDULE A-3.1 4/A-6.2 3/A-6.2 1/A-6.2",
-   "F3": "ALUM. SEE SCHEDULE A-3.1 5/A-6.2 2/A-6.2 1/A-6.2"
-  },
-  "STOREFRONT OPENING SCHEDULE": {
-   "1": "FLUSH BOLTS ROCKWOOD 555 LEVER EXTENTION BOLT US26D ON INTERACTIVE LEAF",
-   "2": "KICK DOWN HOLDER IVES FS 555-SP28",
-   "WIDTH": "T. = TEMPERED GLAZING",
-   "DOOR": "EQ. S.G. = SAFETY GLAZING",
-   "F1": "F2"
-  }
- },
- "detail_titles": {
-  "1/IR1.1": "CONTROL VALVE",
-  "3/IR1.1": "LAWN SPRAY",
-  "4/IR1.1": "SHRUB SPRAY",
-  "5/IR1.1": "MANUAL DRAIN VALVE",
-  "6/IR1.1": "RPA BACKFLOW DEVICE",
-  "7/IR1.1": "WIRE CONNECTION 3M-DPR/Y6",
-  "2/IR1.1": "RAIN SENSOR",
-  "11/IR1.1": "TURF ROTOR W/ POP-UP SWING JOINT",
-  "1/IR1.2": "XCZ-100-PRB-LC CONTROL ZONE KIT",
-  "5/IR1.2": "XFS SUB-SURFACE DRIPLINE",
-  "7/A2.1": "EIFS EXPANSION JOINT DETAIL",
-  "3/A2.1": "SERVICE BELL DETAIL",
-  "6/A2.1": "WALL-ROOF DETAIL",
-  "2/A2.1": "EIFS REVEAL DETAIL",
-  "1/A2.1": "FLASHING DETAIL - BRICK/EIFS",
-  "8/A2.1": "TOWER SECTION",
-  "9/A2.1": "TOWER SECTION",
-  "5/A2.1": "SOFFIT DETAIL",
-  "4/A2.1": "GUTTER/ EAVE DETAIL",
-  "0/A2.1": "ROOF PLAN",
-  "11/A2.1": "SOFFIT DETAIL",
-  "4/A6.1": "INTERIOR S.F. HEAD/ JAMB DETAIL [STOREFRONT]",
-  "1/A6.1": "STOREFRONT OPENING SILL DETAIL",
-  "2/A6.1": "STOREFRONT OPENING SILL DETAIL",
-  "3/A6.1": "INTERIOR S.F. SILL DETAIL [STOREFRONT]",
-  "5/A6.1": "PIER DETAIL [STOREFRONT]",
-  "4/A6.2": "STOREFRONT DOOR TRANSOM DETAIL",
-  "3/A6.2": "STOREFRONT JAMB / SIDELITE DETAIL",
-  "2/A6.2": "STOREFRONT DOOR JAMB DETAIL",
-  "12/A6.2": "OVERHEAD DOOR JAMB DETAIL",
-  "11/A6.2": "OVERHEAD DOOR THRESHOLD DETAIL",
-  "1/A6.2": "STOREFRONT DOOR THRESHOLD DETAIL",
-  "9/A6.2": "ACCESS PANEL DETAIL",
-  "10/A6.2": "ACCESS DOOR HEAD / JAMB DETAIL [STOREFRONT]",
-  "5/A6.2": "STOREFRONT DOOR HEAD DETAIL",
-  "7/A6.2": "EXTERIOR DOOR JAMB DETAIL",
-  "6/A6.2": "EXTERIOR DOOR THRESHOLD DETAIL",
-  "19/A6.2": "INTERIOR DOOR HEAD DETAIL",
-  "17/A6.2": "INTERIOR DOOR JAMB DETAIL",
-  "18/A6.2": "INTERIOR STOREFRONT DOOR HEAD DETAIL",
-  "16/A6.2": "INTERIOR DOOR JAMB DETAIL [STOREFRONT]",
-  "15/A6.2": "INTERIOR DOOR THRESHOLD",
-  "14/A6.2": "CANOPY DETAIL",
-  "8/A6.2": "DOOR HEAD DETAIL",
-  "13/A6.2": "OVERHEAD DOOR HEAD DETAIL",
-  "8/A7.1": "ANTIFREEZE FUNNEL DETAIL",
-  "4/A7.1": "WAINSCOT DETAIL",
-  "5/A7.1": "WAINSCOT DETAIL",
-  "3/A7.1": "SHELVING SECTION @ DRUM TRANSFER STATION",
-  "6/A7.1": "COUNTERTOP DETAIL",
-  "7/A7.1": "GUARDRAIL DETAIL @ STAIR OPENING",
-  "2/A7.1": "WATER HEATER SHELF DETAIL",
-  "1/A7.1": "UPPER CABINET DETAIL",
-  "11/A7.1": "WAITING ROOM",
-  "10/A7.1": "WAITING ROOM",
-  "12/A7.1": "WAITING ROOM",
-  "9/A7.1": "WAITING ROOM",
-  "13/A7.1": "UNISEX TOILET",
-  "14/A7.1": "UNISEX TOILET",
-  "15/A7.1": "UNISEX TOILET",
-  "16/A7.1": "UNISEX TOILET",
-  "22/A7.1": "UTILITY ROOM",
-  "21/A7.1": "UTILITY ROOM",
-  "23/A7.1": "UTILITY ROOM",
-  "24/A7.1": "UTILITY ROOM",
-  "4/A9.1": "SECTION THRU FLOOR OPENING W/ LIFT",
-  "3/A9.1": "SECTION THRU PIT FLOOR OPENING",
-  "2/A9.1": "SECTION THRU PIT FLOOR OPENING",
-  "1/A9.1": "PLAN DETAIL @  PIT OPENING",
-  "1/A5.1": "WALL SECTION @ MECHANICAL ROOM",
-  "2/A5.1": "WALL SECTION @ ACCESS PANEL",
-  "3/A5.1": "WALL SECTION @ PILASTER",
-  "4/A5.1": "THRU WALL FLASHING DETAIL",
-  "3/A5.2": "WALL SECTION @ OVERHEAD DOOR",
-  "1/A5.2": "WALL SECTION @ WINDOW [STOREFRONT]",
-  "2/A5.2": "WALL SECTION @ STOREFRONT DOOR",
-  "1/A3.1": "EXTERIOR ELEVATION (OVERALL FRONT)",
-  "2/A3.1": "EXTERIOR ELEVATION (OVERALL RIGHT) [STOREFRONT]",
-  "2/A3.2": "EXTERIOR ELEVATION (OVERALL LEFT)",
-  "1/A3.2": "EXTERIOR ELEVATION (OVERALL REAR)",
-  "1/A7.2": "BREAK AREA",
-  "9/A7.2": "BREAK AREA / LUBE PIT",
-  "5/A7.2": "BREAK AREA",
-  "12/A7.2": "LUBE PIT",
-  "3/A7.2": "LUBE PIT",
-  "4/A7.2": "LUBE PIT",
-  "10/A7.2": "SERVICE BAYS",
-  "2/A7.2": "SERVICE BAYS",
-  "6/A7.2": "SERVICE BAYS",
-  "7/A7.2": "SERVICE BAYS [STOREFRONT]",
-  "11/A7.2": "STORAGE AREA",
-  "8/A7.2": "STORAGE AREA",
-  "1/G3.1": "OPERATIONS PLAN - LOWER LEVEL",
-  "2/G3.1": "OPERATIONS PLAN - UPPER LEVEL"
- },
- "markups_count": 206
+ "elapsed_s": 101.03
 }

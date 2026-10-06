@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import re
 import time
 from dataclasses import dataclass, field, asdict
@@ -552,6 +553,106 @@ def run_autotakeoff(pdf_path: str, project_name: str = "", sheets_limit: list[st
                 markups.append(_mk(iid, m_["sheet"], m_["page"], reg_s, "region", m_["rect"], note="translucent panel note — not measured"))
         tp_it.flags.append("translucent bays found from the note arrows and the rib pattern — confirm every bay is captured")
         items.append(tp_it)
+
+    # every leader-arrow note on the elevations (Martin: sometimes the only thing naming the material)
+    from .notes import read_notes as _read_notes, outline_at as _outline_at, outlines_at as _outlines_at, follow_line as _follow_line
+    _FAM = {"ext_sf": "sf", "int_sf": "sf", "ext_cw": "cw", "int_cw": "cw", "translucent_panel": "tp",
+            "glazing_only": "gl", "fire_rated_glazing": "gl", "all_glass_wall": "ag", "all_glass": "ag"}
+    items_by_id0 = {i.id: i for i in items}
+    sched_marks_all = {e.mark for e in entries} | {m for e in entries for m in (e.marks or [])}
+    note_log: list = []
+    note_items: dict[tuple, Item] = {}
+    for s in arch:
+        if not set(s.categories) & {"elevation", "enlarged"} or "schedule" in s.categories:
+            continue
+        pg_ = doc[s.page]
+        ppf_ = _pppf2(pg_, 18.0) or 18.0
+        frames_here = [(fitz.Rect(f_["rect"]), x.mark) for x in snaps if x.page == s.page for f_ in x.frames]
+        bays_here = [fitz.Rect(p_["rect"]) for p_ in panels_by_page.get(s.page, [])]
+        for n in _read_notes(pg_, s.sheet):
+            c = classify(n.text, location=_loc_hint(s) or "exterior")
+            rec = {"sheet": s.sheet, "text": n.text[:120], "cls": c.cls, "kind": c.kind, "tips": len(n.tips), "resolved": []}
+            note_log.append(rec)
+            if c.kind != "scope" or c.cls in ("unclassified", "translucent_panel", "break_metal"):
+                continue
+            if c.cls == "sun_control" and any(i.cls == "sun_control" for i in items):
+                rec["resolved"].append("sun control members already measured")
+                continue
+            # "RE-WINDOW ELEVS." / "RE: DOOR SCHEDULE": the scope is tagged elsewhere — never new scope from this note
+            _ref_rx = re.compile(r"\bRE[:\-.\s]*\s*(WINDOW|DOOR|FRAME|STOREFRONT|CURTAIN\s*WALL|GLAZING)?\s*(ELEV|SCHED|TYPE)|SEE\s+(WINDOW|DOOR|FRAME)|\bPER\s+(DOOR\s+|WINDOW\s+|FRAME\s+)?(SCHEDULE|TYPE|ELEV)", re.I)
+            refers = bool(_ref_rx.search(n.text)) or (bool(_ref_rx.search(n.block)) and classify(n.block, location="exterior").cls == c.cls)
+            for tip in n.tips:
+                P = fitz.Point(*tip)
+                hit = next((m for r_, m in frames_here if fitz.Rect(r_.x0 - 6, r_.y0 - 6, r_.x1 + 6, r_.y1 + 6).contains(P)), None)
+                if hit is None and any(b.contains(P) for b in bays_here):
+                    rec["resolved"].append("translucent bay")
+                    continue
+                if hit is None:
+                    # grow outward from the tip: the first outline holding a scheduled type tag is that type
+                    tags_here = [(t.center, t.text.strip()) for t in text_lines(pg_) if t.text.strip() in sched_marks_all]
+                    for o in _outlines_at(pg_, tip, ppf_):
+                        inside = [m for c_, m in tags_here if o.contains(c_)]
+                        if len(inside) == 1 or (inside and len(set(inside)) == 1):
+                            hit = inside[0]
+                            break
+                        if len(set(inside)) > 1:
+                            break
+                if hit is not None:
+                    rec["resolved"].append(f"type {hit}")
+                    it_ = items_by_id0.get(hit)
+                    if it_:
+                        it_.citations.append(f"{s.sheet} note: {n.text[:60]}")
+                        if _FAM.get(c.cls) and _FAM.get(it_.cls) and _FAM[c.cls] != _FAM[it_.cls] and it_.kind == "scope":
+                            it_.flags.append(f"{s.sheet} elevation note says '{n.text[:50]}' ({c.cls}) but the schedule reads {it_.cls} — confirm")
+                    continue
+                if refers:
+                    rec["resolved"].append("flagged (tagged elsewhere, frame not matched)")
+                    markups.append(Markup(f"{s.sheet} notes", s.sheet, s.page, FLAG[0], "flag", [P.x - 8, P.y - 8, P.x + 8, P.y + 8],
+                                          text=f"'{n.text[:50]}' points here — the engine has not matched this frame to a type; confirm it is in the takeoff",
+                                          stroke=FLAG[1], fill=FLAG[2], note="needs review"))
+                    continue
+                key = (s.sheet, c.cls, n.text[:60])
+                nit = note_items.get(key)
+                if nit is None:
+                    nit = Item(id=f"{s.sheet} NOTE {len(note_items) + 1}", cls=c.cls, kind="scope",
+                               label=f"{n.text[:60]} ({s.sheet}, from elevation note)", desc=n.text, qty=0,
+                               qty_source="outlines the note's arrows point at", source="elevation note",
+                               series=c.series, implied=c.implied, notes=list(c.notes))
+                    nit.citations.append(f"{s.sheet} note: {n.text[:80]}")
+                    note_items[key] = nit
+                    reg_n = subject_for(c.cls, "region") or FLAG
+                    markups.append(_mk(nit.id, s.sheet, s.page, reg_n, "region", n.rect, note="elevation note"))
+                lin_n = subject_for(c.cls, "linear")
+                if lin_n and (c.cls in ("glass_handrail", "sun_control", "break_metal") or not subject_for(c.cls, "area")):
+                    pts = _follow_line(pg_, P)
+                    L_in = sum(math.hypot(q.x - p.x, q.y - p.y) for p, q in zip(pts, pts[1:])) / ppf_ * 12 if pts else 0
+                    if L_in >= 48:
+                        nit.qty = round((nit.qty or 0) + L_in / 12, 1)
+                        nit.qty_source = "LF along the line the note's arrow touches"
+                        xs_, ys_ = [q.x for q in pts], [q.y for q in pts]
+                        markups.append(Markup(nit.id, s.sheet, s.page, lin_n[0], "linear", [min(xs_) - 2, min(ys_) - 2, max(xs_) + 2, max(ys_) + 2],
+                                              [[round(q.x, 1), round(q.y, 1)] for q in pts], text=f"{lin_n[0]}\n{fmt_in(L_in)}",
+                                              stroke=lin_n[1], fill=lin_n[2], opacity=lin_n[3], note="followed from note arrow"))
+                        rec["resolved"].append(f"line followed {fmt_in(L_in)}")
+                        continue
+                o = _outline_at(pg_, tip, ppf_)
+                area_n = subject_for(c.cls, "area")
+                if o is not None and area_n:
+                    w_in, h_in = o.width / ppf_ * 12, o.height / ppf_ * 12
+                    nit.qty = (nit.qty or 0) + 1
+                    nit.sf_total = round((nit.sf_total or 0) + w_in * h_in / 144, 1)
+                    markups.append(_mk(nit.id, s.sheet, s.page, area_n, "area", [o.x0, o.y0, o.x1, o.y1],
+                                       text=f"A = {sqft(w_in, h_in)} sf\nW = {fmt_in(w_in)}\nH = {fmt_in(h_in)}"))
+                    rec["resolved"].append("outline measured")
+                else:
+                    nit.flags.append(f"arrow from '{n.text[:40]}' points at something the engine could not outline — take off by hand")
+                    markups.append(Markup(nit.id, s.sheet, s.page, FLAG[0], "flag", [P.x - 8, P.y - 8, P.x + 8, P.y + 8],
+                                          text=f"{n.text[:60]}: not measured", stroke=FLAG[1], fill=FLAG[2], note="needs review"))
+                    rec["resolved"].append("flagged")
+    for nit in note_items.values():
+        nit.flags.append("untagged scope found only from an elevation note's arrow — confirm extent and count")
+        items.append(nit)
+    out["elevation_notes"] = note_log
 
     # break metal: driven off details that show it at our systems; measured on the exterior elevations
     from .breakmetal import scan_details as _bm_scan, edges_for as _bm_edges, runs as _bm_runs

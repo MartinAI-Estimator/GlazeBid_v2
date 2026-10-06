@@ -66,3 +66,16 @@ aluminum tube louvers. Run by Opus, 0 model calls in the engine.
 - **Break metal by detail marker**: markers on the window-type sheets (A3.2–A3.5, "4" over "A3.10") tie each detail to the frame types it's cut through (4/A3.9 → F jambs; 8/A3.9 head → N only; translucent wraps → A–D, E, P …). Elevation frames get only their types' edges; sets without markers fall back to every frame of the system. Translucent bays get the translucent details' edges → full-height piers. Hope: 1,458 LF (was 1,953); 60/88 of Martin's break metal marks; precision 72/138 (was 77/178).
 - **Pier wraps**: one per pier along each run of translucent bays (thin mullions < 0.8' excluded) → 33 EA on Hope vs Martin's 23 boxes on the plans — flagged, needs Martin's check.
 - Hope 66.5 % → 69.2 %. Curtis / McLarty / Valvoline unchanged.
+
+## Standing rule (Martin, 2026-10-06)
+- **Read every leader-arrow note on the elevations, on every project.** The note and its arrow are sometimes the only thing saying what a material is (translucent panels on Hope were never tagged like storefront). Generalise translucent.py's note → shoulder → leader → tip machinery to all elevation notes: classify the note text against the scope rules, and resolve what the arrow tip lands in.
+- Martin's break metal marks on Hope (and some others) were rushed — treat them as a floor, not a count to match.
+
+## Elevation arrow notes — every project (2026-10-06)
+- `notes.py`: every note with a leader arrow on elevation / enlarged sheets. Stacked notes are split by their own arrows (a line an arrow leaves from starts a note; lines without arrows join the nearest one above). Note text classified with the scope rules; each arrow tip resolved:
+  - inside a frame already snapped, or an outline (growing outward from the tip) holding one scheduled type tag → confirms that type (citation added; flag if the note names a different system than the schedule)
+  - inside a translucent bay → already measured
+  - note refers elsewhere ("RE-WINDOW ELEVS.", "PER SCHEDULE", "SEE DOOR …") but the frame isn't matched → yellow flag, never new scope
+  - otherwise untagged scope: linear classes (glass guardrail, sun control, break metal) follow the line the tip touches and measure LF; others measure the smallest outline; nothing found → yellow flag
+- Rules: tube louvers / sun shades / fins = Sun Control (not the louvered-door exclusion); "INSULATED" alone is not glass (needs GLASS/GLAZ/UNIT).
+- Results: Hope 127 notes → 19 tips confirm types (F, Q, N, A, B, W), 7 flagged, A2.19 glass guardrail 89.6 LF (Martin 94'-7"), 1 untagged storefront outline; Hope 69.8 %. McLarty / Valvoline: mirrors from notes (Martin doesn't mark these — ask in the Studio interview). Curtis / McLarty / Valvoline scores unchanged.
