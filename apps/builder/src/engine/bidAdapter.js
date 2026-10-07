@@ -137,7 +137,6 @@ export function jobFromBidSettings(bidSettings = {}, company = {}) {
       DEFAULT_JOB.laborContingencyPct,
     )),
     shopDrawingsPct: num(pick(b.shopDrawingsPct, c.shopDrawingsPct, DEFAULT_JOB.shopDrawingsPct)),
-    shopDrawingsRate: pick(b.shopDrawingsRate, c.shopDrawingsRate) ?? null,
     cleaningHoursPerDay: num(pick(
       b.cleaningHrsPerDay, b.cleaningHoursPerDay, c.cleaningHoursPerDay,
       DEFAULT_JOB.cleaningHoursPerDay,

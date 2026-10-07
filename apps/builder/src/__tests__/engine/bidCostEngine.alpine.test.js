@@ -434,7 +434,7 @@ describe('Alpine Buick GMC — which figures the estimator overrode', () => {
     expect(cont.hours).toBeCloseTo(7.16467675, 6);
   });
 
-  it('shop drawings, left to the engine, are 0.7% of the base-bid cost', () => {
+  it("shop drawings, left to the engine, are 0.7% of the base-bid cost at $40/hr", () => {
     const scopes = ALPINE_BID.scopes.map((s) => {
       const copy = { ...s };
       delete copy.shopDrawingsCostOverride;
@@ -444,7 +444,11 @@ describe('Alpine Buick GMC — which figures the estimator overrode', () => {
     // basis is project cost BEFORE the shops line, so it is a touch under the
     // sheet's 466,950.40 (which has the typed shops inside it)
     expect(r.shopDrawings.cost).toBeCloseTo(r.shopDrawings.basis * 0.007, 6);
-    expect(r.shopDrawings.hours).toBeCloseTo(r.shopDrawings.cost / 40, 6);
+    expect(r.shopDrawings.rate).toBe(40);                  // the job's MH rate
+    expect(r.shopDrawings.hours).toBeCloseTo((r.shopDrawings.basis / 40) * 0.007, 6);
+    // the sheet's own four Shops rows divide by 42 on this $40 job, so they come
+    // to 76.275 MH against the engine's 0.7%-exact figure. That was a slip.
+    expect(r.shopDrawings.hours).toBeGreaterThan(76.275);
     // and it is allocated across the six base breakouts, pro-rata on cost
     expect(r.shopDrawings.lines).toHaveLength(6);
     const alloc = r.shopDrawings.lines.reduce((s, l) => s + l.cost, 0);

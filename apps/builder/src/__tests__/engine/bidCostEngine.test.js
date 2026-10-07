@@ -375,11 +375,47 @@ describe('shop drawings (#19)', () => {
     expect(b).toMatchObject({ cost: 999, overridden: true });
   });
 
-  it('shopDrawingsRate holds the drafting rate apart from the labor rate', () => {
-    // the ValorX sheet divides by 42 on a $40 job, landing at 0.667% not 0.7%
-    const pass1 = two.map((s) => computeScopeCost(s, { ...JOB, laborRate: 40 }));
-    const alloc = allocateShopDrawings(pass1, { ...JOB, laborRate: 40, shopDrawingsRate: 42 });
-    expect(alloc.cost).toBeCloseTo(alloc.basis * 0.007 * (40 / 42), 8);
+  it('the dollars are 0.7% of project cost at ANY labor rate; only the hours move', () => {
+    // hours = (cost / rate) x 0.007, then cost = hours x rate, so the rate
+    // cancels. Martin's formula, confirmed 2026-10-07.
+    const at = (laborRate) => {
+      const job = { ...JOB, laborRate };
+      const pass1 = two.map((s) => computeScopeCost(s, job));
+      return allocateShopDrawings(pass1, job);
+    };
+    const a = at(40);
+    const b = at(84);
+    expect(a.cost).toBeCloseTo(a.basis * 0.007, 8);
+    expect(b.cost).toBeCloseTo(b.basis * 0.007, 8);
+    expect(a.rate).toBe(40);
+    expect(b.rate).toBe(84);
+    expect(a.hours).toBeCloseTo((a.basis / 40) * 0.007, 8);
+    expect(b.hours).toBeCloseTo((b.basis / 84) * 0.007, 8);
+  });
+
+  it('on a fixed basis, doubling the MH rate halves the hours and keeps the money', () => {
+    // material-only scopes, so the basis does not move when the rate does
+    const matOnly = [{
+      breakout: 'M', labor: {}, materials: [{ group: '02-METL', cost: 100000 }],
+      suppliesPctOverride: 0, materialContingencyPctOverride: 0,
+    }];
+    const at = (laborRate) => {
+      const job = { ...JOB, laborRate };
+      return allocateShopDrawings(matOnly.map((s) => computeScopeCost(s, job)), job);
+    };
+    const a = at(42);
+    const b = at(84);
+    expect(a.basis).toBeCloseTo(b.basis, 8);
+    expect(a.cost).toBeCloseTo(b.cost, 8);
+    expect(a.cost).toBeCloseTo(100000 * 0.007, 8);      // $700 either way
+    expect(b.hours).toBeCloseTo(a.hours / 2, 8);
+  });
+
+  it('a zero labor rate cannot produce Infinity hours', () => {
+    const pass1 = two.map((s) => computeScopeCost(s, { ...JOB, laborRate: 0 }));
+    const alloc = allocateShopDrawings(pass1, { ...JOB, laborRate: 0 });
+    expect(alloc.hours).toBe(0);
+    expect(alloc.cost).toBe(0);
   });
 
   it('exports under 01-GLAZ by default, like the sheet does', () => {

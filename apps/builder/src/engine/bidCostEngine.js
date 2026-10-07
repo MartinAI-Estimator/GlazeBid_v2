@@ -21,7 +21,7 @@
  *   #16 bonds = % of final sell, with a typed-dollar override
  *   #17 supplies basis = material + equipment, before tax
  *   #18 material contingency uses the SAME basis as supplies — it does NOT compound
- *   #19 shop drawings = (project cost / labor rate) * 0.7%, allocated to scopes
+ *   #19 shop drawings = (project cost / the job's MH rate) * 0.7%, allocated
  *   #20 cleaning days = ceil(fieldMH / (crew * 8)), overridable
  *
  * THE MONEY SHAPE, exactly as the ValorX sheet reports it:
@@ -81,8 +81,7 @@ export const DEFAULT_JOB = Object.freeze({
   suppliesPct: 0.5,              // #17 of material + equipment, pre-tax
   materialContingencyPct: 1.25,  // #18 same basis as supplies, not compounded
   laborContingencyPct: 2.5,      // of scope MH
-  shopDrawingsPct: 0.7,          // #19 of project cost
-  shopDrawingsRate: null,        // null -> laborRate (see the /42 note in #19)
+  shopDrawingsPct: 0.7,          // #19 of project cost, at the job's MH rate
   shopDrawingsCostCode: '01-GLAZ', // the sheet exports shop HOURS as glazing labor
   cleaningHoursPerDay: 0.5,      // #20 the production sheet's rate, not glazeq's 1.0
   caulkPricePerLF: 1.9,
@@ -448,31 +447,39 @@ export function computeScopeCost(scope, job, extra = {}) {
 // ── project level, pass 2 ──────────────────────────────────────────────────
 
 /**
- * Shop drawings (#19): ONE project number, carried as labor hours so it
- * inherits the labor rate and markup, then allocated to scopes pro-rata by
- * scope cost. Computed on project cost BEFORE this line, so it is not circular
- * (the same treatment as the bond).
+ * Shop drawings (#19), Martin's formula verbatim:
  *
- * `shopDrawingsRate` holds the drafting rate independently of the blended labor
- * rate — the ValorX sheet divides by 42 on a $40 job, which lands the line at
- * 0.667% rather than 0.7%.
+ *     hours = (total project cost / the job's MH rate) * 0.007
+ *
+ * ONE project number, carried as labor HOURS so it inherits the rate and the
+ * markup, then allocated to scopes pro-rata by scope cost. Because the divisor
+ * IS the job's labor rate, the hours re-multiply by it and the line lands at
+ * exactly 0.7% of project cost whatever the rate is set to — so changing the MH
+ * rate moves the hours, not the dollars.
+ *
+ * Computed on project cost BEFORE this line, so it is not circular (the same
+ * treatment as the bond).
+ *
+ * The Alpine Buick GMC sheet divides by 42 on a $40 job, landing its shops
+ * lines at 0.667%. That was an estimator slip, not a separate drafting rate —
+ * confirmed 2026-10-07 — so there is deliberately no override here to
+ * reintroduce it.
  *
  * @param {object[]} pass1 results from computeScopeCost with no shops allocation
  * @returns {{basis:number, hours:number, cost:number, perScope:number[]}}
  */
 export function allocateShopDrawings(pass1, job) {
   const j = jobOf(job);
-  const divisor = num(j.shopDrawingsRate) || num(j.laborRate);
   const laborRate = num(j.laborRate);
   const basis = pass1.reduce((s, r) => s + r.cost, 0);
-  const hours = divisor > 0 ? (basis / divisor) * pct(j.shopDrawingsPct) : 0;
+  const hours = laborRate > 0 ? (basis / laborRate) * pct(j.shopDrawingsPct) : 0;
   const cost = hours * laborRate;
 
   const perScope = pass1.map((r) => {
     if (r.shopDrawingsCostOverride != null) return r.shopDrawingsCostOverride;
     return basis !== 0 ? cost * (r.cost / basis) : 0;
   });
-  return { basis, divisor, hours, cost, perScope };
+  return { basis, rate: laborRate, hours, cost, perScope };
 }
 
 /** Project-level typed adders — travel, per diem, anything entered once (#7). */
@@ -639,7 +646,7 @@ export function computeBid(bid) {
     job,
     scopes: results,
     shopDrawings: {
-      pct: job.shopDrawingsPct, rate: alloc.divisor, basis: alloc.basis,
+      pct: job.shopDrawingsPct, rate: alloc.rate, basis: alloc.basis,
       hours: alloc.hours, cost: alloc.cost,
       lines: results
         .filter((r) => r.labor.shopDrawingsCost !== 0)
