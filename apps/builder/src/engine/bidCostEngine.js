@@ -438,6 +438,10 @@ export function computeScopeCost(scope, job, extra = {}) {
     shopDrawingsCostOverride: scope.shopDrawingsCostOverride == null
       ? null
       : num(scope.shopDrawingsCostOverride),
+    // provenance the adapter attached — which workspace system and which
+    // parametric frames this scope came from, so a screen can navigate back
+    sourceSystemId: scope.sourceSystemId ?? null,
+    frameIds: Array.isArray(scope.frameIds) ? scope.frameIds : [],
   };
 }
 

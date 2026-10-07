@@ -322,6 +322,7 @@ function App() {
     else if (moduleId === 'specSplitter') setCurrentView('spec-sorter');
     else if (moduleId === 'proposal') setCurrentView('proposal');
     else if (moduleId === 'reviewbid') setCurrentView('reviewbid');
+    else if (moduleId === 'studioInbox') setCurrentView('inbox');
     else if (moduleId === 'openProjects') { setCurrentView('glazebidHome'); }
   };
 
@@ -1162,24 +1163,29 @@ function App() {
       return <BidSheet project={currentProject} onNavigate={setCurrentView} bidSettings={bidSettings} onBidSettingsChange={setBidSettings} />;
     }
 
+    // Opening one frame in the builder it came from. Shared by the Bid Cart and
+    // the Review Bid recap, which both list frames with "Open in Frame Builder".
+    const openFrameEditor = (frameId) => {
+      // frames built in the v1 Frame Builder reopen there, on that frame
+      const f = useBidStore.getState().frames.find((x) => x.frameId === frameId);
+      if (f?.source === 'frame-builder-v1') {
+        const st = useFrameTakeoffStore.getState();
+        st.open(currentProject);
+        st.selectFrame(f.sourceFrameId);
+        setCurrentView('frame-takeoff');
+        return;
+      }
+      setEditingFrameId(frameId);
+      setCurrentView('frame-editor');
+    };
+
     // Bid Cart & Labor Engine
     if (currentView === 'bid-cart') {
       return (
         <BidCart
           project={currentProject}
           onNavigate={setCurrentView}
-          onEditFrame={(frameId) => {
-            // frames built in the v1 Frame Builder reopen there, on that frame
-            const f = useBidStore.getState().frames.find((x) => x.frameId === frameId);
-            if (f?.source === 'frame-builder-v1') {
-              const st = useFrameTakeoffStore.getState();
-              st.open(currentProject);
-              st.selectFrame(f.sourceFrameId);
-              setCurrentView('frame-takeoff');
-              return;
-            }
-            setEditingFrameId(frameId); setCurrentView('frame-editor');
-          }}
+          onEditFrame={openFrameEditor}
         />
       );
     }
@@ -1202,6 +1208,9 @@ function App() {
           project={currentProject}
           onBack={() => setCurrentView('projectHome')}
           onNavigate={setCurrentView}
+          onEditFrame={openFrameEditor}
+          bidSettings={bidSettings}
+          onBidSettingsChange={setBidSettings}
         />
       );
     }
@@ -1267,7 +1276,19 @@ function App() {
     if (currentView === 'inbox') {
       return (
         <div style={{ flex: 1, padding: '24px', overflowY: 'auto', background: 'var(--bg-deep)' }}>
-          <h2 style={{ color: '#60a5fa', marginBottom: '16px', fontSize: '18px', fontWeight: 700 }}>📥 Studio Takeoffs</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '16px' }}>
+            <button
+              onClick={() => setCurrentView('projectHome')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: 'transparent',
+                border: 'none', color: '#8b949e', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer',
+                padding: '0.3rem 0.5rem', borderRadius: 6,
+              }}
+            >
+              &larr; Project Home
+            </button>
+            <h2 style={{ color: '#60a5fa', margin: 0, fontSize: '18px', fontWeight: 700 }}>📥 Studio Takeoffs</h2>
+          </div>
           <StudioInbox onNavigate={setCurrentView} />
         </div>
       );

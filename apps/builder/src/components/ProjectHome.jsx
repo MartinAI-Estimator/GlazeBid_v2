@@ -335,6 +335,20 @@ const ProjectHome = ({
             >
               📋 Review Bid
             </button>
+            <button
+              onClick={() => onLaunch?.('studioInbox')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
+                padding: '0.55rem 1.25rem', borderRadius: 8,
+                background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.35)',
+                color: '#34d399', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#34d399'; e.currentTarget.style.color = '#0d1117'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(52,211,153,0.12)'; e.currentTarget.style.color = '#34d399'; }}
+            >
+              📥 Studio Inbox
+            </button>
           </div>
         </div>
 
