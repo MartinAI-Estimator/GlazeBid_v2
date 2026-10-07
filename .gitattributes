@@ -1,0 +1,42 @@
+# Line endings
+# ============
+# This repo is edited from a Windows editor (writes CRLF) and from tooling that
+# writes LF. With no rules, a third of the tree showed as modified with nothing
+# actually changed — 214 files at one point, every one of them a carriage return
+# and not a line of content. That noise masked whether a real change was sitting
+# in the tree, which is the failure mode worth preventing.
+#
+# `text=auto` makes git normalize to LF on the way into the repo, so the
+# difference stops reaching `git status` at all, whatever an editor writes
+# locally. `eol=lf` checks files out as LF to match the two-thirds of the tree
+# that already was, and the JS/Electron toolchain's defaults.
+
+* text=auto eol=lf
+
+# Windows batch files must keep CRLF or cmd.exe can mis-parse them
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Explicit binaries — never normalize, never diff as text
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.pdf   binary
+*.xlsm  binary
+*.xlsx  binary
+*.xls   binary
+*.docx  binary
+*.pptx  binary
+*.dat   binary
+*.zip   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.eot   binary
+*.mp4   binary
+*.node  binary
