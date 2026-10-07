@@ -5,7 +5,6 @@ import ToolPalette from './ToolPalette';
 import VisualCanvas from './VisualCanvas';
 import MaterialDrawer from './MaterialDrawer';
 import BidCartPanel from './BidCartPanel';
-import BidSummaryDashboard from './BidSummaryDashboard';
 import ExecutiveDashboard from './ExecutiveDashboard';
 import MaterialOnlyWorkspace from './MaterialOnlyWorkspace';
 import LaborOnlyWorkspace from './LaborOnlyWorkspace';
